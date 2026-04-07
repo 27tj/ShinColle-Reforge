@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "RB",
+    "WW",
+    "OO"
+  ],
+  "key": {
+    "R": {
+      "item": "shincolle:desk_item_radar"
+    },
+    "B": {
+      "item": "shincolle:desk_item_book"
+    },
+    "W": {
+      "item": "minecraft:white_wool"
+    },
+    "O": {
+      "item": "minecraft:obsidian"
+    }
+  },
+  "result": {
+    "item": "shincolle:desk",
+    "count": 1
+  }
+}

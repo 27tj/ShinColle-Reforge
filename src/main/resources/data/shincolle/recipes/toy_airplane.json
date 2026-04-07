@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " A ",
+    "AAA",
+    " A "
+  ],
+  "key": {
+    "A": {
+      "item": "shincolle:abyss_metal"
+    }
+  },
+  "result": {
+    "item": "shincolle:toy_airplane",
+    "count": 1
+  }
+}

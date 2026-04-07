@@ -1,0 +1,20 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "shincolle:item/equip_drum"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "shincolle:equip_icon": 1
+      },
+      "model": "shincolle:item/equip_drum_liquid"
+    },
+    {
+      "predicate": {
+        "shincolle:equip_icon": 2
+      },
+      "model": "shincolle:item/equip_drum_eu"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "XHX",
+    " W ",
+    "X X"
+  ],
+  "key": {
+    "X": {
+      "item": "shincolle:grudge_xp"
+    },
+    "H": {
+      "item": "shincolle:kaitai_hammer"
+    },
+    "W": {
+      "item": "shincolle:target_wrench"
+    }
+  },
+  "result": {
+    "item": "shincolle:modern_kit",
+    "count": 1
+  }
+}

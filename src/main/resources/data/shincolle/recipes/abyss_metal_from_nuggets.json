@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "NNN",
+    "NNN",
+    "NNN"
+  ],
+  "key": {
+    "N": {
+      "item": "shincolle:abyss_nugget"
+    }
+  },
+  "result": {
+    "item": "shincolle:abyss_metal",
+    "count": 1
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "shincolle:kaitai_hammer"
+    },
+    {
+      "item": "shincolle:ship_spawn_egg"
+    }
+  ],
+  "result": {
+    "item": "shincolle:instant_con_mat",
+    "count": 8
+  }
+}

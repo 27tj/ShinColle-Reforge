@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "mbs=0": {
+      "model": "shincolle:block/grudge_heavy"
+    },
+    "mbs=1": {
+      "model": "shincolle:block/grudge_heavy"
+    },
+    "mbs=2": {
+      "model": "shincolle:block/grudge_heavy"
+    }
+  }
+}

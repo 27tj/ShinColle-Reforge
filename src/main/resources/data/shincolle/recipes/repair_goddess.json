@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "GHG",
+    "GDG",
+    "GHG"
+  ],
+  "key": {
+    "G": {
+      "item": "shincolle:grudge_block"
+    },
+    "H": {
+      "item": "shincolle:grudge_heavy"
+    },
+    "D": {
+      "item": "minecraft:diamond_block"
+    }
+  },
+  "result": {
+    "item": "shincolle:repair_goddess",
+    "count": 1
+  }
+}

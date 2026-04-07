@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " A ",
+    "ACA",
+    " A "
+  ],
+  "key": {
+    "A": {
+      "item": "shincolle:abyss_metal"
+    },
+    "C": {
+      "item": "minecraft:cauldron"
+    }
+  },
+  "result": {
+    "item": "shincolle:ship_tank",
+    "count": 1
+  }
+}

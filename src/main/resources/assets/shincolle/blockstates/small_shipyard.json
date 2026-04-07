@@ -1,0 +1,34 @@
+{
+  "variants": {
+    "active=false,facing=north": {
+      "model": "shincolle:block/small_shipyard"
+    },
+    "active=false,facing=south": {
+      "model": "shincolle:block/small_shipyard",
+      "y": 180
+    },
+    "active=false,facing=west": {
+      "model": "shincolle:block/small_shipyard",
+      "y": 270
+    },
+    "active=false,facing=east": {
+      "model": "shincolle:block/small_shipyard",
+      "y": 90
+    },
+    "active=true,facing=north": {
+      "model": "shincolle:block/small_shipyard"
+    },
+    "active=true,facing=south": {
+      "model": "shincolle:block/small_shipyard",
+      "y": 180
+    },
+    "active=true,facing=west": {
+      "model": "shincolle:block/small_shipyard",
+      "y": 270
+    },
+    "active=true,facing=east": {
+      "model": "shincolle:block/small_shipyard",
+      "y": 90
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "minecraft:cooked_mutton"
+    },
+    {
+      "item": "minecraft:golden_carrot"
+    },
+    {
+      "item": "shincolle:grudge"
+    },
+    {
+      "item": "minecraft:wheat"
+    }
+  ],
+  "result": {
+    "item": "shincolle:combat_ration",
+    "count": 1
+  }
+}

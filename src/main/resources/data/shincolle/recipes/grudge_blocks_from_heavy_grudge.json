@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "shincolle:grudge_heavy"
+    }
+  ],
+  "result": {
+    "item": "shincolle:grudge_block",
+    "count": 9
+  }
+}

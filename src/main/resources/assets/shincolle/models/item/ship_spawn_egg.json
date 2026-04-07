@@ -1,0 +1,68 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "shincolle:item/ship_spawn_egg"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "shincolle:egg_icon": 1
+      },
+      "model": "shincolle:item/ship_spawn_egg_l"
+    },
+    {
+      "predicate": {
+        "shincolle:egg_icon": 2
+      },
+      "model": "shincolle:item/ship_spawn_egg_dd"
+    },
+    {
+      "predicate": {
+        "shincolle:egg_icon": 3
+      },
+      "model": "shincolle:item/ship_spawn_egg_cl"
+    },
+    {
+      "predicate": {
+        "shincolle:egg_icon": 4
+      },
+      "model": "shincolle:item/ship_spawn_egg_ca"
+    },
+    {
+      "predicate": {
+        "shincolle:egg_icon": 5
+      },
+      "model": "shincolle:item/ship_spawn_egg_bb"
+    },
+    {
+      "predicate": {
+        "shincolle:egg_icon": 6
+      },
+      "model": "shincolle:item/ship_spawn_egg_ap"
+    },
+    {
+      "predicate": {
+        "shincolle:egg_icon": 7
+      },
+      "model": "shincolle:item/ship_spawn_egg_ss"
+    },
+    {
+      "predicate": {
+        "shincolle:egg_icon": 8
+      },
+      "model": "shincolle:item/ship_spawn_egg_wd"
+    },
+    {
+      "predicate": {
+        "shincolle:egg_icon": 9
+      },
+      "model": "shincolle:item/ship_spawn_egg_hime"
+    },
+    {
+      "predicate": {
+        "shincolle:egg_icon": 10
+      },
+      "model": "shincolle:item/ship_spawn_egg_cv"
+    }
+  ]
+}

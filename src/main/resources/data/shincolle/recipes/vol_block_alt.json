@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "OGO",
+    "GMG",
+    "OGO"
+  ],
+  "key": {
+    "O": {
+      "item": "minecraft:obsidian"
+    },
+    "G": {
+      "item": "shincolle:grudge_block"
+    },
+    "M": {
+      "item": "minecraft:magma_block"
+    }
+  },
+  "result": {
+    "item": "shincolle:vol_block",
+    "count": 1
+  }
+}

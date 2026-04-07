@@ -1,0 +1,59 @@
+{
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "shincolle:instant_con_mat",
+          "weight": 20,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "min": 10,
+                "max": 20,
+                "type": "minecraft:uniform"
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "shincolle:abyss_metal",
+          "weight": 10,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "min": 5,
+                "max": 10,
+                "type": "minecraft:uniform"
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "shincolle:polymetal_nodule",
+          "weight": 10,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "min": 5,
+                "max": 10,
+                "type": "minecraft:uniform"
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "shincolle:ship_spawn_egg",
+          "weight": 5
+        }
+      ]
+    }
+  ]
+}

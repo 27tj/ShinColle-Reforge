@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "mbs=0": {
+      "model": "shincolle:block/polymetal"
+    },
+    "mbs=1": {
+      "model": "shincolle:block/polymetal"
+    },
+    "mbs=2": {
+      "model": "shincolle:block/polymetal"
+    }
+  }
+}

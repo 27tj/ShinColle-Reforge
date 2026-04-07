@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "minecraft:snowball"
+    },
+    {
+      "item": "minecraft:snowball"
+    },
+    {
+      "item": "minecraft:snowball"
+    },
+    {
+      "item": "minecraft:snowball"
+    },
+    {
+      "item": "minecraft:milk_bucket"
+    },
+    {
+      "item": "shincolle:grudge"
+    }
+  ],
+  "result": {
+    "item": "shincolle:combat_ration",
+    "count": 1
+  }
+}

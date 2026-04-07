@@ -1,0 +1,18 @@
+{
+  "replace": false,
+  "values": [
+    "shincolle:polymetal_ore",
+    "shincolle:abyssium",
+    "shincolle:grudge_block",
+    "shincolle:grudge_heavy",
+    "shincolle:grudge_heavy_deco",
+    "shincolle:grudge_xp",
+    "shincolle:polymetal",
+    "shincolle:vol_block",
+    "shincolle:frame",
+    "shincolle:crane",
+    "shincolle:small_shipyard",
+    "shincolle:vol_core",
+    "shincolle:desk"
+  ]
+}

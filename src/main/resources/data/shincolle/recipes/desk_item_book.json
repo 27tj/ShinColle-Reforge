@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "GGG",
+    "GBG",
+    "GGG"
+  ],
+  "key": {
+    "G": {
+      "item": "shincolle:grudge"
+    },
+    "B": {
+      "item": "minecraft:writable_book"
+    }
+  },
+  "result": {
+    "item": "shincolle:desk_item_book",
+    "count": 1
+  }
+}

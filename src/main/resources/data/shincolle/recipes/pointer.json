@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "A",
+    "G",
+    "A"
+  ],
+  "key": {
+    "A": {
+      "item": "shincolle:abyss_metal"
+    },
+    "G": {
+      "item": "shincolle:grudge_block"
+    }
+  },
+  "result": {
+    "item": "shincolle:pointer",
+    "count": 1
+  }
+}

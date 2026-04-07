@@ -1,0 +1,450 @@
+{
+  "ship_idle": {
+    "sounds": [
+      "shincolle:idle01",
+      "shincolle:idle02",
+      "shincolle:idle03",
+      "shincolle:idle04",
+      "shincolle:idle05",
+      "shincolle:idle06",
+      "shincolle:idle18",
+      "shincolle:idle19",
+      "shincolle:idle20",
+      "shincolle:idle21",
+      "shincolle:idle12",
+      "shincolle:idle13",
+      "shincolle:idle14",
+      "shincolle:idle15",
+      "shincolle:idle16",
+      "shincolle:idle17",
+      "shincolle:idle22",
+      "shincolle:idle07",
+      "shincolle:idle08",
+      "shincolle:idle09",
+      "shincolle:idle10",
+      "shincolle:idle11"
+    ]
+  },
+  "ship_hurt": {
+    "sounds": [
+      "shincolle:hurt01",
+      "shincolle:hurt02",
+      "shincolle:hurt03",
+      "shincolle:hurt04",
+      "shincolle:hurt05",
+      "shincolle:hurt06",
+      "shincolle:hurt07",
+      "shincolle:hurt08"
+    ]
+  },
+  "ship_death": {
+    "sounds": [
+      "shincolle:death01",
+      "shincolle:death02",
+      "shincolle:death03",
+      "shincolle:death04"
+    ]
+  },
+  "ship_firelight": {
+    "sounds": [
+      "shincolle:fire01",
+      "shincolle:fire02",
+      "shincolle:fire03",
+      "shincolle:fire04"
+    ]
+  },
+  "ship_explode": {
+    "sounds": [
+      "shincolle:fire05"
+    ]
+  },
+  "ship_fireheavy": {
+    "sounds": [
+      "shincolle:fireheavy01",
+      "shincolle:fireheavy02",
+      "shincolle:fireheavy03"
+    ]
+  },
+  "ship_hit": {
+    "sounds": [
+      "shincolle:hits01",
+      "shincolle:hits02",
+      "shincolle:hits03",
+      "shincolle:hits04",
+      "shincolle:hits05",
+      "shincolle:hits06",
+      "shincolle:hits07",
+      "shincolle:hits08"
+    ]
+  },
+  "ship_aircraft": {
+    "sounds": [
+      "shincolle:aircraft01",
+      "shincolle:aircraft02",
+      "shincolle:aircraft03"
+    ]
+  },
+  "ship_machinegun": {
+    "sounds": [
+      "shincolle:gun01",
+      "shincolle:gun02",
+      "shincolle:gun03"
+    ]
+  },
+  "ship_laser": {
+    "sounds": [
+      "shincolle:laser01",
+      "shincolle:laser02",
+      "shincolle:laser03"
+    ]
+  },
+  "ship_marry": {
+    "sounds": [
+      "shincolle:love01",
+      "shincolle:love02",
+      "shincolle:love03",
+      "shincolle:love04",
+      "shincolle:love05",
+      "shincolle:love06"
+    ]
+  },
+  "ship_time0": {
+    "sounds": [
+      "shincolle:time00"
+    ]
+  },
+  "ship_time1": {
+    "sounds": [
+      "shincolle:time01"
+    ]
+  },
+  "ship_time2": {
+    "sounds": [
+      "shincolle:time02"
+    ]
+  },
+  "ship_time3": {
+    "sounds": [
+      "shincolle:time03"
+    ]
+  },
+  "ship_time4": {
+    "sounds": [
+      "shincolle:time04"
+    ]
+  },
+  "ship_time5": {
+    "sounds": [
+      "shincolle:time05"
+    ]
+  },
+  "ship_time6": {
+    "sounds": [
+      "shincolle:time06"
+    ]
+  },
+  "ship_time7": {
+    "sounds": [
+      "shincolle:time07"
+    ]
+  },
+  "ship_time8": {
+    "sounds": [
+      "shincolle:time08"
+    ]
+  },
+  "ship_time9": {
+    "sounds": [
+      "shincolle:time09"
+    ]
+  },
+  "ship_time10": {
+    "sounds": [
+      "shincolle:time10"
+    ]
+  },
+  "ship_time11": {
+    "sounds": [
+      "shincolle:time11"
+    ]
+  },
+  "ship_time12": {
+    "sounds": [
+      "shincolle:time12"
+    ]
+  },
+  "ship_time13": {
+    "sounds": [
+      "shincolle:time13"
+    ]
+  },
+  "ship_time14": {
+    "sounds": [
+      "shincolle:time14"
+    ]
+  },
+  "ship_time15": {
+    "sounds": [
+      "shincolle:time15"
+    ]
+  },
+  "ship_time16": {
+    "sounds": [
+      "shincolle:time16"
+    ]
+  },
+  "ship_time17": {
+    "sounds": [
+      "shincolle:time17"
+    ]
+  },
+  "ship_time18": {
+    "sounds": [
+      "shincolle:time18"
+    ]
+  },
+  "ship_time19": {
+    "sounds": [
+      "shincolle:time19"
+    ]
+  },
+  "ship_time20": {
+    "sounds": [
+      "shincolle:time20"
+    ]
+  },
+  "ship_time21": {
+    "sounds": [
+      "shincolle:time21"
+    ]
+  },
+  "ship_time22": {
+    "sounds": [
+      "shincolle:time22"
+    ]
+  },
+  "ship_time23": {
+    "sounds": [
+      "shincolle:time23"
+    ]
+  },
+  "ship_kaitai": {
+    "sounds": [
+      "shincolle:kaitai"
+    ]
+  },
+  "ship_ap_phase1": {
+    "sounds": [
+      "shincolle:ap_p1"
+    ]
+  },
+  "ship_ap_phase2": {
+    "sounds": [
+      "shincolle:ap_p2"
+    ]
+  },
+  "ship_ap_attack": {
+    "sounds": [
+      "shincolle:ap_attack"
+    ]
+  },
+  "ship_waka_attack": {
+    "sounds": [
+      "shincolle:waka_atk01",
+      "shincolle:waka_atk02",
+      "shincolle:waka_atk03",
+      "shincolle:waka_atk04",
+      "shincolle:waka_atk05",
+      "shincolle:waka_atk06",
+      "shincolle:waka_atk07"
+    ]
+  },
+  "ship_waka_hurt": {
+    "sounds": [
+      "shincolle:waka_hurt01",
+      "shincolle:waka_hurt02",
+      "shincolle:waka_hurt03"
+    ]
+  },
+  "ship_waka_idle": {
+    "sounds": [
+      "shincolle:waka_idle01",
+      "shincolle:waka_idle02",
+      "shincolle:waka_idle04",
+      "shincolle:waka_idle05",
+      "shincolle:waka_idle06"
+    ]
+  },
+  "ship_waka_death": {
+    "sounds": [
+      "shincolle:waka_death02",
+      "shincolle:waka_death03"
+    ]
+  },
+  "ship_garuru": {
+    "sounds": [
+      "shincolle:garuru"
+    ]
+  },
+  "ship_yamato_ready": {
+    "sounds": [
+      "shincolle:laser05"
+    ]
+  },
+  "ship_yamato_shot": {
+    "sounds": [
+      "shincolle:laser06"
+    ]
+  },
+  "ship_knockback": {
+    "sounds": [
+      "shincolle:hits02",
+      "shincolle:hits06",
+      "shincolle:hurt04",
+      "shincolle:hurt02"
+    ]
+  },
+  "ship_item": {
+    "sounds": [
+      "shincolle:item01",
+      "shincolle:item02",
+      "shincolle:item03",
+      "shincolle:item04",
+      "shincolle:item05"
+    ]
+  },
+  "ship_levelup": {
+    "sounds": [
+      "shincolle:level01"
+    ]
+  },
+  "ship_feed": {
+    "sounds": [
+      "shincolle:feed01",
+      "shincolle:feed02",
+      "shincolle:feed03",
+      "shincolle:feed04",
+      "shincolle:feed05",
+      "shincolle:feed06",
+      "shincolle:feed07"
+    ]
+  },
+  "ship_bell": {
+    "sounds": [
+      "shincolle:bell01",
+      "shincolle:bell02",
+      "shincolle:bell03"
+    ]
+  },
+  "ship_jet": {
+    "sounds": [
+      "shincolle:accg1",
+      "shincolle:accg2",
+      "shincolle:accg3",
+      "shincolle:accg4"
+    ]
+  },
+  "ship_hitmetal": {
+    "sounds": [
+      "shincolle:hitg1",
+      "shincolle:hitg2",
+      "shincolle:hitg3",
+      "shincolle:hitg4",
+      "shincolle:hitg5",
+      "shincolle:hitg6"
+    ]
+  },
+  "ship_idle_54": {
+    "sounds": [
+      "shincolle:idle5401",
+      "shincolle:idle5402",
+      "shincolle:idle5403"
+    ]
+  },
+  "ship_hurt_54": {
+    "sounds": [
+      "shincolle:hurt5401"
+    ]
+  },
+  "ship_marry_54": {
+    "sounds": [
+      "shincolle:idle5401",
+      "shincolle:idle5402",
+      "shincolle:idle5403"
+    ]
+  },
+  "ship_item_54": {
+    "sounds": [
+      "shincolle:item5401",
+      "shincolle:item5402",
+      "shincolle:idle5401",
+      "shincolle:idle5402",
+      "shincolle:idle5403"
+    ]
+  },
+  "ship_idle_56": {
+    "sounds": [
+      "shincolle:idle5601",
+      "shincolle:idle5602",
+      "shincolle:idle5603",
+      "shincolle:idle5604",
+      "shincolle:idle5606",
+      "shincolle:idle5607",
+      "shincolle:idle5608",
+      "shincolle:idle5609",
+      "shincolle:idle5610",
+      "shincolle:idle5611",
+      "shincolle:hurt5605"
+    ]
+  },
+  "ship_hit_56": {
+    "sounds": [
+      "shincolle:hit5601",
+      "shincolle:hit5602",
+      "shincolle:hit5603",
+      "shincolle:hit5604",
+      "shincolle:hit5605"
+    ]
+  },
+  "ship_hurt_56": {
+    "sounds": [
+      "shincolle:hurt5601",
+      "shincolle:hurt5602",
+      "shincolle:hurt5603",
+      "shincolle:hurt5604",
+      "shincolle:hurt5605",
+      "shincolle:hurt5606",
+      "shincolle:idle5605"
+    ]
+  },
+  "ship_death_56": {
+    "sounds": [
+      "shincolle:death5601",
+      "shincolle:death5602"
+    ]
+  },
+  "ship_item_56": {
+    "sounds": [
+      "shincolle:item5601",
+      "shincolle:hit5602"
+    ]
+  },
+  "ship_idle_60": {
+    "sounds": [
+      "shincolle:pan1",
+      "shincolle:pan2"
+    ]
+  },
+  "ship_hit_60": {
+    "sounds": [
+      "shincolle:pan1",
+      "shincolle:pan2"
+    ]
+  },
+  "ship_hit_62": {
+    "sounds": [
+      "shincolle:burnlove1",
+      "shincolle:burnlove2"
+    ]
+  }
+}

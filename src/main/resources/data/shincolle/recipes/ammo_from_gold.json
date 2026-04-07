@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "III",
+    "IGI",
+    "IPI"
+  ],
+  "key": {
+    "I": {
+      "item": "minecraft:gold_ingot"
+    },
+    "G": {
+      "item": "shincolle:grudge"
+    },
+    "P": {
+      "item": "minecraft:gunpowder"
+    }
+  },
+  "result": {
+    "item": "shincolle:ammo",
+    "count": 32
+  }
+}

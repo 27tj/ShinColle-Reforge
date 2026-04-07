@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "AAA",
+    "APG",
+    "AAA"
+  ],
+  "key": {
+    "A": {
+      "item": "shincolle:abyss_metal"
+    },
+    "P": {
+      "item": "minecraft:piston"
+    },
+    "G": {
+      "item": "shincolle:grudge_block"
+    }
+  },
+  "result": {
+    "item": "shincolle:crane",
+    "count": 1
+  }
+}

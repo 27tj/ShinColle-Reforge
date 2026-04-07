@@ -1,0 +1,59 @@
+{
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "shincolle:grudge",
+          "weight": 1,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "min": 5,
+                "max": 8,
+                "type": "minecraft:uniform"
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "shincolle:ship_spawn_egg",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "shincolle:ammo",
+          "weight": 1,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "min": 2,
+                "max": 3,
+                "type": "minecraft:uniform"
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "shincolle:instant_con_mat",
+          "weight": 1,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "min": 3,
+                "max": 5,
+                "type": "minecraft:uniform"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

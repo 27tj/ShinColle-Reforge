@@ -1,0 +1,47 @@
+package com.lulan.shincolle.ai;
+
+import java.util.EnumSet;
+
+import com.lulan.shincolle.entity.BasicEntityShip;
+
+import net.minecraft.world.entity.ai.goal.Goal;
+
+/**
+ * Sit goal - locks ship in place when commanded.
+ * Ported from EntityAIShipSit (setMutexBits: 7)
+ */
+public class ShipSitGoal extends Goal {
+
+	private final BasicEntityShip ship;
+
+	public ShipSitGoal(BasicEntityShip ship) {
+		this.ship = ship;
+		this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK, Goal.Flag.JUMP));
+	}
+
+	@Override
+	public boolean canUse() {
+		return this.ship.isOrderedToSit();
+	}
+
+	@Override
+	public void start() {
+		this.ship.setOrderedToSit(true);
+		this.ship.setJumping(false);
+	}
+
+	@Override
+	public void tick() {
+		this.ship.getNavigation().stop();
+		if (this.ship.getShipNavigate() != null) {
+			this.ship.getShipNavigate().stop();
+		}
+		this.ship.setTarget(null);
+		this.ship.setEntityTarget(null);
+	}
+
+	@Override
+	public void stop() {
+		this.ship.setOrderedToSit(false);
+	}
+}

@@ -9,6 +9,8 @@
     "chat.tools.terminal.autoApprove": {
         ".specify/scripts/bash/": true,
         ".specify/scripts/powershell/": true
-    }
+    },
+    "java.compile.nullAnalysis.mode": "disabled",
+    "java.configuration.updateBuildConfiguration": "interactive",
+    "todo-tree.tree.showCountsInTree": true
 }
-

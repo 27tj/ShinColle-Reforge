@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "OVO",
+    "VHV",
+    "OVO"
+  ],
+  "key": {
+    "O": {
+      "item": "minecraft:obsidian"
+    },
+    "V": {
+      "item": "shincolle:vol_block"
+    },
+    "H": {
+      "item": "shincolle:grudge_heavy"
+    }
+  },
+  "result": {
+    "item": "shincolle:vol_core",
+    "count": 1
+  }
+}

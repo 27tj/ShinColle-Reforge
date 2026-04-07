@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "shincolle:polymetal_nodule"
+    },
+    {
+      "item": "shincolle:polymetal_nodule"
+    },
+    {
+      "item": "shincolle:polymetal_nodule"
+    },
+    {
+      "item": "shincolle:polymetal_nodule"
+    }
+  ],
+  "result": {
+    "item": "shincolle:polymetal_gravel",
+    "count": 1
+  }
+}

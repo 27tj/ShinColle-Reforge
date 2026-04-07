@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "shincolle:toy_airplane"
+    }
+  ],
+  "result": {
+    "item": "shincolle:abyss_metal",
+    "count": 5
+  }
+}

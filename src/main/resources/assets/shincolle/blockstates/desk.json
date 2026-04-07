@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "shincolle:block/desk"
+    },
+    "facing=south": {
+      "model": "shincolle:block/desk",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "shincolle:block/desk",
+      "y": 270
+    },
+    "facing=east": {
+      "model": "shincolle:block/desk",
+      "y": 90
+    }
+  }
+}
