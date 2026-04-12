@@ -1,10 +1,14 @@
 package com.lulan.shincolle.entity.other;
 
+import java.util.List;
+
 import com.lulan.shincolle.entity.IShipAttackBase;
 import com.lulan.shincolle.entity.IShipCustomTexture;
 import com.lulan.shincolle.entity.IShipOwner;
 import com.lulan.shincolle.entity.IShipProjectile;
 import com.lulan.shincolle.utility.CombatHelper;
+import com.lulan.shincolle.utility.ParticleHelper;
+import com.lulan.shincolle.utility.TargetHelper;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -17,25 +21,28 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
-
-import java.util.List;
+import net.minecraft.world.phys.Vec3;
 
 /**
  * Static projectile/effect entity (mines, barriers, etc.).
- * Remains stationary at a position and damages entities that enter its effect radius.
+ * Remains stationary at a position and damages entities that enter its effect
+ * radius.
  * Different effect types control behavior:
- *   0: mine - explodes on contact, single use
- *   1: barrier - persistent damage field, lasts for duration
- *   2: trap - slows and damages entities in range
+ * 0: mine - explodes on contact, single use
+ * 1: barrier - persistent damage field, lasts for duration
+ * 2: trap - slows and damages entities in range
  */
 public class EntityProjectileStatic extends Entity implements IShipOwner, IShipCustomTexture, IShipProjectile {
 
 	/** Synched effect radius for client-side rendering */
-	private static final EntityDataAccessor<Float> EFFECT_RADIUS =
-			SynchedEntityData.defineId(EntityProjectileStatic.class, EntityDataSerializers.FLOAT);
+	private static final EntityDataAccessor<Float> EFFECT_RADIUS = SynchedEntityData
+			.defineId(EntityProjectileStatic.class, EntityDataSerializers.FLOAT);
 	/** Synched active flag for rendering */
-	private static final EntityDataAccessor<Boolean> IS_ACTIVE =
-			SynchedEntityData.defineId(EntityProjectileStatic.class, EntityDataSerializers.BOOLEAN);
+	private static final EntityDataAccessor<Boolean> IS_ACTIVE = SynchedEntityData
+			.defineId(EntityProjectileStatic.class, EntityDataSerializers.BOOLEAN);
+	/** Synched lifetime for client particle timing */
+	private static final EntityDataAccessor<Integer> EFFECT_LIFETIME = SynchedEntityData
+			.defineId(EntityProjectileStatic.class, EntityDataSerializers.INT);
 
 	private int playerUID;
 	private int textureID;
@@ -87,6 +94,7 @@ public class EntityProjectileStatic extends Entity implements IShipOwner, IShipC
 		this.effectLifetime = lifetime;
 		this.entityData.set(EFFECT_RADIUS, radius);
 		this.entityData.set(IS_ACTIVE, true);
+		this.entityData.set(EFFECT_LIFETIME, lifetime);
 	}
 
 	@Override
@@ -98,6 +106,7 @@ public class EntityProjectileStatic extends Entity implements IShipOwner, IShipC
 	protected void defineSynchedData() {
 		this.entityData.define(EFFECT_RADIUS, 3.0F);
 		this.entityData.define(IS_ACTIVE, true);
+		this.entityData.define(EFFECT_LIFETIME, 200);
 	}
 
 	@Override
@@ -116,22 +125,32 @@ public class EntityProjectileStatic extends Entity implements IShipOwner, IShipC
 		this.effectRadius = compound.getFloat("EffectRadius");
 		this.effectLifetime = compound.getInt("EffectLifetime");
 		this.triggered = compound.getBoolean("Triggered");
+		this.entityData.set(EFFECT_RADIUS, this.effectRadius);
+		this.entityData.set(EFFECT_LIFETIME, this.effectLifetime);
 	}
 
 	@Override
 	public void tick() {
 		super.tick();
 
-		// server-side effect logic
-		if (!this.level().isClientSide()) {
-			// lifetime check
-			if (this.tickCount > this.effectLifetime) {
-				this.discard();
-				return;
+		if (this.level().isClientSide()) {
+			if (this.tickCount == 1) {
+				this.effectLifetime = this.entityData.get(EFFECT_LIFETIME);
+				// 2026/04/07：GitHub Copilotによって確認済み
+				ParticleHelper.spawnSphereLightParticle(this, 5, (float) this.effectLifetime, this.effectRadius * 2F);
 			}
+			return;
+		}
 
-			// apply effect based on type
-			switch (this.effectType) {
+		// server-side effect logic
+		// lifetime check
+		if (this.tickCount > this.effectLifetime) {
+			this.discard();
+			return;
+		}
+
+		// apply effect based on type
+		switch (this.effectType) {
 			case 0: // mine - explodes on first contact
 				if (!this.triggered && this.tickCount > 10) {
 					applyMineDamage();
@@ -147,12 +166,49 @@ public class EntityProjectileStatic extends Entity implements IShipOwner, IShipC
 					applyTrapEffect();
 				}
 				break;
+			case 5: // legacy black hole pull field
+				if ((this.tickCount & 3) == 0) {
+					applyBlackHolePull();
+				}
+				break;
 			default:
 				if (this.tickCount % this.damageInterval == 0) {
 					applyAreaDamage();
 				}
 				break;
+		}
+	}
+
+	/**
+	 * Legacy black-hole behavior (1.10.2 parity): periodically pull entities toward
+	 * center. effectDamage is interpreted as pull force for this mode.
+	 */
+	private void applyBlackHolePull() {
+		// 2026/04/07：GitHub Copilotによって確認済み
+		AABB effectBox = this.getBoundingBox().inflate(this.effectRadius);
+		List<Entity> entities = this.level().getEntities(this, effectBox);
+
+		for (Entity ent : entities) {
+			if (!ent.isPickable() || !ent.isPushable())
+				continue;
+			if (ent == this.hostEntity || ent == this)
+				continue;
+			if (TargetHelper.isEntityInvulnerable(ent))
+				continue;
+
+			if (ent instanceof IShipOwner owner) {
+				if (this.playerUID > 0 && owner.getPlayerUID() == this.playerUID)
+					continue;
 			}
+
+			Vec3 delta = ent.position().subtract(this.position());
+			double dist = delta.length();
+			if (dist <= 1D || dist > this.effectRadius || dist < 1.0E-6D)
+				continue;
+
+			Vec3 pull = delta.normalize().scale(-this.effectDamage);
+			ent.setDeltaMovement(ent.getDeltaMovement().add(pull));
+			ent.hurtMarked = true;
 		}
 	}
 
@@ -164,16 +220,20 @@ public class EntityProjectileStatic extends Entity implements IShipOwner, IShipC
 		List<Entity> entities = this.level().getEntities(this, effectBox);
 
 		for (Entity ent : entities) {
-			if (!ent.isPickable()) continue;
-			if (ent == this.hostEntity) continue;
+			if (!ent.isPickable())
+				continue;
+			if (ent == this.hostEntity)
+				continue;
 
 			// skip same-owner entities
 			if (ent instanceof IShipOwner owner) {
-				if (this.playerUID > 0 && owner.getPlayerUID() == this.playerUID) continue;
+				if (this.playerUID > 0 && owner.getPlayerUID() == this.playerUID)
+					continue;
 			}
 
 			// check friendly fire
-			if (this.hostEntity != null && CombatHelper.isFriendlyFire(this.hostEntity, ent)) continue;
+			if (this.hostEntity != null && CombatHelper.isFriendlyFire(this.hostEntity, ent))
+				continue;
 
 			double distSq = this.distanceToSqr(ent);
 			if (distSq <= this.effectRadius * this.effectRadius) {
@@ -199,16 +259,20 @@ public class EntityProjectileStatic extends Entity implements IShipOwner, IShipC
 		List<Entity> entities = this.level().getEntities(this, effectBox);
 
 		for (Entity ent : entities) {
-			if (!ent.isPickable()) continue;
-			if (ent == this.hostEntity) continue;
+			if (!ent.isPickable())
+				continue;
+			if (ent == this.hostEntity)
+				continue;
 
 			// skip same-owner entities
 			if (ent instanceof IShipOwner owner) {
-				if (this.playerUID > 0 && owner.getPlayerUID() == this.playerUID) continue;
+				if (this.playerUID > 0 && owner.getPlayerUID() == this.playerUID)
+					continue;
 			}
 
 			// check friendly fire
-			if (this.hostEntity != null && CombatHelper.isFriendlyFire(this.hostEntity, ent)) continue;
+			if (this.hostEntity != null && CombatHelper.isFriendlyFire(this.hostEntity, ent))
+				continue;
 
 			double distSq = this.distanceToSqr(ent);
 			if (distSq <= this.effectRadius * this.effectRadius) {
@@ -237,16 +301,20 @@ public class EntityProjectileStatic extends Entity implements IShipOwner, IShipC
 		List<Entity> entities = this.level().getEntities(this, effectBox);
 
 		for (Entity ent : entities) {
-			if (!ent.isPickable()) continue;
-			if (ent == this.hostEntity) continue;
+			if (!ent.isPickable())
+				continue;
+			if (ent == this.hostEntity)
+				continue;
 
 			// skip same-owner entities
 			if (ent instanceof IShipOwner owner) {
-				if (this.playerUID > 0 && owner.getPlayerUID() == this.playerUID) continue;
+				if (this.playerUID > 0 && owner.getPlayerUID() == this.playerUID)
+					continue;
 			}
 
 			// check friendly fire
-			if (this.hostEntity != null && CombatHelper.isFriendlyFire(this.hostEntity, ent)) continue;
+			if (this.hostEntity != null && CombatHelper.isFriendlyFire(this.hostEntity, ent))
+				continue;
 
 			double distSq = this.distanceToSqr(ent);
 			if (distSq <= this.effectRadius * this.effectRadius) {

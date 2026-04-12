@@ -44,3 +44,9 @@ tools
 run
 *.ps1
 *.backup
+
+# Root artifacts from Forge gameTestServer run
+/config/
+/world/
+/logs/
+/server.properties

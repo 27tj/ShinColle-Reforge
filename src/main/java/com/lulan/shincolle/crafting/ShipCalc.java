@@ -29,27 +29,17 @@ public class ShipCalc {
 	private static final List<int[]> SHIP_LARGE = new ArrayList<>();
 
 	static {
+		// [PORT] 1.10.2 -> 1.20.1: keep legacy build tables (abyss-first construction)
 		// Small build (from small shipyard spawn eggs)
 		SHIP_SMALL.add(new int[] { ID.ShipClass.DDI, 80, 0 });
-		SHIP_SMALL.add(new int[] { ID.ShipClass.DDAkatsuki, 85, 0 });
 		SHIP_SMALL.add(new int[] { ID.ShipClass.DDRO, 90, 0 });
-		SHIP_SMALL.add(new int[] { ID.ShipClass.DDHibiki, 95, 0 });
 		SHIP_SMALL.add(new int[] { ID.ShipClass.DDHA, 100, 0 });
-		SHIP_SMALL.add(new int[] { ID.ShipClass.DDIkazuchi, 105, 0 });
 		SHIP_SMALL.add(new int[] { ID.ShipClass.DDNI, 110, 0 });
-		SHIP_SMALL.add(new int[] { ID.ShipClass.DDInazuma, 115, 0 });
 		SHIP_SMALL.add(new int[] { ID.ShipClass.APWA, 120, 1 });
-		SHIP_SMALL.add(new int[] { ID.ShipClass.DDShimakaze, 125, 0 });
 		SHIP_SMALL.add(new int[] { ID.ShipClass.SSKA, 140, 2 });
-		SHIP_SMALL.add(new int[] { ID.ShipClass.SSU511, 145, 2 });
-		SHIP_SMALL.add(new int[] { ID.ShipClass.SSRo500, 155, 2 });
 		SHIP_SMALL.add(new int[] { ID.ShipClass.SSYO, 160, 2 });
 		SHIP_SMALL.add(new int[] { ID.ShipClass.SSSO, 180, 2 });
 		SHIP_SMALL.add(new int[] { ID.ShipClass.CARI, 200, 2 });
-		SHIP_SMALL.add(new int[] { ID.ShipClass.CLTenryuu, 210, 0 });
-		SHIP_SMALL.add(new int[] { ID.ShipClass.CLTatsuta, 220, 0 });
-		SHIP_SMALL.add(new int[] { ID.ShipClass.CAAtago, 235, 2 });
-		SHIP_SMALL.add(new int[] { ID.ShipClass.CATakao, 245, 2 });
 		SHIP_SMALL.add(new int[] { ID.ShipClass.CANE, 256, 2 });
 
 		// Large build (from large shipyard spawn eggs)
@@ -57,15 +47,7 @@ public class ShipCalc {
 		SHIP_LARGE.add(new int[] { ID.ShipClass.CVWO, 650, 3 });
 		SHIP_LARGE.add(new int[] { ID.ShipClass.BBTA, 800, 2 });
 		SHIP_LARGE.add(new int[] { ID.ShipClass.BBRU, 800, 2 });
-		SHIP_LARGE.add(new int[] { ID.ShipClass.BBKongou, 1000, 2 });
-		SHIP_LARGE.add(new int[] { ID.ShipClass.BBHiei, 1000, 2 });
-		SHIP_LARGE.add(new int[] { ID.ShipClass.BBHaruna, 1000, 2 });
-		SHIP_LARGE.add(new int[] { ID.ShipClass.BBKirishima, 1000, 2 });
-		SHIP_LARGE.add(new int[] { ID.ShipClass.CVKaga, 1400, 3 });
-		SHIP_LARGE.add(new int[] { ID.ShipClass.CVAkagi, 1400, 3 });
-		SHIP_LARGE.add(new int[] { ID.ShipClass.BBNagato, 1800, 2 });
 		SHIP_LARGE.add(new int[] { ID.ShipClass.CAHime, 2000, 2 });
-		SHIP_LARGE.add(new int[] { ID.ShipClass.BBYamato, 2200, 2 });
 		SHIP_LARGE.add(new int[] { ID.ShipClass.NorthernHime, 2600, 1 });
 		SHIP_LARGE.add(new int[] { ID.ShipClass.SSNH, 2600, 2 });
 		SHIP_LARGE.add(new int[] { ID.ShipClass.IsolatedHime, 2700, 1 });

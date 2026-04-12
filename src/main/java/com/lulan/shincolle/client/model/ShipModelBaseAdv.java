@@ -1,5 +1,7 @@
 package com.lulan.shincolle.client.model;
 
+import java.util.NoSuchElementException;
+
 import com.lulan.shincolle.entity.IShipEmotion;
 import com.lulan.shincolle.reference.ID;
 
@@ -99,16 +101,26 @@ public abstract class ShipModelBaseAdv<T extends Entity> extends EntityModel<T> 
      * Call from constructor after getting the glow head part.
      */
     protected void loadFaceParts(ModelPart glowHead) {
-        this.Face0 = glowHead.getChild("Face0");
-        this.Face1 = glowHead.getChild("Face1");
-        this.Face2 = glowHead.getChild("Face2");
-        this.Face3 = glowHead.getChild("Face3");
-        this.Face4 = glowHead.getChild("Face4");
-        this.Mouth0 = glowHead.getChild("Mouth0");
-        this.Mouth1 = glowHead.getChild("Mouth1");
-        this.Mouth2 = glowHead.getChild("Mouth2");
-        this.Flush0 = glowHead.getChild("Flush0");
-        this.Flush1 = glowHead.getChild("Flush1");
+        // [PORT] 1.10.2 -> 1.20.1: some migrated models omit parts; missing face parts
+        // should disable expressions instead of crashing renderer bootstrap.
+        this.Face0 = getOptionalChild(glowHead, "Face0");
+        this.Face1 = getOptionalChild(glowHead, "Face1");
+        this.Face2 = getOptionalChild(glowHead, "Face2");
+        this.Face3 = getOptionalChild(glowHead, "Face3");
+        this.Face4 = getOptionalChild(glowHead, "Face4");
+        this.Mouth0 = getOptionalChild(glowHead, "Mouth0");
+        this.Mouth1 = getOptionalChild(glowHead, "Mouth1");
+        this.Mouth2 = getOptionalChild(glowHead, "Mouth2");
+        this.Flush0 = getOptionalChild(glowHead, "Flush0");
+        this.Flush1 = getOptionalChild(glowHead, "Flush1");
+    }
+
+    private static ModelPart getOptionalChild(ModelPart parent, String childName) {
+        try {
+            return parent.getChild(childName);
+        } catch (NoSuchElementException ignored) {
+            return null;
+        }
     }
 
     public float getScale() {
@@ -155,72 +167,76 @@ public abstract class ShipModelBaseAdv<T extends Entity> extends EntityModel<T> 
 
     @Override
     public void setFace(int emo) {
-        if (this.Face0 == null)
-            return;
-        this.Face0.visible = (emo == 0 || emo == 5);
-        this.Face1.visible = (emo == 1 || emo == 6);
-        this.Face2.visible = (emo == 2 || emo == 7);
-        this.Face3.visible = (emo == 3 || emo == 8);
-        this.Face4.visible = (emo == 4 || emo == 9);
+        if (this.Face0 != null)
+            this.Face0.visible = (emo == 0 || emo == 5);
+        if (this.Face1 != null)
+            this.Face1.visible = (emo == 1 || emo == 6);
+        if (this.Face2 != null)
+            this.Face2.visible = (emo == 2 || emo == 7);
+        if (this.Face3 != null)
+            this.Face3.visible = (emo == 3 || emo == 8);
+        if (this.Face4 != null)
+            this.Face4.visible = (emo == 4 || emo == 9);
 
         // Reset Y rotation, then flip if emo >= 5
         if (emo >= 0 && emo <= 4) {
-            if (emo == 0)
+            if (emo == 0 && this.Face0 != null)
                 this.Face0.yRot = 0F;
-            if (emo == 1)
+            if (emo == 1 && this.Face1 != null)
                 this.Face1.yRot = 0F;
-            if (emo == 2)
+            if (emo == 2 && this.Face2 != null)
                 this.Face2.yRot = 0F;
-            if (emo == 3)
+            if (emo == 3 && this.Face3 != null)
                 this.Face3.yRot = 0F;
-            if (emo == 4)
+            if (emo == 4 && this.Face4 != null)
                 this.Face4.yRot = 0F;
         } else {
             int base = emo - 5;
-            if (base == 0)
+            if (base == 0 && this.Face0 != null)
                 this.Face0.yRot = 3.14159F;
-            if (base == 1)
+            if (base == 1 && this.Face1 != null)
                 this.Face1.yRot = 3.14159F;
-            if (base == 2)
+            if (base == 2 && this.Face2 != null)
                 this.Face2.yRot = 3.14159F;
-            if (base == 3)
+            if (base == 3 && this.Face3 != null)
                 this.Face3.yRot = 3.14159F;
-            if (base == 4)
+            if (base == 4 && this.Face4 != null)
                 this.Face4.yRot = 3.14159F;
         }
     }
 
     @Override
     public void setMouth(int emo) {
-        if (this.Mouth0 == null)
-            return;
-        this.Mouth0.visible = (emo == 0 || emo == 3);
-        this.Mouth1.visible = (emo == 1 || emo == 4);
-        this.Mouth2.visible = (emo == 2 || emo == 5);
+        if (this.Mouth0 != null)
+            this.Mouth0.visible = (emo == 0 || emo == 3);
+        if (this.Mouth1 != null)
+            this.Mouth1.visible = (emo == 1 || emo == 4);
+        if (this.Mouth2 != null)
+            this.Mouth2.visible = (emo == 2 || emo == 5);
 
         if (emo <= 2) {
-            if (emo == 0)
+            if (emo == 0 && this.Mouth0 != null)
                 this.Mouth0.yRot = 0F;
-            if (emo == 1)
+            if (emo == 1 && this.Mouth1 != null)
                 this.Mouth1.yRot = 0F;
-            if (emo == 2)
+            if (emo == 2 && this.Mouth2 != null)
                 this.Mouth2.yRot = 0F;
         } else {
-            if (emo == 3)
+            if (emo == 3 && this.Mouth0 != null)
                 this.Mouth0.yRot = 3.14159F;
-            if (emo == 4)
+            if (emo == 4 && this.Mouth1 != null)
                 this.Mouth1.yRot = 3.14159F;
-            if (emo == 5)
+            if (emo == 5 && this.Mouth2 != null)
                 this.Mouth2.yRot = 3.14159F;
         }
     }
 
     @Override
     public void setFlush(boolean show) {
-        if (this.Flush0 == null)
-            return;
-        this.Flush0.visible = show;
-        this.Flush1.visible = show;
+        if (this.Flush0 != null)
+            this.Flush0.visible = show;
+        if (this.Flush1 != null)
+            this.Flush1.visible = show;
     }
 
     @Override

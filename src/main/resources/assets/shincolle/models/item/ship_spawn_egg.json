@@ -1,7 +1,7 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "shincolle:item/ship_spawn_egg"
+    "layer0": "shincolle:item/ship_spawn_egg_s"
   },
   "overrides": [
     {

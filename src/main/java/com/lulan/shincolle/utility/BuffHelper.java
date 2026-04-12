@@ -40,7 +40,7 @@ public class BuffHelper {
 	 * Calculate raw attributes from base stats, level, and bonus points.
 	 *
 	 * Formula per attribute (matching original 1.10.2):
-	 * HP  = (base + (bonus + 1) * level * type) * configScale
+	 * HP = (base + (bonus + 1) * level * type) * configScale
 	 * ATK = (base + (bonus + 1) * level * 0.133 * type) * configScale
 	 * DEF = (base + (bonus + 1) * level * 0.00133 * type) * configScale
 	 * SPD = (base + (bonus + 1) * level * 0.004 * type) * configScale
@@ -123,14 +123,15 @@ public class BuffHelper {
 	 * Uses HostileShipAttrMap (per-class modifiers) and scale config.
 	 *
 	 * Scale levels:
-	 *   0 = scaleMobSmall (default), KB 0.2
-	 *   1 = scaleMobLarge, KB 0.4
-	 *   2 = scaleBossSmall, KB 0.85
-	 *   3 = scaleBossLarge, KB 1.0
+	 * 0 = scaleMobSmall (default), KB 0.2
+	 * 1 = scaleMobLarge, KB 0.4
+	 * 2 = scaleBossSmall, KB 0.85
+	 * 3 = scaleBossLarge, KB 1.0
 	 */
 	public static void updateAttrsRawHostile(Attrs attrs, int shipScale, int shipClass) {
 		float[] attrmod = Values.HostileShipAttrMap.get(shipClass);
-		if (attrmod == null) return;
+		if (attrmod == null)
+			return;
 
 		double[] attrbase;
 		float kb = 0.2F;
@@ -384,15 +385,15 @@ public class BuffHelper {
 	 *
 	 * Original formula reference (from calcAttrsBuffed):
 	 *
-	 * HP:   raw + equip + (morale + potion + formation) * scaleShip[HP]
-	 * HIT:  raw + equip + (morale + potion + formation) * scaleShip[HIT]
-	 * MOV:  raw + equip + (morale + potion) * scaleShip[MOV]  (NO formation)
-	 * ATK_L:  (raw + equip + potion * scaleShip[ATK]) * morale * formation
-	 * ATK_H:  (raw + equip + potion * 3 * scaleShip[ATK]) * morale * formation
+	 * HP: raw + equip + (morale + potion + formation) * scaleShip[HP]
+	 * HIT: raw + equip + (morale + potion + formation) * scaleShip[HIT]
+	 * MOV: raw + equip + (morale + potion) * scaleShip[MOV] (NO formation)
+	 * ATK_L: (raw + equip + potion * scaleShip[ATK]) * morale * formation
+	 * ATK_H: (raw + equip + potion * 3 * scaleShip[ATK]) * morale * formation
 	 * ATK_AL: (raw + equip + potion * scaleShip[ATK]) * morale * formation
 	 * ATK_AH: (raw + equip + potion * 3 * scaleShip[ATK]) * morale * formation
-	 * SPD:  (raw + equip + potion * scaleShip[SPD]) * morale * formation
-	 * DEF:  (raw + equip + (morale + potion) * scaleShip[DEF]) * formation
+	 * SPD: (raw + equip + potion * scaleShip[SPD]) * morale * formation
+	 * DEF: (raw + equip + (morale + potion) * scaleShip[DEF]) * formation
 	 * CRI/DHIT/THIT/MISS/AA/ASM: (raw + equip + potion) * morale * formation
 	 * DODGE/XP/GRUDGE/AMMO/HPRES/KB: raw + equip + morale + potion + formation
 	 */
@@ -434,7 +435,7 @@ public class BuffHelper {
 			buffed[idx] = raw[idx] + equip[idx] + morale[idx] + potion[idx] + formation[idx];
 		}
 
-		// MOV: raw + equip + (morale + potion) * scaleMOV  (NO formation!)
+		// MOV: raw + equip + (morale + potion) * scaleMOV (NO formation!)
 		id = ID.Attrs.MOV;
 		buffed[id] = raw[id] + equip[id] + (morale[id] + potion[id]) * scaleMOV;
 
@@ -459,7 +460,8 @@ public class BuffHelper {
 		buffed[id] = (raw[id] + equip[id] + potion[id] * scaleSPD) * morale[id] * formation[id];
 
 		// CRI, DHIT, THIT, MISS, AA, ASM: (raw + equip + potion) * morale * formation
-		for (int idx : new int[] { ID.Attrs.CRI, ID.Attrs.DHIT, ID.Attrs.THIT, ID.Attrs.MISS, ID.Attrs.AA, ID.Attrs.ASM }) {
+		for (int idx : new int[] { ID.Attrs.CRI, ID.Attrs.DHIT, ID.Attrs.THIT, ID.Attrs.MISS, ID.Attrs.AA,
+				ID.Attrs.ASM }) {
 			buffed[idx] = (raw[idx] + equip[idx] + potion[idx]) * morale[idx] * formation[idx];
 		}
 
@@ -489,7 +491,8 @@ public class BuffHelper {
 
 		// get host's 1% hp
 		float hp1p = ship.getMaxHealth() * 0.01F;
-		if (hp1p < 1F) hp1p = 1F;
+		if (hp1p < 1F)
+			hp1p = 1F;
 
 		// Regeneration (id 10): heal per tick
 		MobEffectInstance regen = ship.getEffect(MobEffects.REGENERATION);
@@ -625,8 +628,7 @@ public class BuffHelper {
 			if (living.getRandom().nextInt(100) >= content[2])
 				return;
 
-			net.minecraft.world.effect.MobEffect effect = net.minecraft.core.registries.BuiltInRegistries.MOB_EFFECT
-					.byId(id);
+			net.minecraft.world.effect.MobEffect effect = net.minecraft.world.effect.MobEffect.byId(id);
 			if (effect == null)
 				return;
 
@@ -667,6 +669,7 @@ public class BuffHelper {
 
 	/**
 	 * Get specific potion level from buff map.
+	 * 
 	 * @return 0 = not present, 1+ = potion level (amplifier + 1)
 	 */
 	public static int getPotionLevel(Map<Integer, Integer> buffmap, int pid) {
@@ -709,12 +712,13 @@ public class BuffHelper {
 	 *
 	 * Checks if the damage source is a thrown potion (ThrownPotion) or
 	 * area effect cloud (AreaEffectCloud). If so, recalculates damage as:
-	 *   (2% maxHP + 2) * potionLevel + rawAtk
+	 * (2% maxHP + 2) * potionLevel + rawAtk
 	 *
 	 * @return recalculated potion damage, or 0F if not a potion source
 	 */
 	public static float getPotionDamage(LivingEntity host, DamageSource source, float atk) {
-		if (host == null || source == null) return 0F;
+		if (host == null || source == null)
+			return 0F;
 
 		int level = 1;
 
@@ -738,7 +742,8 @@ public class BuffHelper {
 
 		// damage = (2% maxHP + 2) * level + raw potion damage
 		float hp1p = host.getMaxHealth() * 0.01F;
-		if (hp1p < 1F) hp1p = 1F;
+		if (hp1p < 1F)
+			hp1p = 1F;
 
 		return (hp1p * 2F + 2F) * level + atk;
 	}
@@ -747,15 +752,16 @@ public class BuffHelper {
 	 * Apply resistance potion effect to reduce incoming damage.
 	 *
 	 * Potion buff IDs:
-	 *   11: Resistance - reduces missile damage
-	 *   12: Fire Resistance - reduces non-missile ship attacks
+	 * 11: Resistance - reduces missile damage
+	 * 12: Fire Resistance - reduces non-missile ship attacks
 	 *
 	 * Each level reduces damage by 20%, max level 4 = 80% reduction.
 	 *
 	 * @return modified damage value
 	 */
 	public static float applyBuffOnDamageByResist(IShipAttackBase host, DamageSource source, float atk) {
-		if (host == null || source == null) return atk;
+		if (host == null || source == null)
+			return atk;
 
 		HashMap<Integer, Integer> buffmap = host.getBuffMap();
 		int level;
@@ -764,7 +770,8 @@ public class BuffHelper {
 		if (source.getDirectEntity() instanceof EntityAbyssMissile) {
 			level = getPotionLevel(buffmap, 11);
 			if (level > 0) {
-				if (level > 4) level = 4;
+				if (level > 4)
+					level = 4;
 				atk = atk * (1F - level * 0.2F);
 			}
 		}
@@ -772,7 +779,8 @@ public class BuffHelper {
 		else if (source.getDirectEntity() instanceof IShipAttackBase) {
 			level = getPotionLevel(buffmap, 12);
 			if (level > 0) {
-				if (level > 4) level = 4;
+				if (level > 4)
+					level = 4;
 				atk = atk * (1F - level * 0.2F);
 			}
 		}
@@ -785,31 +793,37 @@ public class BuffHelper {
 	 * Uses block light level at target position and attacker's Night Vision potion.
 	 *
 	 * Light coefficient:
-	 *   0 = night (light level <= 2)
-	 *   1 = day (light level >= 8)
-	 *   Night Vision potion on attacker adds +0.8 (can exceed 1.0)
+	 * 0 = night (light level <= 2)
+	 * 1 = day (light level >= 8)
+	 * Night Vision potion on attacker adds +0.8 (can exceed 1.0)
 	 *
 	 * @return modified damage value
 	 */
 	public static float applyBuffOnDamageByLight(IShipAttackBase host, DamageSource source, float atk) {
-		if (host == null || source == null) return atk;
+		if (host == null || source == null)
+			return atk;
 
 		// only applies in ship vs ship combat
-		if (!(source.getEntity() instanceof IShipAttackBase attacker)) return atk;
-		if (!(host instanceof LivingEntity hostLiving)) return atk;
+		if (!(source.getEntity() instanceof IShipAttackBase attacker))
+			return atk;
+		if (!(host instanceof LivingEntity hostLiving))
+			return atk;
 
 		// light coefficient: (blockLight - 2) / 6, clamped [0, 1] before night vision
 		BlockPos pos = hostLiving.blockPosition();
 		float lightCoeff = ((float) hostLiving.level().getMaxLocalRawBrightness(pos) - 2F) / 6F;
 
-		if (lightCoeff < 0F) lightCoeff = 0F;
-		else if (lightCoeff > 1F) lightCoeff = 1F;
+		if (lightCoeff < 0F)
+			lightCoeff = 0F;
+		else if (lightCoeff > 1F)
+			lightCoeff = 1F;
 
 		// check Night Vision potion level on the ATTACKER (buff ID 16)
 		float nightVisionLevel = getPotionLevel(attacker.getBuffMap(), 16);
 
 		// apply night vision potion to coefficient
-		if (nightVisionLevel > 0) lightCoeff += 0.8F;
+		if (nightVisionLevel > 0)
+			lightCoeff += 0.8F;
 
 		atk = CombatHelper.modDamageByLight(atk, attacker.getDamageType(), host.getDamageType(), lightCoeff);
 

@@ -1,10 +1,13 @@
 package com.lulan.shincolle.entity.other;
 
+import java.util.List;
+
 import com.lulan.shincolle.entity.IShipAttackBase;
 import com.lulan.shincolle.entity.IShipCustomTexture;
 import com.lulan.shincolle.entity.IShipOwner;
 import com.lulan.shincolle.entity.IShipProjectile;
 import com.lulan.shincolle.utility.CombatHelper;
+import com.lulan.shincolle.utility.ParticleHelper;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -19,21 +22,21 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
-import java.util.List;
-
 /**
  * Beam projectile entity (laser, energy beam, etc.).
- * Implements beam physics: the beam extends from the host entity toward a target
- * direction, damaging entities along its path. The beam persists for a set duration.
+ * Implements beam physics: the beam extends from the host entity toward a
+ * target
+ * direction, damaging entities along its path. The beam persists for a set
+ * duration.
  */
 public class EntityProjectileBeam extends Entity implements IShipOwner, IShipCustomTexture, IShipProjectile {
 
 	/** Synched beam length for client-side rendering */
-	private static final EntityDataAccessor<Float> BEAM_LENGTH =
-			SynchedEntityData.defineId(EntityProjectileBeam.class, EntityDataSerializers.FLOAT);
+	private static final EntityDataAccessor<Float> BEAM_LENGTH = SynchedEntityData.defineId(EntityProjectileBeam.class,
+			EntityDataSerializers.FLOAT);
 	/** Synched beam end tick for rendering fade-out */
-	private static final EntityDataAccessor<Integer> BEAM_END_TICK =
-			SynchedEntityData.defineId(EntityProjectileBeam.class, EntityDataSerializers.INT);
+	private static final EntityDataAccessor<Integer> BEAM_END_TICK = SynchedEntityData
+			.defineId(EntityProjectileBeam.class, EntityDataSerializers.INT);
 
 	private int playerUID;
 	private int textureID;
@@ -67,13 +70,13 @@ public class EntityProjectileBeam extends Entity implements IShipOwner, IShipCus
 	/**
 	 * Initialize the beam with host, direction, damage, and lifetime.
 	 *
-	 * @param host      the entity firing the beam
-	 * @param dirX      beam direction X (normalized)
-	 * @param dirY      beam direction Y (normalized)
-	 * @param dirZ      beam direction Z (normalized)
-	 * @param damage    damage per hit
-	 * @param length    max beam length in blocks
-	 * @param lifetime  beam duration in ticks
+	 * @param host     the entity firing the beam
+	 * @param dirX     beam direction X (normalized)
+	 * @param dirY     beam direction Y (normalized)
+	 * @param dirZ     beam direction Z (normalized)
+	 * @param damage   damage per hit
+	 * @param length   max beam length in blocks
+	 * @param lifetime beam duration in ticks
 	 */
 	public void initBeam(IShipAttackBase host, double dirX, double dirY, double dirZ,
 			float damage, float length, int lifetime) {
@@ -166,6 +169,12 @@ public class EntityProjectileBeam extends Entity implements IShipOwner, IShipCus
 		if (this.level().isClientSide() && this.hostEntity != null) {
 			this.setPos(this.hostEntity.getX(), this.hostEntity.getEyeY(), this.hostEntity.getZ());
 		}
+
+		if (this.level().isClientSide()) {
+			// 2026/04/07：GitHub Copilotによって確認済み
+			int particleLife = Math.max(1, this.beamLifetime - this.tickCount);
+			ParticleHelper.spawnStickyLightningParticle(this, 0F, particleLife, 4);
+		}
 	}
 
 	/**
@@ -183,12 +192,15 @@ public class EntityProjectileBeam extends Entity implements IShipOwner, IShipCus
 		List<Entity> entities = this.level().getEntities(this, beamBox);
 
 		for (Entity ent : entities) {
-			if (!ent.isPickable()) continue;
-			if (ent == this.hostEntity) continue;
+			if (!ent.isPickable())
+				continue;
+			if (ent == this.hostEntity)
+				continue;
 
 			// skip same-owner entities
 			if (ent instanceof IShipOwner owner) {
-				if (this.playerUID > 0 && owner.getPlayerUID() == this.playerUID) continue;
+				if (this.playerUID > 0 && owner.getPlayerUID() == this.playerUID)
+					continue;
 			}
 
 			// check if entity is close to the beam line
@@ -199,7 +211,8 @@ public class EntityProjectileBeam extends Entity implements IShipOwner, IShipCus
 				dmg = CombatHelper.applyDamageReduceByDEF(dmg, ent);
 
 				// check friendly fire
-				if (this.hostEntity != null && CombatHelper.isFriendlyFire(this.hostEntity, ent)) continue;
+				if (this.hostEntity != null && CombatHelper.isFriendlyFire(this.hostEntity, ent))
+					continue;
 
 				// deal damage
 				if (ent instanceof LivingEntity livingTarget && this.hostEntity != null) {
@@ -219,7 +232,8 @@ public class EntityProjectileBeam extends Entity implements IShipOwner, IShipCus
 		Vec3 toEntity = entPos.subtract(start);
 
 		double beamLenSq = beamDir.lengthSqr();
-		if (beamLenSq < 0.001) return false;
+		if (beamLenSq < 0.001)
+			return false;
 
 		// project entity position onto beam line
 		double t = toEntity.dot(beamDir) / beamLenSq;

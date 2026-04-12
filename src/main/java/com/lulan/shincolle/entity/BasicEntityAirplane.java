@@ -350,7 +350,8 @@ public abstract class BasicEntityAirplane extends BasicEntitySummon
 			return false;
 
 		// if missed
-		if (atk <= 0F) return true;
+		if (atk <= 0F)
+			return true;
 
 		// deal damage
 		boolean isHurt = false;
@@ -386,7 +387,8 @@ public abstract class BasicEntityAirplane extends BasicEntitySummon
 			return false;
 
 		// if missed
-		if (atk <= 0F) return true;
+		if (atk <= 0F)
+			return true;
 
 		// deal damage
 		boolean isHurt = false;
@@ -614,6 +616,9 @@ public abstract class BasicEntityAirplane extends BasicEntitySummon
 
 	@Override
 	public HashMap<Integer, Integer> getBuffMap() {
+		if (this.host != null) {
+			return this.host.getBuffMap();
+		}
 		return this.buffMap;
 	}
 
@@ -624,6 +629,9 @@ public abstract class BasicEntityAirplane extends BasicEntitySummon
 
 	@Override
 	public HashMap<Integer, int[]> getAttackEffectMap() {
+		if (this.host != null) {
+			return this.host.getAttackEffectMap();
+		}
 		return this.attackEffectMap;
 	}
 
@@ -634,11 +642,18 @@ public abstract class BasicEntityAirplane extends BasicEntitySummon
 
 	@Override
 	public MissileData getMissileData(int type) {
-		return null;
+		if (this.host != null) {
+			// 2026/04/07：GitHub Copilotによって確認済み
+			return this.host.getMissileData(type);
+		}
+		return new MissileData();
 	}
 
 	@Override
 	public void setMissileData(int type, MissileData data) {
+		if (this.host != null) {
+			this.host.setMissileData(type, data);
+		}
 	}
 
 	// ========== IShipNavigator ==========

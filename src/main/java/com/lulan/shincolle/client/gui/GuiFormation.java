@@ -1,5 +1,7 @@
 package com.lulan.shincolle.client.gui;
 
+import org.lwjgl.glfw.GLFW;
+
 import com.lulan.shincolle.capability.CapaTeitoku;
 import com.lulan.shincolle.capability.CapaTeitokuProvider;
 import com.lulan.shincolle.client.gui.inventory.ContainerFormation;
@@ -10,6 +12,7 @@ import com.lulan.shincolle.utility.FormationHelper;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -41,6 +44,14 @@ public class GuiFormation extends AbstractContainerScreen<ContainerFormation> {
     private int teamClicked = 0;
     /** Currently selected ship slot (0-5) */
     private int listClicked = 0;
+    /** Last clicked ship slot index for double-click detection */
+    private int lastSlotClicked = -1;
+    /** Last click timestamp (ms) for ship-slot double-click detection */
+    private long lastSlotClickTime = 0L;
+    /** Team name rename input field (legacy formation GUI behavior) */
+    private EditBox unitNameField;
+    /** True while editing team name */
+    private boolean renamingTeamName = false;
 
     public GuiFormation(ContainerFormation menu, Inventory playerInv, Component title) {
         super(menu, playerInv, title);
@@ -55,6 +66,20 @@ public class GuiFormation extends AbstractContainerScreen<ContainerFormation> {
         CapaTeitoku capa = getCapaTeitoku();
         if (capa != null) {
             this.teamClicked = capa.getSelectTeam();
+        }
+
+        this.unitNameField = new EditBox(this.font, this.leftPos + 100, this.topPos + 180, 150, 12, Component.empty());
+        this.unitNameField.setMaxLength(64);
+        this.unitNameField.setVisible(false);
+        this.unitNameField.setFocused(false);
+        this.addRenderableWidget(this.unitNameField);
+    }
+
+    @Override
+    public void containerTick() {
+        super.containerTick();
+        if (this.unitNameField != null) {
+            this.unitNameField.tick();
         }
     }
 
@@ -239,12 +264,17 @@ public class GuiFormation extends AbstractContainerScreen<ContainerFormation> {
         int mx = (int) mouseX - this.leftPos;
         int my = (int) mouseY - this.topPos;
 
+        if (this.renamingTeamName && this.unitNameField != null
+                && this.unitNameField.mouseClicked(mouseX, mouseY, button)) {
+            return true;
+        }
+
         // Handle ship slot clicks (right side, 6 slots)
         if (mx >= 142 && mx <= 250) {
             for (int i = 0; i < 6; i++) {
                 int slotY = 5 + i * 27;
                 if (my >= slotY && my <= slotY + 25) {
-                    this.listClicked = i;
+                    handleShipSlotClick(i);
                     return true;
                 }
             }
@@ -255,8 +285,19 @@ public class GuiFormation extends AbstractContainerScreen<ContainerFormation> {
             int btnX = 18 + i * 12;
             int btnY = 167;
             if (mx >= btnX && mx <= btnX + 9 && my >= btnY && my <= btnY + 11) {
+                if (this.renamingTeamName) {
+                    return true;
+                }
                 this.teamClicked = i;
                 this.listClicked = 0;
+                Player player = Minecraft.getInstance().player;
+                if (player != null) {
+                    // [PORT] 1.10.2 -> 1.20.1: keep server-selected team in sync with formation GUI
+                    // selection.
+                    ModNetworking.sendToServer(new C2SGUIInputPacket(
+                            C2SGUIInputPacket.SetSelect,
+                            new int[] { player.getId(), 0, i }));
+                }
                 // Update local capability
                 CapaTeitoku capa = getCapaTeitoku();
                 if (capa != null) {
@@ -264,6 +305,26 @@ public class GuiFormation extends AbstractContainerScreen<ContainerFormation> {
                 }
                 return true;
             }
+        }
+
+        // Handle rename unit name button (legacy button area)
+        if (mx >= 46 && mx <= 94 && my >= 180 && my <= 192) {
+            if (!this.renamingTeamName) {
+                startRenameTeamName();
+            } else {
+                submitRenameTeamName();
+            }
+            return true;
+        }
+
+        // Handle formation ship order buttons (legacy UP/DOWN controls)
+        if (mx >= 159 && mx <= 189 && my >= 170 && my <= 180) {
+            swapSelectedShip(false);
+            return true;
+        }
+        if (mx >= 203 && mx <= 233 && my >= 170 && my <= 180) {
+            swapSelectedShip(true);
+            return true;
         }
 
         // Handle formation type button clicks
@@ -289,9 +350,133 @@ public class GuiFormation extends AbstractContainerScreen<ContainerFormation> {
     }
 
     @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (this.renamingTeamName) {
+            if (keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER) {
+                submitRenameTeamName();
+                return true;
+            }
+            if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
+                cancelRenameTeamName();
+                return true;
+            }
+            if (this.unitNameField != null && this.unitNameField.keyPressed(keyCode, scanCode, modifiers)) {
+                return true;
+            }
+        }
+        return super.keyPressed(keyCode, scanCode, modifiers);
+    }
+
+    @Override
+    public boolean charTyped(char codePoint, int modifiers) {
+        if (this.renamingTeamName && this.unitNameField != null) {
+            return this.unitNameField.charTyped(codePoint, modifiers);
+        }
+        return super.charTyped(codePoint, modifiers);
+    }
+
+    @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         this.renderBackground(graphics);
         super.render(graphics, mouseX, mouseY, partialTick);
         this.renderTooltip(graphics, mouseX, mouseY);
+    }
+
+    private void handleShipSlotClick(int slot) {
+        this.listClicked = slot;
+
+        long now = System.currentTimeMillis();
+        if (slot == this.lastSlotClicked && (now - this.lastSlotClickTime) <= 250L) {
+            openSelectedShipGui();
+        }
+
+        this.lastSlotClicked = slot;
+        this.lastSlotClickTime = now;
+    }
+
+    private void openSelectedShipGui() {
+        Player player = Minecraft.getInstance().player;
+        CapaTeitoku capa = getCapaTeitoku();
+        if (player == null || capa == null) {
+            return;
+        }
+
+        int sid = capa.getTeamSID(this.teamClicked, this.listClicked);
+        if (sid <= 0) {
+            return;
+        }
+
+        ModNetworking.sendToServer(new C2SGUIInputPacket(
+                C2SGUIInputPacket.OpenShipGUI,
+                new int[] { player.getId(), 0, sid }));
+    }
+
+    private void swapSelectedShip(boolean moveUp) {
+        Player player = Minecraft.getInstance().player;
+        CapaTeitoku capa = getCapaTeitoku();
+        if (player == null || capa == null) {
+            return;
+        }
+
+        int current = this.listClicked;
+        int target = moveUp ? (current <= 0 ? 5 : current - 1) : (current >= 5 ? 0 : current + 1);
+
+        ModNetworking.sendToServer(new C2SGUIInputPacket(
+                C2SGUIInputPacket.SwapShip,
+                new int[] { player.getId(), 0, current, target }));
+
+        // Client-side optimistic swap so UI responds immediately before server sync
+        // packet arrives.
+        int currentMember = capa.getTeamMember(this.teamClicked, current);
+        int currentSid = capa.getTeamSID(this.teamClicked, current);
+        capa.setTeamMember(this.teamClicked, current, capa.getTeamMember(this.teamClicked, target));
+        capa.setTeamSID(this.teamClicked, current, capa.getTeamSID(this.teamClicked, target));
+        capa.setTeamMember(this.teamClicked, target, currentMember);
+        capa.setTeamSID(this.teamClicked, target, currentSid);
+
+        this.listClicked = target;
+    }
+
+    private void startRenameTeamName() {
+        CapaTeitoku capa = getCapaTeitoku();
+        if (this.unitNameField == null || capa == null) {
+            return;
+        }
+
+        this.renamingTeamName = true;
+        this.unitNameField.setVisible(true);
+        this.unitNameField.setFocused(true);
+        this.unitNameField.setValue(capa.getUnitName(this.teamClicked));
+        this.unitNameField.setCursorPosition(this.unitNameField.getValue().length());
+        this.setFocused(this.unitNameField);
+    }
+
+    private void submitRenameTeamName() {
+        CapaTeitoku capa = getCapaTeitoku();
+        Player player = Minecraft.getInstance().player;
+        if (!this.renamingTeamName || this.unitNameField == null || capa == null || player == null) {
+            cancelRenameTeamName();
+            return;
+        }
+
+        String newName = this.unitNameField.getValue().trim();
+        if (!newName.isEmpty()) {
+            ModNetworking.sendToServer(new C2SGUIInputPacket(
+                    C2SGUIInputPacket.SetUnitName,
+                    new int[] { player.getId(), 0, this.teamClicked },
+                    newName));
+            capa.setUnitName(this.teamClicked, newName);
+        }
+
+        cancelRenameTeamName();
+    }
+
+    private void cancelRenameTeamName() {
+        this.renamingTeamName = false;
+        if (this.unitNameField != null) {
+            this.unitNameField.setFocused(false);
+            this.unitNameField.setVisible(false);
+        }
+        this.setFocused(null);
     }
 }

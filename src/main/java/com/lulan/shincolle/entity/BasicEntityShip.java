@@ -32,6 +32,7 @@ import com.lulan.shincolle.init.ModItems;
 import com.lulan.shincolle.init.ModSounds;
 import com.lulan.shincolle.item.BasicEquip;
 import com.lulan.shincolle.item.IShipEffectItem;
+import com.lulan.shincolle.item.PointerItem;
 import com.lulan.shincolle.network.C2SInputPacket;
 import com.lulan.shincolle.network.ModNetworking;
 import com.lulan.shincolle.network.S2CEntitySyncPacket;
@@ -990,7 +991,8 @@ public abstract class BasicEntityShip extends TamableAnimal
 		// apply player damage cap
 		atk = CombatHelper.applyDamageReduceOnPlayer(target, atk);
 
-		if (atk <= 0F) return true;
+		if (atk <= 0F)
+			return true;
 
 		// direct damage for light attack (projectile type)
 		boolean isTargetHurt = target.hurt(this.damageSources().mobProjectile(this, this), atk);
@@ -1069,7 +1071,8 @@ public abstract class BasicEntityShip extends TamableAnimal
 		else if (source.is(net.minecraft.world.damagesource.DamageTypes.MAGIC)
 				|| source.is(net.minecraft.world.damagesource.DamageTypes.DRAGON_BREATH)) {
 			// ignore tiny magic damage (< 1% max HP)
-			if (amount < this.getMaxHealth() * 0.01F) return false;
+			if (amount < this.getMaxHealth() * 0.01F)
+				return false;
 
 			this.setStateEmotion(ID.S.Emotion, ID.Emotion.O_O, true);
 			return super.hurt(source, amount);
@@ -1140,8 +1143,10 @@ public abstract class BasicEntityShip extends TamableAnimal
 			reducedAtk = BuffHelper.applyBuffOnDamageByLight(this, source, reducedAtk);
 
 			// minimum damage clamp
-			if (reducedAtk < 1F && reducedAtk > 0F) reducedAtk = 1F;
-			else if (reducedAtk <= 0F) reducedAtk = 0F;
+			if (reducedAtk < 1F && reducedAtk > 0F)
+				reducedAtk = 1F;
+			else if (reducedAtk <= 0F)
+				reducedAtk = 0F;
 
 			// cancel sitting
 			this.setOrderedToSit(false);
@@ -1192,7 +1197,10 @@ public abstract class BasicEntityShip extends TamableAnimal
 		return false;
 	}
 
-	/** get base attack damage. type: 0=melee, 1=light, 2=heavy, 3=light air, 4=heavy air */
+	/**
+	 * get base attack damage. type: 0=melee, 1=light, 2=heavy, 3=light air, 4=heavy
+	 * air
+	 */
 	public float getAttackBaseDamage(int type, Entity target) {
 		if (this.shipAttrs == null)
 			return 1F;
@@ -1226,7 +1234,9 @@ public abstract class BasicEntityShip extends TamableAnimal
 		}
 	}
 
-	/** decr ammo, type: 0:light, 1:heavy. Refills from inventory items if needed. */
+	/**
+	 * decr ammo, type: 0:light, 1:heavy. Refills from inventory items if needed.
+	 */
 	public boolean decrAmmoNum(int type, int amount) {
 		int ammoType = ID.M.NumAmmoLight;
 		boolean useItem = !hasAmmoLight();
@@ -1278,7 +1288,10 @@ public abstract class BasicEntityShip extends TamableAnimal
 		}
 	}
 
-	/** Load ammo from inventory proactively (called by updateConsumeItem). type: 0=light, 1=heavy */
+	/**
+	 * Load ammo from inventory proactively (called by updateConsumeItem). type:
+	 * 0=light, 1=heavy
+	 */
 	public void loadAmmoFromInventory(int type) {
 		// simply delegate to decrAmmoNum with amount=0 to trigger refill logic
 		decrAmmoNum(type, 0);
@@ -1290,14 +1303,16 @@ public abstract class BasicEntityShip extends TamableAnimal
 		float modGrudge = 1F;
 		if (this.shipAttrs != null) {
 			modGrudge = this.shipAttrs.getAttrsBuffed(ID.Attrs.GRUDGE);
-			if (modGrudge <= 0F) modGrudge = 1F;
+			if (modGrudge <= 0F)
+				modGrudge = 1F;
 		}
 
 		// if grudge--, check buff: hunger (potion effect increases consumption)
 		if (value > 0) {
 			int level = 0;
 			MobEffectInstance hunger = this.getEffect(MobEffects.HUNGER);
-			if (hunger != null) level = hunger.getAmplifier() + 1;
+			if (hunger != null)
+				level = hunger.getAmplifier() + 1;
 			value = (int) ((float) value * (1F + level * 2F));
 		}
 		// if grudge++, apply grudge modifier
@@ -1351,9 +1366,12 @@ public abstract class BasicEntityShip extends TamableAnimal
 	}
 
 	/**
-	 * Find item in inventory (excluding equipment slots), respecting page boundaries.
+	 * Find item in inventory (excluding equipment slots), respecting page
+	 * boundaries.
+	 * 
 	 * @param target item to search for
-	 * @param noMeta if true, match any item of same type (ignore NBT/damage); if false, exact match
+	 * @param noMeta if true, match any item of same type (ignore NBT/damage); if
+	 *               false, exact match
 	 * @return slot index or -1 if not found
 	 */
 	public int findItemInSlot(ItemStack target, boolean noMeta) {
@@ -1445,14 +1463,20 @@ public abstract class BasicEntityShip extends TamableAnimal
 
 	/** auto use combat ration from inventory when morale triggers */
 	protected void useCombatRation() {
-		// search for ANY combat ration variant (noMeta=true matches any item of same type)
+		// search for ANY combat ration variant (noMeta=true matches any item of same
+		// type)
 		// try all 6 variants (COMBAT_RATION through COMBAT_RATION_5)
 		int slot = findItemInSlot(new ItemStack(ModItems.COMBAT_RATION.get()), true);
-		if (slot < 0) slot = findItemInSlot(new ItemStack(ModItems.COMBAT_RATION_1.get()), true);
-		if (slot < 0) slot = findItemInSlot(new ItemStack(ModItems.COMBAT_RATION_2.get()), true);
-		if (slot < 0) slot = findItemInSlot(new ItemStack(ModItems.COMBAT_RATION_3.get()), true);
-		if (slot < 0) slot = findItemInSlot(new ItemStack(ModItems.COMBAT_RATION_4.get()), true);
-		if (slot < 0) slot = findItemInSlot(new ItemStack(ModItems.COMBAT_RATION_5.get()), true);
+		if (slot < 0)
+			slot = findItemInSlot(new ItemStack(ModItems.COMBAT_RATION_1.get()), true);
+		if (slot < 0)
+			slot = findItemInSlot(new ItemStack(ModItems.COMBAT_RATION_2.get()), true);
+		if (slot < 0)
+			slot = findItemInSlot(new ItemStack(ModItems.COMBAT_RATION_3.get()), true);
+		if (slot < 0)
+			slot = findItemInSlot(new ItemStack(ModItems.COMBAT_RATION_4.get()), true);
+		if (slot < 0)
+			slot = findItemInSlot(new ItemStack(ModItems.COMBAT_RATION_5.get()), true);
 
 		if (slot >= 0) {
 			ItemStack getItem = this.itemHandler.getStackInSlot(slot);
@@ -1551,14 +1575,18 @@ public abstract class BasicEntityShip extends TamableAnimal
 
 	/** play sound at attacker position. type: 0=light,1=heavy_near,2=heavy_far */
 	public void applySoundAtAttacker(int type, Entity target) {
-		if (target != null && !this.level().isClientSide()) {
+		if (!this.level().isClientSide()) {
 			SoundEvent sound = switch (type) {
 				case 1 -> ModSounds.SHIP_FIRELIGHT.get();
 				case 2 -> ModSounds.SHIP_FIREHEAVY.get();
 				default -> ModSounds.SHIP_HIT.get();
 			};
-			this.level().playSound(null, target.getX(), target.getY(), target.getZ(),
+			this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
 					sound, this.getSoundSource(), this.getSoundVolume(), this.getVoicePitch());
+
+			if (this.random.nextInt(8) == 0) {
+				this.playSound(this.getCustomSound(1, this), this.getSoundVolume(), this.getVoicePitch());
+			}
 		}
 	}
 
@@ -1989,7 +2017,10 @@ public abstract class BasicEntityShip extends TamableAnimal
 		setSizeWithScaleLevel();
 	}
 
-	/** Set entity dimensions based on scale level. Override in subclass for specific sizes. */
+	/**
+	 * Set entity dimensions based on scale level. Override in subclass for specific
+	 * sizes.
+	 */
 	public void setSizeWithScaleLevel() {
 		float scaleFactor = 1.0F + this.scaleLevel * 0.5F;
 		this.entityWidth = 0.6F * scaleFactor;
@@ -2708,7 +2739,7 @@ public abstract class BasicEntityShip extends TamableAnimal
 	public InteractionResult mobInteract(Player player, InteractionHand hand) {
 		// disable off-hand, dead entities don't respond
 		if (hand == InteractionHand.OFF_HAND || !this.isAlive())
-			return InteractionResult.PASS;
+			return InteractionResult.FAIL;
 
 		// server side
 		if (!this.level().isClientSide()) {
@@ -2746,8 +2777,12 @@ public abstract class BasicEntityShip extends TamableAnimal
 				}
 				// use pointer item (caress head mode server side)
 				else if (stack.getItem() == ModItems.POINTER.get() && !player.isShiftKeyDown()) {
-					InteractHelper.interactPointer(this, player, stack);
-					return InteractionResult.SUCCESS;
+					// [PORT] Keep pointer command modes (0-2) in PointerItem packet flow.
+					// Only consume direct entity interaction in caress mode (>2).
+					if (PointerItem.getMode(stack) > PointerItem.MODE_FORMATION) {
+						InteractHelper.interactPointer(this, player, stack);
+						return InteractionResult.SUCCESS;
+					}
 				}
 				// use kaitai hammer, OWNER and OP only
 				else if (stack.getItem() == ModItems.KAITAI_HAMMER.get() && player.isShiftKeyDown()
@@ -2817,7 +2852,8 @@ public abstract class BasicEntityShip extends TamableAnimal
 			ItemStack stack = player.getItemInHand(hand);
 			if (!stack.isEmpty()) {
 				// use pointer item (caress head mode CLIENT side)
-				if (stack.getItem() == ModItems.POINTER.get() && !player.isShiftKeyDown()) {
+				if (stack.getItem() == ModItems.POINTER.get() && !player.isShiftKeyDown()
+						&& PointerItem.getMode(stack) > PointerItem.MODE_FORMATION) {
 					// calc hit height: ratio of player eye Y relative to entity bounding box
 					double eyeY = player.getEyeY();
 					double entBottom = this.getY();

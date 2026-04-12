@@ -41,6 +41,14 @@ minecraft {
             args '--nogui'
         }
 
+        gameTestServer {
+            workingDirectory project.file('.')
+            property 'forge.enabledGameTestNamespaces', "${mod_id},minecraft"
+            property 'forge.logging.console.level', 'info'
+            jvmArgs '--add-opens=java.base/jdk.internal.misc=ALL-UNNAMED'
+            args '--nogui'
+        }
+
         data {
             args '--mod', mod_id, '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
         }

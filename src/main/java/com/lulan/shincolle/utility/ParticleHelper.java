@@ -11,6 +11,7 @@ import com.lulan.shincolle.client.particle.ParticleLine;
 import com.lulan.shincolle.client.particle.ParticleSparkle;
 import com.lulan.shincolle.client.particle.ParticleSphereLight;
 import com.lulan.shincolle.client.particle.ParticleSpray;
+import com.lulan.shincolle.client.particle.ParticleStickyLightning;
 import com.lulan.shincolle.client.particle.ParticleSweep;
 import com.lulan.shincolle.client.particle.ParticleTeam;
 import com.lulan.shincolle.client.particle.ParticleTexts;
@@ -109,6 +110,10 @@ public class ParticleHelper {
                         level.addParticle(ParticleTypes.ELECTRIC_SPARK, x + ox, y + oy, z + oz, 0, 0, 0);
                     }
                 }
+
+                // Legacy spray variants (21-39 subset)
+                // 2026/04/07：GitHub Copilotによって確認済み
+                case 29 -> spawnSprayParticleVariantClient((ClientLevel) level, x, y, z, lookX, lookY, lookZ, 9);
 
                 // Death smoke particles (types 40-49)
                 case 43 -> {
@@ -280,6 +285,16 @@ public class ParticleHelper {
     }
 
     /**
+     * Spawn sticky lightning particles attached to an entity.
+     * Ported for legacy projectile beam effects.
+     */
+    public static void spawnStickyLightningParticle(Entity entity, float scale, int life, int type) {
+        if (entity.level().isClientSide()) {
+            spawnStickyLightningParticleClient(entity, scale, life, type);
+        }
+    }
+
+    /**
      * Spawn a sparkle particle on an entity.
      *
      * @param entity the entity
@@ -370,6 +385,13 @@ public class ParticleHelper {
     }
 
     @OnlyIn(Dist.CLIENT)
+    private static void spawnSprayParticleVariantClient(ClientLevel level, double x, double y, double z,
+            double motionX, double motionY, double motionZ, int sprayType) {
+        Minecraft.getInstance().particleEngine.add(
+                new ParticleSpray(level, x, y, z, motionX, motionY, motionZ, sprayType));
+    }
+
+    @OnlyIn(Dist.CLIENT)
     private static void spawnTeamCircleClient(Entity entity, int teamId) {
         ClientLevel level = (ClientLevel) entity.level();
         Minecraft.getInstance().particleEngine.add(
@@ -419,6 +441,18 @@ public class ParticleHelper {
     }
 
     @OnlyIn(Dist.CLIENT)
+    private static void spawnStickyLightningParticleClient(Entity entity, float scale, int life, int type) {
+        ClientLevel level = (ClientLevel) entity.level();
+        // 2026/04/07：GitHub Copilotによって確認済み
+        // Keep legacy visual density: railgun beam emitted 4 sticky-lightning strips
+        // per tick.
+        for (int i = 0; i < 4; i++) {
+            Minecraft.getInstance().particleEngine.add(
+                    new ParticleStickyLightning(level, entity, scale, life, type));
+        }
+    }
+
+    @OnlyIn(Dist.CLIENT)
     private static void spawnSparkleParticleClient(Entity entity, int type, float... parms) {
         Minecraft.getInstance().particleEngine.add(
                 new ParticleSparkle(entity, type, parms));
@@ -446,11 +480,13 @@ public class ParticleHelper {
 
     /**
      * Spawn attack text particle (miss/crit/dhit/thit indicator).
-     * Called from server side (CombatHelper). Sends a particle packet to nearby clients.
+     * Called from server side (CombatHelper). Sends a particle packet to nearby
+     * clients.
      * type: 0=miss, 1=critical, 2=double hit, 3=triple hit
      */
     public static void spawnAttackTextParticle(Entity entity, int type) {
-        if (entity == null || entity.level().isClientSide()) return;
+        if (entity == null || entity.level().isClientSide())
+            return;
         // type offset: CombatHelper uses 0-3, spawnAttackParticleAt uses 10-13
         int particleType = 10 + type;
         S2CSpawnParticlePacket packet = new S2CSpawnParticlePacket(

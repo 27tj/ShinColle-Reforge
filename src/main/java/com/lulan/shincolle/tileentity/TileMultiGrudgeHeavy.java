@@ -14,7 +14,6 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -292,8 +291,8 @@ public class TileMultiGrudgeHeavy extends BasicTileInventory implements MenuProv
 
 		if (fuelValue > 0 && powerRemained + fuelValue <= POWER_MAX) {
 			// Handle container items (e.g., lava bucket -> empty bucket)
-			Item containerItem = fuelStack.getItem().getCraftingRemainingItem();
-			if (containerItem != null && fuelStack.getCount() > 1) {
+			ItemStack containerStack = fuelStack.getCraftingRemainingItem();
+			if (!containerStack.isEmpty() && fuelStack.getCount() > 1) {
 				// Cannot consume stacked items that leave a container
 				return;
 			}
@@ -303,8 +302,7 @@ public class TileMultiGrudgeHeavy extends BasicTileInventory implements MenuProv
 
 			if (fuelStack.isEmpty()) {
 				// Replace with container item if applicable (e.g., empty bucket)
-				inventory.setStackInSlot(SLOT_FUEL,
-						containerItem != null ? new ItemStack(containerItem) : ItemStack.EMPTY);
+				inventory.setStackInSlot(SLOT_FUEL, containerStack.isEmpty() ? ItemStack.EMPTY : containerStack.copy());
 			}
 			setChanged();
 		}

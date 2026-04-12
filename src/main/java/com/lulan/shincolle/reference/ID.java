@@ -1,13 +1,10 @@
 package com.lulan.shincolle.reference;
 
 //for array ID
-public class ID
-{
-
+public class ID {
 
 	/** ship attributes index */
-	public static final class Attrs
-	{
+	public static final class Attrs {
 		/**
 		 * HP: float, 0~N
 		 * ATK: float, 1~N
@@ -42,8 +39,7 @@ public class ID
 	}
 
 	/** index for bonus point, type modify, scale config */
-	public static final class AttrsBase
-	{
+	public static final class AttrsBase {
 		public static final byte HP = 0;
 		public static final byte ATK = 1;
 		public static final byte DEF = 2;
@@ -58,9 +54,8 @@ public class ID
 		public static final byte modHIT = 11;
 	}
 
-	/**GUI Button ID*/
-	public static final class B
-	{
+	/** GUI Button ID */
+	public static final class B {
 		public static final byte ShipInv_Melee = 0;
 		public static final byte ShipInv_AmmoLight = 1;
 		public static final byte ShipInv_AmmoHeavy = 2;
@@ -105,8 +100,13 @@ public class ID
 		public static final byte ShipInv_EmoFlag1 = 41;
 		public static final byte ShipInv_EmoFlag2 = 42;
 
+		// [PORT] 1.10.2 -> 1.20.1: Metamorph integration is not available in this port.
+		// Keep legacy IDs to avoid accidental numeric reuse.
+		@Deprecated(forRemoval = false, since = "1.20.1-port")
 		public static final byte MorphInv_AddAmmoL = 0;
+		@Deprecated(forRemoval = false, since = "1.20.1-port")
 		public static final byte MorphInv_AddAmmoH = 1;
+		@Deprecated(forRemoval = false, since = "1.20.1-port")
 		public static final byte MorphInv_AddGrudge = 2;
 
 		public static final byte Shipyard_Type = 0;
@@ -131,8 +131,7 @@ public class ID
 	}
 
 	/** ship body part */
-	public static final class Body
-	{
+	public static final class Body {
 		public static final byte UBelly = 0;
 		public static final byte Chest = 1;
 		public static final byte Butt = 2;
@@ -146,9 +145,8 @@ public class ID
 		public static final byte Arm = 10;
 	}
 
-	/** Shipyard build type*/
-	public static final class Build
-	{
+	/** Shipyard build type */
+	public static final class Build {
 		public static final byte NONE = 0;
 		public static final byte SHIP = 1;
 		public static final byte EQUIP = 2;
@@ -157,80 +155,76 @@ public class ID
 	}
 
 	/** Emotion / Emotion4 */
-	public static final class Emotion
-	{
-		public static final byte NORMAL = 0;			//no emotion
-		public static final byte BLINK = 1;				//blink eye
-		public static final byte T_T = 2;				//sad
-		public static final byte O_O = 3;				//stare
-		public static final byte BORED = 4;				//bored
-		public static final byte HUNGRY = 5;			//no grudge
-		public static final byte ANGRY = 6;				//angry
-		public static final byte SHY = 7;				//shy
-		public static final byte XD = 8;				//happy
+	public static final class Emotion {
+		public static final byte NORMAL = 0; // no emotion
+		public static final byte BLINK = 1; // blink eye
+		public static final byte T_T = 2; // sad
+		public static final byte O_O = 3; // stare
+		public static final byte BORED = 4; // bored
+		public static final byte HUNGRY = 5; // no grudge
+		public static final byte ANGRY = 6; // angry
+		public static final byte SHY = 7; // shy
+		public static final byte XD = 8; // happy
 	}
 
 	/** Emotion3 */
-	public static final class Emotion3
-	{
-		public static final byte NORMAL = 0;			//no emotion
-		public static final byte CARESS = 1;			//caressed
+	public static final class Emotion3 {
+		public static final byte NORMAL = 0; // no emotion
+		public static final byte CARESS = 1; // caressed
 	}
 
 	/** equip raw data array */
-	public static final class EquipMisc
-	{
-		public static final byte EQUIP_TYPE = 0;	//0:none, 1:cannon, 2:misc, 3:aircraft
+	public static final class EquipMisc {
+		public static final byte EQUIP_TYPE = 0; // 0:none, 1:cannon, 2:misc, 3:aircraft
 		public static final byte RARE_TYPE = 1;
 		public static final byte RARE_MEAN = 2;
 		public static final byte DEVELOP_NUM = 3;
 		public static final byte DEVELOP_MAT = 4;
-		public static final byte ENCH_TYPE = 5;	//0:none, 1:weapon, 2:armor, 3:misc
+		public static final byte ENCH_TYPE = 5; // 0:none, 1:weapon, 2:armor, 3:misc
 	}
 
 	/** Equip type */
-	public static final class EquipType
-	{
-		public static final byte CANNON_SI = 0;			//single cannon
-		public static final byte CANNON_TW_LO = 1;		//low level twin cannon
-		public static final byte CANNON_TW_HI = 2;		//high level twin cannon
-		public static final byte CANNON_TR = 3;			//triple cannon
-		public static final byte TORPEDO_LO = 4;		//low level torpedo
-		public static final byte TORPEDO_HI = 5;		//high level torpedo
-		public static final byte AIR_T_LO = 6;			//low level aircraft T
-		public static final byte AIR_T_HI = 7;			//high level aircraft T
-		public static final byte AIR_F_LO = 8;			//low level aircraft F
-		public static final byte AIR_F_HI = 9;			//high level aircraft F
-		public static final byte AIR_B_LO = 10;			//low level aircraft B
-		public static final byte AIR_B_HI = 11;			//high level aircraft B
-		public static final byte AIR_R_LO = 12;			//low level aircraft R
-		public static final byte AIR_R_HI = 13;			//high level aircraft R
-		public static final byte RADAR_LO = 14;			//low level radar
-		public static final byte RADAR_HI = 15;			//high level radar
-		public static final byte TURBINE_LO = 16;		//low level turbine
-		public static final byte TURBINE_HI = 17;		//high level turbine
-		public static final byte ARMOR_LO = 18;			//low level armor
-		public static final byte ARMOR_HI = 19;			//high level armor
-		public static final byte GUN_LO = 20;			//low level machine gun
-		public static final byte GUN_HI = 21;			//high level machine gun
-		public static final byte CATAPULT_LO = 22;		//low level catapult
-		public static final byte CATAPULT_HI = 23;		//high level catapult
-		public static final byte DRUM_LO = 24;			//low level drum
-		public static final byte COMPASS_LO = 25;		//low level compass
-		public static final byte FLARE_LO = 26;			//low level flare
-		public static final byte SEARCHLIGHT_LO = 27;	//low level searchlight
-		public static final byte AMMO_LO = 28;			//low level ammo
-		public static final byte AMMO_HI = 29;          //high level ammo
+	public static final class EquipType {
+		public static final byte CANNON_SI = 0; // single cannon
+		public static final byte CANNON_TW_LO = 1; // low level twin cannon
+		public static final byte CANNON_TW_HI = 2; // high level twin cannon
+		public static final byte CANNON_TR = 3; // triple cannon
+		public static final byte TORPEDO_LO = 4; // low level torpedo
+		public static final byte TORPEDO_HI = 5; // high level torpedo
+		public static final byte AIR_T_LO = 6; // low level aircraft T
+		public static final byte AIR_T_HI = 7; // high level aircraft T
+		public static final byte AIR_F_LO = 8; // low level aircraft F
+		public static final byte AIR_F_HI = 9; // high level aircraft F
+		public static final byte AIR_B_LO = 10; // low level aircraft B
+		public static final byte AIR_B_HI = 11; // high level aircraft B
+		public static final byte AIR_R_LO = 12; // low level aircraft R
+		public static final byte AIR_R_HI = 13; // high level aircraft R
+		public static final byte RADAR_LO = 14; // low level radar
+		public static final byte RADAR_HI = 15; // high level radar
+		public static final byte TURBINE_LO = 16; // low level turbine
+		public static final byte TURBINE_HI = 17; // high level turbine
+		public static final byte ARMOR_LO = 18; // low level armor
+		public static final byte ARMOR_HI = 19; // high level armor
+		public static final byte GUN_LO = 20; // low level machine gun
+		public static final byte GUN_HI = 21; // high level machine gun
+		public static final byte CATAPULT_LO = 22; // low level catapult
+		public static final byte CATAPULT_HI = 23; // high level catapult
+		public static final byte DRUM_LO = 24; // low level drum
+		public static final byte COMPASS_LO = 25; // low level compass
+		public static final byte FLARE_LO = 26; // low level flare
+		public static final byte SEARCHLIGHT_LO = 27; // low level searchlight
+		public static final byte AMMO_LO = 28; // low level ammo
+		public static final byte AMMO_HI = 29; // high level ammo
 	}
 
-	/** Equip Sub ID = item meta value
+	/**
+	 * Equip Sub ID = item meta value
 	 *
-	 *  EquipID = EquipType + EquipSubID * 100
+	 * EquipID = EquipType + EquipSubID * 100
 	 *
 	 */
-	public static final class EquipSubID
-	{
-		//cannon
+	public static final class EquipSubID {
+		// cannon
 		public static final byte CANNON_SINGLE_5 = 0;
 		public static final byte CANNON_SINGLE_6 = 1;
 		public static final byte CANNON_TWIN_5 = 2;
@@ -247,7 +241,7 @@ public class ID
 		public static final byte CANNON_TWIN_8 = 13;
 		public static final byte CANNON_QUAD_15 = 14;
 		public static final byte CANNON_TRI_12 = 15;
-		//torpedo
+		// torpedo
 		public static final byte TORPEDO_21MK1 = 0;
 		public static final byte TORPEDO_21MK2 = 1;
 		public static final byte TORPEDO_22MK1 = 2;
@@ -255,7 +249,7 @@ public class ID
 		public static final byte TORPEDO_HIGHSPEED = 4;
 		public static final byte TORPEDO_HIGHSPEED2 = 5;
 		public static final byte TORPEDO_AMB = 6;
-		//aircraft
+		// aircraft
 		public static final byte AIRCRAFT_TMK1 = 0;
 		public static final byte AIRCRAFT_TMK2 = 1;
 		public static final byte AIRCRAFT_TMK3 = 2;
@@ -278,7 +272,7 @@ public class ID
 		public static final byte AIRCRAFT_BLAND = 19;
 		public static final byte AIRCRAFT_BLANDA = 20;
 		public static final byte AIRCRAFT_FBC = 21;
-		//radar
+		// radar
 		public static final byte RADAR_AIRMK1 = 0;
 		public static final byte RADAR_AIRMK2 = 1;
 		public static final byte RADAR_SURMK1 = 2;
@@ -288,13 +282,13 @@ public class ID
 		public static final byte RADAR_SURABYSS = 6;
 		public static final byte RADAR_SONARMK2 = 7;
 		public static final byte RADAR_FCSCIC = 8;
-		//turbine
+		// turbine
 		public static final byte TURBINE = 0;
 		public static final byte TURBINE_IMP = 1;
 		public static final byte TURBINE_ENH = 2;
 		public static final byte TURBINE_GE = 3;
 		public static final byte TURBINE_GENEW = 4;
-		//armor
+		// armor
 		public static final byte ARMOR = 0;
 		public static final byte ARMOR_ENH = 1;
 		public static final byte ARMOR_ATBS = 2;
@@ -302,7 +296,7 @@ public class ID
 		public static final byte ARMOR_ATBL = 4;
 		public static final byte ARMOR_ATBA = 5;
 		public static final byte ARMOR_APB = 6;
-		//machine gun
+		// machine gun
 		public static final byte GUN_HA_3 = 0;
 		public static final byte GUN_HA_5 = 1;
 		public static final byte GUN_SINGLE_12 = 2;
@@ -310,22 +304,22 @@ public class ID
 		public static final byte GUN_TWIN_40 = 4;
 		public static final byte GUN_QUAD_40 = 5;
 		public static final byte GUN_TWIN_4_CIC = 6;
-		//catapult
+		// catapult
 		public static final byte CATAPULT_F = 0;
 		public static final byte CATAPULT_H = 1;
 		public static final byte CATAPULT_C = 2;
 		public static final byte CATAPULT_E = 3;
-		//drum
-		public static final byte DRUM = 0;		//item drum
-		public static final byte DRUM_F = 1;	//fluid drum
-		public static final byte DRUM_E = 2;	//EU drum
-		//compass
+		// drum
+		public static final byte DRUM = 0; // item drum
+		public static final byte DRUM_F = 1; // fluid drum
+		public static final byte DRUM_E = 2; // EU drum
+		// compass
 		public static final byte COMPASS = 0;
-		//flare
+		// flare
 		public static final byte FLARE = 0;
-		//searchlight
+		// searchlight
 		public static final byte SEARCHLIGHT = 0;
-		//ammo
+		// ammo
 		public static final byte AMMO_T91 = 0;
 		public static final byte AMMO_T1 = 1;
 		public static final byte AMMO_AA = 2;
@@ -338,8 +332,7 @@ public class ID
 	}
 
 	/** entity flag index */
-	public static final class F
-	{
+	public static final class F {
 		public static final byte CanFloatUp = 0;
 		public static final byte IsMarried = 1;
 		public static final byte NoFuel = 2;
@@ -348,9 +341,9 @@ public class ID
 		public static final byte UseAmmoHeavy = 5;
 		public static final byte UseAirLight = 6;
 		public static final byte UseAirHeavy = 7;
-		public static final byte HeadTilt = 8;			//client only, no sync
+		public static final byte HeadTilt = 8; // client only, no sync
 		public static final byte UseRingEffect = 9;
-		public static final byte CanDrop = 10;			//server only, no sync
+		public static final byte CanDrop = 10; // server only, no sync
 		public static final byte CanFollow = 11;
 		public static final byte OnSightChase = 12;
 		public static final byte AtkType_Light = 13;
@@ -363,15 +356,14 @@ public class ID
 		public static final byte AntiSS = 20;
 		public static final byte PassiveAI = 21;
 		public static final byte TimeKeeper = 22;
-		public static final byte PickItem = 23;			//active picking item
-		public static final byte CanPickItem = 24;		//can pick item
+		public static final byte PickItem = 23; // active picking item
+		public static final byte CanPickItem = 24; // can pick item
 		public static final byte ShowHeldItem = 25;
 		public static final byte AutoPump = 26;
 	}
 
 	/** GUI ID */
-	public static final class Gui
-	{
+	public static final class Gui {
 		public static final int SHIPINVENTORY = 0;
 		public static final int SMALLSHIPYARD = 1;
 		public static final int LARGESHIPYARD = 2;
@@ -381,12 +373,14 @@ public class ID
 		public static final int CRANE = 6;
 		public static final int VOLCORE = 7;
 		public static final int RECIPE = 8;
+		// [PORT] 1.10.2 -> 1.20.1: Legacy GUI ID kept for compatibility; no active
+		// morph GUI in current build.
+		@Deprecated(forRemoval = false, since = "1.20.1-port")
 		public static final int MORPHINVENTORY = 9;
 	}
 
 	/** icon id for book GUI */
-	public static final class Icon
-	{
+	public static final class Icon {
 		public static final short IronIG = 0;
 		public static final short Grudge = 1;
 		public static final short GrudgeB = 2;
@@ -470,67 +464,64 @@ public class ID
 	}
 
 	/** hp state index */
-	public static final class HPState
-	{
-		public static final byte NORMAL = 0;	//正常
-		public static final byte MINOR = 1;		//小破
-		public static final byte MODERATE = 2;	//中破
-		public static final byte HEAVY = 3;		//大破
+	public static final class HPState {
+		public static final byte NORMAL = 0; // 正常
+		public static final byte MINOR = 1; // 小破
+		public static final byte MODERATE = 2; // 中破
+		public static final byte HEAVY = 3; // 大破
 	}
 
 	/** minor state index */
-	public static final class M
-	{
+	public static final class M {
 		public static final byte ShipLevel = 0;
 		public static final byte Kills = 1;
-		public static final byte ExpCurrent = 2;	//exp curr/next
+		public static final byte ExpCurrent = 2; // exp curr/next
 		public static final byte ExpNext = 3;
 		public static final byte NumAmmoLight = 4;
 		public static final byte NumAmmoHeavy = 5;
 		public static final byte NumGrudge = 6;
 		public static final byte NumAirLight = 7;
 		public static final byte NumAirHeavy = 8;
-		public static final byte UseCombatRation = 9;	//morale level of auto using combat ration
-		public static final byte FollowMin = 10;	//follow range min/max
+		public static final byte UseCombatRation = 9; // morale level of auto using combat ration
+		public static final byte FollowMin = 10; // follow range min/max
 		public static final byte FollowMax = 11;
-		public static final byte FleeHP = 12;		//flee hp%
-		public static final byte NumState = 13;		//total model state number
-		public static final byte GuardX = 14;		//guard xyz pos
+		public static final byte FleeHP = 12; // flee hp%
+		public static final byte NumState = 13; // total model state number
+		public static final byte GuardX = 14; // guard xyz pos
 		public static final byte GuardY = 15;
 		public static final byte GuardZ = 16;
-		public static final byte GuardDim = 17;		//guard entity world id
-		public static final byte GuardID = 18;		//guard entity id
-		public static final byte ShipType = 19;		//ship type
-		public static final byte ShipClass = 20;	//ship class
-		public static final byte PlayerUID = 21;	//player UID
-		public static final byte ShipUID = 22;		//ship UID
-		public static final byte PlayerEID = 23;	//player entity id
-		public static final byte GuardType = 24;	//guard type: 0:move 1:move & attack
-		public static final byte DamageType = 25;	//damage type
-		public static final byte FormatType = 26;	//formation type
-		public static final byte FormatPos = 27;	//formation position
-		public static final byte GrudgeCon = 28;	//grudge consumption when idle
-		public static final byte AmmoCon = 29;		//ammo base consumption
-		public static final byte Morale = 30;		//morale value
-		public static final byte Food = 31;			//food saturation
-		public static final byte FoodMax = 32;		//max food saturation
-		public static final byte HitHeight = 33;	//hit height by pointer item, NO SYNC
-		public static final byte HitAngle = 34;		//hit angle by pointer item, NO SYNC
-		public static final byte SensBody = 35;		//sensitive body part id
-		public static final byte DrumState = 36;	//drum state, ref: EquipDrum.class
-		public static final byte LevelChunkLoader = 37;	//level of chunk loader
-		public static final byte LevelFlare = 38;		//level of flare
-		public static final byte LevelSearchlight = 39;	//level of searchlight
-		public static final byte Task = 40;			//doing task id
-		public static final byte TaskSide = 41;		//side setting for task
-		public static final byte XP = 42;			//for collect xp orb, NO SAVE IF LOGOUT!
-		public static final byte CraneState = 43;	//crane state: 0:none 1:wait 2:craning
-		public static final byte WpStay = 44;		//waypoint stay setting
+		public static final byte GuardDim = 17; // guard entity world id
+		public static final byte GuardID = 18; // guard entity id
+		public static final byte ShipType = 19; // ship type
+		public static final byte ShipClass = 20; // ship class
+		public static final byte PlayerUID = 21; // player UID
+		public static final byte ShipUID = 22; // ship UID
+		public static final byte PlayerEID = 23; // player entity id
+		public static final byte GuardType = 24; // guard type: 0:move 1:move & attack
+		public static final byte DamageType = 25; // damage type
+		public static final byte FormatType = 26; // formation type
+		public static final byte FormatPos = 27; // formation position
+		public static final byte GrudgeCon = 28; // grudge consumption when idle
+		public static final byte AmmoCon = 29; // ammo base consumption
+		public static final byte Morale = 30; // morale value
+		public static final byte Food = 31; // food saturation
+		public static final byte FoodMax = 32; // max food saturation
+		public static final byte HitHeight = 33; // hit height by pointer item, NO SYNC
+		public static final byte HitAngle = 34; // hit angle by pointer item, NO SYNC
+		public static final byte SensBody = 35; // sensitive body part id
+		public static final byte DrumState = 36; // drum state, ref: EquipDrum.class
+		public static final byte LevelChunkLoader = 37; // level of chunk loader
+		public static final byte LevelFlare = 38; // level of flare
+		public static final byte LevelSearchlight = 39; // level of searchlight
+		public static final byte Task = 40; // doing task id
+		public static final byte TaskSide = 41; // side setting for task
+		public static final byte XP = 42; // for collect xp orb, NO SAVE IF LOGOUT!
+		public static final byte CraneState = 43; // crane state: 0:none 1:wait 2:craning
+		public static final byte WpStay = 44; // waypoint stay setting
 	}
 
 	/** morale level */
-	public static final class Morale
-	{
+	public static final class Morale {
 		/* morale id */
 		public static final byte Excited = 0;
 		public static final byte Happy = 1;
@@ -545,21 +536,19 @@ public class ID
 	}
 
 	/** packet type ID */
-	public static final class Packets
-	{
+	public static final class Packets {
 		public static final byte TEST = 0;
 		public static final byte S2C_EntitySync = 1;
 		public static final byte S2C_Particle = 2;
 		public static final byte C2S_GUIInput = 3;
 		public static final byte S2C_GUISync = 4;
-		public static final byte S2C_PlayerSync = 5;  //no use for now
+		public static final byte S2C_PlayerSync = 5; // no use for now
 		public static final byte C2S_CmdInput = 6;
 		public static final byte S2C_CmdReact = 7;
 	}
 
 	/** ring effect, no used for now */
-	public static final class R
-	{
+	public static final class R {
 		public static final byte Haste = 0;
 		public static final byte Speed = 1;
 		public static final byte Jump = 2;
@@ -567,21 +556,19 @@ public class ID
 	}
 
 	/** entity state array index */
-	public static final class S
-	{
-		public static final byte State = 0;				//model state (1 bit for 1 state; if has mounts, first bit = mounts bit)
-		public static final byte Emotion = 1;			//emotion, for face emotion
-		public static final byte Emotion2 = 2;			//emotion 2, for head tilt
-		public static final byte HPState = 3;			//hp state
-		public static final byte NO_USE = 4;			//
-		public static final byte Phase = 5;				//skill phase
-		public static final byte Emotion3 = 6;			//emotion 3, for caress reaction
-		public static final byte Emotion4 = 7;			//emotion 4, for the other pose emotion
+	public static final class S {
+		public static final byte State = 0; // model state (1 bit for 1 state; if has mounts, first bit = mounts bit)
+		public static final byte Emotion = 1; // emotion, for face emotion
+		public static final byte Emotion2 = 2; // emotion 2, for head tilt
+		public static final byte HPState = 3; // hp state
+		public static final byte NO_USE = 4; //
+		public static final byte Phase = 5; // skill phase
+		public static final byte Emotion3 = 6; // emotion 3, for caress reaction
+		public static final byte Emotion4 = 7; // emotion 4, for the other pose emotion
 	}
 
 	/** ship class id */
-	public static final class ShipClass
-	{
+	public static final class ShipClass {
 		public static final byte PlayerBASE = -10;
 		public static final byte PlayerBB = -11;
 		public static final byte PlayerBBV = -12;
@@ -692,8 +679,7 @@ public class ID
 	}
 
 	/** ship misc entity id for renderer */
-	public static final class ShipMisc
-	{
+	public static final class ShipMisc {
 		public static final short Invisible = -1;
 		public static final short AbyssalMissile = 0;
 		public static final short Airplane = 1;
@@ -714,37 +700,34 @@ public class ID
 	}
 
 	/** ship type for damage calc */
-	public static final class ShipDmgType
-	{
-		public static final byte UNDEFINED = 0;			//未定義
-		public static final byte CARRIER = 1;			//航母
-		public static final byte AVIATION = 2;			//航戰
-		public static final byte BATTLESHIP	= 3;		//戰艦
-		public static final byte CRUISER = 4;			//巡洋
-		public static final byte DESTROYER = 5;			//驅逐
-		public static final byte SUBMARINE = 6;			//潛艇
-		public static final byte AIRPLANE = 7;			//飛機
+	public static final class ShipDmgType {
+		public static final byte UNDEFINED = 0; // 未定義
+		public static final byte CARRIER = 1; // 航母
+		public static final byte AVIATION = 2; // 航戰
+		public static final byte BATTLESHIP = 3; // 戰艦
+		public static final byte CRUISER = 4; // 巡洋
+		public static final byte DESTROYER = 5; // 驅逐
+		public static final byte SUBMARINE = 6; // 潛艇
+		public static final byte AIRPLANE = 7; // 飛機
 	}
 
 	/** ship type for GUI display */
-	public static final class ShipType
-	{
-		public static final byte DESTROYER = -1;		//DD
-		public static final byte LIGHT_CRUISER = 1;		//CL
-		public static final byte HEAVY_CRUISER = 2;		//CA CAV
-		public static final byte TORPEDO_CRUISER = 3;	//CLT
-		public static final byte LIGHT_CARRIER = 4;		//CVL
-		public static final byte STANDARD_CARRIER = 5;	//CV
-		public static final byte BATTLESHIP	= 6;		//BB BBV
-		public static final byte TRANSPORT = 7;			//AR AO
-		public static final byte SUBMARINE = 8;			//SS
-		public static final byte DEMON = 9;				//demon + water demon (De)
-		public static final byte HIME = 10;				//princess (Pr)
+	public static final class ShipType {
+		public static final byte DESTROYER = -1; // DD
+		public static final byte LIGHT_CRUISER = 1; // CL
+		public static final byte HEAVY_CRUISER = 2; // CA CAV
+		public static final byte TORPEDO_CRUISER = 3; // CLT
+		public static final byte LIGHT_CARRIER = 4; // CVL
+		public static final byte STANDARD_CARRIER = 5; // CV
+		public static final byte BATTLESHIP = 6; // BB BBV
+		public static final byte TRANSPORT = 7; // AR AO
+		public static final byte SUBMARINE = 8; // SS
+		public static final byte DEMON = 9; // demon + water demon (De)
+		public static final byte HIME = 10; // princess (Pr)
 	}
 
 	/** consumption type and action index */
-	public static final class ShipConsume
-	{
+	public static final class ShipConsume {
 		/** ship type */
 		public static final byte DD = 0;
 		public static final byte CL = 1;
@@ -752,7 +735,7 @@ public class ID
 		public static final byte CAV = 3;
 		public static final byte CLT = 4;
 		public static final byte CVL = 5;
-		public static final byte CV	= 6;
+		public static final byte CV = 6;
 		public static final byte BB = 7;
 		public static final byte BBV = 8;
 		public static final byte SS = 9;
@@ -766,25 +749,24 @@ public class ID
 	}
 
 	/** Timer Array */
-	public static final class T
-	{
-		public static final byte RevengeTime = 0;		//SERVER: revenge target time
-		public static final byte CraneTime = 1;			//BOTH:   craning time
-		public static final byte ImmuneTime = 2;		//SERVER: immune time
-		public static final byte CrandDelay = 3;		//SERVER: crane state changing delay
-		public static final byte WpStayTime = 4;		//SERVER: waypoint stay timer
-		public static final byte Emotion3Time = 5;		//SERVER: emotion 3 tick
-		public static final byte SoundTime = 6;			//SERVER: sound event cooldown
-		public static final byte FaceTime = 7;			//CLIENT: face emotion time
-		public static final byte HeadTilt = 8;			//CLIENT: head tilt time
-		public static final byte NO_USE = 9;			//no use
-		public static final byte EmoteDelay = 10;		//SERVER: emote reaction delay
-		public static final byte LastCombat = 11;		//SERVER: last combat time
-		public static final byte AttackTime = 12;		//CLIENT: attack time for model display
-		public static final byte AttackTime2 = 13;		//CLIENT: attack time 2 for model display
-		public static final byte AttackTime3 = 14;		//SERVER: attack time 3 for skill AI
-		public static final byte TaskTime = 15;			//SERVER: task start time
-		public static final byte MountSkillCD1 = 16;	//BOTH:   player skill cooldown
+	public static final class T {
+		public static final byte RevengeTime = 0; // SERVER: revenge target time
+		public static final byte CraneTime = 1; // BOTH: craning time
+		public static final byte ImmuneTime = 2; // SERVER: immune time
+		public static final byte CrandDelay = 3; // SERVER: crane state changing delay
+		public static final byte WpStayTime = 4; // SERVER: waypoint stay timer
+		public static final byte Emotion3Time = 5; // SERVER: emotion 3 tick
+		public static final byte SoundTime = 6; // SERVER: sound event cooldown
+		public static final byte FaceTime = 7; // CLIENT: face emotion time
+		public static final byte HeadTilt = 8; // CLIENT: head tilt time
+		public static final byte NO_USE = 9; // no use
+		public static final byte EmoteDelay = 10; // SERVER: emote reaction delay
+		public static final byte LastCombat = 11; // SERVER: last combat time
+		public static final byte AttackTime = 12; // CLIENT: attack time for model display
+		public static final byte AttackTime2 = 13; // CLIENT: attack time 2 for model display
+		public static final byte AttackTime3 = 14; // SERVER: attack time 3 for skill AI
+		public static final byte TaskTime = 15; // SERVER: task start time
+		public static final byte MountSkillCD1 = 16; // BOTH: player skill cooldown
 		public static final byte MountSkillCD2 = 17;
 		public static final byte MountSkillCD3 = 18;
 		public static final byte MountSkillCD4 = 19;
@@ -792,8 +774,7 @@ public class ID
 	}
 
 	/** Update Flag */
-	public static final class FlagUpdate
-	{
+	public static final class FlagUpdate {
 		public static final byte FormationBuff = 0;
 		public static final byte AttrsBuffed = 1;
 		public static final byte AttrsBonus = 2;
@@ -803,6 +784,5 @@ public class ID
 		public static final byte AttrsFormation = 6;
 		public static final byte AttrsRaw = 7;
 	}
-
 
 }

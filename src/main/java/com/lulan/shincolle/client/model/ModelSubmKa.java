@@ -1,18 +1,22 @@
 package com.lulan.shincolle.client.model;
 
 import com.lulan.shincolle.entity.IShipEmotion;
-import net.minecraft.world.entity.Entity;
 import com.lulan.shincolle.reference.ID;
 import com.lulan.shincolle.reference.Reference;
 import com.lulan.shincolle.utility.EmotionHelper;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
-import net.minecraft.client.model.geom.builders.*;
+import net.minecraft.client.model.geom.builders.CubeListBuilder;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.model.geom.builders.MeshDefinition;
+import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
 
 public class ModelSubmKa extends ShipModelBaseAdv<Entity> {
 
@@ -116,7 +120,7 @@ public class ModelSubmKa extends ShipModelBaseAdv<Entity> {
                 this.GlowArmLeft01 = this.GlowBodyMain.getChild("GlowArmLeft01");
                 this.GlowArmLeft02 = this.GlowArmLeft01.getChild("GlowArmLeft02");
                 this.EquipT01a = this.GlowArmLeft02.getChild("EquipT01a");
-                this.EquipT01b = this.EquipT01a.getChild("EquipT01b");
+                this.EquipT01b = this.EquipT01a != null ? this.EquipT01a.getChild("EquipT01b") : null;
                 this.loadFaceParts(this.GlowHead);
         }
 
@@ -414,7 +418,9 @@ public class ModelSubmKa extends ShipModelBaseAdv<Entity> {
                 this.BoobR2.visible = !flag;
 
                 flag = !EmotionHelper.checkModelState(3, state); // weapon
-                this.EquipT01a.visible = !flag;
+                if (this.EquipT01a != null) {
+                        this.EquipT01a.visible = !flag;
+                }
         }
 
         @Override
@@ -529,8 +535,10 @@ public class ModelSubmKa extends ShipModelBaseAdv<Entity> {
                 this.LegRight01.yRot = 0F;
                 this.LegRight01.zRot = -0.1F;
                 // equip
-                this.EquipT01a.xRot = 0.14F;
-                this.EquipT01a.zRot = 0F;
+                if (this.EquipT01a != null) {
+                        this.EquipT01a.xRot = 0.14F;
+                        this.EquipT01a.zRot = 0F;
+                }
                 // this.EquipT01a.offsetX = 0F;
                 // this.EquipT01a.offsetY = 0F;
                 // this.EquipT01a.offsetZ = 0F;
@@ -556,8 +564,10 @@ public class ModelSubmKa extends ShipModelBaseAdv<Entity> {
                         this.LegLeft01.zRot = 0.05F;
                         this.LegRight01.zRot = -0.05F;
                         // equip
-                        this.EquipT01a.xRot = 1.2566F;
-                        this.EquipT01a.zRot = -0.1885F;
+                        if (this.EquipT01a != null) {
+                                this.EquipT01a.xRot = 1.2566F;
+                                this.EquipT01a.zRot = -0.1885F;
+                        }
                         // this.EquipT01a.offsetX = -0.08F;
                 } // end is sprinting
 
@@ -604,8 +614,10 @@ public class ModelSubmKa extends ShipModelBaseAdv<Entity> {
                                 addk1 = 0.45F + angleX * 0.1F;
                                 addk2 = 0.45F - angleX * 0.1F;
                                 // equip
-                                this.EquipT01a.visible = true;
-                                this.EquipT01a.xRot = 0.2618F;
+                                if (this.EquipT01a != null) {
+                                        this.EquipT01a.visible = true;
+                                        this.EquipT01a.xRot = 0.2618F;
+                                }
                         } else {
                                 // body
                                 this.Head.xRot -= 0.7F;

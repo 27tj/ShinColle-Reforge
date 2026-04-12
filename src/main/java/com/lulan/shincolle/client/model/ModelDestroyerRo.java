@@ -1,6 +1,7 @@
 package com.lulan.shincolle.client.model;
 
-import net.minecraft.world.entity.Entity;
+import java.util.NoSuchElementException;
+
 import com.lulan.shincolle.entity.IShipEmotion;
 import com.lulan.shincolle.reference.ID;
 import com.lulan.shincolle.reference.Reference;
@@ -16,6 +17,7 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
 
 public class ModelDestroyerRo extends ShipModelBaseAdv<Entity> {
 
@@ -91,12 +93,21 @@ public class ModelDestroyerRo extends ShipModelBaseAdv<Entity> {
                 this.GlowNeckBack = this.GlowBack.getChild("GlowNeckBack");
                 this.GlowHead = this.GlowNeckBack.getChild("GlowHead");
                 this.loadFaceParts(this.GlowHead);
-                this.FaceL00 = this.GlowHead.getChild("FaceL00");
-                this.FaceL01 = this.GlowHead.getChild("FaceL01");
-                this.FaceL02 = this.GlowHead.getChild("FaceL02");
-                this.FaceR00 = this.GlowHead.getChild("FaceR00");
-                this.FaceR01 = this.GlowHead.getChild("FaceR01");
-                this.FaceR02 = this.GlowHead.getChild("FaceR02");
+                // [PORT] Legacy face variants may be absent in some migrated layers.
+                this.FaceL00 = getChildOrFallback(this.GlowHead, "FaceL00");
+                this.FaceL01 = getChildOrFallback(this.GlowHead, "FaceL01");
+                this.FaceL02 = getChildOrFallback(this.GlowHead, "FaceL02");
+                this.FaceR00 = getChildOrFallback(this.GlowHead, "FaceR00");
+                this.FaceR01 = getChildOrFallback(this.GlowHead, "FaceR01");
+                this.FaceR02 = getChildOrFallback(this.GlowHead, "FaceR02");
+        }
+
+        private static ModelPart getChildOrFallback(ModelPart parent, String childName) {
+                try {
+                        return parent.getChild(childName);
+                } catch (NoSuchElementException ignored) {
+                        return parent;
+                }
         }
 
         public static LayerDefinition createBodyLayer() {

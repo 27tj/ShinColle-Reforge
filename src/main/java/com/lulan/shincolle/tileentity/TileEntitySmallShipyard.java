@@ -10,16 +10,15 @@ import com.lulan.shincolle.utility.LogHelper;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.network.Connection;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.ForgeHooks;
@@ -229,8 +228,8 @@ public class TileEntitySmallShipyard extends BasicTileInventory implements MenuP
 
 		if (fuelValue > 0 && powerRemained + fuelValue <= POWER_MAX) {
 			// Handle container items (e.g., lava bucket -> empty bucket)
-			Item containerItem = fuelStack.getItem().getCraftingRemainingItem();
-			if (containerItem != null && fuelStack.getCount() > 1) {
+			ItemStack containerStack = fuelStack.getCraftingRemainingItem();
+			if (!containerStack.isEmpty() && fuelStack.getCount() > 1) {
 				// Cannot consume stacked items that leave a container
 				return;
 			}
@@ -240,8 +239,7 @@ public class TileEntitySmallShipyard extends BasicTileInventory implements MenuP
 
 			if (fuelStack.isEmpty()) {
 				// Replace with container item if applicable (e.g., empty bucket)
-				inventory.setStackInSlot(SLOT_FUEL,
-						containerItem != null ? new ItemStack(containerItem) : ItemStack.EMPTY);
+				inventory.setStackInSlot(SLOT_FUEL, containerStack.isEmpty() ? ItemStack.EMPTY : containerStack.copy());
 			}
 			setChanged();
 		}

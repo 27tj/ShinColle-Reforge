@@ -1,18 +1,19 @@
 package com.lulan.shincolle.utility;
 
+import com.lulan.shincolle.entity.BasicEntityMount;
 import com.lulan.shincolle.entity.BasicEntityShip;
 import com.lulan.shincolle.entity.BasicEntityShipHostile;
 import com.lulan.shincolle.entity.BasicEntitySummon;
-import com.lulan.shincolle.entity.BasicEntityMount;
 import com.lulan.shincolle.entity.IShipAttackBase;
+import com.lulan.shincolle.entity.IShipAttrs;
 import com.lulan.shincolle.entity.IShipInvisible;
 import com.lulan.shincolle.entity.IShipOwner;
+import com.lulan.shincolle.entity.other.EntityProjectileStatic;
 import com.lulan.shincolle.handler.ConfigHandler;
+import com.lulan.shincolle.init.ModEntities;
 import com.lulan.shincolle.reference.ID;
 import com.lulan.shincolle.reference.Values;
 import com.lulan.shincolle.reference.unitclass.Attrs;
-
-import com.lulan.shincolle.entity.IShipAttrs;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
@@ -32,24 +33,26 @@ import net.minecraft.world.level.block.state.BlockState;
 public class CombatHelper {
 
 	/**
-	 * Apply combat rate to damage. Rolls for miss, critical, double hit, triple hit.
+	 * Apply combat rate to damage. Rolls for miss, critical, double hit, triple
+	 * hit.
 	 * Priority: miss > cri > dhit > thit > normal
 	 * Uses cumulative probability on a single random roll.
 	 *
-	 * @param host         attacker (IShipAttackBase)
-	 * @param target       target entity
-	 * @param canMultiHit  whether multi-hit is allowed for this attack
-	 * @param distance     distance to target
-	 * @param rawAtk       raw attack damage
+	 * @param host        attacker (IShipAttackBase)
+	 * @param target      target entity
+	 * @param canMultiHit whether multi-hit is allowed for this attack
+	 * @param distance    distance to target
+	 * @param rawAtk      raw attack damage
 	 * @return modified damage (0 = miss)
 	 */
 	public static float applyCombatRateToDamage(IShipAttackBase host, Entity target,
 			boolean canMultiHit, float distance, float rawAtk) {
-		if (host == null) return rawAtk;
+		if (host == null)
+			return rawAtk;
 
 		// if host is a minion, get host's host
 		if ((host instanceof BasicEntitySummon || host instanceof BasicEntityMount) &&
-			host.getHostEntity() instanceof IShipAttackBase) {
+				host.getHostEntity() instanceof IShipAttackBase) {
 			host = (IShipAttackBase) host.getHostEntity();
 		}
 
@@ -61,35 +64,42 @@ public class CombatHelper {
 
 		// cumulative ranges
 		cri += miss;
-		if (cri < miss) cri = miss;
+		if (cri < miss)
+			cri = miss;
 
 		dhit += cri;
-		if (dhit < cri) dhit = cri;
+		if (dhit < cri)
+			dhit = cri;
 
 		thit += dhit;
-		if (thit < dhit) thit = dhit;
+		if (thit < dhit)
+			thit = dhit;
 
 		// roll
 		float roll = host.getRand().nextFloat();
 
 		// miss
 		if (roll <= miss) {
-			if (host instanceof Entity e) ParticleHelper.spawnAttackTextParticle(e, 0);
+			if (host instanceof Entity e)
+				ParticleHelper.spawnAttackTextParticle(e, 0);
 			return 0F;
 		}
 		// critical
 		else if (roll <= cri) {
-			if (host instanceof Entity e) ParticleHelper.spawnAttackTextParticle(e, 1);
+			if (host instanceof Entity e)
+				ParticleHelper.spawnAttackTextParticle(e, 1);
 			return rawAtk * 1.5F;
 		}
 		// double hit
 		else if (canMultiHit && roll <= dhit) {
-			if (host instanceof Entity e) ParticleHelper.spawnAttackTextParticle(e, 2);
+			if (host instanceof Entity e)
+				ParticleHelper.spawnAttackTextParticle(e, 2);
 			return rawAtk * 2F;
 		}
 		// triple hit
 		else if (canMultiHit && roll <= thit) {
-			if (host instanceof Entity e) ParticleHelper.spawnAttackTextParticle(e, 3);
+			if (host instanceof Entity e)
+				ParticleHelper.spawnAttackTextParticle(e, 3);
 			return rawAtk * 3F;
 		}
 
@@ -123,8 +133,10 @@ public class CombatHelper {
 		miss -= host.getAttrs().getAttrsBuffed(ID.Attrs.MISS);
 
 		// cap at 50%
-		if (miss > 0.5F) miss = 0.5F;
-		if (miss < 0F) miss = 0F;
+		if (miss > 0.5F)
+			miss = 0.5F;
+		if (miss < 0F)
+			miss = 0F;
 
 		// apply nausea potion effect (after limit)
 		if (host instanceof LivingEntity living) {
@@ -148,10 +160,13 @@ public class CombatHelper {
 	 * @return modified damage
 	 */
 	public static float modDamageByLight(float dmg, int typeAtk, int typeDef, float lightCoef) {
-		if (typeAtk <= 0 || typeDef <= 0) return dmg;
+		if (typeAtk <= 0 || typeDef <= 0)
+			return dmg;
 
-		if (lightCoef < 0F) lightCoef = 0F;
-		else if (lightCoef > 1F) lightCoef = 1F;
+		if (lightCoef < 0F)
+			lightCoef = 0F;
+		else if (lightCoef > 1F)
+			lightCoef = 1F;
 
 		// NOTE: deliberately swapped as in original
 		float modDay = Values.ModDmgNight[typeAtk - 1][typeDef - 1];
@@ -285,7 +300,8 @@ public class CombatHelper {
 
 	/**
 	 * Apply ship-vs-ship damage scaling from config.
-	 * Only applies when the attacker is a friendly ship/summon/mount (playerUID > 0).
+	 * Only applies when the attacker is a friendly ship/summon/mount (playerUID >
+	 * 0).
 	 * The target is always the ship being hurt (BasicEntityShip).
 	 */
 	public static float applyShipVsShipDamage(float damage, Entity attacker, Entity target) {
@@ -293,8 +309,8 @@ public class CombatHelper {
 		// and must be a BasicEntityShip, BasicEntitySummon, or BasicEntityMount
 		if (attacker instanceof IShipOwner shipOwner && shipOwner.getPlayerUID() > 0 &&
 				(attacker instanceof BasicEntityShip ||
-				 attacker instanceof BasicEntitySummon ||
-				 attacker instanceof BasicEntityMount)) {
+						attacker instanceof BasicEntitySummon ||
+						attacker instanceof BasicEntityMount)) {
 			return damage * ConfigHandler.COMMON.dmgTakenSvS.get() / 100F;
 		}
 
@@ -330,7 +346,8 @@ public class CombatHelper {
 		}
 
 		// friendly ship should not hurt its owner
-		if (attacker instanceof BasicEntityShip atkShip && target instanceof net.minecraft.world.entity.player.Player player) {
+		if (attacker instanceof BasicEntityShip atkShip
+				&& target instanceof net.minecraft.world.entity.player.Player player) {
 			if (atkShip.getOwner() != null && atkShip.getOwner().equals(player)) {
 				return true;
 			}
@@ -357,7 +374,8 @@ public class CombatHelper {
 	 * type: 0=melee, 1=light, 2=heavy, 3=air-light, 4=air-heavy
 	 */
 	public static int getAttackDelay(float aspd, int type) {
-		if (aspd < 0.01F) aspd = 0.01F;
+		if (aspd < 0.01F)
+			aspd = 0.01F;
 		switch (type) {
 			case 0:
 				return (int) (ConfigHandler.baseAttackSpeed[0] / aspd) + ConfigHandler.fixedAttackDelay[0];
@@ -476,5 +494,39 @@ public class CombatHelper {
 		}
 
 		return moveType;
+	}
+
+	/**
+	 * Trigger special attack effects from missile type.
+	 *
+	 * type:
+	 * 5: black hole field
+	 */
+	public static void specialAttackEffect(IShipAttackBase host, int type, float[] data) {
+		if (host == null || data == null || data.length < 3) {
+			return;
+		}
+
+		switch (type) {
+			case 5:
+				if (!(host instanceof Entity hostEntity) || hostEntity.level().isClientSide()) {
+					return;
+				}
+
+				EntityProjectileStatic effect = new EntityProjectileStatic(ModEntities.PROJECTILE_STATIC.get(),
+						hostEntity.level());
+				effect.setPos(data[0], data[1], data[2]);
+
+				int life = Mth.floor((float) (20D + host.getLevel() * 0.125D));
+				float pullForce = (float) (0.12D + host.getLevel() * 0.00075D);
+				float range = (float) (4D + host.getLevel() * 0.035D);
+				effect.initEffect(host, 5, pullForce, range, life);
+
+				// 2026/04/07：GitHub Copilotによって確認済み
+				hostEntity.level().addFreshEntity(effect);
+				break;
+			default:
+				break;
+		}
 	}
 }

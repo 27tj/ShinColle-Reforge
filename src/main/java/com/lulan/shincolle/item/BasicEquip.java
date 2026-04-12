@@ -8,10 +8,10 @@ import com.lulan.shincolle.handler.ConfigHandler;
 import com.lulan.shincolle.reference.Enums.EnumEquipEffectSP;
 import com.lulan.shincolle.reference.ID;
 import com.lulan.shincolle.reference.Values;
+import com.lulan.shincolle.utility.ClientRuntimeHelper;
 import com.lulan.shincolle.utility.EnchantHelper;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
@@ -132,7 +132,7 @@ public abstract class BasicEquip extends BasicItem implements IShipResourceItem 
 		if (stack.hasTag()) {
 			CompoundTag nbt = stack.getTag();
 			if (nbt != null) {
-				int hideFlag = Screen.hasControlDown() ? 0 : 1;
+				int hideFlag = ClientRuntimeHelper.isControlDown() ? 0 : 1;
 				nbt.putInt("HideFlags", hideFlag);
 			}
 		}
@@ -214,21 +214,26 @@ public abstract class BasicEquip extends BasicItem implements IShipResourceItem 
 						main[ID.Attrs.ASM]) + " " +
 						Component.translatable("gui.shincolle.antiss").getString()));
 			if (main[ID.Attrs.XP] != 0F)
-				tooltip.add(Component.literal(ChatFormatting.GREEN + Component.translatable("gui.shincolle.equip.xp").getString() + " " +
-						String.format("%.0f", main[ID.Attrs.XP] * 100F) + "%"));
+				tooltip.add(Component.literal(
+						ChatFormatting.GREEN + Component.translatable("gui.shincolle.equip.xp").getString() + " " +
+								String.format("%.0f", main[ID.Attrs.XP] * 100F) + "%"));
 			if (main[ID.Attrs.GRUDGE] != 0F)
 				tooltip.add(
-						Component.literal(ChatFormatting.DARK_PURPLE + Component.translatable("gui.shincolle.equip.grudge").getString() + " " +
+						Component.literal(ChatFormatting.DARK_PURPLE
+								+ Component.translatable("gui.shincolle.equip.grudge").getString() + " " +
 								String.format("%.0f", main[ID.Attrs.GRUDGE] * 100F) + "%"));
 			if (main[ID.Attrs.AMMO] != 0F)
-				tooltip.add(Component.literal(ChatFormatting.DARK_AQUA + Component.translatable("gui.shincolle.equip.ammo").getString() + " " +
+				tooltip.add(Component.literal(ChatFormatting.DARK_AQUA
+						+ Component.translatable("gui.shincolle.equip.ammo").getString() + " " +
 						String.format("%.0f", main[ID.Attrs.AMMO] * 100F) + "%"));
 			if (main[ID.Attrs.HPRES] != 0F)
-				tooltip.add(Component.literal(ChatFormatting.DARK_GREEN + Component.translatable("gui.shincolle.equip.hpres").getString() + " " +
+				tooltip.add(Component.literal(ChatFormatting.DARK_GREEN
+						+ Component.translatable("gui.shincolle.equip.hpres").getString() + " " +
 						String.format("%.0f", main[ID.Attrs.HPRES] * 100F) + "%"));
 			if (main[ID.Attrs.KB] != 0F)
-				tooltip.add(Component.literal(ChatFormatting.DARK_RED + Component.translatable("gui.shincolle.equip.kb").getString() + " " +
-						String.format("%.0f", main[ID.Attrs.KB] * 100F) + "%"));
+				tooltip.add(Component.literal(
+						ChatFormatting.DARK_RED + Component.translatable("gui.shincolle.equip.kb").getString() + " " +
+								String.format("%.0f", main[ID.Attrs.KB] * 100F) + "%"));
 
 			// Enchant type and equip type
 			String drawstr = Component.translatable("gui.shincolle.equip.enchtype").getString() + " ";
@@ -237,22 +242,26 @@ public abstract class BasicEquip extends BasicItem implements IShipResourceItem 
 					: misc[ID.EquipMisc.ENCH_TYPE] == 2
 							? ChatFormatting.AQUA + Component.translatable("gui.shincolle.equip.enchtype0").getString()
 							: misc[ID.EquipMisc.ENCH_TYPE] == 3
-									? ChatFormatting.GRAY + Component.translatable("gui.shincolle.equip.enchtype2").getString()
+									? ChatFormatting.GRAY
+											+ Component.translatable("gui.shincolle.equip.enchtype2").getString()
 									: "";
 			drawstr += misc[ID.EquipMisc.EQUIP_TYPE] == 1
 					? "  " + ChatFormatting.DARK_RED + Component.translatable("gui.shincolle.notforcarrier").getString()
 					: misc[ID.EquipMisc.EQUIP_TYPE] == 3
-							? "  " + ChatFormatting.DARK_AQUA + Component.translatable("gui.shincolle.carrieronly").getString()
+							? "  " + ChatFormatting.DARK_AQUA
+									+ Component.translatable("gui.shincolle.carrieronly").getString()
 							: "";
 			tooltip.add(Component.literal(drawstr));
 
 			// Construction info
 			if (misc[ID.EquipMisc.DEVELOP_NUM] > 400) {
 				tooltip.add(
-						Component.literal(ChatFormatting.DARK_RED + Component.translatable("block.shincolle.block_large_shipyard").getString()));
+						Component.literal(ChatFormatting.DARK_RED
+								+ Component.translatable("block.shincolle.block_large_shipyard").getString()));
 			} else {
 				tooltip.add(
-						Component.literal(ChatFormatting.DARK_RED + Component.translatable("block.shincolle.block_small_shipyard").getString()));
+						Component.literal(ChatFormatting.DARK_RED
+								+ Component.translatable("block.shincolle.block_small_shipyard").getString()));
 			}
 
 			// Material info
@@ -275,7 +284,8 @@ public abstract class BasicEquip extends BasicItem implements IShipResourceItem 
 			drawstr = ChatFormatting.DARK_PURPLE + Component.translatable("gui.shincolle.equip.matstype").getString() +
 					ChatFormatting.GRAY + " (" + matname + ") " +
 					String.format("%.0f", (float) misc[ID.EquipMisc.DEVELOP_NUM]) + "  " +
-					ChatFormatting.DARK_PURPLE + Component.translatable("gui.shincolle.equip.matsrarelevel").getString() +
+					ChatFormatting.DARK_PURPLE + Component.translatable("gui.shincolle.equip.matsrarelevel").getString()
+					+
 					ChatFormatting.GRAY + " " + String.format("%.0f", (float) misc[ID.EquipMisc.RARE_MEAN]);
 			tooltip.add(Component.literal(drawstr));
 		}

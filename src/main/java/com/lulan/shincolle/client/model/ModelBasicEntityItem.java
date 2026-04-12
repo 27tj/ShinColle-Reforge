@@ -1,9 +1,7 @@
 package com.lulan.shincolle.client.model;
 
 import com.lulan.shincolle.entity.IShipEmotion;
-import com.lulan.shincolle.reference.ID;
 import com.lulan.shincolle.reference.Reference;
-import com.lulan.shincolle.utility.EmotionHelper;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
@@ -45,16 +43,9 @@ public class ModelBasicEntityItem extends ShipModelBaseAdv<Entity> {
     @Override
     public void setupAnim(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
             float headPitch) {
-        IShipEmotion ent = (IShipEmotion) entity;
-        this.showEquip(ent);
-        this.setFlush(ent.getStateMinor(ID.M.Morale) > ID.Morale.L_Happy);
-        EmotionHelper.rollEmotionAdv(this, ent);
-        if (ent.getStateFlag(ID.F.NoFuel)) {
-            this.applyDeadPose(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, ent);
-        } else {
-            this.applyNormalPose(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, ent);
-        }
-        this.syncRotationGlowPart();
+        float rot = limbSwing * 0.1F;
+        this.shape1.xRot = rot;
+        this.shape1.yRot = rot;
     }
 
     @Override

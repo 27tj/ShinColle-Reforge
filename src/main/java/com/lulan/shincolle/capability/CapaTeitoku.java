@@ -66,6 +66,7 @@ public class CapaTeitoku implements INBTSerializable<CompoundTag> {
     private String teamName;
     private List<Integer> allyList;
     private List<Integer> banList;
+    private List<Integer> knownTeamIds;
     private List<Integer> colledShipList;
     private List<Integer> colledEquipList;
     private List<Integer> shipList;
@@ -90,6 +91,7 @@ public class CapaTeitoku implements INBTSerializable<CompoundTag> {
         this.teamName = "";
         this.allyList = new ArrayList<>();
         this.banList = new ArrayList<>();
+        this.knownTeamIds = new ArrayList<>();
         this.colledShipList = new ArrayList<>();
         this.colledEquipList = new ArrayList<>();
         this.shipList = new ArrayList<>();
@@ -144,6 +146,7 @@ public class CapaTeitoku implements INBTSerializable<CompoundTag> {
         nbt.putIntArray("TargetClassList", targetClassList.stream().mapToInt(Integer::intValue).toArray());
         nbt.putIntArray("AllyList", allyList.stream().mapToInt(Integer::intValue).toArray());
         nbt.putIntArray("BanList", banList.stream().mapToInt(Integer::intValue).toArray());
+        nbt.putIntArray("KnownTeamIds", knownTeamIds.stream().mapToInt(Integer::intValue).toArray());
         nbt.putIntArray("ColledShipList", colledShipList.stream().mapToInt(Integer::intValue).toArray());
         nbt.putIntArray("ColledEquipList", colledEquipList.stream().mapToInt(Integer::intValue).toArray());
         nbt.putIntArray("ShipList", shipList.stream().mapToInt(Integer::intValue).toArray());
@@ -205,6 +208,13 @@ public class CapaTeitoku implements INBTSerializable<CompoundTag> {
         if (nbt.contains("BanList")) {
             for (int v : nbt.getIntArray("BanList")) {
                 this.banList.add(v);
+            }
+        }
+
+        this.knownTeamIds = new ArrayList<>();
+        if (nbt.contains("KnownTeamIds")) {
+            for (int v : nbt.getIntArray("KnownTeamIds")) {
+                this.knownTeamIds.add(v);
             }
         }
 
@@ -360,6 +370,14 @@ public class CapaTeitoku implements INBTSerializable<CompoundTag> {
         this.banList = list != null ? list : new ArrayList<>();
     }
 
+    public List<Integer> getKnownTeamIds() {
+        return knownTeamIds;
+    }
+
+    public void setKnownTeamIds(List<Integer> list) {
+        this.knownTeamIds = list != null ? list : new ArrayList<>();
+    }
+
     public List<Integer> getColledShipList() {
         return colledShipList;
     }
@@ -496,6 +514,7 @@ public class CapaTeitoku implements INBTSerializable<CompoundTag> {
         this.teamName = other.teamName;
         this.allyList = new ArrayList<>(other.allyList);
         this.banList = new ArrayList<>(other.banList);
+        this.knownTeamIds = new ArrayList<>(other.knownTeamIds);
         this.colledShipList = new ArrayList<>(other.colledShipList);
         this.colledEquipList = new ArrayList<>(other.colledEquipList);
         this.shipList = new ArrayList<>(other.shipList);

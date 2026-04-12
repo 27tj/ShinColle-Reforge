@@ -1,6 +1,7 @@
 package com.lulan.shincolle.client.gui;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.lulan.shincolle.capability.CapaTeitoku;
@@ -22,7 +23,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
-
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -365,10 +365,22 @@ public class GuiDesk extends AbstractContainerScreen<ContainerDesk> {
                 for (int i = 0; i < 7; i++) {
                     int tabY1 = 34 + i * 13;
                     int tabY2 = tabY1 + 12;
-                    if (i == 3) { tabY1 = 72; tabY2 = 82; }
-                    if (i == 4) { tabY1 = 83; tabY2 = 96; }
-                    if (i == 5) { tabY1 = 97; tabY2 = 109; }
-                    if (i == 6) { tabY1 = 110; tabY2 = 121; }
+                    if (i == 3) {
+                        tabY1 = 72;
+                        tabY2 = 82;
+                    }
+                    if (i == 4) {
+                        tabY1 = 83;
+                        tabY2 = 96;
+                    }
+                    if (i == 5) {
+                        tabY1 = 97;
+                        tabY2 = 109;
+                    }
+                    if (i == 6) {
+                        tabY1 = 110;
+                        tabY2 = 121;
+                    }
                     if (localY >= tabY1 && localY <= tabY2) {
                         String chapTitle = Component.translatable("gui.shincolle.book.chap" + i + ".title").getString();
                         g.renderTooltip(this.font, Component.literal(chapTitle), mouseX, mouseY);
@@ -564,13 +576,16 @@ public class GuiDesk extends AbstractContainerScreen<ContainerDesk> {
         galleryShipClass = shipClass;
         galleryEntity = null;
 
-        if (shipClass < 0) return;
+        if (shipClass < 0)
+            return;
 
         Minecraft mc = Minecraft.getInstance();
-        if (mc.level == null) return;
+        if (mc.level == null)
+            return;
 
         EntityType<?> type = ShipSpawnEgg.getEntityTypeForClass(shipClass);
-        if (type == null) return;
+        if (type == null)
+            return;
 
         Entity ent = type.create(mc.level);
         if (ent instanceof LivingEntity living) {
@@ -622,10 +637,12 @@ public class GuiDesk extends AbstractContainerScreen<ContainerDesk> {
 
     /** Draw ship name icon from the icon sprite sheets. */
     private void drawShipNameIcon(GuiGraphics g) {
-        if (galleryShipClass < 0) return;
+        if (galleryShipClass < 0)
+            return;
 
         int[] iconData = Values.ShipNameIconMap.get(galleryShipClass);
-        if (iconData == null || iconData.length < 3) return;
+        if (iconData == null || iconData.length < 3)
+            return;
 
         int fileLineId = iconData[0];
         int iconX = iconData[1];
@@ -654,10 +671,12 @@ public class GuiDesk extends AbstractContainerScreen<ContainerDesk> {
     private void drawShipTypeIcon(GuiGraphics g) {
         // Look up ship type from class
         Byte shipType = Values.ShipTypeMap.get(galleryShipClass);
-        if (shipType == null) return;
+        if (shipType == null)
+            return;
 
         int[] typeIcon = Values.ShipTypeIconMap.get(shipType);
-        if (typeIcon == null || typeIcon.length < 2) return;
+        if (typeIcon == null || typeIcon.length < 2)
+            return;
 
         g.blit(TEX_ICON0, 96, 36, typeIcon[0], typeIcon[1], 11, 29);
     }
@@ -797,6 +816,25 @@ public class GuiDesk extends AbstractContainerScreen<ContainerDesk> {
                     g.drawString(this.font, ChatFormatting.YELLOW + "" + tid, 10, ty, 0, false);
                     ty += 31;
                 }
+            }
+
+            // Draw team relation list (right side)
+            List<Integer> knownTeams = getKnownTeamIdsForDisplay();
+            int selectedAbsIndex = listNum[LISTCLICK_TEAM] + listClicked[LISTCLICK_TEAM];
+            int ty = 27;
+            for (int i = listNum[LISTCLICK_TEAM]; i < knownTeams.size() && i < listNum[LISTCLICK_TEAM] + 5; i++) {
+                int tid = knownTeams.get(i);
+                boolean selected = (i == selectedAbsIndex && listFocus == LISTCLICK_TEAM);
+
+                String idLabel = "ID " + tid;
+                int idColor = selected ? Enums.EnumColors.YELLOW.getValue() : Enums.EnumColors.WHITE.getValue();
+                g.drawString(this.font, idLabel, 145, ty, idColor, false);
+
+                String relLabel = getTeamRelationLabel(tid);
+                int relColor = getTeamRelationColor(tid);
+                g.drawString(this.font, relLabel, 145, ty + 10, relColor, false);
+
+                ty += 32;
             }
         }
     }
@@ -1049,15 +1087,8 @@ public class GuiDesk extends AbstractContainerScreen<ContainerDesk> {
 
     private void handleClickTeamAlly(int btn) {
         switch (btn) {
-            case 0: // Left top: Ally - send ally request using text field name
-                if (tempCD <= 0) {
-                    String leaderName = textField.getValue();
-                    if (leaderName != null && !leaderName.isEmpty()) {
-                        ModNetworking.sendToServer(new C2SGUIInputPacket(
-                                C2SGUIInputPacket.Desk_Ally, new int[0], leaderName));
-                        this.tempCD = CLICKCD;
-                    }
-                }
+            case 0: // Left top: Ally/Break toggle based on selected team
+                handleToggleAllyAction();
                 break;
             case 6: // Left bottom: OK (back to main)
                 this.teamState = TEAMSTATE_MAIN;
@@ -1120,15 +1151,8 @@ public class GuiDesk extends AbstractContainerScreen<ContainerDesk> {
 
     private void handleClickTeamBan(int btn) {
         switch (btn) {
-            case 0: // Left top: Ban - send ban request using text field name
-                if (tempCD <= 0) {
-                    String leaderName = textField.getValue();
-                    if (leaderName != null && !leaderName.isEmpty()) {
-                        ModNetworking.sendToServer(new C2SGUIInputPacket(
-                                C2SGUIInputPacket.Desk_Ban, new int[0], leaderName));
-                        this.tempCD = CLICKCD;
-                    }
-                }
+            case 0: // Left top: Ban/Unban toggle based on selected team
+                handleToggleBanAction();
                 break;
             case 6: // Left bottom: OK (back to main)
                 this.teamState = TEAMSTATE_MAIN;
@@ -1149,6 +1173,171 @@ public class GuiDesk extends AbstractContainerScreen<ContainerDesk> {
                 listClicked[LISTCLICK_BAN] = btn - 9;
                 break;
         }
+    }
+
+    private void handleToggleAllyAction() {
+        if (tempCD > 0 || capa == null || capa.getPlayerUID() <= 0) {
+            return;
+        }
+
+        int targetTid = getSelectedTeamIdForRelationAction(TEAMSTATE_ALLY);
+        if (targetTid > 0 && targetTid != capa.getPlayerUID()) {
+            boolean alreadyAlly = capa.getAllyList() != null && capa.getAllyList().contains(targetTid);
+            byte packetType = alreadyAlly ? C2SGUIInputPacket.Desk_Break : C2SGUIInputPacket.Desk_Ally;
+            ModNetworking.sendToServer(new C2SGUIInputPacket(packetType, new int[] { targetTid }));
+            this.tempCD = CLICKCD;
+            return;
+        }
+
+        String leaderName = textField != null ? textField.getValue() : null;
+        if (leaderName != null && !leaderName.isEmpty()) {
+            byte packetType = (listFocus == LISTCLICK_ALLY) ? C2SGUIInputPacket.Desk_Break
+                    : C2SGUIInputPacket.Desk_Ally;
+            ModNetworking.sendToServer(new C2SGUIInputPacket(packetType, new int[0], leaderName));
+            this.tempCD = CLICKCD;
+        }
+    }
+
+    private void handleToggleBanAction() {
+        if (tempCD > 0 || capa == null || capa.getPlayerUID() <= 0) {
+            return;
+        }
+
+        int targetTid = getSelectedTeamIdForRelationAction(TEAMSTATE_BAN);
+        if (targetTid > 0 && targetTid != capa.getPlayerUID()) {
+            boolean alreadyBanned = capa.getBanList() != null && capa.getBanList().contains(targetTid);
+            byte packetType = alreadyBanned ? C2SGUIInputPacket.Desk_Unban : C2SGUIInputPacket.Desk_Ban;
+            ModNetworking.sendToServer(new C2SGUIInputPacket(packetType, new int[] { targetTid }));
+            this.tempCD = CLICKCD;
+            return;
+        }
+
+        String leaderName = textField != null ? textField.getValue() : null;
+        if (leaderName != null && !leaderName.isEmpty()) {
+            byte packetType = (listFocus == LISTCLICK_BAN) ? C2SGUIInputPacket.Desk_Unban : C2SGUIInputPacket.Desk_Ban;
+            ModNetworking.sendToServer(new C2SGUIInputPacket(packetType, new int[0], leaderName));
+            this.tempCD = CLICKCD;
+        }
+    }
+
+    private int getSelectedTeamIdForRelationAction(int relationState) {
+        if (capa == null) {
+            return 0;
+        }
+
+        if (listFocus == LISTCLICK_TEAM) {
+            int idx = listClicked[LISTCLICK_TEAM] + listNum[LISTCLICK_TEAM];
+            List<Integer> knownTeams = getKnownTeamIdsForDisplay();
+            if (knownTeams != null && idx >= 0 && idx < knownTeams.size()) {
+                return knownTeams.get(idx);
+            }
+        }
+
+        if (relationState == TEAMSTATE_ALLY && listFocus == LISTCLICK_ALLY) {
+            int idx = listClicked[LISTCLICK_ALLY] + listNum[LISTCLICK_ALLY];
+            List<Integer> allyList = capa.getAllyList();
+            if (allyList != null && idx >= 0 && idx < allyList.size()) {
+                return allyList.get(idx);
+            }
+        }
+
+        if (relationState == TEAMSTATE_BAN && listFocus == LISTCLICK_BAN) {
+            int idx = listClicked[LISTCLICK_BAN] + listNum[LISTCLICK_BAN];
+            List<Integer> banList = capa.getBanList();
+            if (banList != null && idx >= 0 && idx < banList.size()) {
+                return banList.get(idx);
+            }
+        }
+
+        return 0;
+    }
+
+    private List<Integer> getKnownTeamIdsForDisplay() {
+        if (capa == null) {
+            return Collections.emptyList();
+        }
+
+        List<Integer> known = new ArrayList<>();
+        List<Integer> syncedKnown = capa.getKnownTeamIds();
+        if (syncedKnown != null) {
+            for (Integer tid : syncedKnown) {
+                if (tid != null && tid > 0 && !known.contains(tid)) {
+                    known.add(tid);
+                }
+            }
+        }
+
+        if (known.isEmpty()) {
+            int myTid = capa.getPlayerUID();
+            if (myTid > 0) {
+                known.add(myTid);
+            }
+
+            List<Integer> allyList = capa.getAllyList();
+            if (allyList != null) {
+                for (Integer tid : allyList) {
+                    if (tid != null && tid > 0 && !known.contains(tid)) {
+                        known.add(tid);
+                    }
+                }
+            }
+
+            List<Integer> banList = capa.getBanList();
+            if (banList != null) {
+                for (Integer tid : banList) {
+                    if (tid != null && tid > 0 && !known.contains(tid)) {
+                        known.add(tid);
+                    }
+                }
+            }
+        }
+
+        Collections.sort(known);
+        return known;
+    }
+
+    private String getTeamRelationLabel(int tid) {
+        if (capa == null || tid <= 0) {
+            return strNeutral;
+        }
+
+        if (tid == capa.getPlayerUID()) {
+            return strBelong;
+        }
+
+        List<Integer> banList = capa.getBanList();
+        if (banList != null && banList.contains(tid)) {
+            return strHostile;
+        }
+
+        List<Integer> allyList = capa.getAllyList();
+        if (allyList != null && allyList.contains(tid)) {
+            return strAllied;
+        }
+
+        return strNeutral;
+    }
+
+    private int getTeamRelationColor(int tid) {
+        if (capa == null || tid <= 0) {
+            return Enums.EnumColors.GRAY_LIGHT.getValue();
+        }
+
+        if (tid == capa.getPlayerUID()) {
+            return Enums.EnumColors.WHITE.getValue();
+        }
+
+        List<Integer> banList = capa.getBanList();
+        if (banList != null && banList.contains(tid)) {
+            return Enums.EnumColors.YELLOW.getValue();
+        }
+
+        List<Integer> allyList = capa.getAllyList();
+        if (allyList != null && allyList.contains(tid)) {
+            return Enums.EnumColors.CYAN.getValue();
+        }
+
+        return Enums.EnumColors.GRAY_LIGHT.getValue();
     }
 
     private void handleTargetClick(int btn) {
@@ -1188,16 +1377,18 @@ public class GuiDesk extends AbstractContainerScreen<ContainerDesk> {
                 if ((bookChapNum == 4 || bookChapNum == 5) && bookPageNum > 0) {
                     if (isWheelUp) {
                         mScale += 2;
-                        if (mScale > 200) mScale = 200;
+                        if (mScale > 200)
+                            mScale = 200;
                     } else {
                         mScale -= 2;
-                        if (mScale < 5) mScale = 5;
+                        if (mScale < 5)
+                            mScale = 5;
                     }
                 }
                 return;
             case 3: // Team
                 if (listFocus == LISTCLICK_TEAM) {
-                    listSize = 20; // arbitrary max
+                    listSize = getKnownTeamIdsForDisplay().size();
                     maxVisible = 5;
                     listId = LISTCLICK_TEAM;
                 } else if (listFocus == LISTCLICK_ALLY) {

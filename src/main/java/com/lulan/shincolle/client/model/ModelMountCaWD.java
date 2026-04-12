@@ -1,5 +1,7 @@
 package com.lulan.shincolle.client.model;
 
+import java.util.NoSuchElementException;
+
 import com.lulan.shincolle.entity.IShipEmotion;
 import com.lulan.shincolle.reference.ID;
 import com.lulan.shincolle.reference.Reference;
@@ -122,8 +124,10 @@ public class ModelMountCaWD extends ShipModelBaseAdv<Entity> {
                 this.GlowWingL01a2 = this.GlowBodyMain2.getChild("GlowWingL01a2");
                 this.GlowWingR01a2 = this.GlowBodyMain2.getChild("GlowWingR01a2");
 
-                this.WingL01b = this.GlowWingL01a2.getChild("WingL01b");
-                this.WingL01c = this.WingL01b.getChild("WingL01c");
+                // [PORT] 1.10.2 -> 1.20.1: missing migrated wing subparts should degrade
+                // gracefully instead of crashing model construction.
+                this.WingL01b = getChildOrFallback(this.GlowWingL01a2, "WingL01b");
+                this.WingL01c = getChildOrFallback(this.WingL01b, "WingL01c");
 
                 this.GlowJaw01 = this.GlowNeck.getChild("GlowJaw01");
                 this.GlowHead01 = this.GlowNeck.getChild("GlowHead01");
@@ -142,14 +146,22 @@ public class ModelMountCaWD extends ShipModelBaseAdv<Entity> {
                 this.CannonR02 = this.GlowCannonR01.getChild("CannonR02");
                 this.CannonM03 = this.GlowCannonM02.getChild("CannonM03");
                 this.CannonM05 = this.GlowCannonM04.getChild("CannonM05");
-                this.WingR01b = this.GlowWingR01a2.getChild("WingR01b");
-                this.WingR01c = this.WingR01b.getChild("WingR01c");
+                this.WingR01b = getChildOrFallback(this.GlowWingR01a2, "WingR01b");
+                this.WingR01c = getChildOrFallback(this.WingR01b, "WingR01c");
                 this.WingL02 = this.GlowBodyMain2.getChild("WingL02");
                 this.WingR02 = this.GlowBodyMain2.getChild("WingR02");
                 this.WingL03 = this.GlowBodyMain2.getChild("WingL03");
                 this.WingR03 = this.GlowBodyMain2.getChild("WingR03");
                 this.WingL04 = this.GlowBodyMain2.getChild("WingL04");
                 this.WingR04 = this.GlowBodyMain2.getChild("WingR04");
+        }
+
+        private static ModelPart getChildOrFallback(ModelPart parent, String childName) {
+                try {
+                        return parent.getChild(childName);
+                } catch (NoSuchElementException ignored) {
+                        return parent;
+                }
         }
 
         public static LayerDefinition createBodyLayer() {

@@ -81,10 +81,31 @@ public class ShipSpawnEgg extends BasicItem {
 			}
 			// legacy fallback
 			if (tag.contains(TAG_SHIP_TYPE)) {
-				return tag.getInt(TAG_SHIP_TYPE);
+				int legacyType = tag.getInt(TAG_SHIP_TYPE);
+
+				// [PORT] 1.10.2 -> 1.20.1: legacy ShipType often stored item metadata
+				// (ShipClass + 2, hostile = ShipClass + 2002). Convert to modern ShipClass.
+				if (legacyType <= 1) {
+					return legacyType;
+				}
+
+				int maxLegacyMeta = ID.ShipClass.NorthlandHime + 2;
+				int maxLegacyMobMeta = MOB_OFFSET + maxLegacyMeta;
+				boolean isLegacyMeta = (legacyType >= 2 && legacyType <= maxLegacyMeta)
+						|| (legacyType >= MOB_OFFSET + 2 && legacyType <= maxLegacyMobMeta);
+
+				if (isLegacyMeta) {
+					return legacyType - 2;
+				}
+
+				return legacyType;
 			}
 		}
 		return 0;
+	}
+
+	private static boolean hasSpecificShipClassTag(CompoundTag tag) {
+		return tag != null && (tag.contains(TAG_SHIP_CLASS) || tag.contains(TAG_SHIP_TYPE));
 	}
 
 	/** Set the ship class on an ItemStack's NBT */
@@ -93,11 +114,13 @@ public class ShipSpawnEgg extends BasicItem {
 	}
 
 	/** @deprecated Use getShipClass instead */
+	@Deprecated
 	public static int getShipType(ItemStack stack) {
 		return getShipClass(stack);
 	}
 
 	/** @deprecated Use setShipClass instead */
+	@Deprecated
 	public static void setShipType(ItemStack stack, int type) {
 		setShipClass(stack, type);
 	}
@@ -109,7 +132,10 @@ public class ShipSpawnEgg extends BasicItem {
 		return stack;
 	}
 
-	/** Create a construction egg ItemStack with the specified build type (0=small, 1=large) */
+	/**
+	 * Create a construction egg ItemStack with the specified build type (0=small,
+	 * 1=large)
+	 */
 	public ItemStack createConstructionStack(int buildType) {
 		ItemStack stack = new ItemStack(this);
 		CompoundTag tag = stack.getOrCreateTag();
@@ -124,10 +150,13 @@ public class ShipSpawnEgg extends BasicItem {
 	 */
 	public static int getEggIcon(ItemStack stack) {
 		CompoundTag tag = stack.getTag();
+		if (hasSpecificShipClassTag(tag)) {
+			return getIconFromShipClass(getShipClass(stack));
+		}
 		if (tag != null && tag.contains("BuildType")) {
 			return tag.getByte("BuildType") == 0 ? 0 : 1;
 		}
-		return getIconFromShipClass(getShipClass(stack));
+		return 0;
 	}
 
 	// ===== Right Click on Block: Spawn Entity =====
@@ -160,8 +189,6 @@ public class ShipSpawnEgg extends BasicItem {
 			return InteractionResult.FAIL;
 
 		int shipClass = getShipClass(stack);
-		boolean isMob = shipClass >= MOB_OFFSET;
-		int actualClass = isMob ? shipClass - MOB_OFFSET : shipClass;
 
 		// XP cost for saved eggs (eggs with stored ship data)
 		if (!player.getAbilities().instabuild && nbt.contains("StateMinor")) {
@@ -462,6 +489,16 @@ public class ShipSpawnEgg extends BasicItem {
 	public String getDescriptionId(ItemStack stack) {
 		CompoundTag nbt = stack.getTag();
 		if (nbt != null) {
+			// Specific ship egg: name based on ship class (priority over BuildType)
+			// [PORT] 1.10.2 -> 1.20.1: shipyard result eggs may contain both BuildType and
+			// ShipClass; ShipClass should drive individual egg display.
+			if (hasSpecificShipClassTag(nbt)) {
+				int shipClass = getShipClass(stack);
+				if (shipClass >= 0) {
+					return "item.shincolle.ship_egg_" + (shipClass + 2);
+				}
+			}
+
 			// Construction egg: name based on build type
 			if (nbt.contains("BuildType")) {
 				int buildType = nbt.getByte("BuildType");
@@ -470,12 +507,6 @@ public class ShipSpawnEgg extends BasicItem {
 				} else {
 					return "item.shincolle.large_egg";
 				}
-			}
-			// Specific ship egg: name based on ship class
-			// Lang keys use legacy metadata convention (ShipClass + 2)
-			int shipClass = getShipClass(stack);
-			if (shipClass >= 0) {
-				return "item.shincolle.ship_egg_" + (shipClass + 2);
 			}
 		}
 		return "item.shincolle.ship_spawn_egg";
@@ -499,7 +530,8 @@ public class ShipSpawnEgg extends BasicItem {
 				if (stateMinor.length > 0) {
 					int shipLevel = stateMinor[0]; // StateMinor[0] = ShipLevel (raw level)
 					tooltip.add(Component
-							.literal(ChatFormatting.AQUA + Component.translatable("gui.shincolle.eggText").getString() + " " + shipLevel));
+							.literal(ChatFormatting.AQUA + Component.translatable("gui.shincolle.eggText").getString()
+									+ " " + shipLevel));
 				}
 				if (nbt.contains("customname")) {
 					tooltip.add(Component.literal(ChatFormatting.WHITE + nbt.getString("customname")));
@@ -515,13 +547,17 @@ public class ShipSpawnEgg extends BasicItem {
 				int polymetal = nbt.getInt("Polymetal");
 
 				tooltip.add(Component
-						.literal(ChatFormatting.WHITE + "" + grudge + " " + Component.translatable("item.shincolle.grudge").getString()));
+						.literal(ChatFormatting.WHITE + "" + grudge + " "
+								+ Component.translatable("item.shincolle.grudge").getString()));
 				tooltip.add(Component
-						.literal(ChatFormatting.RED + "" + abyssium + " " + Component.translatable("item.shincolle.abyss_metal").getString()));
+						.literal(ChatFormatting.RED + "" + abyssium + " "
+								+ Component.translatable("item.shincolle.abyss_metal").getString()));
 				tooltip.add(
-						Component.literal(ChatFormatting.GREEN + "" + ammo + " " + Component.translatable("item.shincolle.ammo").getString()));
+						Component.literal(ChatFormatting.GREEN + "" + ammo + " "
+								+ Component.translatable("item.shincolle.ammo").getString()));
 				tooltip.add(Component.literal(
-						ChatFormatting.AQUA + "" + polymetal + " " + Component.translatable("item.shincolle.abyss_metal_1").getString()));
+						ChatFormatting.AQUA + "" + polymetal + " "
+								+ Component.translatable("item.shincolle.abyss_metal_1").getString()));
 			}
 
 			// Show ship class in advanced tooltip mode

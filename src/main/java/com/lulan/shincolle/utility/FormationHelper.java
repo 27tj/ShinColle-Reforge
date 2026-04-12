@@ -15,11 +15,11 @@ import net.minecraft.world.level.Level;
  * Helper for formation buff calculations and formation position calculation.
  *
  * Formation types:
- *   1: Line Ahead (単縦陣)
- *   2: Double Line (複縦陣)
- *   3: Diamond (輪形陣)
- *   4: Echelon (梯形陣)
- *   5: Line Abreast (単横陣)
+ * 1: Line Ahead (単縦陣)
+ * 2: Double Line (複縦陣)
+ * 3: Diamond (輪形陣)
+ * 4: Echelon (梯形陣)
+ * 5: Line Abreast (単横陣)
  *
  * Ported from 1.10.2 FormationHelper.
  */

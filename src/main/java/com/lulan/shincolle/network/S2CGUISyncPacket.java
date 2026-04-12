@@ -1,13 +1,16 @@
 package com.lulan.shincolle.network;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 
 import com.lulan.shincolle.capability.CapaTeitoku;
 import com.lulan.shincolle.capability.CapaTeitokuProvider;
 import com.lulan.shincolle.entity.BasicEntityShip;
 import com.lulan.shincolle.reference.ID;
+import com.lulan.shincolle.team.TeamData;
 import com.lulan.shincolle.utility.LogHelper;
 import com.lulan.shincolle.utility.PacketHelper;
 
@@ -220,6 +223,43 @@ public class S2CGUISyncPacket {
 			buf.writeInt(0); // inventory page
 		});
 		return new S2CGUISyncPacket(SyncGUI_ShipInv, data);
+	}
+
+	/**
+	 * Sync desk team data and known team IDs for team relation GUI.
+	 */
+	public static S2CGUISyncPacket syncTeamData(CapaTeitoku capa, TeamData myTeamData,
+			Map<Integer, TeamData> allTeams) {
+		byte[] data = toBytes(buf -> {
+			String teamName = myTeamData != null ? myTeamData.getTeamName() : "";
+			List<Integer> allyList = myTeamData != null
+					? new ArrayList<>(myTeamData.getTeamAllyList())
+					: new ArrayList<>();
+			List<Integer> banList = myTeamData != null
+					? new ArrayList<>(myTeamData.getTeamBannedList())
+					: new ArrayList<>();
+
+			List<Integer> knownTeams = new ArrayList<>();
+			if (allTeams != null && !allTeams.isEmpty()) {
+				for (Integer tid : allTeams.keySet()) {
+					if (tid != null && tid > 0) {
+						knownTeams.add(tid);
+					}
+				}
+			}
+
+			if (knownTeams.isEmpty() && capa != null && capa.getPlayerUID() > 0) {
+				knownTeams.add(capa.getPlayerUID());
+			}
+
+			Collections.sort(knownTeams);
+
+			PacketHelper.writeNullableString(buf, teamName);
+			PacketHelper.writeIntList(buf, allyList);
+			PacketHelper.writeIntList(buf, banList);
+			PacketHelper.writeIntList(buf, knownTeams);
+		});
+		return new S2CGUISyncPacket(SyncPlayerProp_TeamData, data);
 	}
 
 	/** Sync an int list (ship list, collection lists) */
@@ -461,13 +501,46 @@ public class S2CGUISyncPacket {
 		if (capa == null)
 			return;
 		// TeamData format: team name (string), ally list (int list), ban list (int
-		// list)
+		// list), known team id list (int list)
 		String teamName = PacketHelper.readNullableString(buf);
 		List<Integer> allyList = PacketHelper.readIntList(buf);
 		List<Integer> banList = PacketHelper.readIntList(buf);
+		List<Integer> knownTeamIds = buf.readableBytes() > 0
+				? PacketHelper.readIntList(buf)
+				: buildFallbackKnownTeamIds(capa, allyList, banList);
 		capa.setTeamName(teamName != null ? teamName : "");
 		capa.setAllyList(allyList);
 		capa.setBanList(banList);
+		capa.setKnownTeamIds(knownTeamIds);
+	}
+
+	@OnlyIn(Dist.CLIENT)
+	private static List<Integer> buildFallbackKnownTeamIds(CapaTeitoku capa,
+			List<Integer> allyList, List<Integer> banList) {
+		List<Integer> known = new ArrayList<>();
+
+		if (capa != null && capa.getPlayerUID() > 0) {
+			known.add(capa.getPlayerUID());
+		}
+
+		if (allyList != null) {
+			for (Integer tid : allyList) {
+				if (tid != null && tid > 0 && !known.contains(tid)) {
+					known.add(tid);
+				}
+			}
+		}
+
+		if (banList != null) {
+			for (Integer tid : banList) {
+				if (tid != null && tid > 0 && !known.contains(tid)) {
+					known.add(tid);
+				}
+			}
+		}
+
+		Collections.sort(known);
+		return known;
 	}
 
 	@OnlyIn(Dist.CLIENT)

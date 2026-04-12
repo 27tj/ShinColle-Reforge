@@ -43,9 +43,11 @@ public class ModCreativeTabs {
 						output.accept(ModItems.GRUDGE_1.get());
 
 						// 6. Equipment Items - alphabetical order, custom sub-ordering where applicable
-						// Airplane: T:0,1,2,3,15 / F:4,5,6,7,8,18,16,21 / B:9,10,11,12,17,19,20 / R:13,14
+						// Airplane: T:0,1,2,3,15 / F:4,5,6,7,8,18,16,21 / B:9,10,11,12,17,19,20 /
+						// R:13,14
 						addEquipVariants(output, ModItems.EQUIP_AIRPLANE,
-								new int[] { 0, 1, 2, 3, 15, 4, 5, 6, 7, 8, 18, 16, 21, 9, 10, 11, 12, 17, 19, 20, 13, 14 });
+								new int[] { 0, 1, 2, 3, 15, 4, 5, 6, 7, 8, 18, 16, 21, 9, 10, 11, 12, 17, 19, 20, 13,
+										14 });
 						addEquipVariants(output, ModItems.EQUIP_AMMO);
 						// Armor: 0,1,5,2,3,4,6
 						addEquipVariants(output, ModItems.EQUIP_ARMOR,
@@ -143,8 +145,9 @@ public class ModCreativeTabs {
 						output.accept(ModItems.WAYPOINT_BLOCK_ITEM.get());
 						output.accept(ModItems.GRUDGE_HEAVY_BLOCK_ITEM.get());
 						output.accept(ModItems.POLYMETAL_BLOCK_ITEM.get());
-						output.accept(ModItems.LIGHT_AIR_BLOCK_ITEM.get());
-						output.accept(ModItems.LIGHT_LIQUID_BLOCK_ITEM.get());
+						// [PORT] 1.10.2 -> 1.20.1: Light helper blocks are internal utility blocks and
+						// were not visible in normal tab flow.
+						// Keep them obtainable by command only to avoid creative inventory pollution.
 					})
 					.build());
 
@@ -174,7 +177,8 @@ public class ModCreativeTabs {
 
 	/**
 	 * Add all spawn egg variants to creative tab using correct ShipClass values.
-	 * Construction template eggs use BuildType tag; individual eggs use ShipClass directly.
+	 * Construction template eggs use BuildType tag; individual eggs use ShipClass
+	 * directly.
 	 */
 	private static void addSpawnEggVariants(CreativeModeTab.Output output) {
 		Item item = ModItems.SHIP_SPAWN_EGG.get();
@@ -187,12 +191,13 @@ public class ModCreativeTabs {
 		output.accept(egg.createConstructionStack(0)); // small construction egg
 		output.accept(egg.createConstructionStack(1)); // large construction egg
 
-		// Abyssal ships (深海棲艦) - friendly, owner assigned on spawn, extends BasicEntityShip
-		output.accept(egg.createStack(0));  // DDI
-		output.accept(egg.createStack(1));  // DDRO
-		output.accept(egg.createStack(2));  // DDHA
-		output.accept(egg.createStack(3));  // DDNI
-		output.accept(egg.createStack(9));  // CARI
+		// Abyssal ships (深海棲艦) - friendly, owner assigned on spawn, extends
+		// BasicEntityShip
+		output.accept(egg.createStack(0)); // DDI
+		output.accept(egg.createStack(1)); // DDRO
+		output.accept(egg.createStack(2)); // DDHA
+		output.accept(egg.createStack(3)); // DDNI
+		output.accept(egg.createStack(9)); // CARI
 		output.accept(egg.createStack(10)); // CANE
 		output.accept(egg.createStack(12)); // CVWO
 		output.accept(egg.createStack(13)); // BBRU
@@ -238,7 +243,8 @@ public class ModCreativeTabs {
 		output.accept(egg.createStack(38)); // SSU511
 		output.accept(egg.createStack(39)); // SSRo500
 
-		// Mob variants (hostile field-spawning versions, ShipClass + 2000, extends BasicEntityShipHostile)
+		// Mob variants (hostile field-spawning versions, ShipClass + 2000, extends
+		// BasicEntityShipHostile)
 		output.accept(egg.createStack(2051)); // DDAkatsuki (Mob)
 		output.accept(egg.createStack(2052)); // DDHibiki (Mob)
 		output.accept(egg.createStack(2053)); // DDIkazuchi (Mob)

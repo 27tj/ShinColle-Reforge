@@ -7,10 +7,10 @@ import com.lulan.shincolle.capability.CapaTeitokuProvider;
 import com.lulan.shincolle.entity.BasicEntityShip;
 import com.lulan.shincolle.handler.ConfigHandler;
 import com.lulan.shincolle.reference.ID;
+import com.lulan.shincolle.utility.ClientRuntimeHelper;
 import com.lulan.shincolle.utility.TeamHelper;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -151,13 +151,18 @@ public class MarriageRing extends BasicItem {
 
 	@Override
 	public void appendHoverText(ItemStack stack, Level level, List<Component> tooltip, TooltipFlag flag) {
-		Player player = Minecraft.getInstance().player;
+		Player player = ClientRuntimeHelper.getClientPlayer();
 		if (player != null) {
 			CapaTeitoku capa = player.getCapability(CapaTeitokuProvider.CAPABILITY).orElse(null);
 			if (capa != null) {
 				tooltip.add(Component.literal(
-						ChatFormatting.AQUA + Component.translatable("gui.shincolle.ringText").getString() + " " + capa.getMarriageNum()));
+						ChatFormatting.AQUA + Component.translatable("gui.shincolle.ringText").getString() + " "
+								+ capa.getMarriageNum()));
+				return;
 			}
 		}
+
+		tooltip.add(Component.literal(
+				ChatFormatting.AQUA + Component.translatable("gui.shincolle.ringText").getString()));
 	}
 }

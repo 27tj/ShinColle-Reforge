@@ -11,10 +11,10 @@ import com.lulan.shincolle.network.C2SGUIInputPacket;
 import com.lulan.shincolle.network.ModNetworking;
 import com.lulan.shincolle.reference.ID;
 import com.lulan.shincolle.tileentity.ITileGuardPoint;
+import com.lulan.shincolle.utility.ClientRuntimeHelper;
 import com.lulan.shincolle.utility.TeamHelper;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -148,9 +148,8 @@ public class PointerItem extends BasicItem {
 		int mode = getMode(stack);
 		CapaTeitoku capa = player.getCapability(CapaTeitokuProvider.CAPABILITY).orElse(null);
 
-		var options = Minecraft.getInstance().options;
-		boolean isSneaking = options.keyShift.isDown();
-		boolean isSprinting = options.keySprint.isDown();
+		boolean isSneaking = player.isShiftKeyDown();
+		boolean isSprinting = player.isSprinting();
 
 		// Ray trace for entities at 64 blocks
 		EntityHitResult entityHit = rayTraceEntities(player, 64.0);
@@ -265,9 +264,8 @@ public class PointerItem extends BasicItem {
 	// ===== Client-side Right Click Logic =====
 
 	private void handleRightClickClient(ItemStack stack, Player player, int mode) {
-		var options = Minecraft.getInstance().options;
-		boolean isSneaking = options.keyShift.isDown();
-		boolean isSprinting = options.keySprint.isDown();
+		boolean isSneaking = player.isShiftKeyDown();
+		boolean isSprinting = player.isSprinting();
 
 		// Ray trace for entities at 64 blocks
 		EntityHitResult entityHit = rayTraceEntities(player, 64.0);
@@ -395,7 +393,9 @@ public class PointerItem extends BasicItem {
 
 			ModNetworking.sendToServer(new C2SGUIInputPacket(
 					C2SGUIInputPacket.SetFormation,
-					new int[] { player.getId(), 0, fid }));
+					// [PORT] 1.10.2 -> 1.20.1: use selected team ID so pointer formation change
+					// applies to active team.
+					new int[] { player.getId(), teamId, fid }));
 		}
 
 		PointerItem.formatCD = 0;
@@ -459,7 +459,7 @@ public class PointerItem extends BasicItem {
 
 	@Override
 	public void appendHoverText(ItemStack stack, Level level, List<Component> tooltip, TooltipFlag flag) {
-		Player player = Minecraft.getInstance().player;
+		Player player = ClientRuntimeHelper.getClientPlayer();
 		if (player == null)
 			return;
 
@@ -473,7 +473,8 @@ public class PointerItem extends BasicItem {
 
 		String formationName = "";
 		if (fid >= 0) {
-			formationName = ChatFormatting.GOLD + Component.translatable("gui.shincolle.formation.format" + fid).getString();
+			formationName = ChatFormatting.GOLD
+					+ Component.translatable("gui.shincolle.formation.format" + fid).getString();
 		}
 
 		// Show mode and formation name
@@ -495,7 +496,8 @@ public class PointerItem extends BasicItem {
 		}
 
 		tooltip.add(Component.literal(modeColor + Component.translatable(modeKey).getString() + " : " + formationName));
-		tooltip.add(Component.literal(ChatFormatting.GRAY + Component.translatable("gui.shincolle.pointer3").getString()));
+		tooltip.add(
+				Component.literal(ChatFormatting.GRAY + Component.translatable("gui.shincolle.pointer3").getString()));
 
 		// Current team ID
 		tooltip.add(Component.literal(ChatFormatting.YELLOW + "" + ChatFormatting.UNDERLINE +

@@ -11,6 +11,7 @@ import com.lulan.shincolle.handler.ConfigHandler;
 import com.lulan.shincolle.init.ModEntities;
 import com.lulan.shincolle.reference.ID;
 import com.lulan.shincolle.reference.unitclass.MissileData;
+import com.lulan.shincolle.utility.CombatHelper;
 import com.lulan.shincolle.utility.EmotionHelper;
 
 import net.minecraft.world.entity.Entity;
@@ -20,7 +21,8 @@ import net.minecraft.world.level.Level;
 
 /**
  * Destroyer Shimakaze entity.
- * model state: 0:rensouhou type, 1:cannon, 2:hair anchor, 3:hat1, 4:hat2, 5:hat3
+ * model state: 0:rensouhou type, 1:cannon, 2:hair anchor, 3:hat1, 4:hat2,
+ * 5:hat3
  */
 public class EntityDestroyerShimakaze extends BasicEntityShipSmall implements IShipSummonAttack {
 
@@ -34,7 +36,7 @@ public class EntityDestroyerShimakaze extends BasicEntityShipSmall implements IS
 		this.setStateMinor(ID.M.NumState, 6);
 		this.setGrudgeConsumption(ConfigHandler.consumeGrudgeShip[ID.ShipConsume.DD]);
 		this.setAmmoConsumption(ConfigHandler.consumeAmmoShip[ID.ShipConsume.DD]);
-		this.ModelPos = new float[]{0F, 25F, 0F, 45F};
+		this.ModelPos = new float[] { 0F, 25F, 0F, 45F };
 
 		this.numRensouhou = 6;
 
@@ -69,18 +71,19 @@ public class EntityDestroyerShimakaze extends BasicEntityShipSmall implements IS
 		if (!this.level().isClientSide()) {
 			// add rensouhou + aura every 128 ticks
 			if (this.tickCount % 128 == 0) {
-				if (this.numRensouhou < 6) numRensouhou++;
+				if (this.numRensouhou < 6)
+					numRensouhou++;
 
 				// marriage aura: speed boost to owner
 				java.util.UUID ownerUUID = this.getOwnerUUID();
 				Player player = ownerUUID != null ? this.level().getPlayerByUUID(ownerUUID) : null;
 				if (player != null && getStateFlag(ID.F.IsMarried) && getStateFlag(ID.F.UseRingEffect) &&
-					getStateMinor(ID.M.NumGrudge) > 0 &&
-					this.distanceToSqr(player) < 256.0D) {
+						getStateMinor(ID.M.NumGrudge) > 0 &&
+						this.distanceToSqr(player) < 256.0D) {
 					int level = getStateMinor(ID.M.ShipLevel) / 35 + 1;
 					player.addEffect(new net.minecraft.world.effect.MobEffectInstance(
-						net.minecraft.world.effect.MobEffects.MOVEMENT_SPEED,
-						80 + getStateMinor(ID.M.ShipLevel), level, false, false));
+							net.minecraft.world.effect.MobEffects.MOVEMENT_SPEED,
+							80 + getStateMinor(ID.M.ShipLevel), level, false, false));
 				}
 			}
 		}
@@ -89,10 +92,12 @@ public class EntityDestroyerShimakaze extends BasicEntityShipSmall implements IS
 	@Override
 	public boolean attackEntityWithAmmo(Entity target) {
 		// consume ammo
-		if (!decrAmmoNum(0, 4 * this.getAmmoConsumption())) return false;
+		if (!decrAmmoNum(0, 4 * this.getAmmoConsumption()))
+			return false;
 
 		// check rensouhou availability
-		if (this.numRensouhou <= 0) return false;
+		if (this.numRensouhou <= 0)
+			return false;
 		this.numRensouhou--;
 
 		// experience + grudge + morale
@@ -128,7 +133,8 @@ public class EntityDestroyerShimakaze extends BasicEntityShipSmall implements IS
 	@Override
 	public boolean attackEntityWithHeavyAmmo(Entity target) {
 		// consume heavy ammo
-		if (!decrAmmoNum(1, this.getAmmoConsumption())) return false;
+		if (!decrAmmoNum(1, this.getAmmoConsumption()))
+			return false;
 
 		float atk = getAttackBaseDamage(2, target) * 0.3F;
 		float kbValue = 0.15F;
@@ -157,9 +163,13 @@ public class EntityDestroyerShimakaze extends BasicEntityShipSmall implements IS
 
 		// get missile data
 		MissileData md = this.getMissileData(2);
-		int moveType = 0; // direct (simplified from CombatHelper.calcMissileMoveType)
+		int moveType = CombatHelper.calcMissileMoveType(this, target.getY(), 2);
+		if (moveType == 1) {
+			moveType = 0;
+		}
 
 		// spawn 5 missiles in cross pattern
+		// 2026/04/07：GitHub Copilotによって確認済み
 		spawnMissile(atk, kbValue, launchPos, tarX, tarY + tarHeightOff, tarZ,
 				md, moveType);
 		spawnMissile(atk, kbValue, launchPos, tarX + 3.5F, tarY + tarHeightOff, tarZ + 3.5F,

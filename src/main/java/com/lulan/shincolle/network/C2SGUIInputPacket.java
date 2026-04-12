@@ -5,6 +5,8 @@ import java.util.function.Supplier;
 
 import com.lulan.shincolle.capability.CapaTeitoku;
 import com.lulan.shincolle.capability.CapaTeitokuProvider;
+import com.lulan.shincolle.client.gui.inventory.ContainerFormation;
+import com.lulan.shincolle.client.gui.inventory.ContainerShipInventory;
 import com.lulan.shincolle.entity.BasicEntityShip;
 import com.lulan.shincolle.reference.ID;
 import com.lulan.shincolle.server.ServerDataManager;
@@ -22,8 +24,10 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.Entity;
 import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.network.NetworkHooks;
 
 /**
  * Client-to-Server GUI input packet.
@@ -226,6 +230,11 @@ public class C2SGUIInputPacket {
 
 		if (entity instanceof BasicEntityShip ship) {
 			applyShipGUIButton(ship, values[2], values[3]);
+			if (values[2] == ID.B.ShipInv_InvPage
+					&& player.containerMenu instanceof ContainerShipInventory menu
+					&& menu.getShip() == ship) {
+				menu.setInventoryPage(values[3]);
+			}
 		}
 	}
 
@@ -740,16 +749,24 @@ public class C2SGUIInputPacket {
 	}
 
 	/**
-	 * Open a ship's item/inventory GUI.
-	 * values: 0:player eid, 1:(unused dim), 2:entity id
+	 * Open pointer item GUI.
+	 * values: 0:player eid, 1:(unused dim), 2:gui type (0=formation)
 	 */
 	private void handleOpenItemGUI(ServerPlayer player) {
 		if (values.length < 3)
 			return;
-		ServerLevel level = player.serverLevel();
-		Entity entity = level.getEntity(values[2]);
-		if (entity instanceof BasicEntityShip ship) {
-			ship.openGUI(player);
+
+		switch (values[2]) {
+			case 0:
+				// [PORT] 1.10.2 -> 1.20.1: OpenItemGUI is the pointer formation GUI entry
+				// point.
+				NetworkHooks.openScreen(player, new SimpleMenuProvider(
+						(containerId, playerInv, p) -> new ContainerFormation(containerId, playerInv),
+						Component.translatable("gui.shincolle.formation.formation")));
+				break;
+			default:
+				LogHelper.debug("C2SGUIInputPacket: unknown OpenItemGUI type=" + values[2]);
+				break;
 		}
 	}
 
@@ -801,6 +818,7 @@ public class C2SGUIInputPacket {
 		CapaTeitoku capa = player.getCapability(CapaTeitokuProvider.CAPABILITY).orElse(null);
 		if (capa != null) {
 			ModNetworking.sendToPlayer(S2CGUISyncPacket.syncPlayerMisc(capa), player);
+			syncDeskTeamData(player, capa);
 		}
 	}
 
@@ -815,6 +833,7 @@ public class C2SGUIInputPacket {
 		if (capa == null)
 			return;
 		ServerDataManager.teamRename(capa.getPlayerUID(), stringData);
+		syncDeskTeamData(player, capa);
 	}
 
 	/**
@@ -822,15 +841,14 @@ public class C2SGUIInputPacket {
 	 * stringData: the target team leader's name
 	 */
 	private void handleDeskAlly(ServerPlayer player) {
-		if (stringData == null || stringData.isEmpty())
-			return;
 		CapaTeitoku capa = player.getCapability(CapaTeitokuProvider.CAPABILITY).orElse(null);
 		if (capa == null)
 			return;
 		int myTid = capa.getPlayerUID();
-		int otherTid = findTeamByLeaderName(stringData);
+		int otherTid = resolveDeskTargetTeamId();
 		if (otherTid > 0) {
 			ServerDataManager.teamAddAlly(myTid, otherTid);
+			syncDeskTeamData(player, capa);
 		}
 	}
 
@@ -839,15 +857,14 @@ public class C2SGUIInputPacket {
 	 * stringData: the target team leader's name
 	 */
 	private void handleDeskBreak(ServerPlayer player) {
-		if (stringData == null || stringData.isEmpty())
-			return;
 		CapaTeitoku capa = player.getCapability(CapaTeitokuProvider.CAPABILITY).orElse(null);
 		if (capa == null)
 			return;
 		int myTid = capa.getPlayerUID();
-		int otherTid = findTeamByLeaderName(stringData);
+		int otherTid = resolveDeskTargetTeamId();
 		if (otherTid > 0) {
 			ServerDataManager.teamRemoveAlly(myTid, otherTid);
+			syncDeskTeamData(player, capa);
 		}
 	}
 
@@ -856,15 +873,14 @@ public class C2SGUIInputPacket {
 	 * stringData: the target team leader's name
 	 */
 	private void handleDeskBan(ServerPlayer player) {
-		if (stringData == null || stringData.isEmpty())
-			return;
 		CapaTeitoku capa = player.getCapability(CapaTeitokuProvider.CAPABILITY).orElse(null);
 		if (capa == null)
 			return;
 		int myTid = capa.getPlayerUID();
-		int otherTid = findTeamByLeaderName(stringData);
+		int otherTid = resolveDeskTargetTeamId();
 		if (otherTid > 0) {
 			ServerDataManager.teamAddBan(myTid, otherTid);
+			syncDeskTeamData(player, capa);
 		}
 	}
 
@@ -873,16 +889,25 @@ public class C2SGUIInputPacket {
 	 * stringData: the target team leader's name
 	 */
 	private void handleDeskUnban(ServerPlayer player) {
-		if (stringData == null || stringData.isEmpty())
-			return;
 		CapaTeitoku capa = player.getCapability(CapaTeitokuProvider.CAPABILITY).orElse(null);
 		if (capa == null)
 			return;
 		int myTid = capa.getPlayerUID();
-		int otherTid = findTeamByLeaderName(stringData);
+		int otherTid = resolveDeskTargetTeamId();
 		if (otherTid > 0) {
 			ServerDataManager.teamRemoveBan(myTid, otherTid);
+			syncDeskTeamData(player, capa);
 		}
+	}
+
+	private int resolveDeskTargetTeamId() {
+		if (values.length > 0 && values[0] > 0) {
+			return values[0];
+		}
+		if (stringData != null && !stringData.isEmpty()) {
+			return findTeamByLeaderName(stringData);
+		}
+		return 0;
 	}
 
 	/**
@@ -893,6 +918,7 @@ public class C2SGUIInputPacket {
 		CapaTeitoku capa = player.getCapability(CapaTeitokuProvider.CAPABILITY).orElse(null);
 		if (capa != null) {
 			ModNetworking.sendToPlayer(S2CGUISyncPacket.syncPlayerMisc(capa), player);
+			syncDeskTeamData(player, capa);
 		}
 	}
 
@@ -903,7 +929,20 @@ public class C2SGUIInputPacket {
 		CapaTeitoku capa = player.getCapability(CapaTeitokuProvider.CAPABILITY).orElse(null);
 		if (capa != null) {
 			ModNetworking.sendToPlayer(S2CGUISyncPacket.syncPlayerFull(capa), player);
+			syncDeskTeamData(player, capa);
 		}
+	}
+
+	private static void syncDeskTeamData(ServerPlayer player, CapaTeitoku capa) {
+		if (player == null || capa == null) {
+			return;
+		}
+
+		int teamId = capa.getPlayerUID();
+		TeamData myTeamData = teamId > 0 ? ServerDataManager.getTeamData(teamId) : null;
+		ModNetworking.sendToPlayer(
+				S2CGUISyncPacket.syncTeamData(capa, myTeamData, ServerDataManager.getAllTeamWorldData()),
+				player);
 	}
 
 	// ========== Utility ==========

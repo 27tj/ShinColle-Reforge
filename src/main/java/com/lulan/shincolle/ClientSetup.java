@@ -80,6 +80,8 @@ import com.lulan.shincolle.client.particle.ParticleSmoke;
 import com.lulan.shincolle.client.particle.ParticleSpray;
 import com.lulan.shincolle.client.render.NoopEntityRenderer;
 import com.lulan.shincolle.client.render.PlaceholderMobRenderer;
+import com.lulan.shincolle.client.render.RenderAbyssMissile;
+import com.lulan.shincolle.client.render.RenderBasicEntityItem;
 import com.lulan.shincolle.client.render.RenderShipFishing;
 import com.lulan.shincolle.client.render.ShipEntityRenderer;
 import com.lulan.shincolle.client.render.block.RenderDesk;
@@ -419,6 +421,7 @@ public class ClientSetup {
 		event.registerEntityRenderer(ModEntities.BB_HARUNA_MOB.get(),
 				ctx -> new PlaceholderMobRenderer<>(ctx, new ModelBBHaruna(ctx.bakeLayer(ModelBBHaruna.LAYER_LOCATION)),
 						tex("EntityBBHaruna"), 0.5F));
+		// 2026/04/07：GitHub Copilotによって確認済み - hostile系はPlaceholderMobRenderer経路を維持。
 		event.registerEntityRenderer(ModEntities.BB_KIRISHIMA_MOB.get(),
 				ctx -> new PlaceholderMobRenderer<>(ctx,
 						new ModelBBKirishima(ctx.bakeLayer(ModelBBKirishima.LAYER_LOCATION)), tex("EntityBBKirishima"),
@@ -536,11 +539,13 @@ public class ClientSetup {
 						new ModelRensouhouS(ctx.bakeLayer(ModelRensouhouS.LAYER_LOCATION)), tex("EntityRensouhouS"),
 						0.3F));
 
-		// ========== Raw Entity Types (NoopEntityRenderer) ==========
-		event.registerEntityRenderer(ModEntities.ABYSS_MISSILE.get(), NoopEntityRenderer::new);
+		// ========== Raw Entity Types ==========
+		event.registerEntityRenderer(ModEntities.ABYSS_MISSILE.get(), RenderAbyssMissile::new);
+		// 2026/04/07：GitHub Copilotによって確認済み -
+		// 1.10.2ではInvisible指定のため、beam/staticはNoop維持。
 		event.registerEntityRenderer(ModEntities.PROJECTILE_BEAM.get(), NoopEntityRenderer::new);
 		event.registerEntityRenderer(ModEntities.PROJECTILE_STATIC.get(), NoopEntityRenderer::new);
-		event.registerEntityRenderer(ModEntities.BASIC_ENTITY_ITEM.get(), NoopEntityRenderer::new);
+		event.registerEntityRenderer(ModEntities.BASIC_ENTITY_ITEM.get(), RenderBasicEntityItem::new);
 		event.registerEntityRenderer(ModEntities.FISHING_HOOK.get(), RenderShipFishing::new);
 
 		// ========== Block Entity Renderers ==========

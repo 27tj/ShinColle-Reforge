@@ -6,13 +6,14 @@ import javax.annotation.Nullable;
 
 import com.lulan.shincolle.ai.ShipAttackOnCollideGoal;
 import com.lulan.shincolle.ai.ShipFloatingGoal;
+import com.lulan.shincolle.ai.ShipHostileWanderGoal;
+import com.lulan.shincolle.ai.ShipOpenDoorGoal;
 import com.lulan.shincolle.ai.ShipRangeAttackGoal;
 import com.lulan.shincolle.ai.ShipRangeTargetGoal;
 import com.lulan.shincolle.ai.ShipRevengeTargetGoal;
 import com.lulan.shincolle.ai.path.ShipMoveHelper;
 import com.lulan.shincolle.ai.path.ShipPathNavigate;
 import com.lulan.shincolle.entity.other.EntityAbyssMissile;
-import com.lulan.shincolle.utility.BuffHelper;
 import com.lulan.shincolle.init.ModEntities;
 import com.lulan.shincolle.init.ModSounds;
 import com.lulan.shincolle.network.ModNetworking;
@@ -21,10 +22,13 @@ import com.lulan.shincolle.reference.ID;
 import com.lulan.shincolle.reference.unitclass.Attrs;
 import com.lulan.shincolle.reference.unitclass.AttrsAdv;
 import com.lulan.shincolle.reference.unitclass.MissileData;
+import com.lulan.shincolle.utility.BlockHelper;
+import com.lulan.shincolle.utility.BuffHelper;
 import com.lulan.shincolle.utility.CombatHelper;
 import com.lulan.shincolle.utility.EntityHelper;
 import com.lulan.shincolle.utility.TargetHelper;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerPlayer;
@@ -270,6 +274,9 @@ public abstract class BasicEntityShipHostile extends Mob
 	protected void setAIList() {
 		// floating (highest priority, no mutex)
 		this.goalSelector.addGoal(0, new ShipFloatingGoal(this));
+		// [PORT] 1.10.2 -> 1.20.1: restore legacy hostile mobility goals
+		this.goalSelector.addGoal(21, new ShipOpenDoorGoal(this, true));
+		this.goalSelector.addGoal(23, new ShipHostileWanderGoal(this, 12, 1, 0.8D));
 		// ranged cannon attack
 		this.goalSelector.addGoal(11, new ShipRangeAttackGoal(this));
 		// melee attack on collide
@@ -394,6 +401,11 @@ public abstract class BasicEntityShipHostile extends Mob
 
 				// check every 64 ticks
 				if ((tickCount & 63) == 0) {
+					if (this.isAlive()) {
+						// [PORT] 1.10.2 -> 1.20.1: hostile searchlight update on periodic server tick
+						updateSearchlight();
+					}
+
 					updateEmotionState();
 
 					// check every 128 ticks
@@ -518,13 +530,15 @@ public abstract class BasicEntityShipHostile extends Mob
 		applySoundAtAttacker(1, target);
 
 		// if missed
-		if (atk <= 0F) return true;
+		if (atk <= 0F)
+			return true;
 
 		// check friendly fire
 		if (CombatHelper.isFriendlyFire(this, target))
 			atk = 0F;
 
-		if (atk <= 0F) return true;
+		if (atk <= 0F)
+			return true;
 
 		boolean isTargetHurt = target.hurt(this.damageSources().mobProjectile(this, this), atk);
 		if (isTargetHurt) {
@@ -555,9 +569,13 @@ public abstract class BasicEntityShipHostile extends Mob
 
 		// spawn missile
 		MissileData md = this.getMissileData(2);
-		int moveType = 0; // simplified from CombatHelper.calcMissileMoveType
+		int moveType = CombatHelper.calcMissileMoveType(this, target.getY(), 2);
+		if (moveType == 0) {
+			launchPos = (float) this.getY() + this.getBbHeight() * 0.3F;
+		}
 		EntityAbyssMissile missile = new EntityAbyssMissile(
 				ModEntities.ABYSS_MISSILE.get(), this.level());
+		// 2026/04/07：GitHub Copilotによって確認済み
 		missile.initMissile(this, md.type, moveType,
 				atk, kbValue, launchPos, tarX, tarY, tarZ,
 				160, 0.25F, md.vel0, md.accY1, md.accY2);
@@ -1107,6 +1125,20 @@ public abstract class BasicEntityShipHostile extends Mob
 	// ========== Searchlight stubs ==========
 
 	public void updateSearchlight() {
-		// TODO: Phase 7
+		if (this.getStateMinor(ID.M.LevelSearchlight) <= 0)
+			return;
+		if (this.getStateFlag(ID.F.NoFuel))
+			return;
+		if (!this.isAlive())
+			return;
+
+		// [PORT] 1.10.2 -> 1.20.1: keep night-time searchlight behavior using dayTime
+		// window.
+		int time = (int) (this.level().getDayTime() % 24000L);
+		if (time < 12500 || time > 23500)
+			return;
+
+		BlockPos pos = this.blockPosition().above(2);
+		BlockHelper.placeSearchlight(this.level(), pos);
 	}
 }
