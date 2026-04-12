@@ -69,7 +69,10 @@ public class MulitBlockHelper {
 		int patternTemp;
 		int patternMatch = 1; // init match pattern = 0001 (bit)
 
-		if (yCoord < 3)
+		// [PORT] 1.10.2 -> 1.20.1: world min build height can be negative; the
+		// original y<3 guard should map to "need 2 blocks below core" relative to
+		// current world floor instead of absolute Y=3.
+		if (yCoord < level.getMinBuildHeight() + 2)
 			return -1;
 
 		// scan a 3x3x3 area

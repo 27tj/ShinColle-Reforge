@@ -1130,10 +1130,9 @@ public final class ShinColleEntityRegistryGameTests {
 	public static void largeShipyardMultiblockReformsAfterStaleCoreCleanup(GameTestHelper helper) {
 		ServerLevel level = helper.getLevel();
 
-		// [PORT] 1.10.2 -> 1.20.1: checkMultiBlockForm rejects y < 3. GameTest
-		// structures are often placed at low absolute Y, so build this fixture high
-		// enough to exercise normal gameplay conditions.
-		BlockPos core = helper.absolutePos(new BlockPos(2, 80, 2));
+		// [PORT] 1.10.2 -> 1.20.1: keep this fixture near template height so low-Y
+		// worlds are covered by regression tests.
+		BlockPos core = helper.absolutePos(new BlockPos(2, 4, 2));
 
 		// Base layer: full 3x3 polymetal
 		for (int dx = -1; dx <= 1; dx++) {
