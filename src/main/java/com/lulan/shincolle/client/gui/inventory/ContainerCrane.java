@@ -32,6 +32,10 @@ import net.minecraftforge.items.ItemStackHandler;
  * 4: enabUnload (0/1)
  * 5: checkMetadata (0/1)
  * 6: checkNbt (0/1)
+ * 7: checkDict (0/1)
+ * 8: redSignalMode (0-2)
+ * 9: liquidMode (0-2)
+ * 10: energyMode (0-2)
  */
 public class ContainerCrane extends AbstractContainerMenu {
 
@@ -48,7 +52,11 @@ public class ContainerCrane extends AbstractContainerMenu {
     public static final int DATA_ENAB_UNLOAD = 4;
     public static final int DATA_CHECK_META = 5;
     public static final int DATA_CHECK_NBT = 6;
-    public static final int DATA_COUNT = 7;
+    public static final int DATA_CHECK_DICT = 7;
+    public static final int DATA_RED_MODE = 8;
+    public static final int DATA_LIQUID_MODE = 9;
+    public static final int DATA_ENERGY_MODE = 10;
+    public static final int DATA_COUNT = 11;
 
     private final TileEntityCrane tile;
     private final ContainerData data;
@@ -106,6 +114,10 @@ public class ContainerCrane extends AbstractContainerMenu {
                     case DATA_ENAB_UNLOAD -> tile.isEnabUnload() ? 1 : 0;
                     case DATA_CHECK_META -> tile.isCheckMetadata() ? 1 : 0;
                     case DATA_CHECK_NBT -> tile.isCheckNbt() ? 1 : 0;
+                    case DATA_CHECK_DICT -> tile.isCheckDict() ? 1 : 0;
+                    case DATA_RED_MODE -> tile.getRedSignalMode();
+                    case DATA_LIQUID_MODE -> tile.getLiquidMode();
+                    case DATA_ENERGY_MODE -> tile.getEnergyMode();
                     default -> 0;
                 };
             }
@@ -204,5 +216,21 @@ public class ContainerCrane extends AbstractContainerMenu {
 
     public boolean isCheckNbt() {
         return data.get(DATA_CHECK_NBT) != 0;
+    }
+
+    public boolean isCheckDict() {
+        return data.get(DATA_CHECK_DICT) != 0;
+    }
+
+    public int getRedSignalMode() {
+        return data.get(DATA_RED_MODE);
+    }
+
+    public int getLiquidMode() {
+        return data.get(DATA_LIQUID_MODE);
+    }
+
+    public int getEnergyMode() {
+        return data.get(DATA_ENERGY_MODE);
     }
 }

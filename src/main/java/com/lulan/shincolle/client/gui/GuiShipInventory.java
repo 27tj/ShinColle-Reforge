@@ -1,13 +1,19 @@
 package com.lulan.shincolle.client.gui;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.lulan.shincolle.client.gui.inventory.ContainerShipInventory;
 import com.lulan.shincolle.entity.BasicEntityShip;
+import com.lulan.shincolle.entity.BasicEntityShipCV;
 import com.lulan.shincolle.network.C2SGUIInputPacket;
 import com.lulan.shincolle.network.ModNetworking;
 import com.lulan.shincolle.reference.ID;
 import com.lulan.shincolle.reference.Values;
 import com.lulan.shincolle.reference.unitclass.Attrs;
+import com.lulan.shincolle.reference.unitclass.AttrsAdv;
 import com.lulan.shincolle.utility.BuffHelper;
+import com.lulan.shincolle.utility.GuiHelper;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -218,30 +224,17 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
 
     /** Render AI page tab indicators (two columns of 6 tabs) */
     private void renderAIPageTabs(GuiGraphics graphics) {
-        int baseY = this.topPos + 131;
-
-        // Left column: pages 1-6
-        for (int i = 0; i < 6; i++) {
-            int tabY = baseY + i * 13;
-            boolean selected = (showPageAI == i + 1);
-            int color = selected ? 0xFF006600 : 0xFF222222;
-            int border = selected ? 0xFF00CC00 : 0xFF444444;
-            graphics.fill(this.leftPos + 239, tabY, this.leftPos + 245, tabY + 11, color);
-            // Top/bottom borders
-            graphics.fill(this.leftPos + 239, tabY, this.leftPos + 245, tabY + 1, border);
-            graphics.fill(this.leftPos + 239, tabY + 10, this.leftPos + 245, tabY + 11, border);
-        }
-
-        // Right column: pages 7-12
-        for (int i = 0; i < 6; i++) {
-            int tabY = baseY + i * 13;
-            boolean selected = (showPageAI == i + 7);
-            int color = selected ? 0xFF006600 : 0xFF222222;
-            int border = selected ? 0xFF00CC00 : 0xFF444444;
-            graphics.fill(this.leftPos + 246, tabY, this.leftPos + 253, tabY + 11, color);
-            graphics.fill(this.leftPos + 246, tabY, this.leftPos + 253, tabY + 1, border);
-            graphics.fill(this.leftPos + 246, tabY + 10, this.leftPos + 253, tabY + 11, border);
-        }
+        // [PORT] 1.10.2 -> 1.20.1: use legacy single tab-indicator sprite for AI pages.
+        int indicatorX = showPageAI <= 6 ? 239 : 246;
+        int indicatorY = switch (showPageAI) {
+            case 1, 7 -> 131;
+            case 2, 8 -> 144;
+            case 3, 9 -> 157;
+            case 4, 10 -> 170;
+            case 5, 11 -> 183;
+            default -> 196;
+        };
+        graphics.blit(TEXTURE, this.leftPos + indicatorX, this.topPos + indicatorY, 74, 214, 6, 11);
     }
 
     // ========== AI Page Content Background Rendering ==========
@@ -288,14 +281,7 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
             int bx = this.leftPos + 174;
             int by = this.topPos + 131 + i * 13;
             boolean isOn = ship.getStateFlag(flagId);
-
-            int bgColor = isOn ? 0xFF006600 : 0xFF333333;
-            graphics.fill(bx, by, bx + 11, by + 11, bgColor);
-            int borderColor = isOn ? 0xFF00CC00 : 0xFF666666;
-            graphics.fill(bx, by, bx + 11, by + 1, borderColor);
-            graphics.fill(bx, by + 10, bx + 11, by + 11, borderColor);
-            graphics.fill(bx, by, bx + 1, by + 11, borderColor);
-            graphics.fill(bx + 10, by, bx + 11, by + 11, borderColor);
+            graphics.blit(TEXTURE, bx, by, isOn ? 0 : 11, 214, 11, 11);
         }
     }
 
@@ -304,10 +290,7 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
         for (int idx = 0; idx < barIndices.length; idx++) {
             int barIndex = barIndices[idx];
             int trackY = this.topPos + SLIDER_TRACK_Y[idx];
-            int trackX = this.leftPos + SLIDER_TRACK_X;
-
-            // Track background
-            graphics.fill(trackX, trackY, trackX + SLIDER_TRACK_W, trackY + 3, 0xFF555555);
+            graphics.blit(TEXTURE, this.leftPos + SLIDER_TRACK_X, trackY, 31, 214, 43, 3);
 
             // Get slider position
             int pos;
@@ -321,8 +304,7 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
             // Handle
             int hx = this.leftPos + 189 + pos;
             int hy = trackY - 3;
-            int handleColor = (mousePressBar == barIndex) ? 0xFFFF4444 : 0xFFCCCCCC;
-            graphics.fill(hx, hy, hx + SLIDER_HANDLE_W, hy + SLIDER_HANDLE_H, handleColor);
+            graphics.blit(TEXTURE, hx, hy, 22, 214, 9, 9);
         }
     }
 
@@ -346,14 +328,7 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
                 int sx = this.leftPos + 176 + col * 16;
                 int sy = this.topPos + 157 + row * 13;
                 boolean stateOn = (modelState & (1 << stateIdx)) != 0;
-
-                int sBg = stateOn ? 0xFF004488 : 0xFF333333;
-                graphics.fill(sx, sy, sx + 14, sy + 11, sBg);
-                int sBorder = stateOn ? 0xFF0088FF : 0xFF555555;
-                graphics.fill(sx, sy, sx + 14, sy + 1, sBorder);
-                graphics.fill(sx, sy + 10, sx + 14, sy + 11, sBorder);
-                graphics.fill(sx, sy, sx + 1, sy + 11, sBorder);
-                graphics.fill(sx + 13, sy, sx + 14, sy + 11, sBorder);
+                graphics.blit(TEXTURE, sx, sy, stateOn ? 0 : 11, 214, 11, 11);
             }
         }
     }
@@ -361,63 +336,55 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
     /** Render page 7 background: Task selection */
     private void renderPage7Bg(GuiGraphics graphics, BasicEntityShip ship) {
         int currentTask = ship.getStateMinor(ID.M.Task);
+        // Task icon row and overlay labels.
+        graphics.blit(TEXTURE, this.leftPos + 174, this.topPos + 136, 87, 214, 64, 16);
+        graphics.blit(TEXTURE, this.leftPos + 174, this.topPos + 138, 151, 237, 64, 16);
 
-        // 4 task buttons (16x16 each)
-        String[] taskLabels = { "Cook", "Fish", "Mine", "Crft" };
-        for (int i = 0; i < 4; i++) {
-            int tx = this.leftPos + 174 + i * 16;
-            int ty = this.topPos + 136;
-            boolean selected = (currentTask == i + 1);
-            int bg = selected ? 0xFF664400 : 0xFF333333;
-            int border = selected ? 0xFFFFAA00 : 0xFF555555;
-            graphics.fill(tx, ty, tx + 14, ty + 14, bg);
-            graphics.fill(tx, ty, tx + 14, ty + 1, border);
-            graphics.fill(tx, ty + 13, tx + 14, ty + 14, border);
-            graphics.fill(tx, ty, tx + 1, ty + 14, border);
-            graphics.fill(tx + 13, ty, tx + 14, ty + 14, border);
+        switch (currentTask) {
+            case 1 -> graphics.blit(TEXTURE, this.leftPos + 174, this.topPos + 136, 87, 230, 16, 16);
+            case 2 -> graphics.blit(TEXTURE, this.leftPos + 190, this.topPos + 136, 103, 230, 16, 16);
+            case 3 -> graphics.blit(TEXTURE, this.leftPos + 206, this.topPos + 136, 119, 230, 16, 16);
+            case 4 -> graphics.blit(TEXTURE, this.leftPos + 222, this.topPos + 136, 135, 230, 16, 16);
+            default -> {
+            }
         }
 
         // Task side toggle: metadata, ore dict, NBT tag checkboxes
         int taskSide = ship.getStateMinor(ID.M.TaskSide);
-        for (int i = 0; i < 3; i++) {
-            int cx = this.leftPos + 177;
-            int cy = this.topPos + 157 + i * 13;
-            boolean checked = (taskSide & (1 << (18 + i))) != 0;
-            drawToggleButton(graphics, cx, cy, checked);
-        }
+        graphics.blit(TEXTURE, this.leftPos + 177, this.topPos + 157,
+                (taskSide & (1 << 18)) != 0 ? 0 : 0,
+                (taskSide & (1 << 18)) != 0 ? 236 : 225,
+                11, 11);
+        graphics.blit(TEXTURE, this.leftPos + 177, this.topPos + 170,
+                (taskSide & (1 << 19)) != 0 ? 11 : 11,
+                (taskSide & (1 << 19)) != 0 ? 236 : 225,
+                11, 11);
+        graphics.blit(TEXTURE, this.leftPos + 177, this.topPos + 183,
+                (taskSide & (1 << 20)) != 0 ? 22 : 22,
+                (taskSide & (1 << 20)) != 0 ? 236 : 225,
+                11, 11);
     }
 
     /** Render page 8 background: Task side I/O/Fuel direction buttons */
     private void renderPage8Bg(GuiGraphics graphics, BasicEntityShip ship) {
         int taskSide = ship.getStateMinor(ID.M.TaskSide);
-        String[] dirLabels = { "D", "U", "N", "S", "W", "E" };
 
-        // 3 rows: Input (bits 0-5), Output (bits 6-11), Fuel (bits 12-17)
-        int[] rowYs = { 144, 170, 196 };
-        for (int row = 0; row < 3; row++) {
-            for (int col = 0; col < 6; col++) {
-                int bit = row * 6 + col;
-                boolean on = (taskSide & (1 << bit)) != 0;
-                int dx = this.leftPos + 173 + col * 11;
-                int dy = this.topPos + rowYs[row];
-                int bg = on ? 0xFF006600 : 0xFF333333;
-                int border = on ? 0xFF00CC00 : 0xFF555555;
-                graphics.fill(dx, dy, dx + 10, dy + 11, bg);
-                graphics.fill(dx, dy, dx + 10, dy + 1, border);
-                graphics.fill(dx, dy + 10, dx + 10, dy + 11, border);
+        graphics.blit(TEXTURE, this.leftPos + 173, this.topPos + 144, 151, 214, 66, 11);
+        graphics.blit(TEXTURE, this.leftPos + 173, this.topPos + 170, 151, 214, 66, 11);
+        graphics.blit(TEXTURE, this.leftPos + 173, this.topPos + 196, 151, 214, 66, 11);
+
+        for (int i = 0; i < 18; i++) {
+            if ((taskSide & (1 << i)) != 0) {
+                int dx = (i % 6) * 11;
+                int dy = (i / 6) * 26;
+                graphics.blit(TEXTURE, this.leftPos + 173 + dx, this.topPos + 144 + dy, 151 + dx, 225, 11, 11);
             }
         }
     }
 
     /** Helper: draw a single 11x11 toggle button */
     private void drawToggleButton(GuiGraphics graphics, int x, int y, boolean isOn) {
-        int bgColor = isOn ? 0xFF006600 : 0xFF333333;
-        graphics.fill(x, y, x + 11, y + 11, bgColor);
-        int borderColor = isOn ? 0xFF00CC00 : 0xFF666666;
-        graphics.fill(x, y, x + 11, y + 1, borderColor);
-        graphics.fill(x, y + 10, x + 11, y + 11, borderColor);
-        graphics.fill(x, y, x + 1, y + 11, borderColor);
-        graphics.fill(x + 10, y, x + 11, y + 11, borderColor);
+        graphics.blit(TEXTURE, x, y, isOn ? 0 : 11, 214, 11, 11);
     }
 
     // ========== Label/Text Rendering ==========
@@ -460,9 +427,6 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
 
         // AI Page Labels
         renderAIPageLabels(graphics, ship);
-
-        // AI Page Tab Numbers
-        renderAIPageTabNumbers(graphics);
 
         // Player inventory title (vanilla位置を維持)
         graphics.drawString(this.font, this.playerInventoryTitle, this.inventoryLabelX, 121, 0x404040, false);
@@ -511,12 +475,6 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
         textY += 21;
         drawStatLine(graphics, textX, textY, tr("gui.shincolle.grudge", "Grudge") + ":",
                 String.valueOf(ship.getStateMinor(ID.M.NumGrudge)), lc, vc);
-        textY += 21;
-
-        int morale = ship.getMorale();
-        String moraleText = getMoraleDisplayName(morale);
-        int moraleColor = getMoraleDisplayColor(morale);
-        drawStatLine(graphics, textX, textY, tr("gui.shincolle.morale", "Morale") + ":", moraleText, lc, moraleColor);
     }
 
     /** Page 1: ATK, DEF, SPD, MOV, HIT */
@@ -530,34 +488,29 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
         int lc = 0x404040;
         int vc = 0xFFFFFF;
 
-        String atkKey = showAirAttack ? "gui.shincolle.airfirepower" : "gui.shincolle.firepower1";
-        String torpedoKey = showAirAttack ? "gui.shincolle.airtorpedo" : "gui.shincolle.torpedo";
+        String atkKey = showAirAttack ? "gui.shincolle.firepower2" : "gui.shincolle.firepower1";
         float atkVal = showAirAttack ? attrs.getAttrsBuffed(ID.Attrs.ATK_AL) : attrs.getAttrsBuffed(ID.Attrs.ATK_L);
         float torpedoVal = showAirAttack ? attrs.getAttrsBuffed(ID.Attrs.ATK_AH) : attrs.getAttrsBuffed(ID.Attrs.ATK_H);
+        String atkText = String.format("%.1f / %.1f", atkVal, torpedoVal);
 
         drawStatLine(graphics, textX, textY, I18n.get(atkKey),
-                String.format("%.1f", atkVal), lc, vc);
-        textY += 17;
-        drawStatLine(graphics, textX, textY, I18n.get(torpedoKey),
-                String.format("%.1f", torpedoVal), lc, vc);
-        textY += 17;
+                atkText, lc, GuiHelper.getBonusPointColor(attrs.getAttrsBonus(ID.AttrsBase.ATK)));
+        textY += 21;
         drawStatLine(graphics, textX, textY, I18n.get("gui.shincolle.armor"),
-                String.format("%.1f", attrs.getAttrsBuffed(ID.Attrs.DEF)), lc, vc);
-        textY += 17;
+                String.format("%.1f%%", attrs.getAttrsBuffed(ID.Attrs.DEF) * 100F), lc,
+                GuiHelper.getBonusPointColor(attrs.getAttrsBonus(ID.AttrsBase.DEF)));
+        textY += 21;
         drawStatLine(graphics, textX, textY, I18n.get("gui.shincolle.attackspeed"),
-                String.format("%.2f", attrs.getAttrsBuffed(ID.Attrs.SPD)), lc, vc);
-        textY += 17;
+                String.format("%.2f", attrs.getAttrsBuffed(ID.Attrs.SPD)), lc,
+                GuiHelper.getBonusPointColor(attrs.getAttrsBonus(ID.AttrsBase.SPD)));
+        textY += 21;
         drawStatLine(graphics, textX, textY, I18n.get("gui.shincolle.movespeed"),
-                String.format("%.3f", attrs.getAttrsBuffed(ID.Attrs.MOV)), lc, vc);
-        textY += 17;
+                String.format("%.2f", attrs.getAttrsBuffed(ID.Attrs.MOV)), lc,
+                GuiHelper.getBonusPointColor(attrs.getAttrsBonus(ID.AttrsBase.MOV)));
+        textY += 21;
         drawStatLine(graphics, textX, textY, I18n.get("gui.shincolle.range"),
-                String.format("%.0f", attrs.getAttrsBuffed(ID.Attrs.HIT)), lc, vc);
-        textY += 17;
-        drawStatLine(graphics, textX, textY, I18n.get("gui.shincolle.critical"),
-                String.format("%.0f%%", attrs.getAttrsBuffed(ID.Attrs.CRI) * 100F), lc, vc);
-        textY += 17;
-        drawStatLine(graphics, textX, textY, I18n.get("gui.shincolle.dodge"),
-                String.format("%.0f%%", attrs.getAttrsBuffed(ID.Attrs.DODGE) * 100F), lc, vc);
+                String.format("%.1f", attrs.getAttrsBuffed(ID.Attrs.HIT)), lc,
+                GuiHelper.getBonusPointColor(attrs.getAttrsBonus(ID.AttrsBase.HIT)));
     }
 
     /** Page 2: Marriage, Ring, Formation, Ship type, UID */
@@ -570,24 +523,19 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
         boolean isMarried = ship.getStateFlag(ID.F.IsMarried);
         drawStatLine(graphics, textX, textY, tr("gui.shincolle.marriage", "Marriage") + ":",
                 isMarried ? tr("gui.shincolle.married", "Married") : tr("gui.shincolle.unmarried", "Unmarried"),
-                lc, isMarried ? 0xFF69B4 : 0xAAAAAA);
-        textY += 21;
-        boolean hasRing = ship.getStateFlag(ID.F.HaveRingEffect);
-        drawStatLine(graphics, textX, textY, tr("gui.shincolle.auraeffect", "Aura Effect") + ":",
-                hasRing ? tr("gui.shincolle.general.ok", "ON") : tr("gui.shincolle.general.cancel", "OFF"),
-                lc, hasRing ? 0xFFD700 : 0xAAAAAA);
+                lc, 0xFFFF00);
         textY += 21;
         drawStatLine(graphics, textX, textY, tr("gui.shincolle.formation.formation", "Formation") + ":",
                 getFormationName(ship.getStateMinor(ID.M.FormatType)), lc, vc);
-        textY += 21;
-        drawStatLine(graphics, textX, textY, tr("gui.shincolle.formation.position", "Formation Pos") + ":",
-                String.valueOf(ship.getStateMinor(ID.M.FormatPos)), lc, vc);
-        textY += 21;
-        drawStatLine(graphics, textX, textY, tr("gui.shincolle.type", "Type") + ":",
-                getShipTypeName(ship.getShipType()), lc,
-                vc);
-        textY += 21;
-        drawStatLine(graphics, textX, textY, "UID:", String.valueOf(ship.getShipUID()), lc, vc);
+
+        if (ship instanceof BasicEntityShipCV cvShip) {
+            textY += 42;
+            drawStatLine(graphics, textX, textY, tr("gui.shincolle.airplanelight", "Light Aircraft") + ":",
+                    String.valueOf(cvShip.getNumAircraftLight()), lc, 0xFFFF00);
+            textY += 21;
+            drawStatLine(graphics, textX, textY, tr("gui.shincolle.airplaneheavy", "Heavy Aircraft") + ":",
+                    String.valueOf(cvShip.getNumAircraftHeavy()), lc, 0xFFFF00);
+        }
     }
 
     private static String getMoraleDisplayName(int morale) {
@@ -669,15 +617,13 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
             if (conditionFlag >= 0 && !ship.getStateFlag(conditionFlag))
                 continue;
 
-            boolean isOn = ship.getStateFlag(toggles[i][0]);
-            int textColor = isOn ? 0x00FF00 : 0xCCCCCC;
-            graphics.drawString(this.font, tr(labelKeys[i], labels[i]), 187, 132 + i * 13, textColor, false);
+            graphics.drawString(this.font, tr(labelKeys[i], labels[i]), 187, 133 + i * 13, 0x000000, false);
         }
     }
 
     /** Render slider labels for page 2: Follow Min, Follow Max, Flee HP */
     private void renderSliderLabelsPage2(GuiGraphics graphics, BasicEntityShip ship) {
-        int lc = 0xCCCCCC;
+        int lc = 0x000000;
 
         graphics.drawString(this.font, tr("gui.shincolle.followmin", "Follow Min"), 174, 134, lc, false);
         int fmin = (mousePressBar == 0) ? barPosToState(0, barPos) : ship.getStateMinor(ID.M.FollowMin);
@@ -692,17 +638,17 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
         graphics.drawString(this.font, tr("gui.shincolle.fleehp", "Flee HP%"), 174, 182, lc, false);
         int flee = (mousePressBar == 2) ? barPosToState(2, barPos) : ship.getStateMinor(ID.M.FleeHP);
         int fleeColor = (mousePressBar == 2) ? 0xFF4444 : 0xFFFF00;
-        graphics.drawString(this.font, flee + "%", 174, 193, fleeColor, true);
+        graphics.drawString(this.font, String.valueOf(flee), 174, 193, fleeColor, true);
     }
 
     /** Render slider labels for page 5: Waypoint Stay, Auto Combat Ration */
     private void renderSliderLabelsPage5(GuiGraphics graphics, BasicEntityShip ship) {
-        int lc = 0xCCCCCC;
+        int lc = 0x000000;
 
         graphics.drawString(this.font, tr("gui.shincolle.ai.wpstay", "Waypoint Stay"), 174, 134, lc, false);
         int wpStay = (mousePressBar == 3) ? barPosToState(3, barPos) : ship.getStateMinor(ID.M.WpStay);
         int wpColor = (mousePressBar == 3) ? 0xFF4444 : 0xFFFF00;
-        String wpText = wpStay == 0 ? tr("gui.shincolle.general.off", "Off") : (wpStay + "s");
+        String wpText = wpStay + "s";
         graphics.drawString(this.font, wpText, 174, 145, wpColor, true);
 
         graphics.drawString(this.font, tr("gui.shincolle.autocombatration", "Auto CR"), 174, 158, lc, false);
@@ -715,51 +661,16 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
     /** Render page 6 labels: Show Held + Model State grid */
     private void renderPage6Labels(GuiGraphics graphics, BasicEntityShip ship) {
         boolean showHeld = ship.getStateFlag(ID.F.ShowHeldItem);
-        graphics.drawString(this.font, tr("gui.shincolle.showhelditem", "Show Held Item"), 187, 132,
-                showHeld ? 0x00FF00 : 0xCCCCCC, false);
-        graphics.drawString(this.font, tr("gui.shincolle.appearance", "Appearance"), 177, 147, 0xCCCCCC, false);
-
-        int numStates = ship.getStateMinor(ID.M.NumState);
-        int modelState = ship.getStateEmotion(ID.S.State);
-        for (int row = 0; row < 4; row++) {
-            for (int col = 0; col < 4; col++) {
-                int stateIdx = row * 4 + col;
-                if (stateIdx >= numStates)
-                    return;
-                boolean on = (modelState & (1 << stateIdx)) != 0;
-                int sx = 178 + col * 16;
-                int sy = 158 + row * 13;
-                graphics.drawString(this.font, String.valueOf(stateIdx + 1), sx, sy, on ? 0x66BBFF : 0xCCCCCC, false);
-            }
-        }
+        graphics.drawString(this.font, tr("gui.shincolle.showhelditem", "Show Held Item"), 187, 133,
+                showHeld ? 0x000000 : 0x000000, false);
+        graphics.drawString(this.font, tr("gui.shincolle.appearance", "Appearance"), 177, 146, 0x000000, false);
     }
 
     /** Render page 7 labels: Task selection */
     private void renderPage7Labels(GuiGraphics graphics, BasicEntityShip ship) {
-        int currentTask = ship.getStateMinor(ID.M.Task);
-        String[] taskNames = {
-                tr("gui.shincolle.ai.cooking", "Cook"),
-                tr("gui.shincolle.ai.fishing", "Fish"),
-                tr("gui.shincolle.ai.mining", "Mine"),
-                tr("gui.shincolle.ai.crafting", "Craft")
-        };
-        for (int i = 0; i < 4; i++) {
-            int tx = 175 + i * 16;
-            boolean selected = (currentTask == i + 1);
-            graphics.drawString(this.font, taskNames[i], tx, 153, selected ? 0xFFAA00 : 0xCCCCCC, false);
-        }
-
-        // Task setting labels
-        String[] settingLabels = {
-                tr("gui.shincolle.crane.usemeta", "Metadata"),
-                tr("gui.shincolle.crane.useoredict", "Ore Dict"),
-                tr("gui.shincolle.crane.usenbt", "NBT Tag")
-        };
-        int taskSide = ship.getStateMinor(ID.M.TaskSide);
-        for (int i = 0; i < 3; i++) {
-            boolean checked = (taskSide & (1 << (18 + i))) != 0;
-            graphics.drawString(this.font, settingLabels[i], 190, 158 + i * 13, checked ? 0x00FF00 : 0xCCCCCC, false);
-        }
+        graphics.drawString(this.font, " Metadata", 187, 159, 0x000000, false);
+        graphics.drawString(this.font, " Ore Dict", 187, 172, 0x000000, false);
+        graphics.drawString(this.font, " NBT Tag", 187, 185, 0x000000, false);
     }
 
     /** Render page 8 labels: Task side directions */
@@ -771,16 +682,7 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
         };
         int[] rowLabelY = { 133, 159, 185 };
         for (int i = 0; i < 3; i++) {
-            graphics.drawString(this.font, rowLabels[i], 177, rowLabelY[i], 0xCCCCCC, false);
-        }
-
-        // Direction labels on each button
-        String[] dirs = { "D", "U", "N", "S", "W", "E" };
-        int[] rowYs = { 145, 171, 197 };
-        for (int row = 0; row < 3; row++) {
-            for (int col = 0; col < 6; col++) {
-                graphics.drawString(this.font, dirs[col], 175 + col * 11, rowYs[row], 0xCCCCCC, false);
-            }
+            graphics.drawString(this.font, rowLabels[i], 177, rowLabelY[i], 0x000000, false);
         }
     }
 
@@ -1083,6 +985,113 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
         this.renderBackground(graphics);
         super.render(graphics, mouseX, mouseY, partialTick);
         this.renderTooltip(graphics, mouseX, mouseY);
+
+        BasicEntityShip ship = this.menu.getShip();
+        if (ship != null && isHoveringMoraleIcon(mouseX, mouseY)) {
+            renderMoraleTooltip(graphics, ship, mouseX, mouseY);
+        }
+        if (ship != null) {
+            renderAIPageTooltip(graphics, mouseX, mouseY);
+        }
+    }
+
+    /** Render small hover tooltips for AI page task controls (legacy parity). */
+    private void renderAIPageTooltip(GuiGraphics graphics, int mouseX, int mouseY) {
+        if (showPageAI != 7) {
+            return;
+        }
+
+        int relX = mouseX - this.leftPos;
+        int relY = mouseY - this.topPos;
+        if (relX < 173 || relX >= 239 || relY < 131 || relY >= 207) {
+            return;
+        }
+
+        List<Component> tips = new ArrayList<>();
+        if (relY <= 157) {
+            if (relX < 190) {
+                tips.add(Component.literal(tr("gui.shincolle.ai.cooking", "Cooking")));
+            } else if (relX < 206) {
+                tips.add(Component.literal(tr("gui.shincolle.ai.fishing", "Fishing")));
+            } else if (relX < 222) {
+                tips.add(Component.literal(tr("gui.shincolle.ai.mining", "Mining")));
+            } else {
+                tips.add(Component.literal(tr("gui.shincolle.ai.crafting", "Crafting")));
+            }
+        } else if (relY <= 170) {
+            tips.add(Component.literal("Metadata"));
+        } else if (relY <= 183) {
+            tips.add(Component.literal("Ore Dict"));
+        } else if (relY <= 196) {
+            tips.add(Component.literal("NBT Tag"));
+        }
+
+        if (!tips.isEmpty()) {
+            graphics.renderComponentTooltip(this.font, tips, mouseX, mouseY);
+        }
+    }
+
+    /** Morale icon hover region near the top-right model panel. */
+    private boolean isHoveringMoraleIcon(int mouseX, int mouseY) {
+        int x0 = this.leftPos + 238;
+        int y0 = this.topPos + 17;
+        return mouseX >= x0 && mouseX < x0 + 13 && mouseY >= y0 && mouseY < y0 + 13;
+    }
+
+    /**
+     * Render morale tooltip with current morale and morale-derived attribute
+     * modifiers.
+     */
+    private void renderMoraleTooltip(GuiGraphics graphics, BasicEntityShip ship, int mouseX, int mouseY) {
+        List<Component> lines = new ArrayList<>();
+        int morale = ship.getMorale();
+        lines.add(Component.literal(getMoraleDisplayName(morale) + " (" + morale + ")"));
+
+        Attrs attrs = ship.getAttrs();
+        if (attrs instanceof AttrsAdv adv) {
+            lines.add(Component.literal(tr("gui.shincolle.firepower1", "Firepower") + ": x "
+                    + String.format("%.0f", adv.getAttrsMorale(ID.Attrs.ATK_L) * 100F)
+                    + "% / "
+                    + String.format("%.0f", adv.getAttrsMorale(ID.Attrs.ATK_H) * 100F) + "%"));
+            lines.add(Component.literal(tr("gui.shincolle.airfirepower", "Air Firepower") + ": x "
+                    + String.format("%.0f", adv.getAttrsMorale(ID.Attrs.ATK_AL) * 100F)
+                    + "% / "
+                    + String.format("%.0f", adv.getAttrsMorale(ID.Attrs.ATK_AH) * 100F) + "%"));
+            lines.add(Component.literal(tr("gui.shincolle.attackspeed", "Attack Speed") + ": x "
+                    + String.format("%.0f", adv.getAttrsMorale(ID.Attrs.SPD) * 100F) + "%"));
+            lines.add(Component.literal(tr("gui.shincolle.range", "Range") + ": + "
+                    + String.format("%.1f", adv.getAttrsMorale(ID.Attrs.HIT))));
+            lines.add(Component.literal(tr("gui.shincolle.critical", "Critical") + ": x "
+                    + String.format("%.0f", adv.getAttrsMorale(ID.Attrs.CRI) * 100F) + "%"));
+            lines.add(Component.literal("DHIT: x "
+                    + String.format("%.0f", adv.getAttrsMorale(ID.Attrs.DHIT) * 100F) + "%"));
+            lines.add(Component.literal("THIT: x "
+                    + String.format("%.0f", adv.getAttrsMorale(ID.Attrs.THIT) * 100F) + "%"));
+            lines.add(Component.literal(tr("gui.shincolle.missrate", "Miss") + ": x "
+                    + String.format("%.0f", adv.getAttrsMorale(ID.Attrs.MISS) * 100F) + "%"));
+            lines.add(Component.literal("AA: x "
+                    + String.format("%.0f", adv.getAttrsMorale(ID.Attrs.AA) * 100F) + "%"));
+            lines.add(Component.literal("ASM: x "
+                    + String.format("%.0f", adv.getAttrsMorale(ID.Attrs.ASM) * 100F) + "%"));
+            lines.add(Component.literal(tr("gui.shincolle.armor", "Armor") + ": + "
+                    + String.format("%.0f", adv.getAttrsMorale(ID.Attrs.DEF) * 100F) + "%"));
+            lines.add(Component.literal(tr("gui.shincolle.dodge", "Dodge") + ": + "
+                    + String.format("%.0f", adv.getAttrsMorale(ID.Attrs.DODGE) * 100F) + "%"));
+            lines.add(Component.literal("XP: + "
+                    + String.format("%.0f", adv.getAttrsMorale(ID.Attrs.XP) * 100F) + "%"));
+            lines.add(Component.literal(tr("gui.shincolle.grudge", "Grudge") + ": + "
+                    + String.format("%.0f", adv.getAttrsMorale(ID.Attrs.GRUDGE) * 100F) + "%"));
+            lines.add(Component.literal(tr("gui.shincolle.ammo", "Ammo") + ": + "
+                    + String.format("%.0f", adv.getAttrsMorale(ID.Attrs.AMMO) * 100F) + "%"));
+            lines.add(Component.literal("HPRES: + "
+                    + String.format("%.0f", adv.getAttrsMorale(ID.Attrs.HPRES) * 100F) + "%"));
+            lines.add(Component.literal("KB: + "
+                    + String.format("%.0f", adv.getAttrsMorale(ID.Attrs.KB) * 100F) + "%"));
+            lines.add(Component.literal(tr("gui.shincolle.movespeed", "Move Speed") + ": + "
+                    + String.format("%.2f", adv.getAttrsMorale(ID.Attrs.MOV))));
+        }
+
+        graphics.renderComponentTooltip(this.font, lines, mouseX, mouseY);
     }
 
     // ========== Slider Conversion Methods ==========

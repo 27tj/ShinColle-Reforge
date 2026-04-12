@@ -1,12 +1,17 @@
 package com.lulan.shincolle.tileentity;
 
+import java.util.List;
+
 import com.lulan.shincolle.client.gui.inventory.ContainerCrane;
 import com.lulan.shincolle.entity.BasicEntityShip;
 import com.lulan.shincolle.init.ModBlockEntities;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.Container;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
@@ -14,14 +19,10 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.network.Connection;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-
-import java.util.List;
 
 /**
  * Block entity for the Crane block.
@@ -57,12 +58,12 @@ public class TileEntityCrane extends BasicTileInventory implements MenuProvider 
 	private boolean checkNbt = false;
 	/** Check ore dictionary / item tags when filtering */
 	private boolean checkDict = false;
-	/** Respond to redstone signal */
-	private boolean redSignal = false;
-	/** Enable liquid/fluid transfer mode */
-	private boolean liquidMode = false;
-	/** Enable energy transfer mode */
-	private boolean energyMode = false;
+	/** Respond to redstone signal mode (0:none, 1:continuous, 2:pulse). */
+	private int redSignalMode = 0;
+	/** Liquid transfer mode (0:none, 1:to ship, 2:to crane). */
+	private int liquidMode = 0;
+	/** Energy transfer mode (0:none, 1:to ship, 2:to crane). */
+	private int energyMode = 0;
 
 	/** Paired chest position */
 	private BlockPos chestPos = BlockPos.ZERO;
@@ -110,7 +111,7 @@ public class TileEntityCrane extends BasicTileInventory implements MenuProvider 
 	}
 
 	public void setCraneMode(int mode) {
-		this.craneMode = mode;
+		this.craneMode = Math.max(0, Math.min(mode, MODE_NAMES.length - 1));
 		setChanged();
 	}
 
@@ -173,30 +174,63 @@ public class TileEntityCrane extends BasicTileInventory implements MenuProvider 
 	}
 
 	public boolean isRedSignal() {
-		return redSignal;
+		return redSignalMode > 0;
 	}
 
 	public void setRedSignal(boolean v) {
-		this.redSignal = v;
+		setRedSignalMode(v ? 1 : 0);
+	}
+
+	public int getRedSignalMode() {
+		return redSignalMode;
+	}
+
+	public void setRedSignalMode(int mode) {
+		this.redSignalMode = normalizeTriStateMode(mode);
 		setChanged();
 	}
 
 	public boolean isLiquidMode() {
-		return liquidMode;
+		return liquidMode > 0;
 	}
 
 	public void setLiquidMode(boolean v) {
-		this.liquidMode = v;
+		setLiquidMode(v ? 1 : 0);
+	}
+
+	public int getLiquidMode() {
+		return liquidMode;
+	}
+
+	public void setLiquidMode(int mode) {
+		this.liquidMode = normalizeTriStateMode(mode);
 		setChanged();
 	}
 
 	public boolean isEnergyMode() {
-		return energyMode;
+		return energyMode > 0;
 	}
 
 	public void setEnergyMode(boolean v) {
-		this.energyMode = v;
+		setEnergyMode(v ? 1 : 0);
+	}
+
+	public int getEnergyMode() {
+		return energyMode;
+	}
+
+	public void setEnergyMode(int mode) {
+		this.energyMode = normalizeTriStateMode(mode);
 		setChanged();
+	}
+
+	private static int normalizeTriStateMode(int mode) {
+		// [PORT] 1.10.2 -> 1.20.1: Keep legacy crane tri-state semantics (0/1/2; >2
+		// wraps to 0).
+		if (mode < 0 || mode > 2) {
+			return 0;
+		}
+		return mode;
 	}
 
 	public BlockPos getChestPos() {
@@ -479,9 +513,9 @@ public class TileEntityCrane extends BasicTileInventory implements MenuProvider 
 		tag.putBoolean("CheckMeta", checkMetadata);
 		tag.putBoolean("CheckNbt", checkNbt);
 		tag.putBoolean("CheckDict", checkDict);
-		tag.putBoolean("RedSignal", redSignal);
-		tag.putBoolean("LiquidMode", liquidMode);
-		tag.putBoolean("EnergyMode", energyMode);
+		tag.putInt("RedSignal", redSignalMode);
+		tag.putInt("LiquidMode", liquidMode);
+		tag.putInt("EnergyMode", energyMode);
 		tag.putInt("PlayerUID", playerUID);
 		tag.putLong("ChestPos", chestPos.asLong());
 		tag.putLong("NextPos", nextPos.asLong());
@@ -499,9 +533,21 @@ public class TileEntityCrane extends BasicTileInventory implements MenuProvider 
 		checkMetadata = tag.getBoolean("CheckMeta");
 		checkNbt = tag.getBoolean("CheckNbt");
 		checkDict = tag.getBoolean("CheckDict");
-		redSignal = tag.getBoolean("RedSignal");
-		liquidMode = tag.getBoolean("LiquidMode");
-		energyMode = tag.getBoolean("EnergyMode");
+		if (tag.contains("RedSignal", Tag.TAG_INT)) {
+			redSignalMode = normalizeTriStateMode(tag.getInt("RedSignal"));
+		} else {
+			redSignalMode = tag.getBoolean("RedSignal") ? 1 : 0;
+		}
+		if (tag.contains("LiquidMode", Tag.TAG_INT)) {
+			liquidMode = normalizeTriStateMode(tag.getInt("LiquidMode"));
+		} else {
+			liquidMode = tag.getBoolean("LiquidMode") ? 1 : 0;
+		}
+		if (tag.contains("EnergyMode", Tag.TAG_INT)) {
+			energyMode = normalizeTriStateMode(tag.getInt("EnergyMode"));
+		} else {
+			energyMode = tag.getBoolean("EnergyMode") ? 1 : 0;
+		}
 		playerUID = tag.getInt("PlayerUID");
 		if (tag.contains("ChestPos"))
 			chestPos = BlockPos.of(tag.getLong("ChestPos"));

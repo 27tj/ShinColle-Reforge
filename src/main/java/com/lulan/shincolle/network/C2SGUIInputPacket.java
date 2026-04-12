@@ -298,34 +298,35 @@ public class C2SGUIInputPacket {
 	private static void handleCraneBtn(TileEntityCrane tile, int buttonId, int value) {
 		switch (buttonId) {
 			case ID.B.Crane_Power:
-				tile.setActive(!tile.isActive());
+				tile.setActive(value != 0);
 				break;
 			case ID.B.Crane_Mode:
 				tile.setCraneMode(value);
 				break;
 			case ID.B.Crane_Meta:
-				tile.setCheckMetadata(!tile.isCheckMetadata());
+				tile.setCheckMetadata(value != 0);
 				break;
 			case ID.B.Crane_Dict:
-				tile.setCheckDict(!tile.isCheckDict());
+				tile.setCheckDict(value != 0);
 				break;
 			case ID.B.Crane_Load:
-				tile.setEnabLoad(!tile.isEnabLoad());
+				tile.setEnabLoad(value != 0);
 				break;
 			case ID.B.Crane_Unload:
-				tile.setEnabUnload(!tile.isEnabUnload());
+				tile.setEnabUnload(value != 0);
 				break;
 			case ID.B.Crane_Nbt:
-				tile.setCheckNbt(!tile.isCheckNbt());
+				tile.setCheckNbt(value != 0);
 				break;
 			case ID.B.Crane_Red:
-				tile.setRedSignal(!tile.isRedSignal());
+				// [PORT] 1.10.2 -> 1.20.1: preserve explicit tri-state values from GUI packet.
+				tile.setRedSignalMode(value);
 				break;
 			case ID.B.Crane_Liquid:
-				tile.setLiquidMode(!tile.isLiquidMode());
+				tile.setLiquidMode(value);
 				break;
 			case ID.B.Crane_Energy:
-				tile.setEnergyMode(!tile.isEnergyMode());
+				tile.setEnergyMode(value);
 				break;
 		}
 	}

@@ -39,7 +39,8 @@ public class ShipRangeTargetGoal extends Goal {
 	public ShipRangeTargetGoal(IShipAttackBase host) {
 		this.host = host;
 		this.entity = (Mob) host;
-		this.setFlags(EnumSet.of(Goal.Flag.MOVE));
+		// [PORT] 1.10.2 targetTasks mutex -> 1.20.1 TARGET control flag.
+		this.setFlags(EnumSet.of(Goal.Flag.TARGET));
 
 		if (host instanceof BasicEntityShip) {
 			this.hostShip = (BasicEntityShip) host;
@@ -124,7 +125,8 @@ public class ShipRangeTargetGoal extends Goal {
 	 */
 	private <T> List<LivingEntity> findTargetsByType(AABB searchBox, Class<T> targetType) {
 		List<LivingEntity> result = new ArrayList<>();
-		for (LivingEntity e : this.entity.level().getEntitiesOfClass(LivingEntity.class, searchBox, this::isValidTarget)) {
+		for (LivingEntity e : this.entity.level().getEntitiesOfClass(LivingEntity.class, searchBox,
+				this::isValidTarget)) {
 			if (targetType.isInstance(e)) {
 				result.add(e);
 			}
@@ -136,8 +138,10 @@ public class ShipRangeTargetGoal extends Goal {
 	 * Union two lists, returning a combined non-null list.
 	 */
 	private List<LivingEntity> unionLists(List<LivingEntity> a, List<LivingEntity> b) {
-		if (a == null || a.isEmpty()) return b;
-		if (b == null || b.isEmpty()) return a;
+		if (a == null || a.isEmpty())
+			return b;
+		if (b == null || b.isEmpty())
+			return a;
 		List<LivingEntity> result = new ArrayList<>(a);
 		for (LivingEntity e : b) {
 			if (!result.contains(e)) {

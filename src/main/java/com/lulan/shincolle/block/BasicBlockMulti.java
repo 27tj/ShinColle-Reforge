@@ -7,10 +7,10 @@ import com.lulan.shincolle.utility.MulitBlockHelper;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
@@ -147,18 +147,22 @@ public abstract class BasicBlockMulti extends BasicBlockContainer {
 						NetworkHooks.openScreen(sp, coreGH, gh.getCorePos());
 						return InteractionResult.CONSUME;
 					}
-				}
-				// MBS not yet formed - check if it can form
-				else {
-					int type = MulitBlockHelper.checkMultiBlockForm(level,
-							pos.getX(), pos.getY(), pos.getZ());
 
-					if (type > 0) {
-						MulitBlockHelper.setupStructure(level,
-								pos.getX(), pos.getY(), pos.getZ(), type);
-						LogHelper.debug("DEBUG: check multi block form: type " + type);
-						return InteractionResult.CONSUME;
-					}
+					// [PORT] 1.10.2 -> 1.20.1: stale core references can block structure
+					// reforming forever after world edits/crashes.
+					gh.resetCorePos();
+					updateBlockState(0, level, pos);
+				}
+
+				// MBS not yet formed - check if it can form
+				int type = MulitBlockHelper.checkMultiBlockForm(level,
+						pos.getX(), pos.getY(), pos.getZ());
+
+				if (type > 0) {
+					MulitBlockHelper.setupStructure(level,
+							pos.getX(), pos.getY(), pos.getZ(), type);
+					LogHelper.debug("DEBUG: check multi block form: type " + type);
+					return InteractionResult.CONSUME;
 				}
 			} else if (te instanceof BasicTileMulti tile) {
 				// MBS already formed - open GUI at core
@@ -170,6 +174,9 @@ public abstract class BasicBlockMulti extends BasicBlockContainer {
 						NetworkHooks.openScreen(sp, coreGH, tile.getCorePos());
 						return InteractionResult.CONSUME;
 					}
+
+					tile.resetCorePos();
+					updateBlockState(0, level, pos);
 				}
 			}
 		}

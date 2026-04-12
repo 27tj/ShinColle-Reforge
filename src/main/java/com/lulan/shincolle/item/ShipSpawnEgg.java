@@ -230,7 +230,9 @@ public class ShipSpawnEgg extends BasicItem {
 			// recalc attributes
 			ship.calcShipAttributes(31, true);
 		} else if (entity instanceof BasicEntityShipHostile hostile) {
-			hostile.initAttrs(level.random.nextInt(4));
+			// [PORT] 1.10.2 -> 1.20.1: keep hostile spawn silhouette larger than
+			// regular ships by biasing hostile scale level away from 0.
+			hostile.initAttrs(1 + level.random.nextInt(3));
 			level.addFreshEntity(hostile);
 			hostile.playAmbientSound();
 		}

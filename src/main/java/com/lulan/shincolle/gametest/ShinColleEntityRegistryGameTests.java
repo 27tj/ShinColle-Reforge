@@ -37,8 +37,12 @@ import com.lulan.shincolle.reference.ID;
 import com.lulan.shincolle.reference.Reference;
 import com.lulan.shincolle.server.ServerDataManager;
 import com.lulan.shincolle.team.TeamData;
+import com.lulan.shincolle.tileentity.BasicTileMulti;
+import com.lulan.shincolle.tileentity.TileEntityCrane;
+import com.lulan.shincolle.tileentity.TileMultiGrudgeHeavy;
 import com.lulan.shincolle.utility.ClientRuntimeHelper;
 import com.lulan.shincolle.utility.CombatHelper;
+import com.lulan.shincolle.utility.MulitBlockHelper;
 import com.lulan.shincolle.utility.PacketHelper;
 import com.mojang.authlib.GameProfile;
 
@@ -399,6 +403,69 @@ public final class ShinColleEntityRegistryGameTests {
 		}
 		if (!knownTeamIds.equals(List.of(8201, 8202, 8205))) {
 			throw new AssertionError("syncTeamData should include sorted known team IDs.");
+		}
+
+		helper.succeed();
+	}
+
+	// 2026/04/12：GitHub Copilotによって確認済み
+	@GameTest(template = "empty", templateNamespace = "minecraft")
+	public static void craneTileBtnAppliesExplicitValues(GameTestHelper helper) {
+		TileEntityCrane tile = new TileEntityCrane(BlockPos.ZERO, Blocks.AIR.defaultBlockState());
+
+		try {
+			Method method = C2SGUIInputPacket.class
+					.getDeclaredMethod("handleCraneBtn", TileEntityCrane.class, int.class, int.class);
+			method.setAccessible(true);
+
+			// [PORT] 1.10.2 -> 1.20.1: packet payload must apply explicit values, not blind
+			// toggles.
+			method.invoke(null, tile, (int) ID.B.Crane_Power, 1);
+			if (!tile.isActive()) {
+				throw new AssertionError("Crane_Power value=1 should enable crane.");
+			}
+			method.invoke(null, tile, (int) ID.B.Crane_Power, 0);
+			if (tile.isActive()) {
+				throw new AssertionError("Crane_Power value=0 should disable crane.");
+			}
+
+			method.invoke(null, tile, (int) ID.B.Crane_Mode, -3);
+			if (tile.getCraneMode() != 0) {
+				throw new AssertionError("Crane_Mode should clamp low values to 0.");
+			}
+			method.invoke(null, tile, (int) ID.B.Crane_Mode, 999);
+			if (tile.getCraneMode() != TileEntityCrane.MODE_NAMES.length - 1) {
+				throw new AssertionError("Crane_Mode should clamp high values to max mode index.");
+			}
+
+			method.invoke(null, tile, (int) ID.B.Crane_Dict, 1);
+			if (!tile.isCheckDict()) {
+				throw new AssertionError("Crane_Dict value=1 should enable dict check.");
+			}
+			method.invoke(null, tile, (int) ID.B.Crane_Dict, 0);
+			if (tile.isCheckDict()) {
+				throw new AssertionError("Crane_Dict value=0 should disable dict check.");
+			}
+
+			method.invoke(null, tile, (int) ID.B.Crane_Red, 2);
+			if (tile.getRedSignalMode() != 2) {
+				throw new AssertionError("Crane_Red should keep explicit mode 2.");
+			}
+			method.invoke(null, tile, (int) ID.B.Crane_Red, 3);
+			if (tile.getRedSignalMode() != 0) {
+				throw new AssertionError("Crane_Red values above 2 should wrap to 0.");
+			}
+
+			method.invoke(null, tile, (int) ID.B.Crane_Liquid, 1);
+			if (tile.getLiquidMode() != 1) {
+				throw new AssertionError("Crane_Liquid should apply explicit mode value.");
+			}
+			method.invoke(null, tile, (int) ID.B.Crane_Energy, 2);
+			if (tile.getEnergyMode() != 2) {
+				throw new AssertionError("Crane_Energy should apply explicit mode value.");
+			}
+		} catch (ReflectiveOperationException e) {
+			throw new AssertionError("Reflection call to handleCraneBtn failed.", e);
 		}
 
 		helper.succeed();
@@ -1053,6 +1120,73 @@ public final class ShinColleEntityRegistryGameTests {
 			if (forbiddenLarge.contains(rolledLarge)) {
 				throw new AssertionError("Large build roll returned forbidden class: " + rolledLarge);
 			}
+		}
+
+		helper.succeed();
+	}
+
+	// 2026/04/12：GitHub Copilotによって確認済み
+	@GameTest(template = "empty", templateNamespace = "minecraft")
+	public static void largeShipyardMultiblockReformsAfterStaleCoreCleanup(GameTestHelper helper) {
+		ServerLevel level = helper.getLevel();
+
+		// [PORT] 1.10.2 -> 1.20.1: checkMultiBlockForm rejects y < 3. GameTest
+		// structures are often placed at low absolute Y, so build this fixture high
+		// enough to exercise normal gameplay conditions.
+		BlockPos core = helper.absolutePos(new BlockPos(2, 80, 2));
+
+		// Base layer: full 3x3 polymetal
+		for (int dx = -1; dx <= 1; dx++) {
+			for (int dz = -1; dz <= 1; dz++) {
+				level.setBlock(core.offset(dx, -2, dz), ModBlocks.POLYMETAL.get().defaultBlockState(), 3);
+			}
+		}
+
+		// Mid layer: four polymetal corners
+		level.setBlock(core.offset(-1, -1, -1), ModBlocks.POLYMETAL.get().defaultBlockState(), 3);
+		level.setBlock(core.offset(-1, -1, 1), ModBlocks.POLYMETAL.get().defaultBlockState(), 3);
+		level.setBlock(core.offset(1, -1, -1), ModBlocks.POLYMETAL.get().defaultBlockState(), 3);
+		level.setBlock(core.offset(1, -1, 1), ModBlocks.POLYMETAL.get().defaultBlockState(), 3);
+
+		// Top center: heavy grudge core block
+		level.setBlock(core, ModBlocks.GRUDGE_HEAVY.get().defaultBlockState(), 3);
+
+		BlockPos staleCorePos = core.offset(6, 0, 0);
+		if (!(level.getBlockEntity(core) instanceof TileMultiGrudgeHeavy coreTile)) {
+			throw new AssertionError("Large shipyard core tile was not created.");
+		}
+		coreTile.setCorePos(staleCorePos);
+
+		BlockPos polyPos = core.offset(-1, -1, -1);
+		if (!(level.getBlockEntity(polyPos) instanceof BasicTileMulti polyTile)) {
+			throw new AssertionError("Polymetal multiblock tile was not created.");
+		}
+		polyTile.setCorePos(staleCorePos);
+
+		int formType = MulitBlockHelper.checkMultiBlockForm(level, core.getX(), core.getY(), core.getZ());
+		if (formType <= 0) {
+			throw new AssertionError("Large shipyard form check failed after stale core cleanup: " + formType);
+		}
+		MulitBlockHelper.setupStructure(level, core.getX(), core.getY(), core.getZ(), formType);
+
+		if (!(level.getBlockEntity(core) instanceof TileMultiGrudgeHeavy formedCore) || !formedCore.hasCorePos()) {
+			throw new AssertionError("Large shipyard core was not formed after stale core cleanup.");
+		}
+		if (!formedCore.getCorePos().equals(core)) {
+			throw new AssertionError("Core position mismatch after structure setup: " + formedCore.getCorePos());
+		}
+
+		if (!(level.getBlockEntity(polyPos) instanceof BasicTileMulti formedPoly) || !formedPoly.hasCorePos()) {
+			throw new AssertionError("Polymetal tile did not join formed structure.");
+		}
+		if (!formedPoly.getCorePos().equals(core)) {
+			throw new AssertionError("Polymetal core position mismatch: " + formedPoly.getCorePos());
+		}
+
+		// Verify helper path also sees structure as occupied after successful setup.
+		int checkResult = MulitBlockHelper.checkMultiBlockForm(level, core.getX(), core.getY(), core.getZ());
+		if (checkResult != -1) {
+			throw new AssertionError("Structure occupancy check should fail once formed, got: " + checkResult);
 		}
 
 		helper.succeed();

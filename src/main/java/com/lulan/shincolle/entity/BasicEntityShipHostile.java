@@ -30,21 +30,27 @@ import com.lulan.shincolle.utility.TargetHelper;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.BossEvent;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.Vec3;
 
 /**
@@ -180,6 +186,27 @@ public abstract class BasicEntityShipHostile extends Mob
 				.add(Attributes.ARMOR, 0.0D)
 				.add(Attributes.ARMOR_TOUGHNESS, 0.0D)
 				.add(Attributes.ATTACK_DAMAGE, 4.0D);
+	}
+
+	@Nullable
+	@Override
+	public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty,
+			MobSpawnType spawnType, @Nullable SpawnGroupData spawnData, @Nullable CompoundTag dataTag) {
+		SpawnGroupData result = super.finalizeSpawn(level, difficulty, spawnType, spawnData, dataTag);
+
+		if (!level.isClientSide()) {
+			int initScale;
+			if (dataTag != null && dataTag.contains("ScaleLevel", Tag.TAG_INT)) {
+				initScale = Mth.clamp(dataTag.getInt("ScaleLevel"), 0, 3);
+			} else {
+				// [PORT] 1.10.2 -> 1.20.1: keep naturally spawned hostile ships larger
+				// than regular ships by default.
+				initScale = 1 + this.random.nextInt(3);
+			}
+			this.initAttrs(initScale);
+		}
+
+		return result;
 	}
 
 	// ========== Init / Abstract Methods ==========

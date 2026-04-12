@@ -13,6 +13,11 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class MulitBlockHelper {
 
+	private static boolean hasValidLargeShipyardCore(Level level, BlockPos corePos) {
+		BlockEntity coreTile = level.getBlockEntity(corePos);
+		return coreTile instanceof TileMultiGrudgeHeavy core && core.hasCorePos();
+	}
+
 	/**
 	 * pattern array [type][x][y][z]
 	 * type: 0:large shipyard 1:large workshop
@@ -102,10 +107,20 @@ public class MulitBlockHelper {
 					if (blockType > 0) {
 						BlockEntity t = level.getBlockEntity(pos);
 						if (t instanceof BasicTileMulti bm && bm.hasCorePos()) {
-							return -1;
+							if (hasValidLargeShipyardCore(level, bm.getCorePos())) {
+								return -1;
+							}
+							// [PORT] 1.10.2 -> 1.20.1: stale core references can survive crashes/world
+							// edits and block multiblock re-forming; auto-clean invalid references.
+							bm.resetCorePos();
+							BasicBlockMulti.updateBlockState(0, level, pos);
 						}
 						if (t instanceof TileMultiGrudgeHeavy gh && gh.hasCorePos()) {
-							return -1;
+							if (hasValidLargeShipyardCore(level, gh.getCorePos())) {
+								return -1;
+							}
+							gh.resetCorePos();
+							BasicBlockMulti.updateBlockState(0, level, pos);
 						}
 					}
 

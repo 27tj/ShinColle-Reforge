@@ -20,7 +20,8 @@ public class ShipRevengeTargetGoal extends Goal {
 	public ShipRevengeTargetGoal(IShipAttackBase host) {
 		this.host = host;
 		this.oldRevengeTime = 0;
-		this.setFlags(EnumSet.of(Goal.Flag.MOVE));
+		// [PORT] 1.10.2 targetTasks mutex -> 1.20.1 TARGET control flag.
+		this.setFlags(EnumSet.of(Goal.Flag.TARGET));
 	}
 
 	@Override
@@ -48,7 +49,8 @@ public class ShipRevengeTargetGoal extends Goal {
 
 		// Use follow range for tracking, not attack range
 		float followMax = this.host.getStateMinor(com.lulan.shincolle.reference.ID.M.FollowMax);
-		if (followMax < 16F) followMax = 16F;
+		if (followMax < 16F)
+			followMax = 16F;
 		float rangeSq = (followMax + 2F) * (followMax + 2F);
 
 		return ((LivingEntity) this.host).distanceToSqr(target) <= rangeSq;
