@@ -3,6 +3,7 @@ package com.lulan.shincolle.utility;
 import com.lulan.shincolle.ai.path.ShipMoveHelper;
 import com.lulan.shincolle.ai.path.ShipPathNavigate;
 import com.lulan.shincolle.entity.BasicEntityShip;
+import com.lulan.shincolle.entity.BasicEntityShipHostile;
 import com.lulan.shincolle.entity.IShipAttackBase;
 import com.lulan.shincolle.entity.IShipFloating;
 import com.lulan.shincolle.entity.IShipNavigator;
@@ -11,17 +12,19 @@ import com.lulan.shincolle.reference.ID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.FlyingMob;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ambient.Bat;
 import net.minecraft.world.entity.animal.WaterAnimal;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.entity.monster.Blaze;
 import net.minecraft.world.entity.monster.Guardian;
-import net.minecraft.world.entity.FlyingMob;
-import net.minecraft.world.entity.ambient.Bat;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 /**
@@ -94,6 +97,12 @@ public class EntityHelper {
 			pathNavi.onUpdateNavigation();
 			moveHelper.onUpdateMoveHelper();
 		}
+
+		// [PORT] 1.10.2 -> 1.20.1: keep vanilla path disabled in liquid to avoid
+		// mixed vanilla/custom navigation steering.
+		if (!entity.getNavigation().isDone() && checkEntityIsInLiquid(entity)) {
+			entity.getNavigation().stop();
+		}
 	}
 
 	/**
@@ -105,31 +114,34 @@ public class EntityHelper {
 			return;
 
 		Level level = entity.level();
-		BlockPos pos = entity.blockPosition();
+		BlockPos pos = new BlockPos(
+				net.minecraft.util.Mth.floor(entity.getX()),
+				(int) entity.getBoundingBox().minY,
+				net.minecraft.util.Mth.floor(entity.getZ()));
+		// [PORT] 1.10.2 -> 1.20.1: restore legacy depth contract used by
+		// ShipFloatingGoal
+		// (single-column liquid depth + CanFloatUp flag from top block material).
+		BlockState state = level.getBlockState(pos);
 		double depth = 0D;
 
-		// scan downward to find water depth
-		BlockPos checkPos = pos;
-		while (checkPos.getY() > level.getMinBuildHeight()) {
-			FluidState fluid = level.getFluidState(checkPos);
-			if (fluid.is(FluidTags.WATER)) {
-				depth += 1D;
-				checkPos = checkPos.below();
-			} else {
-				break;
-			}
-		}
+		if (BlockHelper.checkBlockIsLiquid(state)) {
+			depth = 1D;
+			ship.setStateFlag(ID.F.CanFloatUp, true);
 
-		// scan upward from entity position for water above
-		checkPos = pos.above();
-		while (checkPos.getY() < level.getMaxBuildHeight()) {
-			FluidState fluid = level.getFluidState(checkPos);
-			if (fluid.is(FluidTags.WATER)) {
-				depth += 1D;
-				checkPos = checkPos.above();
-			} else {
-				break;
+			for (int y = pos.getY() + 1; y < level.getMaxBuildHeight(); y++) {
+				BlockState upState = level.getBlockState(new BlockPos(pos.getX(), y, pos.getZ()));
+
+				if (BlockHelper.checkBlockIsLiquid(upState)) {
+					depth++;
+				} else {
+					ship.setStateFlag(ID.F.CanFloatUp, upState.isAir());
+					break;
+				}
 			}
+
+			depth -= (entity.getY() - Math.floor(entity.getY()));
+		} else {
+			ship.setStateFlag(ID.F.CanFloatUp, false);
 		}
 
 		ship.setShipDepth(depth);
@@ -281,6 +293,7 @@ public class EntityHelper {
 
 	/**
 	 * Check entity moving type for AA/ASM damage modifier.
+	 * 
 	 * @return 0: default, 1: air mob, 2: water mob
 	 */
 	public static int checkEntityMovingType(Entity entity) {
@@ -313,5 +326,40 @@ public class EntityHelper {
 				(int) entity.getBoundingBox().minY,
 				net.minecraft.util.Mth.floor(entity.getZ()));
 		return BlockHelper.checkBlockIsLiquid(entity.level().getBlockState(pos));
+	}
+
+	/**
+	 * Apply emotes reaction to nearby friendly ships.
+	 */
+	public static void applyShipEmotesAOE(Level level, double x, double y, double z, double range, int emotesType) {
+		if (level.isClientSide()) {
+			return;
+		}
+
+		// [PORT] 1.10.2 -> 1.20.1: restore legacy AOE emote distribution for ships.
+		AABB box = new AABB(x - range, y - range, z - range, x + range, y + range, z + range);
+		for (BasicEntityShip ship : level.getEntitiesOfClass(BasicEntityShip.class, box)) {
+			if (ship.isAlive()) {
+				ship.applyEmotesReaction(emotesType);
+			}
+		}
+	}
+
+	/**
+	 * Apply emotes reaction to nearby hostile ships.
+	 */
+	public static void applyShipEmotesAOEHostile(
+			Level level, double x, double y, double z, double range, int emotesType) {
+		if (level.isClientSide()) {
+			return;
+		}
+
+		// [PORT] 1.10.2 -> 1.20.1: restore legacy hostile AOE emote distribution path.
+		AABB box = new AABB(x - range, y - range, z - range, x + range, y + range, z + range);
+		for (BasicEntityShipHostile ship : level.getEntitiesOfClass(BasicEntityShipHostile.class, box)) {
+			if (ship.isAlive()) {
+				ship.applyEmotesReaction(emotesType);
+			}
+		}
 	}
 }

@@ -18,6 +18,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraftforge.common.ForgeHooks;
 
 /**
@@ -216,6 +217,15 @@ public class TileMultiGrudgeHeavy extends BasicTileInventory implements MenuProv
 		this.corePos = BlockPos.ZERO;
 		this.hasCorePos = false;
 		setChanged();
+	}
+
+	@Override
+	public AABB getRenderBoundingBox() {
+		// [PORT] 1.10.2 -> 1.20.1: keep large-shipyard model visible when the core
+		// block is just outside frustum by expanding BE render bounds to structure
+		// size.
+		BlockPos pos = this.getBlockPos();
+		return new AABB(pos.offset(-2, -3, -2), pos.offset(3, 3, 3));
 	}
 
 	// ==================== Build Logic ====================

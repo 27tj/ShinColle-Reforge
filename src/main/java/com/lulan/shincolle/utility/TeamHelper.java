@@ -4,6 +4,7 @@ import com.lulan.shincolle.capability.CapaTeitoku;
 import com.lulan.shincolle.entity.BasicEntityShip;
 import com.lulan.shincolle.entity.IShipOwner;
 import com.lulan.shincolle.handler.ConfigHandler;
+import com.lulan.shincolle.reference.ID;
 import com.lulan.shincolle.server.ServerDataManager;
 import com.lulan.shincolle.team.TeamData;
 
@@ -181,20 +182,26 @@ public class TeamHelper {
         int team = capa.getSelectTeam();
 
         for (int i = 0; i < CapaTeitoku.SLOT_NUM; i++) {
-            int sid = capa.getTeamSID(team, i);
-            BasicEntityShip ship = ServerDataManager.getShipByUID(sid);
+            int shipUID = capa.getTeamMember(team, i);
+            BasicEntityShip ship = ServerDataManager.getShipByUID(shipUID);
 
             if (ship != null) {
                 if (checkSameOwner(ship, player)) {
-                    capa.setTeamMember(team, i, ship.getId());
+                    // TeamMember stores persistent ship UID; TeamSID stores runtime entity ID.
+                    capa.setTeamMember(team, i, ship.getStateMinor(ID.M.ShipUID));
+                    capa.setTeamSID(team, i, ship.getId());
                 } else {
-                    // Owner changed, clear slot
-                    capa.setTeamMember(team, i, -1);
+                    // Owner changed, clear runtime entity pointer but keep persistent UID.
+                    capa.setTeamSID(team, i, -1);
                 }
             } else {
-                // Ship not found; clear entity ID but keep UID
-                if (sid <= 0) {
+                // Ship not found; clear runtime entity pointer but keep UID for later relink.
+                capa.setTeamSID(team, i, -1);
+
+                // Truly empty slot: clear both fields.
+                if (shipUID <= 0) {
                     capa.setTeamMember(team, i, -1);
+                    capa.setTeamSID(team, i, -1);
                 }
             }
         }

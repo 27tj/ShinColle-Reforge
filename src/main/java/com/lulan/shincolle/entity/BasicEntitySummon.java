@@ -46,7 +46,9 @@ public abstract class BasicEntitySummon extends Mob implements IShipOwner {
 	/** Called at end of subclass constructor */
 	protected void postInit() {
 		this.shipNavigator = new ShipPathNavigate(this);
-		this.shipMoveHelper = new ShipMoveHelper(this, 30F);
+		// [PORT] 1.10.2 -> 1.20.1: restore legacy summon turn-rate cap for ship-type
+		// summons.
+		this.shipMoveHelper = new ShipMoveHelper(this, 60F);
 	}
 
 	// ========== Static Attributes ==========

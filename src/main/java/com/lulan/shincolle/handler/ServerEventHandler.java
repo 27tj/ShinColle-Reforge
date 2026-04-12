@@ -1,13 +1,20 @@
 package com.lulan.shincolle.handler;
 
 import com.lulan.shincolle.capability.CapaTeitoku;
+import com.lulan.shincolle.entity.BasicEntityShip;
+import com.lulan.shincolle.entity.BasicEntityShipHostile;
+import com.lulan.shincolle.entity.IShipAttackBase;
 import com.lulan.shincolle.reference.Reference;
 import com.lulan.shincolle.server.ServerDataManager;
+import com.lulan.shincolle.utility.EntityHelper;
 import com.lulan.shincolle.utility.LogHelper;
 
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.event.server.ServerStoppingEvent;
@@ -98,6 +105,52 @@ public class ServerEventHandler {
                 LogHelper.info("player logged out: " + event.getEntity().getGameProfile().getName()
                         + " uid=" + capa.getPlayerUID());
             }
+        }
+    }
+
+    /**
+     * Handle entity death side effects (kill count, morale and nearby emote
+     * reaction).
+     */
+    @SubscribeEvent
+    public static void onEntityDeath(LivingDeathEvent event) {
+        if (event.getEntity().level().isClientSide()) {
+            return;
+        }
+
+        LivingEntity deadEntity = event.getEntity();
+
+        if (deadEntity instanceof BasicEntityShip ship) {
+            // [PORT] 1.10.2 -> 1.20.1: keep ship cache update on ship death.
+            ship.updateShipCacheDataWithoutNewID();
+        }
+
+        Entity killerEntity = event.getSource().getDirectEntity();
+        if (killerEntity == null) {
+            killerEntity = event.getSource().getEntity();
+        }
+
+        if (killerEntity instanceof BasicEntityShip killerShip) {
+            // [PORT] 1.10.2 -> 1.20.1: restore direct-kill reward contract.
+            killerShip.addKills();
+            killerShip.addMorale(2);
+        } else if (killerEntity instanceof IShipAttackBase attackBase
+                && attackBase.getHostEntity() instanceof BasicEntityShip hostShip) {
+            // [PORT] 1.10.2 -> 1.20.1: summon/projectile kills count for host ship.
+            hostShip.addKills();
+        }
+
+        if (deadEntity instanceof BasicEntityShip deadShip) {
+            // [PORT] 1.10.2 -> 1.20.1: restore nearby shock reaction when ship dies.
+            deadShip.applyParticleEmotion(8);
+            EntityHelper.applyShipEmotesAOE(deadShip.level(), deadShip.getX(), deadShip.getY(), deadShip.getZ(), 16D,
+                    6);
+        } else if (deadEntity instanceof BasicEntityShipHostile) {
+            // [PORT] 1.10.2 -> 1.20.1: keep hostile death AOE reaction path.
+            // [PORT?] Hostile particle-emotion API is not currently exposed in 1.20.1 base
+            // class.
+            EntityHelper.applyShipEmotesAOEHostile(
+                    deadEntity.level(), deadEntity.getX(), deadEntity.getY(), deadEntity.getZ(), 48D, 6);
         }
     }
 }

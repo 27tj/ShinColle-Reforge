@@ -165,7 +165,8 @@ public abstract class BasicEntityShipHostile extends Mob
 	/** init values, called at the end of subclass constructor */
 	protected void postInit() {
 		this.shipNavigator = new ShipPathNavigate(this);
-		this.shipMoveHelper = new ShipMoveHelper(this, 30F);
+		// [PORT] 1.10.2 -> 1.20.1: restore legacy hostile ship turn-rate cap.
+		this.shipMoveHelper = new ShipMoveHelper(this, 60F);
 		this.shipAttrs = new AttrsAdv(this.getShipClass());
 
 		// init boss bar if scale level >= 2

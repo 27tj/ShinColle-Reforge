@@ -101,8 +101,8 @@ public class ShipMoveHelper {
 						moveSpeed *= 0.92F;
 					}
 				}
-				// non-flying in water
-				else if (EntityHelper.isInWater(this.entity)) {
+				// non-flying in liquid (legacy uses footing-based liquid check)
+				else if (EntityHelper.checkEntityIsInLiquid(this.entity)) {
 					if (y1 > 1D) {
 						this.entity.setDeltaMovement(
 								this.entity.getDeltaMovement().add(0, moveSpeed * 0.2D, 0));
@@ -135,13 +135,17 @@ public class ShipMoveHelper {
 	private float limitAngle(float yaw, float degree, float limit) {
 		float f = Mth.wrapDegrees(degree - yaw);
 
-		if (f > limit) f = limit;
-		if (f < -limit) f = -limit;
+		if (f > limit)
+			f = limit;
+		if (f < -limit)
+			f = -limit;
 
 		float f1 = yaw + f;
 
-		if (f1 < 0.0F) f1 += 360.0F;
-		else if (f1 > 360.0F) f1 -= 360.0F;
+		if (f1 < 0.0F)
+			f1 += 360.0F;
+		else if (f1 > 360.0F)
+			f1 -= 360.0F;
 
 		return f1;
 	}

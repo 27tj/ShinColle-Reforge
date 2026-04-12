@@ -229,7 +229,8 @@ public abstract class BasicEntityShip extends TamableAnimal
 	/** init values, called at the end of subclass constructor */
 	protected void postInit() {
 		this.shipNavigator = new ShipPathNavigate(this);
-		this.shipMoveHelper = new ShipMoveHelper(this, 30F);
+		// [PORT] 1.10.2 -> 1.20.1: restore legacy ship turn-rate cap (60 deg/tick).
+		this.shipMoveHelper = new ShipMoveHelper(this, 60F);
 		this.shipAttrs = new AttrsAdv(this.getShipClass());
 	}
 
@@ -1456,6 +1457,10 @@ public abstract class BasicEntityShip extends TamableAnimal
 		getItem.shrink(1);
 		if (getItem.isEmpty()) {
 			this.itemHandler.setStackInSlot(slot, ItemStack.EMPTY);
+		} else {
+			// [PORT] 1.10.2 -> 1.20.1: keep legacy behavior by writing back decremented
+			// stacks so inventory handlers can observe content changes.
+			this.itemHandler.setStackInSlot(slot, getItem);
 		}
 
 		return true;
@@ -1488,6 +1493,10 @@ public abstract class BasicEntityShip extends TamableAnimal
 			getItem.shrink(1);
 			if (getItem.isEmpty()) {
 				this.itemHandler.setStackInSlot(slot, ItemStack.EMPTY);
+			} else {
+				// [PORT] 1.10.2 -> 1.20.1: write back modified stack to preserve
+				// inventory update semantics used by older implementation.
+				this.itemHandler.setStackInSlot(slot, getItem);
 			}
 		}
 	}
