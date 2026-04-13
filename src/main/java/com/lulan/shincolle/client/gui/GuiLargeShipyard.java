@@ -136,7 +136,8 @@ public class GuiLargeShipyard extends AbstractContainerScreen<ContainerLargeShip
 
         // Error/hint messages (centered at x=105, y=99)
         if (buildType != 0) {
-            // Check: if build type is set but no materials allocated or stock is insufficient
+            // Check: if build type is set but no materials allocated or stock is
+            // insufficient
             boolean noMaterials = true;
             boolean insufficientStock = false;
             for (int i = 0; i < 4; i++) {
