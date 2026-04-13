@@ -561,6 +561,8 @@ public class ModelDestroyerIkazuchi extends ShipModelBaseAdv<Entity> {
 
         @Override
         public void applyDeadPose(float f, float f1, float f2, float f3, float f4, IShipEmotion ent) {
+                // [PORT] 1.10.2 -> 1.20.1: preserve legacy dead-pose grounding offset.
+                this.offsetY += 0.51F + 0.24F * ent.getScaleLevel();
 
                 this.setFaceHungry(ent);
 
@@ -627,6 +629,7 @@ public class ModelDestroyerIkazuchi extends ShipModelBaseAdv<Entity> {
 
                 // 水上漂浮
                 if (ent.getShipDepth(0) > 0D || ent.getShipDepth(1) > 0D) {
+                        this.offsetY += angleX * 0.05F + 0.025F;
                 }
 
                 // leg move

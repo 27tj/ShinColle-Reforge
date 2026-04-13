@@ -1,18 +1,22 @@
 package com.lulan.shincolle.client.model;
 
 import com.lulan.shincolle.entity.IShipEmotion;
-import net.minecraft.world.entity.Entity;
 import com.lulan.shincolle.reference.ID;
 import com.lulan.shincolle.reference.Reference;
 import com.lulan.shincolle.utility.EmotionHelper;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
-import net.minecraft.client.model.geom.builders.*;
+import net.minecraft.client.model.geom.builders.CubeListBuilder;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.model.geom.builders.MeshDefinition;
+import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
 
 public class ModelCruiserTenryuu extends ShipModelBaseAdv<Entity> {
 
@@ -503,7 +507,8 @@ public class ModelCruiserTenryuu extends ShipModelBaseAdv<Entity> {
 		PartDefinition earL01 = glowHead.addOrReplaceChild("EarL01",
 				CubeListBuilder.create().texOffs(43, 75)
 						.addBox(-1.0F, -2.5F, -2.5F, 2.0F, 5.0F, 5.0F),
-				PartPose.offsetAndRotation(9.0F, -11.0F, 4.0F, 0.08726646259971647F, -0.17453292519943295F, -0.08726646259971647F));
+				PartPose.offsetAndRotation(9.0F, -11.0F, 4.0F, 0.08726646259971647F, -0.17453292519943295F,
+						-0.08726646259971647F));
 
 		PartDefinition earL02 = earL01.addOrReplaceChild("EarL02",
 				CubeListBuilder.create().texOffs(88, 41)
@@ -523,7 +528,8 @@ public class ModelCruiserTenryuu extends ShipModelBaseAdv<Entity> {
 		PartDefinition earR01 = glowHead.addOrReplaceChild("EarR01",
 				CubeListBuilder.create().mirror().texOffs(43, 75)
 						.addBox(-1.0F, -2.5F, -2.5F, 2.0F, 5.0F, 5.0F),
-				PartPose.offsetAndRotation(-9.0F, -11.0F, 4.0F, 0.08726646259971647F, 0.17453292519943295F, 0.08726646259971647F));
+				PartPose.offsetAndRotation(-9.0F, -11.0F, 4.0F, 0.08726646259971647F, 0.17453292519943295F,
+						0.08726646259971647F));
 
 		PartDefinition earR02 = earR01.addOrReplaceChild("EarR02",
 				CubeListBuilder.create().mirror().texOffs(88, 41)
@@ -578,22 +584,22 @@ public class ModelCruiserTenryuu extends ShipModelBaseAdv<Entity> {
 		IShipEmotion ent = (IShipEmotion) entity;
 		// set scale per scaleLevel
 		switch (ent.getScaleLevel()) {
-		case 3:
-			this.scale = 1.64F;
-			this.offsetY = -0.58F;
-			break;
-		case 2:
-			this.scale = 1.23F;
-			this.offsetY = -0.27F;
-			break;
-		case 1:
-			this.scale = 0.82F;
-			this.offsetY = 0.35F;
-			break;
-		default:
-			this.scale = 0.41F;
-			this.offsetY = 2.17F;
-			break;
+			case 3:
+				this.scale = 1.64F;
+				this.offsetY = -0.58F;
+				break;
+			case 2:
+				this.scale = 1.23F;
+				this.offsetY = -0.27F;
+				break;
+			case 1:
+				this.scale = 0.82F;
+				this.offsetY = 0.35F;
+				break;
+			default:
+				this.scale = 0.41F;
+				this.offsetY = 2.17F;
+				break;
 		}
 		this.showEquip(ent);
 		this.setFlush(ent.getStateMinor(ID.M.Morale) > ID.Morale.L_Happy);
@@ -655,6 +661,7 @@ public class ModelCruiserTenryuu extends ShipModelBaseAdv<Entity> {
 	@Override
 	public void applyDeadPose(float f, float f1, float f2, float f3, float f4, IShipEmotion ent) {
 
+		this.offsetY += 0.53F + 0.26F * ent.getScaleLevel();
 		this.setFaceHungry(ent);
 
 		// body
@@ -742,6 +749,7 @@ public class ModelCruiserTenryuu extends ShipModelBaseAdv<Entity> {
 
 		// 水上漂浮
 		if (ent.getShipDepth(0) > 0D) {
+			this.offsetY += angleX * 0.05F + 0.025F;
 		}
 
 		// leg move

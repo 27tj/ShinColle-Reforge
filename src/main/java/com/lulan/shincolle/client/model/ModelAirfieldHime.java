@@ -1,19 +1,23 @@
 package com.lulan.shincolle.client.model;
 
-import com.lulan.shincolle.entity.IShipEmotion;
 import com.lulan.shincolle.entity.BasicEntityMount;
-import net.minecraft.world.entity.Entity;
+import com.lulan.shincolle.entity.IShipEmotion;
 import com.lulan.shincolle.reference.ID;
 import com.lulan.shincolle.reference.Reference;
 import com.lulan.shincolle.utility.EmotionHelper;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
-import net.minecraft.client.model.geom.builders.*;
+import net.minecraft.client.model.geom.builders.CubeListBuilder;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.model.geom.builders.MeshDefinition;
+import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
 
 public class ModelAirfieldHime extends ShipModelBaseAdv<Entity> {
 
@@ -298,7 +302,8 @@ public class ModelAirfieldHime extends ShipModelBaseAdv<Entity> {
 		PartDefinition glowHeadHL = glowHead.addOrReplaceChild("HeadHL",
 				CubeListBuilder.create().mirror().texOffs(39, 28)
 						.addBox(0.0F, -2.5F, -2.5F, 3.0F, 5.0F, 5.0F),
-				PartPose.offsetAndRotation(6.4F, -10.6F, 0.8F, -0.7853981633974483F, -0.17453292519943295F, -0.3141592653589793F));
+				PartPose.offsetAndRotation(6.4F, -10.6F, 0.8F, -0.7853981633974483F, -0.17453292519943295F,
+						-0.3141592653589793F));
 
 		PartDefinition glowHeadHL2 = glowHeadHL.addOrReplaceChild("HeadHL2",
 				CubeListBuilder.create().texOffs(47, 56)
@@ -314,7 +319,8 @@ public class ModelAirfieldHime extends ShipModelBaseAdv<Entity> {
 		PartDefinition glowHeadHR = glowHead.addOrReplaceChild("HeadHR",
 				CubeListBuilder.create().mirror().texOffs(39, 28)
 						.addBox(-3.0F, -2.5F, -2.5F, 3.0F, 5.0F, 5.0F),
-				PartPose.offsetAndRotation(-6.4F, -10.6F, 0.8F, -0.7853981633974483F, 0.17453292519943295F, 0.3141592653589793F));
+				PartPose.offsetAndRotation(-6.4F, -10.6F, 0.8F, -0.7853981633974483F, 0.17453292519943295F,
+						0.3141592653589793F));
 
 		PartDefinition glowHeadHR2 = glowHeadHR.addOrReplaceChild("HeadHR2",
 				CubeListBuilder.create().texOffs(47, 56)
@@ -540,6 +546,7 @@ public class ModelAirfieldHime extends ShipModelBaseAdv<Entity> {
 
 		// 水上漂浮
 		if (ent.getShipDepth(0) > 0D || ent.getShipDepth(1) > 0D) {
+			this.offsetY += angleX * 0.05F + 0.025F;
 		}
 
 		// leg move parm

@@ -1127,12 +1127,17 @@ public class ModelBBKirishima extends ShipModelBaseAdv<Entity> {
                 // Scale-dependent dead pose variations (currently defaults for all scales)
                 switch (ent.getScaleLevel()) {
                         case 3:
+                                // [PORT] 1.10.2 -> 1.20.1: preserve legacy dead-pose grounding offset.
+                                this.offsetY += 1.42F;
                                 break;
                         case 2:
+                                this.offsetY += 1.29F;
                                 break;
                         case 1:
+                                this.offsetY += 1.05F;
                                 break;
                         default:
+                                this.offsetY += 0.7F;
                                 break;
                 }
 
@@ -1245,6 +1250,7 @@ public class ModelBBKirishima extends ShipModelBaseAdv<Entity> {
 
                 // 水上漂浮
                 if (ent.getShipDepth(0) > 0D) {
+                        this.offsetY += angleX * 0.05F + 0.025F;
                 }
 
                 // leg move

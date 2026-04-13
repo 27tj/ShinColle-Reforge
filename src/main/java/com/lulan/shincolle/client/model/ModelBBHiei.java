@@ -1117,12 +1117,17 @@ public class ModelBBHiei extends ShipModelBaseAdv<Entity> {
 
                 switch (ent.getScaleLevel()) {
                         case 3:
+                                // [PORT] 1.10.2 -> 1.20.1: preserve legacy dead-pose grounding offset.
+                                this.offsetY += 1.22F;
                                 break;
                         case 2:
+                                this.offsetY += 1.1F;
                                 break;
                         case 1:
+                                this.offsetY += 0.89F;
                                 break;
                         default:
+                                this.offsetY += 0.6F;
                                 break;
                 }
 
@@ -1247,6 +1252,7 @@ public class ModelBBHiei extends ShipModelBaseAdv<Entity> {
 
                 // 水上漂浮
                 if (ent.getShipDepth(0) > 0D) {
+                        this.offsetY += angleX * 0.05F + 0.025F;
                 }
 
                 // leg move

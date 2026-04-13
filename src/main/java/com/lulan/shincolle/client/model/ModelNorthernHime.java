@@ -1,18 +1,22 @@
 package com.lulan.shincolle.client.model;
 
 import com.lulan.shincolle.entity.IShipEmotion;
-import net.minecraft.world.entity.Entity;
 import com.lulan.shincolle.reference.ID;
 import com.lulan.shincolle.reference.Reference;
 import com.lulan.shincolle.utility.EmotionHelper;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
-import net.minecraft.client.model.geom.builders.*;
+import net.minecraft.client.model.geom.builders.CubeListBuilder;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.model.geom.builders.MeshDefinition;
+import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
 
 public class ModelNorthernHime extends ShipModelBaseAdv<Entity> {
 
@@ -676,7 +680,8 @@ public class ModelNorthernHime extends ShipModelBaseAdv<Entity> {
                 PartDefinition glowHeadHL = glowHead.addOrReplaceChild("HeadHL",
                                 CubeListBuilder.create().mirror().texOffs(30, 90)
                                                 .addBox(0.0F, -2.5F, -2.5F, 3.0F, 5.0F, 5.0F),
-                                PartPose.offsetAndRotation(5.9F, -10.9F, 1.0F, -0.7853981633974483F, -0.17453292519943295F, -0.3141592653589793F));
+                                PartPose.offsetAndRotation(5.9F, -10.9F, 1.0F, -0.7853981633974483F,
+                                                -0.17453292519943295F, -0.3141592653589793F));
 
                 PartDefinition glowHeadHL2 = glowHeadHL.addOrReplaceChild("HeadHL2",
                                 CubeListBuilder.create().texOffs(30, 90)
@@ -692,7 +697,8 @@ public class ModelNorthernHime extends ShipModelBaseAdv<Entity> {
                 PartDefinition glowHeadHR = glowHead.addOrReplaceChild("HeadHR",
                                 CubeListBuilder.create().mirror().texOffs(30, 90)
                                                 .addBox(-3.0F, -2.5F, -2.5F, 3.0F, 5.0F, 5.0F),
-                                PartPose.offsetAndRotation(-5.9F, -10.8F, 1.0F, -0.7853981633974483F, 0.17453292519943295F, 0.3141592653589793F));
+                                PartPose.offsetAndRotation(-5.9F, -10.8F, 1.0F, -0.7853981633974483F,
+                                                0.17453292519943295F, 0.3141592653589793F));
 
                 PartDefinition glowHeadHR2 = glowHeadHR.addOrReplaceChild("HeadHR2",
                                 CubeListBuilder.create().texOffs(30, 90)
@@ -720,18 +726,21 @@ public class ModelNorthernHime extends ShipModelBaseAdv<Entity> {
                 glowTailHead2.addOrReplaceChild("TailHeadC2",
                                 CubeListBuilder.create().texOffs(0, 13)
                                                 .addBox(-1.5F, -1.5F, 0.0F, 3.0F, 3.0F, 10.0F),
-                                PartPose.offsetAndRotation(3.2F, 3.2F, 10.5F, 0.08726646259971647F, 0.08726646259971647F, 0.017627825445142728F));
+                                PartPose.offsetAndRotation(3.2F, 3.2F, 10.5F, 0.08726646259971647F,
+                                                0.08726646259971647F, 0.017627825445142728F));
 
                 glowTailHead2.addOrReplaceChild("TailHeadC3",
                                 CubeListBuilder.create().texOffs(0, 13)
                                                 .addBox(-1.5F, -1.5F, 0.0F, 3.0F, 3.0F, 10.0F),
-                                PartPose.offsetAndRotation(-3.2F, 3.2F, 10.5F, 0.08726646259971647F, -0.08726646259971647F, 0.0F));
+                                PartPose.offsetAndRotation(-3.2F, 3.2F, 10.5F, 0.08726646259971647F,
+                                                -0.08726646259971647F, 0.0F));
 
                 // Equipment road parts
                 PartDefinition equipRoad01 = glowHeadBase.addOrReplaceChild("EquipRoad01",
                                 CubeListBuilder.create().texOffs(46, 41)
                                                 .addBox(0.0F, 0.0F, 0.0F, 7.0F, 2.0F, 12.0F),
-                                PartPose.offsetAndRotation(6.0F, -11.5F, -3.0F, -0.20943951023931953F, 0.08726646259971647F, 0.0F));
+                                PartPose.offsetAndRotation(6.0F, -11.5F, -3.0F, -0.20943951023931953F,
+                                                0.08726646259971647F, 0.0F));
 
                 PartDefinition equipRoad02 = equipRoad01.addOrReplaceChild("EquipRoad02",
                                 CubeListBuilder.create().texOffs(46, 41)
@@ -747,17 +756,20 @@ public class ModelNorthernHime extends ShipModelBaseAdv<Entity> {
                 PartDefinition equipLHead = glowEquipLT06.addOrReplaceChild("EquipLHead",
                                 CubeListBuilder.create().texOffs(0, 29)
                                                 .addBox(0.0F, -3.5F, -5.0F, 10.0F, 7.0F, 9.0F),
-                                PartPose.offsetAndRotation(5.0F, 0.0F, -1.0F, 0.0F, -0.6981317007977318F, -0.17453292519943295F));
+                                PartPose.offsetAndRotation(5.0F, 0.0F, -1.0F, 0.0F, -0.6981317007977318F,
+                                                -0.17453292519943295F));
 
                 PartDefinition equipLHead01 = equipLHead.addOrReplaceChild("EquipLHead01",
                                 CubeListBuilder.create().texOffs(0, 0)
                                                 .addBox(-12.0F, -1.0F, 0.0F, 12.0F, 2.0F, 0.0F),
-                                PartPose.offsetAndRotation(4.0F, 0.0F, -4.0F, 0.0F, -0.5235987755982988F, -0.3490658503988659F));
+                                PartPose.offsetAndRotation(4.0F, 0.0F, -4.0F, 0.0F, -0.5235987755982988F,
+                                                -0.3490658503988659F));
 
                 PartDefinition equipLHead02 = equipLHead01.addOrReplaceChild("EquipLHead02",
                                 CubeListBuilder.create().texOffs(0, 0)
                                                 .addBox(-12.0F, -1.0F, 0.0F, 12.0F, 2.0F, 0.0F),
-                                PartPose.offsetAndRotation(-11.5F, 0.0F, 0.0F, 0.0F, 0.5235987755982988F, -0.2617993877991494F));
+                                PartPose.offsetAndRotation(-11.5F, 0.0F, 0.0F, 0.0F, 0.5235987755982988F,
+                                                -0.2617993877991494F));
 
                 equipLHead02.addOrReplaceChild("EquipLHead03",
                                 CubeListBuilder.create().texOffs(24, 48)
@@ -885,6 +897,7 @@ public class ModelNorthernHime extends ShipModelBaseAdv<Entity> {
 
                 // 水上漂浮
                 if (ent.getShipDepth(0) > 0D || ent.getShipDepth(1) > 0D) {
+                        this.offsetY += angleX * 0.05F + 0.025F;
                 }
 
                 // leg move parm

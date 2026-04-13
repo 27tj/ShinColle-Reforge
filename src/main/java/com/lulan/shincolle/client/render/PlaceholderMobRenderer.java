@@ -2,6 +2,9 @@ package com.lulan.shincolle.client.render;
 
 import java.util.function.Function;
 
+import com.lulan.shincolle.entity.IShipEmotion;
+import com.mojang.blaze3d.vertex.PoseStack;
+
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -16,12 +19,14 @@ import net.minecraft.world.entity.Mob;
 public class PlaceholderMobRenderer<T extends Mob> extends MobRenderer<T, EntityModel<T>> {
 
 	private final ResourceLocation texture;
+	private final float baseShadowRadius;
 
 	@SuppressWarnings("unchecked")
 	public PlaceholderMobRenderer(EntityRendererProvider.Context context, EntityModel<?> model,
 			ResourceLocation texture, float shadowRadius) {
 		super(context, (EntityModel<T>) model, shadowRadius);
 		this.texture = texture;
+		this.baseShadowRadius = shadowRadius;
 	}
 
 	@Override
@@ -37,6 +42,16 @@ public class PlaceholderMobRenderer<T extends Mob> extends MobRenderer<T, Entity
 	@Override
 	protected float getFlipDegrees(T entity) {
 		return 0F;
+	}
+
+	@Override
+	protected void scale(T entity, PoseStack poseStack, float partialTick) {
+		// [PORT] 1.10.2 -> 1.20.1: keep legacy shadow scaling semantics without per-frame accumulation.
+		float adjustedShadowRadius = this.baseShadowRadius;
+		if (entity instanceof IShipEmotion shipEmotion) {
+			adjustedShadowRadius += Math.max(0, shipEmotion.getScaleLevel()) * 0.4F;
+		}
+		this.shadowRadius = adjustedShadowRadius;
 	}
 
 	/**

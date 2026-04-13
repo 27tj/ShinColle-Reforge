@@ -481,6 +481,7 @@ public class ModelHarbourHime extends ShipModelBaseAdv<Entity> {
 
 		// 水上漂浮
 		if (ent.getShipDepth(0) > 0D || ent.getShipDepth(1) > 0D) {
+			this.offsetY += angleX * 0.05F + 0.025F;
 		}
 
 		// leg move parm

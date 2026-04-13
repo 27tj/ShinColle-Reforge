@@ -57,7 +57,10 @@ public class S2CReactPacket {
 	public void handle(Supplier<NetworkEvent.Context> ctxSupplier) {
 		NetworkEvent.Context ctx = ctxSupplier.get();
 		ctx.enqueueWork(() -> {
-			handleClient();
+			// [PORT] 1.10.2 -> 1.20.1: enforce client-only execution at reception side.
+			if (ctx.getDirection().getReceptionSide().isClient()) {
+				handleClient();
+			}
 		});
 		ctx.setPacketHandled(true);
 	}

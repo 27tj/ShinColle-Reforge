@@ -1,6 +1,5 @@
 package com.lulan.shincolle.client.model;
 
-import net.minecraft.world.entity.Entity;
 import com.lulan.shincolle.entity.IShipEmotion;
 import com.lulan.shincolle.reference.ID;
 import com.lulan.shincolle.reference.Reference;
@@ -17,6 +16,7 @@ import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
 
 public class ModelCAHime extends ShipModelBaseAdv<Entity> {
 
@@ -86,8 +86,8 @@ public class ModelCAHime extends ShipModelBaseAdv<Entity> {
 
 	public ModelCAHime(ModelPart root) {
 		super();
-        this.scale = 0.45F;
-        this.offsetY = 2.22F;
+		this.scale = 0.45F;
+		this.offsetY = 2.22F;
 		this.BodyMain = root.getChild("BodyMain");
 		this.Neck = this.BodyMain.getChild("Neck");
 		this.LegRight01 = this.BodyMain.getChild("LegRight01");
@@ -687,6 +687,7 @@ public class ModelCAHime extends ShipModelBaseAdv<Entity> {
 
 		// 水上漂浮
 		if (ent.getShipDepth(0) > 0D) {
+			this.offsetY += angleX * 0.05F + 0.025F;
 		}
 
 		// leg move

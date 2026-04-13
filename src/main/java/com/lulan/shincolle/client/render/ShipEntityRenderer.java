@@ -18,12 +18,14 @@ import net.minecraft.resources.ResourceLocation;
 public class ShipEntityRenderer<T extends BasicEntityShip> extends MobRenderer<T, EntityModel<T>> {
 
 	private final ResourceLocation texture;
+	private final float baseShadowRadius;
 
 	@SuppressWarnings("unchecked")
 	public ShipEntityRenderer(EntityRendererProvider.Context context, EntityModel<?> model,
 			ResourceLocation texture, float shadowRadius) {
 		super(context, (EntityModel<T>) model, shadowRadius);
 		this.texture = texture;
+		this.baseShadowRadius = shadowRadius;
 		this.addLayer(new LayerShipHeldItem<>(this));
 	}
 
@@ -49,10 +51,9 @@ public class ShipEntityRenderer<T extends BasicEntityShip> extends MobRenderer<T
 	 */
 	@Override
 	protected void scale(T entity, PoseStack poseStack, float partialTick) {
-		int scaleLevel = entity.getScaleLevel();
-		if (scaleLevel > 0) {
-			this.shadowRadius += scaleLevel * 0.4F;
-		}
+		// [PORT] 1.10.2 -> 1.20.1: RenderBasic#setShadowSize() was recalculated every frame.
+		// Avoid cumulative growth by rebuilding shadow size from the renderer's base radius.
+		this.shadowRadius = this.baseShadowRadius + Math.max(0, entity.getScaleLevel()) * 0.4F;
 	}
 
 	/**

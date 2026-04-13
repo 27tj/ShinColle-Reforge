@@ -6,6 +6,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 /**
  * HUD overlay rendering utility for ShinColle.
@@ -16,6 +18,7 @@ import net.minecraft.resources.ResourceLocation;
  * The actual event registration will be handled in ClientSetup or a dedicated
  * event handler class.
  */
+@OnlyIn(Dist.CLIENT)
 public class RenderHelper {
 
     // GUI texture atlas for HUD elements (icons, skill indicators, etc.)
@@ -32,13 +35,13 @@ public class RenderHelper {
 
     // Colors (ARGB format)
     private static final int COLOR_BAR_BG = 0xFF333333;
-    private static final int COLOR_HP_HIGH = 0xFF00FF00;      // green: > 50%
-    private static final int COLOR_HP_MED = 0xFFFFFF00;        // yellow: 25%-50%
-    private static final int COLOR_HP_LOW = 0xFFFF0000;        // red: < 25%
-    private static final int COLOR_FUEL = 0xFF3399FF;          // blue
-    private static final int COLOR_AMMO_TEXT = 0xFFFFFFFF;     // white
-    private static final int COLOR_AMMO_LOW = 0xFFFF6666;      // light red
-    private static final int COLOR_RETICLE = 0xCCFFFFFF;       // semi-transparent white
+    private static final int COLOR_HP_HIGH = 0xFF00FF00; // green: > 50%
+    private static final int COLOR_HP_MED = 0xFFFFFF00; // yellow: 25%-50%
+    private static final int COLOR_HP_LOW = 0xFFFF0000; // red: < 25%
+    private static final int COLOR_FUEL = 0xFF3399FF; // blue
+    private static final int COLOR_AMMO_TEXT = 0xFFFFFFFF; // white
+    private static final int COLOR_AMMO_LOW = 0xFFFF6666; // light red
+    private static final int COLOR_RETICLE = 0xCCFFFFFF; // semi-transparent white
     private static final int COLOR_COOLDOWN_OVERLAY = 0x80000000; // semi-transparent black
     private static final int COLOR_SKILL_PLACEHOLDER = 0xFF5577AA; // blue-grey placeholder
 
@@ -189,11 +192,13 @@ public class RenderHelper {
      * @param cooldownPct cooldown percentage (0.0 = ready, 1.0 = full cooldown)
      */
     public static void drawCooldownOverlay(GuiGraphics graphics, int x, int y, float cooldownPct) {
-        if (cooldownPct <= 0.0f) return;
+        if (cooldownPct <= 0.0f)
+            return;
 
         cooldownPct = Math.min(cooldownPct, 1.0f);
 
-        // Draw semi-transparent overlay from top, height proportional to cooldown remaining
+        // Draw semi-transparent overlay from top, height proportional to cooldown
+        // remaining
         int overlayHeight = (int) (SKILL_ICON_SIZE * cooldownPct);
         if (overlayHeight > 0) {
             graphics.fill(x, y, x + SKILL_ICON_SIZE, y + overlayHeight, COLOR_COOLDOWN_OVERLAY);

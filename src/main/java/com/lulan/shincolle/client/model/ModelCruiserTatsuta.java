@@ -1,18 +1,22 @@
 package com.lulan.shincolle.client.model;
 
 import com.lulan.shincolle.entity.IShipEmotion;
-import net.minecraft.world.entity.Entity;
 import com.lulan.shincolle.reference.ID;
 import com.lulan.shincolle.reference.Reference;
 import com.lulan.shincolle.utility.EmotionHelper;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
-import net.minecraft.client.model.geom.builders.*;
+import net.minecraft.client.model.geom.builders.CubeListBuilder;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.model.geom.builders.MeshDefinition;
+import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
 
 public class ModelCruiserTatsuta extends ShipModelBaseAdv<Entity> {
 
@@ -495,22 +499,22 @@ public class ModelCruiserTatsuta extends ShipModelBaseAdv<Entity> {
 		IShipEmotion ent = (IShipEmotion) entity;
 		// set scale per scaleLevel
 		switch (ent.getScaleLevel()) {
-		case 3:
-			this.scale = 1.64F;
-			this.offsetY = -0.58F;
-			break;
-		case 2:
-			this.scale = 1.23F;
-			this.offsetY = -0.27F;
-			break;
-		case 1:
-			this.scale = 0.82F;
-			this.offsetY = 0.35F;
-			break;
-		default:
-			this.scale = 0.41F;
-			this.offsetY = 2.17F;
-			break;
+			case 3:
+				this.scale = 1.64F;
+				this.offsetY = -0.58F;
+				break;
+			case 2:
+				this.scale = 1.23F;
+				this.offsetY = -0.27F;
+				break;
+			case 1:
+				this.scale = 0.82F;
+				this.offsetY = 0.35F;
+				break;
+			default:
+				this.scale = 0.41F;
+				this.offsetY = 2.17F;
+				break;
 		}
 		this.showEquip(ent);
 		this.setFlush(ent.getStateMinor(ID.M.Morale) > ID.Morale.L_Happy);
@@ -570,6 +574,7 @@ public class ModelCruiserTatsuta extends ShipModelBaseAdv<Entity> {
 	@Override
 	public void applyDeadPose(float f, float f1, float f2, float f3, float f4, IShipEmotion ent) {
 
+		this.offsetY += 0.51F + 0.26F * ent.getScaleLevel();
 		this.setFaceHungry(ent);
 
 		// body
@@ -649,6 +654,7 @@ public class ModelCruiserTatsuta extends ShipModelBaseAdv<Entity> {
 
 		// 水上漂浮
 		if (ent.getShipDepth(0) > 0D) {
+			this.offsetY += angleX * 0.05F + 0.025F;
 		}
 
 		// leg move

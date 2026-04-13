@@ -1,19 +1,23 @@
 package com.lulan.shincolle.client.model;
 
 import com.lulan.shincolle.entity.IShipEmotion;
-import net.minecraft.world.entity.Entity;
 import com.lulan.shincolle.entity.IShipFloating;
 import com.lulan.shincolle.reference.ID;
 import com.lulan.shincolle.reference.Reference;
 import com.lulan.shincolle.utility.EmotionHelper;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
-import net.minecraft.client.model.geom.builders.*;
+import net.minecraft.client.model.geom.builders.CubeListBuilder;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.model.geom.builders.MeshDefinition;
+import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
 
 public class ModelSubmRo500 extends ShipModelBaseAdv<Entity> {
 
@@ -324,22 +328,22 @@ public class ModelSubmRo500 extends ShipModelBaseAdv<Entity> {
                 IShipEmotion ent = (IShipEmotion) entity;
                 // set scale per scaleLevel
                 switch (ent.getScaleLevel()) {
-                case 3:
-                    this.scale = 1.44F;
-                    this.offsetY = -0.45F;
-                    break;
-                case 2:
-                    this.scale = 1.08F;
-                    this.offsetY = -0.06F;
-                    break;
-                case 1:
-                    this.scale = 0.72F;
-                    this.offsetY = 0.66F;
-                    break;
-                default:
-                    this.scale = 0.36F;
-                    this.offsetY = 2.86F;
-                    break;
+                        case 3:
+                                this.scale = 1.44F;
+                                this.offsetY = -0.45F;
+                                break;
+                        case 2:
+                                this.scale = 1.08F;
+                                this.offsetY = -0.06F;
+                                break;
+                        case 1:
+                                this.scale = 0.72F;
+                                this.offsetY = 0.66F;
+                                break;
+                        default:
+                                this.scale = 0.36F;
+                                this.offsetY = 2.86F;
+                                break;
                 }
                 this.showEquip(ent);
                 this.setFlush(ent.getStateMinor(ID.M.Morale) > ID.Morale.L_Happy);
@@ -395,6 +399,7 @@ public class ModelSubmRo500 extends ShipModelBaseAdv<Entity> {
         @Override
         public void applyDeadPose(float f, float f1, float f2, float f3, float f4, IShipEmotion ent) {
 
+                this.offsetY += 0.55F + 0.29F * ent.getScaleLevel();
                 this.setFaceHungry(ent);
 
                 // 頭部
@@ -441,6 +446,7 @@ public class ModelSubmRo500 extends ShipModelBaseAdv<Entity> {
 
                 // 水上漂浮
                 if (ent.getShipDepth(0) > 0D) {
+                        this.offsetY += angleX * 0.05F + 0.025F;
                 }
 
                 // leg move parm

@@ -17,6 +17,7 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 
 public class ModelDestroyerRo extends ShipModelBaseAdv<Entity> {
@@ -100,6 +101,13 @@ public class ModelDestroyerRo extends ShipModelBaseAdv<Entity> {
                 this.FaceR00 = getChildOrFallback(this.GlowHead, "FaceR00");
                 this.FaceR01 = getChildOrFallback(this.GlowHead, "FaceR01");
                 this.FaceR02 = getChildOrFallback(this.GlowHead, "FaceR02");
+
+                this.k00 = getChildOrNull(this.GlowHead, "k00");
+                if (this.k00 != null) {
+                        this.k01 = getChildOrNull(this.k00, "k01");
+                        this.k02 = getChildOrNull(this.k00, "k02");
+                        this.k03 = getChildOrNull(this.k00, "k03");
+                }
         }
 
         private static ModelPart getChildOrFallback(ModelPart parent, String childName) {
@@ -107,6 +115,14 @@ public class ModelDestroyerRo extends ShipModelBaseAdv<Entity> {
                         return parent.getChild(childName);
                 } catch (NoSuchElementException ignored) {
                         return parent;
+                }
+        }
+
+        private static ModelPart getChildOrNull(ModelPart parent, String childName) {
+                try {
+                        return parent.getChild(childName);
+                } catch (NoSuchElementException ignored) {
+                        return null;
                 }
         }
 
@@ -251,6 +267,26 @@ public class ModelDestroyerRo extends ShipModelBaseAdv<Entity> {
                                 PartPose.offset(0.0F, 0.0F, -17.5F));
                 addDefaultFaceParts(glowHead);
 
+                PartDefinition k00 = glowHead.addOrReplaceChild("k00",
+                                CubeListBuilder.create().texOffs(54, 94)
+                                                .addBox(0.0F, 0.0F, 0.0F, 5.0F, 8.0F, 8.0F),
+                                PartPose.offsetAndRotation(12.0F, -10.0F, 0.0F, 0.0F, 0.17453292519943295F, 0.0F));
+
+                k00.addOrReplaceChild("k01",
+                                CubeListBuilder.create().texOffs(72, 102)
+                                                .addBox(1.0F, -18.5F, 1.0F, 3.0F, 18.0F, 8.0F),
+                                PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, -0.5235987755982988F, 0.0F, 0.0F));
+
+                k00.addOrReplaceChild("k02",
+                                CubeListBuilder.create().texOffs(72, 102)
+                                                .addBox(0.8F, -25.0F, -0.7F, 3.0F, 18.0F, 8.0F),
+                                PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, -1.3962634015954636F, 0.0F, 0.0F));
+
+                k00.addOrReplaceChild("k03",
+                                CubeListBuilder.create().texOffs(72, 102)
+                                                .addBox(0.6F, -24.5F, -2.5F, 3.0F, 18.0F, 8.0F),
+                                PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, -2.0943951023931953F, 0.0F, 0.0F));
+
                 // Custom dual-eye face parts for Ro-class destroyer
                 glowHead.addOrReplaceChild("FaceL00",
                                 CubeListBuilder.create().texOffs(98, 63)
@@ -284,9 +320,13 @@ public class ModelDestroyerRo extends ShipModelBaseAdv<Entity> {
         public void setupAnim(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks,
                         float netHeadYaw, float headPitch) {
                 IShipEmotion ent = (IShipEmotion) entity;
+                // [PORT] 1.10.2 -> 1.20.1: legacy model used fixed render transform.
+                this.scale = 0.45F;
+                this.offsetY = 2.1F;
                 this.showEquip(ent);
                 this.setFlush(ent.getStateMinor(ID.M.Morale) > ID.Morale.L_Happy);
-                EmotionHelper.rollEmotionAdv(this, ent);
+                // [PORT] 1.10.2 -> 1.20.1: preserve legacy per-model emotion roll behavior.
+                this.rollEmotionLegacy(ent);
                 if (ent.getStateFlag(ID.F.NoFuel)) {
                         this.applyDeadPose(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, ent);
                 } else {
@@ -309,7 +349,9 @@ public class ModelDestroyerRo extends ShipModelBaseAdv<Entity> {
         @Override
         public void showEquip(IShipEmotion ent) {
 
-                // No equipment visibility toggling needed for this model
+                if (this.k00 != null) {
+                        this.k00.visible = EmotionHelper.checkModelState(0, ent.getStateEmotion(ID.S.State));
+                }
 
         }
 
@@ -326,17 +368,159 @@ public class ModelDestroyerRo extends ShipModelBaseAdv<Entity> {
                 this.GlowHead.zRot = this.Head.zRot;
         }
 
+        private void rollEmotionLegacy(IShipEmotion ent) {
+                switch (ent.getStateEmotion(ID.S.Emotion)) {
+                        case ID.Emotion.BLINK:
+                                EmotionHelper.applyEmotionBlink(this, ent);
+                                break;
+                        case ID.Emotion.T_T:
+                        case ID.Emotion.O_O:
+                        case ID.Emotion.HUNGRY:
+                                if (ent.getFaceTick() <= 0) {
+                                        this.setFace(2);
+                                }
+                                break;
+                        case ID.Emotion.BORED:
+                                if (ent.getFaceTick() <= 0) {
+                                        this.setFace(1);
+                                }
+                                break;
+                        default:
+                                if (ent.getFaceTick() <= 0) {
+                                        this.setFace(0);
+                                } else {
+                                        EmotionHelper.applyEmotionBlink(this, ent);
+                                }
+
+                                if (ent.getTickExisted() % 120 == 0) {
+                                        int emotionRand = ent.getRand().nextInt(10);
+                                        if (emotionRand > 7) {
+                                                EmotionHelper.applyEmotionBlink(this, ent);
+                                        }
+                                }
+                                break;
+                }
+        }
+
         @Override
         public void applyDeadPose(float f, float f1, float f2, float f3, float f4, IShipEmotion ent) {
+                // [PORT] 1.10.2 -> 1.20.1: motionStopPos applied +0.45Y in NoFuel state.
+                this.offsetY += 0.45F;
 
-                // Pose animation pending - needs port from old model format
+                this.setFace(1);
+
+                this.HeadD01.xRot = 0.7F;
+                this.NeckBack.xRot = 0F;
+                this.NeckBack.yRot = 0.1F;
+                this.Head.xRot = 0.1F;
+                this.Head.yRot = 0.1F;
+
+                this.Back.xRot = 0F;
+                this.Back.yRot = 3.1415F;
+                this.Back.zRot = 3.1415F;
+
+                this.LegRightFront.xRot = 1.57F;
+                this.LegRightFront.yRot = -0.52F;
+                this.LegLeftFront.xRot = 1.57F;
+                this.LegLeftFront.yRot = 0.52F;
+                this.LegRightEnd.xRot = 1F;
+                this.LegLeftEnd.xRot = 1F;
+
+                this.TailBack.xRot = 0.1F;
+                this.TailBack.yRot = -0.15F;
+                this.TailEnd.xRot = 0.1F;
+                this.TailEnd.yRot = -0.15F;
+                this.tube01.xRot = -0.8F;
+                this.tube01.yRot = -0.12F;
 
         }
 
         @Override
         public void applyNormalPose(float f, float f1, float f2, float f3, float f4, IShipEmotion ent) {
+                float angleX = Mth.cos(f2 * 0.125F);
 
-                // Pose animation pending - needs port from old model format
+                // [PORT] 1.10.2 -> 1.20.1: restore legacy water bobbing translation.
+                if (ent.getShipDepth(0) > 0D) {
+                        this.offsetY += angleX * 0.05F + 0.025F;
+                }
+
+                this.Back.xRot = -0.2618F;
+                this.Back.yRot = 0F;
+                this.Back.zRot = 0F;
+                this.NeckBack.xRot = 0.0873F;
+                this.Head.xRot = 0.3F;
+                this.LegRightFront.yRot = 0F;
+                this.LegLeftFront.yRot = 0F;
+
+                if (f4 != 0F) {
+                        this.NeckBack.xRot = f4 * 0.005F;
+                        this.NeckBack.yRot = f3 * 0.005F;
+                        this.Head.xRot = f4 * 0.005F;
+                        this.Head.yRot = f3 * 0.005F;
+                        this.TailBack.xRot = 0.1F;
+                        this.TailBack.yRot = f3 * -0.005F;
+                        this.TailEnd.xRot = 0.1F;
+                        this.TailEnd.yRot = f3 * -0.005F;
+                        this.tube01.xRot = f4 * -0.005F - 0.8727F;
+                        this.tube01.yRot = f3 * -0.005F;
+                } else {
+                        this.Head.xRot = angleX * 0.08F + 0.3F;
+                        this.HeadD01.xRot = angleX * 0.05F + 0.7F;
+                        this.NeckBack.xRot = 0.0873F;
+                        this.NeckBack.yRot = 0F;
+                        this.Head.yRot = 0F;
+                        this.TailBack.yRot = 0F;
+                        this.TailEnd.yRot = 0F;
+                        this.tube01.xRot = -0.8727F;
+                        this.tube01.yRot = 0F;
+                }
+
+                if (ent.getIsSitting()) {
+                        this.offsetY += 0.45F;
+                        if (ent.getStateEmotion(ID.S.Emotion) == ID.Emotion.BORED) {
+                                this.setFace(2);
+                                this.Back.xRot = 0F;
+                                this.Back.yRot = 3.1415F;
+                                this.Back.zRot = 3.1415F;
+                                this.Head.xRot = angleX * 0.08F + 0.35F;
+                                this.LegRightFront.xRot = angleX * 0.3F + 0.5F;
+                                this.LegLeftFront.xRot = -angleX * 0.3F + 0.5F;
+                                this.LegRightEnd.xRot = angleX * 0.3F + 0.5F;
+                                this.LegLeftEnd.xRot = -angleX * 0.3F + 0.5F;
+                                this.TailBack.xRot = -0.3F;
+                                this.TailBack.yRot = angleX * 0.3F;
+                                this.TailEnd.xRot = -0.3F;
+                                this.TailEnd.yRot = angleX * 0.5F;
+                                this.tube01.xRot = -0.8F;
+                        } else {
+                                this.Back.xRot = -0.7F;
+                                this.Head.xRot = angleX * 0.08F + 0.35F;
+                                this.LegRightFront.xRot = -0.6981F;
+                                this.LegLeftFront.xRot = -0.6981F;
+                                this.LegRightEnd.xRot = 0.1745F;
+                                this.LegLeftEnd.xRot = 0.1745F;
+                                this.TailBack.xRot = 0.5F;
+                                this.TailBack.yRot = angleX * 0.3F;
+                                this.TailEnd.xRot = 0.6F;
+                                this.TailEnd.yRot = angleX * 0.5F;
+                                this.tube01.xRot = -0.6F;
+                        }
+                } else {
+                        if (ent.getIsSprinting() || f1 > 0.9F) {
+                                this.LegRightFront.xRot = Mth.cos(f * 0.6662F) * 0.4F * f1 + 1F;
+                                this.LegLeftFront.xRot = Mth.cos(f * 0.6662F + Mth.PI) * 0.4F * f1 + 1F;
+                                this.LegRightEnd.xRot = Mth.sin(f * 0.6662F) * f1 + 0.5F;
+                                this.LegLeftEnd.xRot = Mth.sin(f * 0.6662F + Mth.PI) * f1 + 0.5F;
+                        } else {
+                                this.LegRightFront.xRot = angleX * 0.3F + 0.8F;
+                                this.LegLeftFront.xRot = -angleX * 0.3F + 0.8F;
+                                this.LegRightEnd.xRot = angleX * 0.3F + 0.5F;
+                                this.LegLeftEnd.xRot = -angleX * 0.3F + 0.5F;
+                        }
+
+                        this.TailBack.xRot = angleX * 0.1F - 0.1F;
+                        this.TailEnd.xRot = angleX * 0.25F - 0.1F;
+                }
 
         }
 }

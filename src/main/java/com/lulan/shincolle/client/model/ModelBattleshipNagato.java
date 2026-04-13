@@ -606,6 +606,7 @@ public class ModelBattleshipNagato extends ShipModelBaseAdv<Entity> {
         @Override
         public void applyDeadPose(float f, float f1, float f2, float f3, float f4, IShipEmotion ent) {
 
+                this.offsetY += 0.73F + 0.28F * ent.getScaleLevel();
                 this.setFaceHungry(ent);
 
                 // 移動頭部使其看人
@@ -654,6 +655,7 @@ public class ModelBattleshipNagato extends ShipModelBaseAdv<Entity> {
 
                 // 水上漂浮
                 if (ent.getShipDepth(0) > 0D) {
+                        this.offsetY += angleX * 0.05F + 0.025F;
                 }
 
                 // leg move parm
@@ -879,8 +881,8 @@ public class ModelBattleshipNagato extends ShipModelBaseAdv<Entity> {
                                         // this.EquipRC203.xRot -= 0.5F;
                                         break;
                                 default: // cannon or heavy atk phase 1,3
-                                        // setFace(3);
-                                        // Body
+                                         // setFace(3);
+                                         // Body
                                         this.BodyMain.xRot = -0.17F;
                                         // arm
                                         this.ArmLeft01.xRot = -1.57F;

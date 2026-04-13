@@ -423,6 +423,7 @@ public class ModelDestroyerShimakaze extends ShipModelBaseAdv<Entity> {
 
         @Override
         public void applyDeadPose(float f, float f1, float f2, float f3, float f4, IShipEmotion ent) {
+                this.offsetY += 0.55F + 0.26F * ent.getScaleLevel();
                 this.setFaceHungry(ent);
 
                 this.EarL01.xRot = 1F;
@@ -470,6 +471,11 @@ public class ModelDestroyerShimakaze extends ShipModelBaseAdv<Entity> {
                 float angleX1 = Mth.cos(f2 * 0.08F + 0.3F + f * 0.5F);
                 float addk1;
                 float addk2;
+
+                // 水上漂浮
+                if (ent.getShipDepth(0) > 0D) {
+                        this.offsetY += angleX * 0.05F + 0.025F;
+                }
 
                 // Leg default
                 addk1 = Mth.cos(f * 0.7F) * f1 - 0.21F;

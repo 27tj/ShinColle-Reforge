@@ -1,6 +1,5 @@
 package com.lulan.shincolle.client.model;
 
-import net.minecraft.world.entity.Entity;
 import com.lulan.shincolle.entity.IShipEmotion;
 import com.lulan.shincolle.entity.IShipRiderType;
 import com.lulan.shincolle.reference.ID;
@@ -18,6 +17,7 @@ import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
 
 public class ModelDestroyerHibiki extends ShipModelBaseAdv<Entity> {
 
@@ -766,22 +766,22 @@ public class ModelDestroyerHibiki extends ShipModelBaseAdv<Entity> {
                 IShipEmotion ent = (IShipEmotion) entity;
                 // set scale per scaleLevel
                 switch (ent.getScaleLevel()) {
-                case 3:
-                    this.scale = 1.6F;
-                    this.offsetY = -0.53F;
-                    break;
-                case 2:
-                    this.scale = 1.2F;
-                    this.offsetY = -0.23F;
-                    break;
-                case 1:
-                    this.scale = 0.8F;
-                    this.offsetY = 0.41F;
-                    break;
-                default:
-                    this.scale = 0.4F;
-                    this.offsetY = 2.28F;
-                    break;
+                        case 3:
+                                this.scale = 1.6F;
+                                this.offsetY = -0.53F;
+                                break;
+                        case 2:
+                                this.scale = 1.2F;
+                                this.offsetY = -0.23F;
+                                break;
+                        case 1:
+                                this.scale = 0.8F;
+                                this.offsetY = 0.41F;
+                                break;
+                        default:
+                                this.scale = 0.4F;
+                                this.offsetY = 2.28F;
+                                break;
                 }
                 this.showEquip(ent);
                 this.setFlush(ent.getStateMinor(ID.M.Morale) > ID.Morale.L_Happy);
@@ -879,6 +879,8 @@ public class ModelDestroyerHibiki extends ShipModelBaseAdv<Entity> {
 
         @Override
         public void applyDeadPose(float f, float f1, float f2, float f3, float f4, IShipEmotion ent) {
+                // [PORT] 1.10.2 -> 1.20.1: preserve legacy dead-pose grounding offset.
+                this.offsetY += 0.51F + 0.25F * ent.getScaleLevel();
 
                 this.setFaceHungry(ent);
 
@@ -943,6 +945,7 @@ public class ModelDestroyerHibiki extends ShipModelBaseAdv<Entity> {
 
                 // 水上漂浮
                 if (ent.getShipDepth(0) > 0D || ent.getShipDepth(1) > 0D) {
+                        this.offsetY += angleX * 0.05F + 0.025F;
                 }
 
                 // leg move
