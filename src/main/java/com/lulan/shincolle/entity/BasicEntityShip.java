@@ -47,6 +47,7 @@ import com.lulan.shincolle.reference.unitclass.MissileData;
 import com.lulan.shincolle.server.ServerDataManager;
 import com.lulan.shincolle.utility.BlockHelper;
 import com.lulan.shincolle.utility.BuffHelper;
+import com.lulan.shincolle.utility.ClientRuntimeHelper;
 import com.lulan.shincolle.utility.CombatHelper;
 import com.lulan.shincolle.utility.EnchantHelper;
 import com.lulan.shincolle.utility.EntityHelper;
@@ -504,7 +505,62 @@ public abstract class BasicEntityShip extends TamableAnimal
 					}
 				}
 			}
+
+			// Pointer visualization (legacy behavior): owner holding pointer mode 0-2
+			// periodically shows team circles on this ship and guard target.
+			updateClientPointerIndicator();
 		}
+	}
+
+	private void updateClientPointerIndicator() {
+		if ((this.tickCount & 31) != 0) {
+			return;
+		}
+
+		Player clientPlayer = ClientRuntimeHelper.getClientPlayer();
+		if (clientPlayer == null || clientPlayer.level() != this.level() || !this.isOwnedBy(clientPlayer)) {
+			return;
+		}
+
+		ItemStack pointer = getClientPointerInUse(clientPlayer);
+		if (pointer.isEmpty() || PointerItem.getMode(pointer) > PointerItem.MODE_FORMATION) {
+			return;
+		}
+
+		ParticleHelper.spawnTeamCircle(this, 0);
+
+		if (!this.getStateFlag(ID.F.CanFollow)) {
+			// [RENDER?] 目視検証必須: 1.10.2 では guard block 側マーカー/線も表示。
+			// 1.20.1 ではまず ship と guarded entity の team circle 描画を復元。
+			updateClientGuardedEntity();
+			Entity guarded = this.getGuardedEntity();
+			if (guarded != null && guarded.level() == this.level()) {
+				ParticleHelper.spawnTeamCircle(guarded, 0);
+			}
+		}
+	}
+
+	private void updateClientGuardedEntity() {
+		int guardedId = this.getStateMinor(ID.M.GuardID);
+		if (guardedId > 0) {
+			this.setGuardedEntity(this.level().getEntity(guardedId));
+		} else {
+			this.setGuardedEntity(null);
+		}
+	}
+
+	private ItemStack getClientPointerInUse(Player player) {
+		ItemStack mainHand = player.getMainHandItem();
+		if (!mainHand.isEmpty() && mainHand.getItem() == ModItems.POINTER.get()) {
+			return mainHand;
+		}
+
+		ItemStack offHand = player.getOffhandItem();
+		if (!offHand.isEmpty() && offHand.getItem() == ModItems.POINTER.get()) {
+			return offHand;
+		}
+
+		return ItemStack.EMPTY;
 	}
 
 	@Override

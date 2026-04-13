@@ -1,6 +1,26 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "shincolle:item/pointer"
-  }
+    "layer0": "shincolle:item/pointer_mode_0"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "shincolle:pointer_mode": 1
+      },
+      "model": "shincolle:item/pointer_1"
+    },
+    {
+      "predicate": {
+        "shincolle:pointer_mode": 2
+      },
+      "model": "shincolle:item/pointer_2"
+    },
+    {
+      "predicate": {
+        "shincolle:pointer_mode": 3
+      },
+      "model": "shincolle:item/pointer_3"
+    }
+  ]
 }

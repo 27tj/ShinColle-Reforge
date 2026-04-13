@@ -93,6 +93,7 @@ import com.lulan.shincolle.init.ModItems;
 import com.lulan.shincolle.init.ModMenuTypes;
 import com.lulan.shincolle.init.ModParticles;
 import com.lulan.shincolle.item.BasicEquip;
+import com.lulan.shincolle.item.PointerItem;
 import com.lulan.shincolle.item.ShipSpawnEgg;
 import com.lulan.shincolle.reference.Reference;
 
@@ -571,6 +572,9 @@ public class ClientSetup {
 			registerEquipIconProperty(ModItems.EQUIP_AIRPLANE.get());
 			registerEquipIconProperty(ModItems.EQUIP_DRUM.get());
 
+			// Register pointer mode texture property (mode stored in PointerItem NBT)
+			registerPointerModeProperty();
+
 			// Register spawn egg variant texture property
 			ItemProperties.register(ModItems.SHIP_SPAWN_EGG.get(),
 					new ResourceLocation(Reference.MOD_ID, "egg_icon"),
@@ -593,6 +597,16 @@ public class ClientSetup {
 					}
 					return 0.0F;
 				});
+	}
+
+	/**
+	 * Register the "pointer_mode" item property for PointerItem.
+	 * Maps PointerItem NBT Mode (0-3) to model overrides in pointer.json.
+	 */
+	private static void registerPointerModeProperty() {
+		ItemProperties.register(ModItems.POINTER.get(),
+				new ResourceLocation(Reference.MOD_ID, "pointer_mode"),
+				(stack, level, entity, seed) -> (float) PointerItem.getMode(stack));
 	}
 
 	/**
