@@ -17,7 +17,7 @@ import com.lulan.shincolle.tileentity.TileEntityVolCore;
 import com.lulan.shincolle.tileentity.TileMultiGrudgeHeavy;
 import com.lulan.shincolle.utility.LogHelper;
 import com.lulan.shincolle.utility.PacketHelper;
-import com.lulan.shincolle.utility.TargetHelper;
+import com.lulan.shincolle.utility.TeamHelper;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -37,6 +37,7 @@ import net.minecraftforge.network.NetworkHooks;
  * Ported from 1.10.2 C2SGUIPackets.
  */
 public class C2SGUIInputPacket {
+	private static final int LARGE_SHIPYARD_MAT_BUILD_MAX = 1000;
 
 	// ========== Packet IDs ==========
 
@@ -287,12 +288,23 @@ public class C2SGUIInputPacket {
 				tile.setSelectMat(Math.max(0, Math.min(value, 3)));
 				break;
 			case ID.B.Shipyard_INCDEC:
-				int matIndex = tile.getSelectMat();
-				int currentBuild = tile.getMatBuild(matIndex);
-				int newBuild = Math.max(0, Math.min(currentBuild + value, 30000));
-				tile.setMatBuild(matIndex, newBuild);
+				int matIndex = Math.max(0, Math.min(tile.getSelectMat(), 3));
+				applyLargeShipyardMaterialDelta(tile, matIndex, value);
 				break;
 		}
+	}
+
+	private static void applyLargeShipyardMaterialDelta(TileMultiGrudgeHeavy tile, int matIndex, int delta) {
+		if (delta == 0)
+			return;
+
+		int currentBuild = Math.max(0, tile.getMatBuild(matIndex));
+		int stock = Math.max(0, tile.getMatStock(matIndex));
+		int maxBuild = Math.min(LARGE_SHIPYARD_MAT_BUILD_MAX, stock);
+		int target = currentBuild + delta;
+
+		target = Math.max(0, Math.min(target, maxBuild));
+		tile.setMatBuild(matIndex, target);
 	}
 
 	private static void handleCraneBtn(TileEntityCrane tile, int buttonId, int value) {
@@ -365,13 +377,10 @@ public class C2SGUIInputPacket {
 		Entity entity = level.getEntity(values[3]);
 
 		if (entity instanceof BasicEntityShip ship) {
-			if (TargetHelper.checkSameOwner(player, ship)) {
+			if (TeamHelper.checkSameOwner(player, ship)) {
 				boolean newSit = !ship.isOrderedToSit();
-				ship.setOrderedToSit(newSit);
 				ship.setEntitySit(newSit);
-				if (!newSit) {
-					ship.getShipNavigate().stop();
-				}
+				ship.setRiderAndMountSit();
 			}
 		}
 	}
@@ -509,7 +518,7 @@ public class C2SGUIInputPacket {
 			return;
 		ServerLevel level = player.serverLevel();
 		Entity entity = level.getEntity(values[2]);
-		if (entity instanceof BasicEntityShip ship && TargetHelper.checkSameOwner(player, ship)) {
+		if (entity instanceof BasicEntityShip ship && TeamHelper.checkSameOwner(player, ship)) {
 			CapaTeitoku capa = player.getCapability(CapaTeitokuProvider.CAPABILITY).orElse(null);
 			if (capa != null) {
 				int teamId = capa.getSelectTeam();
@@ -615,7 +624,7 @@ public class C2SGUIInputPacket {
 			return;
 		ServerLevel level = player.serverLevel();
 		Entity entity = level.getEntity(values[2]);
-		if (entity instanceof BasicEntityShip ship && TargetHelper.checkSameOwner(player, ship)) {
+		if (entity instanceof BasicEntityShip ship && TeamHelper.checkSameOwner(player, ship)) {
 			ship.setStateMinor(ID.M.FormatType, values[3]);
 		}
 	}

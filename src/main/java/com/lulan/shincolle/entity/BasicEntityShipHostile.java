@@ -220,9 +220,10 @@ public abstract class BasicEntityShipHostile extends Mob
 	 * @param scaleLevel 0=small mob, 1=large mob, 2=small boss, 3=large boss
 	 */
 	public void initAttrs(int scaleLevel) {
-		this.scaleLevel = scaleLevel;
-		setSizeWithScaleLevel();
-		calcShipAttributes(31, false);
+		setScaleLevel(scaleLevel);
+		if (!this.level().isClientSide()) {
+			calcShipAttributes(31, false);
+		}
 	}
 
 	/** Set size based on scale level */
@@ -379,6 +380,7 @@ public abstract class BasicEntityShipHostile extends Mob
 	@Override
 	public void startSeenByPlayer(ServerPlayer player) {
 		super.startSeenByPlayer(player);
+		ModNetworking.sendToPlayer(S2CEntitySyncPacket.syncScale(this, this.getScaleLevel()), player);
 		if (this.bossEvent != null) {
 			this.bossEvent.addPlayer(player);
 		}
@@ -939,7 +941,12 @@ public abstract class BasicEntityShipHostile extends Mob
 	}
 
 	public void setScaleLevel(int par1) {
-		this.scaleLevel = par1;
+		this.scaleLevel = Mth.clamp(par1, 0, 3);
+		setSizeWithScaleLevel();
+
+		if (!this.level().isClientSide()) {
+			ModNetworking.sendToAllTrackingAndSelf(S2CEntitySyncPacket.syncScale(this, this.scaleLevel), this);
+		}
 	}
 
 	public RandomSource getRand() {

@@ -978,6 +978,7 @@ public abstract class BasicEntityShip extends TamableAnimal
 
 		// play attack sound
 		applySoundAtAttacker(1, target);
+		applyParticleAtAttacker(1, target, target);
 
 		// if missed (damage is 0), still return true (attack was attempted)
 		if (atk <= 0F) {
@@ -1024,6 +1025,7 @@ public abstract class BasicEntityShip extends TamableAnimal
 
 		// play attack sound
 		applySoundAtAttacker(2, target);
+		applyParticleAtAttacker(2, target, target);
 
 		// target position
 		float tarX = (float) target.getX();
@@ -1591,7 +1593,7 @@ public abstract class BasicEntityShip extends TamableAnimal
 				default -> ModSounds.SHIP_HIT.get();
 			};
 			this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
-					sound, this.getSoundSource(), this.getSoundVolume(), this.getVoicePitch());
+					sound, this.getSoundSource(), (float) ConfigHandler.volumeAttack(), this.getVoicePitch() * 0.85F);
 
 			if (this.random.nextInt(8) == 0) {
 				this.playSound(this.getCustomSound(1, this), this.getSoundVolume(), this.getVoicePitch());
@@ -3827,6 +3829,7 @@ public abstract class BasicEntityShip extends TamableAnimal
 
 		// play attack sound
 		applySoundAtAttacker(2, this);
+		applyParticleAtAttacker(2, this, this);
 
 		float tarX = (float) target.getX();
 		float tarY = (float) target.getY();

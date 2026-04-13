@@ -136,18 +136,21 @@ public class GuiLargeShipyard extends AbstractContainerScreen<ContainerLargeShip
 
         // Error/hint messages (centered at x=105, y=99)
         if (buildType != 0) {
-            int powerGoal = this.menu.getBuildPercent(); // If no materials, build percent stays at 0
-            // Check: if build type is set but no materials allocated
+            // Check: if build type is set but no materials allocated or stock is insufficient
             boolean noMaterials = true;
+            boolean insufficientStock = false;
             for (int i = 0; i < 4; i++) {
-                if (this.menu.getMatBuild(i) > 0) {
+                int buildVal = this.menu.getMatBuild(i);
+                if (buildVal > 0) {
                     noMaterials = false;
-                    break;
+                    if (buildVal > this.menu.getMatStock(i)) {
+                        insufficientStock = true;
+                    }
                 }
             }
             int fuelPercent = this.menu.getFuelPercent();
 
-            if (noMaterials) {
+            if (noMaterials || insufficientStock) {
                 g.drawString(this.font, errorMsg1,
                         105 - this.font.width(errorMsg1) / 2, 99,
                         EnumColors.RED_LIGHT.getValue(), false);
