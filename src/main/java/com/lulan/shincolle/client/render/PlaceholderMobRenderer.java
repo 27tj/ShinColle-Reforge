@@ -46,7 +46,8 @@ public class PlaceholderMobRenderer<T extends Mob> extends MobRenderer<T, Entity
 
 	@Override
 	protected void scale(T entity, PoseStack poseStack, float partialTick) {
-		// [PORT] 1.10.2 -> 1.20.1: keep legacy shadow scaling semantics without per-frame accumulation.
+		// [PORT] 1.10.2 -> 1.20.1: keep legacy shadow scaling semantics without
+		// per-frame accumulation.
 		float adjustedShadowRadius = this.baseShadowRadius;
 		if (entity instanceof IShipEmotion shipEmotion) {
 			adjustedShadowRadius += Math.max(0, shipEmotion.getScaleLevel()) * 0.4F;

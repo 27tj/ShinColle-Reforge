@@ -51,8 +51,10 @@ public class ShipEntityRenderer<T extends BasicEntityShip> extends MobRenderer<T
 	 */
 	@Override
 	protected void scale(T entity, PoseStack poseStack, float partialTick) {
-		// [PORT] 1.10.2 -> 1.20.1: RenderBasic#setShadowSize() was recalculated every frame.
-		// Avoid cumulative growth by rebuilding shadow size from the renderer's base radius.
+		// [PORT] 1.10.2 -> 1.20.1: RenderBasic#setShadowSize() was recalculated every
+		// frame.
+		// Avoid cumulative growth by rebuilding shadow size from the renderer's base
+		// radius.
 		this.shadowRadius = this.baseShadowRadius + Math.max(0, entity.getScaleLevel()) * 0.4F;
 	}
 
