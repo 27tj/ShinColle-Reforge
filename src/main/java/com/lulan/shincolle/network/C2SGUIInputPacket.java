@@ -377,7 +377,9 @@ public class C2SGUIInputPacket {
 		Entity entity = level.getEntity(values[3]);
 
 		if (entity instanceof BasicEntityShip ship) {
-			if (TeamHelper.checkSameOwner(player, ship)) {
+			// [PORT] 1.10.2 -> 1.20.1: fallback to UUID owner check to avoid
+			// sit-toggle packet rejection when UID capability is not ready.
+			if (TeamHelper.checkSameOwner(player, ship) || ship.isOwnedBy(player)) {
 				boolean newSit = !ship.isOrderedToSit();
 				ship.setEntitySit(newSit);
 				ship.setRiderAndMountSit();

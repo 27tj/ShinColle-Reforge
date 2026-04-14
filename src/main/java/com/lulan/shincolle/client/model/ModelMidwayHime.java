@@ -1,7 +1,6 @@
 package com.lulan.shincolle.client.model;
 
 import com.lulan.shincolle.entity.BasicEntityMount;
-import net.minecraft.world.entity.Entity;
 import com.lulan.shincolle.entity.IShipEmotion;
 import com.lulan.shincolle.reference.ID;
 import com.lulan.shincolle.reference.Reference;
@@ -18,6 +17,7 @@ import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
 
 public class ModelMidwayHime extends ShipModelBaseAdv<Entity> {
 
@@ -406,7 +406,8 @@ public class ModelMidwayHime extends ShipModelBaseAdv<Entity> {
 		PartDefinition glowHeadHL = glowHead.addOrReplaceChild("HeadHL",
 				CubeListBuilder.create().mirror().texOffs(40, 104)
 						.addBox(0.0F, -2.5F, -2.5F, 3.0F, 5.0F, 5.0F),
-				PartPose.offsetAndRotation(6.4F, -10.6F, 0.8F, -0.7853981633974483F, -0.17453292519943295F, -0.3839724354387525F));
+				PartPose.offsetAndRotation(6.4F, -10.6F, 0.8F, -0.7853981633974483F, -0.17453292519943295F,
+						-0.3839724354387525F));
 
 		PartDefinition glowHeadHL2 = glowHeadHL.addOrReplaceChild("HeadHL2",
 				CubeListBuilder.create().texOffs(0, 0)
@@ -422,7 +423,8 @@ public class ModelMidwayHime extends ShipModelBaseAdv<Entity> {
 		PartDefinition glowHeadHR = glowHead.addOrReplaceChild("HeadHR",
 				CubeListBuilder.create().texOffs(40, 104)
 						.addBox(-3.0F, -2.5F, -2.5F, 3.0F, 5.0F, 5.0F),
-				PartPose.offsetAndRotation(-6.4F, -10.6F, 0.8F, -0.7853981633974483F, 0.17453292519943295F, 0.3839724354387525F));
+				PartPose.offsetAndRotation(-6.4F, -10.6F, 0.8F, -0.7853981633974483F, 0.17453292519943295F,
+						0.3839724354387525F));
 
 		PartDefinition glowHeadHR2 = glowHeadHR.addOrReplaceChild("HeadHR2",
 				CubeListBuilder.create().texOffs(0, 0)
@@ -449,27 +451,32 @@ public class ModelMidwayHime extends ShipModelBaseAdv<Entity> {
 		PartDefinition collar03a1 = collar02.addOrReplaceChild("Collar03a1",
 				CubeListBuilder.create().mirror().texOffs(0, 0)
 						.addBox(-1.5F, 0.0F, -1.5F, 3.0F, 4.0F, 3.0F),
-				PartPose.offsetAndRotation(1.3F, 0.6F, -3.5F, -1.8325957145940461F, -0.12217304763960307F, 0.03490658503988659F));
+				PartPose.offsetAndRotation(1.3F, 0.6F, -3.5F, -1.8325957145940461F, -0.12217304763960307F,
+						0.03490658503988659F));
 
 		PartDefinition collar03a2 = collar02.addOrReplaceChild("Collar03a2",
 				CubeListBuilder.create().texOffs(0, 0)
 						.addBox(-1.5F, 0.0F, -1.5F, 3.0F, 4.0F, 3.0F),
-				PartPose.offsetAndRotation(-1.3F, 0.6F, -3.5F, -1.8325957145940461F, 0.12217304763960307F, -0.03490658503988659F));
+				PartPose.offsetAndRotation(-1.3F, 0.6F, -3.5F, -1.8325957145940461F, 0.12217304763960307F,
+						-0.03490658503988659F));
 
 		PartDefinition collar03a3 = collar02.addOrReplaceChild("Collar03a3",
 				CubeListBuilder.create().texOffs(0, 0)
 						.addBox(-1.5F, 0.0F, -1.5F, 3.0F, 5.0F, 3.0F),
-				PartPose.offsetAndRotation(4.3F, 0.5F, -3.5F, -2.007128639793479F, -0.20943951023931953F, 0.06981317007977318F));
+				PartPose.offsetAndRotation(4.3F, 0.5F, -3.5F, -2.007128639793479F, -0.20943951023931953F,
+						0.06981317007977318F));
 
 		PartDefinition collar03a3_1 = collar02.addOrReplaceChild("Collar03a3_1",
 				CubeListBuilder.create().mirror().texOffs(0, 0)
 						.addBox(-1.5F, 0.0F, -1.5F, 3.0F, 5.0F, 3.0F),
-				PartPose.offsetAndRotation(-4.3F, 0.5F, -3.5F, -2.007128639793479F, 0.20943951023931953F, -0.06981317007977318F));
+				PartPose.offsetAndRotation(-4.3F, 0.5F, -3.5F, -2.007128639793479F, 0.20943951023931953F,
+						-0.06981317007977318F));
 
 		PartDefinition collar03a4 = collar02.addOrReplaceChild("Collar03a4",
 				CubeListBuilder.create().texOffs(0, 0)
 						.addBox(-1.5F, 0.0F, -1.5F, 3.0F, 4.0F, 3.0F),
-				PartPose.offsetAndRotation(5.0F, 0.2F, -2.1F, -1.6580627893946132F, -0.8028514559173915F, -0.08726646259971647F));
+				PartPose.offsetAndRotation(5.0F, 0.2F, -2.1F, -1.6580627893946132F, -0.8028514559173915F,
+						-0.08726646259971647F));
 
 		PartDefinition collar03a5 = collar02.addOrReplaceChild("Collar03a5",
 				CubeListBuilder.create().mirror().texOffs(0, 0)
@@ -489,22 +496,26 @@ public class ModelMidwayHime extends ShipModelBaseAdv<Entity> {
 		PartDefinition collar03a8 = collar02.addOrReplaceChild("Collar03a8",
 				CubeListBuilder.create().mirror().texOffs(0, 0)
 						.addBox(-1.5F, 0.0F, -1.5F, 3.0F, 5.0F, 3.0F),
-				PartPose.offsetAndRotation(3.5F, 0.2F, 3.4F, -1.7453292519943295F, -2.6179938779914944F, 0.05235987755982988F));
+				PartPose.offsetAndRotation(3.5F, 0.2F, 3.4F, -1.7453292519943295F, -2.6179938779914944F,
+						0.05235987755982988F));
 
 		PartDefinition collar03a9 = collar02.addOrReplaceChild("Collar03a9",
 				CubeListBuilder.create().texOffs(0, 0)
 						.addBox(-1.5F, 0.0F, -1.5F, 3.0F, 5.0F, 3.0F),
-				PartPose.offsetAndRotation(1.4F, 0.4F, 2.6F, -1.7453292519943295F, -3.036872898470133F, 0.05235987755982988F));
+				PartPose.offsetAndRotation(1.4F, 0.4F, 2.6F, -1.7453292519943295F, -3.036872898470133F,
+						0.05235987755982988F));
 
 		PartDefinition collar03a10 = collar02.addOrReplaceChild("Collar03a10",
 				CubeListBuilder.create().mirror().texOffs(0, 0)
 						.addBox(-1.5F, 0.0F, -1.5F, 3.0F, 5.0F, 3.0F),
-				PartPose.offsetAndRotation(-1.4F, 0.4F, 2.6F, -1.7453292519943295F, 3.036872898470133F, -0.05235987755982988F));
+				PartPose.offsetAndRotation(-1.4F, 0.4F, 2.6F, -1.7453292519943295F, 3.036872898470133F,
+						-0.05235987755982988F));
 
 		PartDefinition collar03a11 = collar02.addOrReplaceChild("Collar03a11",
 				CubeListBuilder.create().texOffs(0, 0)
 						.addBox(-1.5F, 0.0F, -1.5F, 3.0F, 5.0F, 3.0F),
-				PartPose.offsetAndRotation(-3.5F, 0.2F, 3.4F, -1.7453292519943295F, 2.6179938779914944F, -0.05235987755982988F));
+				PartPose.offsetAndRotation(-3.5F, 0.2F, 3.4F, -1.7453292519943295F, 2.6179938779914944F,
+						-0.05235987755982988F));
 
 		PartDefinition collar03a12 = collar02.addOrReplaceChild("Collar03a12",
 				CubeListBuilder.create().mirror().texOffs(0, 0)
@@ -524,7 +535,8 @@ public class ModelMidwayHime extends ShipModelBaseAdv<Entity> {
 		PartDefinition collar03a15 = collar02.addOrReplaceChild("Collar03a15",
 				CubeListBuilder.create().mirror().texOffs(0, 0)
 						.addBox(-1.5F, 0.0F, -1.5F, 3.0F, 4.0F, 3.0F),
-				PartPose.offsetAndRotation(-5.0F, 0.2F, -2.1F, -1.6580627893946132F, 0.8028514559173915F, 0.08726646259971647F));
+				PartPose.offsetAndRotation(-5.0F, 0.2F, -2.1F, -1.6580627893946132F, 0.8028514559173915F,
+						0.08726646259971647F));
 
 		// Collar03b parts on their respective Collar03a parents
 		collar03a1.addOrReplaceChild("Collar03b1",
@@ -844,7 +856,10 @@ public class ModelMidwayHime extends ShipModelBaseAdv<Entity> {
 		float headZ = 0F;
 
 		// 水上漂浮
+		// [RENDER?] 目視検証必須: 水面時の上下揺れが1.10.2相当の小振幅(0.025)で再現されること。
+		// [REPRO?] 目視未確認: 実機で水面待機時の高さ差と揺れ周期を比較すること。
 		if (ent.getShipDepth(0) > 0D || ent.getShipDepth(1) > 0D) {
+			this.offsetY += angleX * 0.025F + 0.025F;
 		}
 
 		// leg move parm

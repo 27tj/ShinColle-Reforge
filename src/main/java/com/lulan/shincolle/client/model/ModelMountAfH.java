@@ -1,6 +1,5 @@
 package com.lulan.shincolle.client.model;
 
-import net.minecraft.world.entity.Entity;
 import com.lulan.shincolle.entity.IShipEmotion;
 import com.lulan.shincolle.reference.Reference;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -15,6 +14,7 @@ import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
 
 /**
  * ModelMountAfH - PinkaLulan 2015/5/19
@@ -296,6 +296,16 @@ public class ModelMountAfH extends ShipModelBaseAdv<Entity> {
                 }
 
                 float angleX = Mth.cos(ageInTicks * 0.08F);
+
+                this.offsetY = 0F;
+                if (ent.getShipDepth(0) > 0D) {
+                        // [PORT] 1.10.2 -> 1.20.1: restore mount water bobbing translation.
+                        // [RENDER?] Visual check required: water bobbing amplitude should match 1.10.2
+                        // mount behavior.
+                        // [REPRO?] Unverified visually: compare idle-on-water Y oscillation in client
+                        // runtime.
+                        this.offsetY += angleX * 0.025F + 0.025F;
+                }
 
                 // Jaw animation
                 this.Jaw.xRot = angleX * 0.1F + 0.4F;

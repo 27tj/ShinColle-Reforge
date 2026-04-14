@@ -24,6 +24,8 @@ public abstract class ShipModelBaseAdv<T extends Entity> extends EntityModel<T> 
 
     protected float scale = 1F;
     protected float offsetY = 0F;
+    private boolean offsetYBaseInitialized = false;
+    private float baseOffsetY = 0F;
 
     // Held item support fields
     protected ModelPart[] armMain;
@@ -129,6 +131,19 @@ public abstract class ShipModelBaseAdv<T extends Entity> extends EntityModel<T> 
 
     public float getOffsetY() {
         return this.offsetY;
+    }
+
+    @Override
+    public void prepareMobModel(T entity, float limbSwing, float limbSwingAmount, float partialTick) {
+        super.prepareMobModel(entity, limbSwing, limbSwingAmount, partialTick);
+        if (!this.offsetYBaseInitialized) {
+            this.baseOffsetY = this.offsetY;
+            this.offsetYBaseInitialized = true;
+        }
+        // [PORT] 1.10.2 -> 1.20.1: offsetY accumulates former GlStateManager.translate()
+        // conversions; reset each frame to avoid cross-frame drift.
+        // [REPRO?] visual verification pending: check NoFuel grounding on multiple ship classes.
+        this.offsetY = this.baseOffsetY;
     }
 
     /**

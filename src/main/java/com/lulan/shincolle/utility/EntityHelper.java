@@ -211,6 +211,13 @@ public class EntityHelper {
 		if (depth <= 0D)
 			return;
 
+		// [PORT] 1.10.2 -> 1.20.1: restore legacy water horizontal acceleration.
+		// ShipMoveHelper controls facing/speed, while travelVec provides forward
+		// intent.
+		if (travelVec.lengthSqr() > 1.0E-6D) {
+			ship.moveRelative(ship.getSpeed() * 0.4F, travelVec);
+		}
+
 		Vec3 motion = ship.getDeltaMovement();
 		double floatingDepth = ship.getShipFloatingDepth();
 
@@ -225,6 +232,11 @@ public class EntityHelper {
 		} else {
 			// hover at surface
 			vy *= 0.8D;
+		}
+
+		// [PORT] 1.10.2 -> 1.20.1: keep the classic "bump up" when colliding in water.
+		if (ship.horizontalCollision && ship.level().getFluidState(ship.blockPosition().above()).is(FluidTags.WATER)) {
+			vy = Math.max(vy, 0.3D);
 		}
 
 		// apply drag in water

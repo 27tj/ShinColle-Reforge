@@ -33,6 +33,9 @@ public class ModelDestroyerNi extends ShipModelBaseAdv<Entity> {
         private final ModelPart ArmLeft;
         private final ModelPart ArmRight;
         private ModelPart k00;
+        private final ModelPart Face00;
+        private final ModelPart Face01;
+        private final ModelPart Face02;
         private final ModelPart ToothU;
         private ModelPart k01;
         private ModelPart k02;
@@ -70,6 +73,9 @@ public class ModelDestroyerNi extends ShipModelBaseAdv<Entity> {
                 this.GlowNeckBack = this.GlowBack.getChild("GlowNeckBack");
                 this.GlowHead = this.GlowNeckBack.getChild("GlowHead");
                 this.loadFaceParts(this.GlowHead);
+                this.Face00 = this.GlowHead.getChild("Face00");
+                this.Face01 = this.GlowHead.getChild("Face01");
+                this.Face02 = this.GlowHead.getChild("Face02");
                 this.k00 = this.GlowHead.getChild("k00");
                 this.k01 = this.k00.getChild("k01");
                 this.k02 = this.k00.getChild("k02");
@@ -174,7 +180,19 @@ public class ModelDestroyerNi extends ShipModelBaseAdv<Entity> {
                 PartDefinition glowHead = glowNeckBack.addOrReplaceChild("GlowHead",
                                 CubeListBuilder.create(),
                                 PartPose.offset(0.0F, 3.0F, -19.0F));
-                addDefaultFaceParts(glowHead);
+                // [PORT] 1.10.2 -> 1.20.1: DestroyerNi uses model-specific 3-face atlas.
+                glowHead.addOrReplaceChild("Face00",
+                                CubeListBuilder.create().texOffs(68, 40)
+                                                .addBox(-10.0F, 0.0F, 0.0F, 20.0F, 0.0F, 20.0F),
+                                PartPose.offset(0.0F, -14.3F, -27.0F));
+                glowHead.addOrReplaceChild("Face01",
+                                CubeListBuilder.create().texOffs(68, 20)
+                                                .addBox(-10.0F, 0.0F, 0.0F, 20.0F, 0.0F, 20.0F),
+                                PartPose.offset(0.0F, -14.2F, -27.0F));
+                glowHead.addOrReplaceChild("Face02",
+                                CubeListBuilder.create().texOffs(68, 0)
+                                                .addBox(-10.0F, 0.0F, 0.0F, 20.0F, 0.0F, 20.0F),
+                                PartPose.offset(0.0F, -14.1F, -27.0F));
 
                 PartDefinition k00 = glowHead.addOrReplaceChild("k00",
                                 CubeListBuilder.create().texOffs(100, 60)
@@ -289,7 +307,8 @@ public class ModelDestroyerNi extends ShipModelBaseAdv<Entity> {
                 // [PORT] 1.10.2 -> 1.20.1: motionStopPos applied +0.75Y in NoFuel state.
                 this.offsetY += 0.75F;
 
-                this.setFaceHungry(ent);
+                // [PORT] 1.10.2 -> 1.20.1: legacy dead pose uses face index 2.
+                this.setFace(2);
 
                 this.NeckBack.xRot = 0.3F;
                 this.NeckBack.yRot = 0F;
@@ -383,5 +402,12 @@ public class ModelDestroyerNi extends ShipModelBaseAdv<Entity> {
                         this.Equip03.zRot = angleX * 0.4F - 0.8F;
                 }
 
+        }
+
+        @Override
+        public void setFace(int emo) {
+                this.Face00.visible = (emo == 0);
+                this.Face01.visible = (emo == 1);
+                this.Face02.visible = (emo == 2);
         }
 }

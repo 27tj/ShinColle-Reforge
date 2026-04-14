@@ -87,6 +87,9 @@ public class ShipMoveHelper {
 
 				// limit turn rate per tick
 				this.entity.setYRot(this.limitAngle(this.entity.getYRot(), f, this.rotateLimit));
+				// [PORT] 1.10.2 -> 1.20.1: restore legacy forward input while MOVE_TO.
+				// In 1.20.1 setSpeed() does not implicitly set forward movement.
+				this.entity.zza = 1.0F;
 
 				// Y-axis movement (not handled by vanilla which only does horizontal)
 				if (entityN.canFly()) {

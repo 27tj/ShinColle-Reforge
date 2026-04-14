@@ -1,19 +1,23 @@
 package com.lulan.shincolle.client.model;
 
-import com.lulan.shincolle.entity.IShipEmotion;
 import com.lulan.shincolle.entity.BasicEntityMount;
-import net.minecraft.world.entity.Entity;
+import com.lulan.shincolle.entity.IShipEmotion;
 import com.lulan.shincolle.reference.ID;
 import com.lulan.shincolle.reference.Reference;
 import com.lulan.shincolle.utility.EmotionHelper;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
-import net.minecraft.client.model.geom.builders.*;
+import net.minecraft.client.model.geom.builders.CubeListBuilder;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.model.geom.builders.MeshDefinition;
+import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
 
 public class ModelSubmHime extends ShipModelBaseAdv<Entity> {
 
@@ -897,7 +901,10 @@ public class ModelSubmHime extends ShipModelBaseAdv<Entity> {
 		boolean tails = EmotionHelper.checkModelState(2, state);
 
 		// 水上漂浮
+		// [RENDER?] 目視検証必須: 水面時の上下揺れが1.10.2相当の小振幅(0.025)で再現されること。
+		// [REPRO?] 目視未確認: 実機で水面待機時の高さ差と揺れ周期を比較すること。
 		if (ent.getShipDepth(0) > 0D || ent.getShipDepth(1) > 0D) {
+			this.offsetY += angleX * 0.025F + 0.025F;
 		}
 
 		// leg move parm

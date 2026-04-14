@@ -563,6 +563,20 @@ public abstract class BasicEntityShip extends TamableAnimal
 		return ItemStack.EMPTY;
 	}
 
+	private ItemStack getPointerInUse(Player player) {
+		ItemStack mainHand = player.getMainHandItem();
+		if (!mainHand.isEmpty() && mainHand.getItem() == ModItems.POINTER.get()) {
+			return mainHand;
+		}
+
+		ItemStack offHand = player.getOffhandItem();
+		if (!offHand.isEmpty() && offHand.getItem() == ModItems.POINTER.get()) {
+			return offHand;
+		}
+
+		return ItemStack.EMPTY;
+	}
+
 	@Override
 	public void aiStep() {
 		if (this.tickCount == 5) {
@@ -2899,7 +2913,9 @@ public abstract class BasicEntityShip extends TamableAnimal
 			}
 
 			// owner right click
-			if (TeamHelper.checkSameOwner(this, player)) {
+			// [PORT] 1.10.2 -> 1.20.1: allow UUID ownership fallback when UID capability
+			// has not synced yet, so sit toggle does not silently fail.
+			if (TeamHelper.checkSameOwner(this, player) || this.isOwnedBy(player)) {
 				// sneak: open GUI
 				if (player.isShiftKeyDown()) {
 					if (player instanceof ServerPlayer sp) {
@@ -2907,9 +2923,12 @@ public abstract class BasicEntityShip extends TamableAnimal
 					}
 					return InteractionResult.SUCCESS;
 				} else {
-					// toggle sitting
-					this.setEntitySit(!this.isOrderedToSit());
-					this.setRiderAndMountSit();
+					// [PORT] 1.10.2 parity: pointer in use should not toggle sit here.
+					if (getPointerInUse(player).isEmpty()) {
+						// toggle sitting (bare hand / non-pointer interaction)
+						this.setEntitySit(!this.isOrderedToSit());
+						this.setRiderAndMountSit();
+					}
 					return InteractionResult.SUCCESS;
 				}
 			}

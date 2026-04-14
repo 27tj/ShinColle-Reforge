@@ -94,36 +94,17 @@ public class ModelDestroyerRo extends ShipModelBaseAdv<Entity> {
                 this.GlowNeckBack = this.GlowBack.getChild("GlowNeckBack");
                 this.GlowHead = this.GlowNeckBack.getChild("GlowHead");
                 this.loadFaceParts(this.GlowHead);
-                // [PORT] Legacy face variants may be absent in some migrated layers.
-                this.FaceL00 = getChildOrFallback(this.GlowHead, "FaceL00");
-                this.FaceL01 = getChildOrFallback(this.GlowHead, "FaceL01");
-                this.FaceL02 = getChildOrFallback(this.GlowHead, "FaceL02");
-                this.FaceR00 = getChildOrFallback(this.GlowHead, "FaceR00");
-                this.FaceR01 = getChildOrFallback(this.GlowHead, "FaceR01");
-                this.FaceR02 = getChildOrFallback(this.GlowHead, "FaceR02");
+                this.FaceL00 = this.GlowHead.getChild("FaceL00");
+                this.FaceL01 = this.GlowHead.getChild("FaceL01");
+                this.FaceL02 = this.GlowHead.getChild("FaceL02");
+                this.FaceR00 = this.GlowHead.getChild("FaceR00");
+                this.FaceR01 = this.GlowHead.getChild("FaceR01");
+                this.FaceR02 = this.GlowHead.getChild("FaceR02");
 
-                this.k00 = getChildOrNull(this.GlowHead, "k00");
-                if (this.k00 != null) {
-                        this.k01 = getChildOrNull(this.k00, "k01");
-                        this.k02 = getChildOrNull(this.k00, "k02");
-                        this.k03 = getChildOrNull(this.k00, "k03");
-                }
-        }
-
-        private static ModelPart getChildOrFallback(ModelPart parent, String childName) {
-                try {
-                        return parent.getChild(childName);
-                } catch (NoSuchElementException ignored) {
-                        return parent;
-                }
-        }
-
-        private static ModelPart getChildOrNull(ModelPart parent, String childName) {
-                try {
-                        return parent.getChild(childName);
-                } catch (NoSuchElementException ignored) {
-                        return null;
-                }
+                this.k00 = this.GlowHead.getChild("k00");
+                this.k01 = this.k00.getChild("k01");
+                this.k02 = this.k00.getChild("k02");
+                this.k03 = this.k00.getChild("k03");
         }
 
         public static LayerDefinition createBodyLayer() {
@@ -265,7 +246,31 @@ public class ModelDestroyerRo extends ShipModelBaseAdv<Entity> {
                 PartDefinition glowHead = glowNeckBack.addOrReplaceChild("GlowHead",
                                 CubeListBuilder.create(),
                                 PartPose.offset(0.0F, 0.0F, -17.5F));
-                addDefaultFaceParts(glowHead);
+                // [PORT] 1.10.2 -> 1.20.1: DestroyerRo uses side-projected dual-eye atlas.
+                glowHead.addOrReplaceChild("FaceL00",
+                                CubeListBuilder.create().texOffs(96, 96)
+                                                .addBox(0.0F, 0.0F, 0.0F, 0.0F, 16.0F, 16.0F),
+                                PartPose.offset(15.1F, -8.0F, -16.0F));
+                glowHead.addOrReplaceChild("FaceL01",
+                                CubeListBuilder.create().texOffs(96, 0)
+                                                .addBox(0.0F, 0.0F, 0.0F, 0.0F, 16.0F, 16.0F),
+                                PartPose.offset(15.1F, -8.0F, -16.0F));
+                glowHead.addOrReplaceChild("FaceL02",
+                                CubeListBuilder.create().texOffs(96, 16)
+                                                .addBox(0.0F, 0.0F, 0.0F, 0.0F, 16.0F, 16.0F),
+                                PartPose.offset(15.1F, -8.0F, -16.0F));
+                glowHead.addOrReplaceChild("FaceR00",
+                                CubeListBuilder.create().texOffs(96, 96)
+                                                .addBox(0.0F, 0.0F, 0.0F, 0.0F, 16.0F, 16.0F),
+                                PartPose.offset(-15.1F, -8.0F, -16.0F));
+                glowHead.addOrReplaceChild("FaceR01",
+                                CubeListBuilder.create().texOffs(96, 0)
+                                                .addBox(0.0F, 0.0F, 0.0F, 0.0F, 16.0F, 16.0F),
+                                PartPose.offset(-15.1F, -8.0F, -16.0F));
+                glowHead.addOrReplaceChild("FaceR02",
+                                CubeListBuilder.create().texOffs(96, 16)
+                                                .addBox(0.0F, 0.0F, 0.0F, 0.0F, 16.0F, 16.0F),
+                                PartPose.offset(-15.1F, -8.0F, -16.0F));
 
                 PartDefinition k00 = glowHead.addOrReplaceChild("k00",
                                 CubeListBuilder.create().texOffs(54, 94)
@@ -349,9 +354,7 @@ public class ModelDestroyerRo extends ShipModelBaseAdv<Entity> {
         @Override
         public void showEquip(IShipEmotion ent) {
 
-                if (this.k00 != null) {
-                        this.k00.visible = EmotionHelper.checkModelState(0, ent.getStateEmotion(ID.S.State));
-                }
+                this.k00.visible = EmotionHelper.checkModelState(0, ent.getStateEmotion(ID.S.State));
 
         }
 
@@ -522,5 +525,15 @@ public class ModelDestroyerRo extends ShipModelBaseAdv<Entity> {
                         this.TailEnd.xRot = angleX * 0.25F - 0.1F;
                 }
 
+        }
+
+        @Override
+        public void setFace(int emo) {
+                this.FaceL00.visible = (emo == 0);
+                this.FaceR00.visible = (emo == 0);
+                this.FaceL01.visible = (emo == 1);
+                this.FaceR01.visible = (emo == 1);
+                this.FaceL02.visible = (emo == 2);
+                this.FaceR02.visible = (emo == 2);
         }
 }

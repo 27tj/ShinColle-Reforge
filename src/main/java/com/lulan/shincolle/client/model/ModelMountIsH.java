@@ -15,6 +15,7 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 
 public class ModelMountIsH extends ShipModelBaseAdv<Entity> {
@@ -403,6 +404,18 @@ public class ModelMountIsH extends ShipModelBaseAdv<Entity> {
         public void setupAnim(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
                         float headPitch) {
                 IShipEmotion ent = (IShipEmotion) entity;
+                float angleX = Mth.cos(ageInTicks * 0.08F);
+
+                this.offsetY = 0F;
+                if (ent.getShipDepth(0) > 0D) {
+                        // [PORT] 1.10.2 -> 1.20.1: restore mount water bobbing translation.
+                        // [RENDER?] Visual check required: water bobbing amplitude should match 1.10.2
+                        // mount behavior.
+                        // [REPRO?] Unverified visually: compare idle-on-water Y oscillation in client
+                        // runtime.
+                        this.offsetY += angleX * 0.025F + 0.025F;
+                }
+
                 this.showEquip(ent);
                 this.setFlush(ent.getStateMinor(ID.M.Morale) > ID.Morale.L_Happy);
                 EmotionHelper.rollEmotionAdv(this, ent);
