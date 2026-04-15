@@ -15,6 +15,10 @@ import com.lulan.shincolle.ai.ShipFollowOwnerGoal;
 import com.lulan.shincolle.ai.ShipHostileWanderGoal;
 import com.lulan.shincolle.ai.ShipOpenDoorGoal;
 import com.lulan.shincolle.ai.ShipPickItemGoal;
+import com.lulan.shincolle.ai.ShipRangeAttackGoal;
+import com.lulan.shincolle.ai.ShipRangeTargetGoal;
+import com.lulan.shincolle.ai.ShipRevengeTargetGoal;
+import com.lulan.shincolle.ai.ShipSkillAttackGoal;
 import com.lulan.shincolle.capability.CapaTeitoku;
 import com.lulan.shincolle.capability.CapaTeitokuProvider;
 import com.lulan.shincolle.client.gui.inventory.ContainerFormation;
@@ -22,6 +26,7 @@ import com.lulan.shincolle.client.gui.inventory.ContainerShipInventory;
 import com.lulan.shincolle.crafting.ShipCalc;
 import com.lulan.shincolle.entity.BasicEntityShip;
 import com.lulan.shincolle.entity.BasicEntityShipHostile;
+import com.lulan.shincolle.entity.BasicEntityMount;
 import com.lulan.shincolle.entity.IShipAttackBase;
 import com.lulan.shincolle.entity.other.EntityFloatingFort;
 import com.lulan.shincolle.entity.other.EntityProjectileStatic;
@@ -932,6 +937,125 @@ public final class ShinColleEntityRegistryGameTests {
 		helper.succeed();
 	}
 
+	// 2026/04/15：GitHub Copilotによって追加
+	@GameTest(template = "empty", templateNamespace = "minecraft")
+	public static void lightCruiserSkillAttackGoalUsesLegacyPriority(GameTestHelper helper) {
+		ServerLevel level = helper.getLevel();
+
+		assertLightCruiserGoalPriority(level, ModEntities.CL_TENRYUU.get(), "cl_tenryuu");
+		assertLightCruiserGoalPriority(level, ModEntities.CL_TATSUTA.get(), "cl_tatsuta");
+
+		helper.succeed();
+	}
+
+	// 2026/04/15：GitHub Copilotによって追加
+	@GameTest(template = "empty", templateNamespace = "minecraft")
+	public static void mountFollowHostTeleportsWhenFarAndUnridden(GameTestHelper helper) {
+		ServerLevel level = helper.getLevel();
+
+		Entity hostEntity = ModEntities.BB_KONGOU.get().create(level);
+		if (!(hostEntity instanceof BasicEntityShip host)) {
+			throw new AssertionError("BB_KONGOU is not BasicEntityShip in mount-follow test.");
+		}
+
+		Entity mountEntity = ModEntities.MOUNT_BAH.get().create(level);
+		if (!(mountEntity instanceof BasicEntityMount mount)) {
+			throw new AssertionError("MOUNT_BAH is not BasicEntityMount in mount-follow test.");
+		}
+
+		host.moveTo(48.5D, level.getSharedSpawnPos().getY() + 1D, 0.5D, 0F, 0F);
+		mount.moveTo(0.5D, level.getSharedSpawnPos().getY() + 1D, 0.5D, 0F, 0F);
+
+		if (!level.addFreshEntity(host)) {
+			throw new AssertionError("Failed to add host ship entity in mount-follow test.");
+		}
+		if (!level.addFreshEntity(mount)) {
+			throw new AssertionError("Failed to add mount entity in mount-follow test.");
+		}
+
+		mount.setHost(host);
+		mount.setAIList();
+
+		double initialDistSq = mount.distanceToSqr(host);
+		if (initialDistSq <= 1024.0D) {
+			throw new AssertionError("Mount-follow test requires long initial distance. actual=" + initialDistSq);
+		}
+
+		for (int i = 0; i < 20; i++) {
+			mount.tick();
+			if (mount.distanceToSqr(host) <= 4.0D) {
+				break;
+			}
+		}
+
+		double finalDistSq = mount.distanceToSqr(host);
+		if (finalDistSq > 4.0D) {
+			throw new AssertionError("Mount should follow/teleport to host when far and unridden. finalDistSq="
+					+ finalDistSq);
+		}
+
+		mount.discard();
+		host.discard();
+		helper.succeed();
+	}
+
+	// 2026/04/15：GitHub Copilotによって追加
+	@GameTest(template = "empty", templateNamespace = "minecraft")
+	public static void mountFollowHostBlockedWhenRidden(GameTestHelper helper) {
+		ServerLevel level = helper.getLevel();
+
+		Entity hostEntity = ModEntities.BB_KONGOU.get().create(level);
+		if (!(hostEntity instanceof BasicEntityShip host)) {
+			throw new AssertionError("BB_KONGOU is not BasicEntityShip in mount-ridden test.");
+		}
+
+		Entity mountEntity = ModEntities.MOUNT_BAH.get().create(level);
+		if (!(mountEntity instanceof BasicEntityMount mount)) {
+			throw new AssertionError("MOUNT_BAH is not BasicEntityMount in mount-ridden test.");
+		}
+
+		ServerPlayer rider = createFollowTestOwner(helper, level,
+				UUID.fromString("00000000-0000-0000-0000-000000000007"),
+				"shincolle_mount_rider");
+
+		host.moveTo(48.5D, level.getSharedSpawnPos().getY() + 1D, 0.5D, 0F, 0F);
+		mount.moveTo(0.5D, level.getSharedSpawnPos().getY() + 1D, 0.5D, 0F, 0F);
+		rider.moveTo(0.5D, level.getSharedSpawnPos().getY() + 1D, 0.5D, 0F, 0F);
+
+		if (!level.addFreshEntity(host)) {
+			throw new AssertionError("Failed to add host ship entity in mount-ridden test.");
+		}
+		if (!level.addFreshEntity(mount)) {
+			throw new AssertionError("Failed to add mount entity in mount-ridden test.");
+		}
+
+		mount.setHost(host);
+		mount.setAIList();
+
+		if (!rider.startRiding(mount, true)) {
+			throw new AssertionError("Failed to mount rider onto BasicEntityMount in mount-ridden test.");
+		}
+
+		double initialDistSq = mount.distanceToSqr(host);
+		if (initialDistSq <= 1024.0D) {
+			throw new AssertionError("Mount-ridden test requires long initial distance. actual=" + initialDistSq);
+		}
+
+		for (int i = 0; i < 20; i++) {
+			mount.tick();
+		}
+
+		double finalDistSq = mount.distanceToSqr(host);
+		if (finalDistSq < 256.0D) {
+			throw new AssertionError("Mount follow should be blocked while ridden. finalDistSq=" + finalDistSq);
+		}
+
+		rider.stopRiding();
+		mount.discard();
+		host.discard();
+		helper.succeed();
+	}
+
 	// 2026/04/11：GitHub Copilotによって確認済み
 	@GameTest(template = "empty", templateNamespace = "minecraft")
 	public static void shipSpawnEggSpecificClassPriorityAndLegacyTypeConversion(GameTestHelper helper) {
@@ -1064,6 +1188,39 @@ public final class ShinColleEntityRegistryGameTests {
 		if (!hasWander || !hasOpenDoor) {
 			throw new AssertionError("Hostile goal list missing expected mobility goals. hasWander="
 					+ hasWander + " hasOpenDoor=" + hasOpenDoor);
+		}
+
+		hostile.discard();
+		helper.succeed();
+	}
+
+	// 2026/04/15：GitHub Copilotによって追加
+	@GameTest(template = "empty", templateNamespace = "minecraft")
+	public static void hostileTargetGoalPrioritiesMatchLegacy(GameTestHelper helper) {
+		ServerLevel level = helper.getLevel();
+
+		Entity entity = ModEntities.BB_KIRISHIMA_MOB.get().create(level);
+		if (!(entity instanceof BasicEntityShipHostile hostile)) {
+			throw new AssertionError("BB_KIRISHIMA_MOB is not BasicEntityShipHostile in target-priority test.");
+		}
+
+		hostile.moveTo(0.5D, level.getSharedSpawnPos().getY() + 1D, 0.5D, 0F, 0F);
+		if (!level.addFreshEntity(hostile)) {
+			throw new AssertionError("Failed to add hostile ship for target-priority test.");
+		}
+
+		invokeNoArgProtected(hostile, "clearAITargetTasks");
+		invokeNoArgProtected(hostile, "setAITargetList");
+
+		GoalSelector targetSelector = extractTargetSelector(hostile);
+		int revengePriority = findGoalPriority(targetSelector, ShipRevengeTargetGoal.class);
+		int rangePriority = findGoalPriority(targetSelector, ShipRangeTargetGoal.class);
+
+		if (revengePriority != 1) {
+			throw new AssertionError("Hostile revenge target priority mismatch. expected=1 actual=" + revengePriority);
+		}
+		if (rangePriority != 3) {
+			throw new AssertionError("Hostile range target priority mismatch. expected=3 actual=" + rangePriority);
 		}
 
 		hostile.discard();
@@ -1219,6 +1376,63 @@ public final class ShinColleEntityRegistryGameTests {
 		}
 
 		throw new AssertionError("Failed to resolve goal selector via reflection.");
+	}
+
+	private static GoalSelector extractTargetSelector(Mob mob) {
+		try {
+			Field targetSelectorField = Mob.class.getDeclaredField("targetSelector");
+			targetSelectorField.setAccessible(true);
+			Object value = targetSelectorField.get(mob);
+			if (value instanceof GoalSelector selector) {
+				return selector;
+			}
+		} catch (ReflectiveOperationException e) {
+			throw new AssertionError("Failed to inspect target selector via reflection.", e);
+		}
+
+		throw new AssertionError("Failed to resolve target selector via reflection.");
+	}
+
+	private static void assertLightCruiserGoalPriority(ServerLevel level, EntityType<?> type, String id) {
+		Entity entity = type.create(level);
+		if (!(entity instanceof BasicEntityShip ship)) {
+			throw new AssertionError("Entity is not BasicEntityShip in light cruiser AI test: " + id);
+		}
+
+		ship.moveTo(0.5D, level.getSharedSpawnPos().getY() + 1D, 0.5D, 0F, 0F);
+		if (!level.addFreshEntity(ship)) {
+			throw new AssertionError("Failed to add entity for light cruiser AI test: " + id);
+		}
+
+		invokeNoArgProtected(ship, "clearAITasks");
+		invokeNoArgProtected(ship, "setAIList");
+
+		GoalSelector selector = extractGoalSelector(ship);
+		int skillPriority = findGoalPriority(selector, ShipSkillAttackGoal.class);
+		int rangePriority = findGoalPriority(selector, ShipRangeAttackGoal.class);
+
+		if (skillPriority != 0) {
+			throw new AssertionError("SkillAttack goal priority mismatch for " + id + ". expected=0 actual="
+					+ skillPriority);
+		}
+
+		if (rangePriority != 11) {
+			throw new AssertionError("RangeAttack goal priority mismatch for " + id + ". expected=11 actual="
+					+ rangePriority);
+		}
+
+		ship.discard();
+	}
+
+	private static int findGoalPriority(GoalSelector selector, Class<? extends Goal> goalClass) {
+		int bestPriority = Integer.MAX_VALUE;
+		for (WrappedGoal wrappedGoal : selector.getAvailableGoals()) {
+			if (goalClass.isInstance(wrappedGoal.getGoal())) {
+				bestPriority = Math.min(bestPriority, wrappedGoal.getPriority());
+			}
+		}
+
+		return bestPriority == Integer.MAX_VALUE ? -1 : bestPriority;
 	}
 
 	private static void invokePacketHandler(C2SGUIInputPacket packet, String methodName, ServerPlayer player) {

@@ -1,7 +1,5 @@
 package com.lulan.shincolle.client.model;
 
-import java.util.NoSuchElementException;
-
 import com.lulan.shincolle.entity.IShipEmotion;
 import com.lulan.shincolle.reference.ID;
 import com.lulan.shincolle.reference.Reference;
@@ -247,6 +245,7 @@ public class ModelDestroyerRo extends ShipModelBaseAdv<Entity> {
                                 CubeListBuilder.create(),
                                 PartPose.offset(0.0F, 0.0F, -17.5F));
                 // [PORT] 1.10.2 -> 1.20.1: DestroyerRo uses side-projected dual-eye atlas.
+                // [RENDER?] 目視検証必須: 左右側面フェイス(通常/困り/泣き)が旧版と同じ位置・UVで表示されること。
                 glowHead.addOrReplaceChild("FaceL00",
                                 CubeListBuilder.create().texOffs(96, 96)
                                                 .addBox(0.0F, 0.0F, 0.0F, 0.0F, 16.0F, 16.0F),
@@ -291,32 +290,6 @@ public class ModelDestroyerRo extends ShipModelBaseAdv<Entity> {
                                 CubeListBuilder.create().texOffs(72, 102)
                                                 .addBox(0.6F, -24.5F, -2.5F, 3.0F, 18.0F, 8.0F),
                                 PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, -2.0943951023931953F, 0.0F, 0.0F));
-
-                // Custom dual-eye face parts for Ro-class destroyer
-                glowHead.addOrReplaceChild("FaceL00",
-                                CubeListBuilder.create().texOffs(98, 63)
-                                                .addBox(-5.0F, 0.0F, -0.5F, 10, 8, 1),
-                                PartPose.offset(-4.0F, -10.0F, -14.5F));
-                glowHead.addOrReplaceChild("FaceL01",
-                                CubeListBuilder.create().texOffs(98, 76)
-                                                .addBox(-5.0F, 0.0F, -0.5F, 10, 8, 1),
-                                PartPose.offset(-4.0F, -10.0F, -14.5F));
-                glowHead.addOrReplaceChild("FaceL02",
-                                CubeListBuilder.create().texOffs(98, 89)
-                                                .addBox(-5.0F, 0.0F, -0.5F, 10, 8, 1),
-                                PartPose.offset(-4.0F, -10.0F, -14.5F));
-                glowHead.addOrReplaceChild("FaceR00",
-                                CubeListBuilder.create().texOffs(98, 63)
-                                                .addBox(-5.0F, 0.0F, -0.5F, 10, 8, 1),
-                                PartPose.offset(4.0F, -10.0F, -14.5F));
-                glowHead.addOrReplaceChild("FaceR01",
-                                CubeListBuilder.create().texOffs(98, 76)
-                                                .addBox(-5.0F, 0.0F, -0.5F, 10, 8, 1),
-                                PartPose.offset(4.0F, -10.0F, -14.5F));
-                glowHead.addOrReplaceChild("FaceR02",
-                                CubeListBuilder.create().texOffs(98, 89)
-                                                .addBox(-5.0F, 0.0F, -0.5F, 10, 8, 1),
-                                PartPose.offset(4.0F, -10.0F, -14.5F));
 
                 return LayerDefinition.create(meshdefinition, 128, 128);
         }

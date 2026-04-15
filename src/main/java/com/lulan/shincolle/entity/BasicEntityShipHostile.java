@@ -318,7 +318,8 @@ public abstract class BasicEntityShipHostile extends Mob
 
 	public void setAITargetList() {
 		this.targetSelector.addGoal(1, new ShipRevengeTargetGoal(this));
-		this.targetSelector.addGoal(5, new ShipRangeTargetGoal(this));
+		// [PORT] 1.10.2 -> 1.20.1: legacy hostile range target priority is 3.
+		this.targetSelector.addGoal(3, new ShipRangeTargetGoal(this));
 	}
 
 	protected void clearAITasks() {
