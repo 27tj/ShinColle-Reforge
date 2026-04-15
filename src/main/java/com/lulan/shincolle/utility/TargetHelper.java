@@ -13,7 +13,9 @@ import com.lulan.shincolle.entity.IShipInvisible;
 import com.lulan.shincolle.entity.IShipOwner;
 import com.lulan.shincolle.handler.ConfigHandler;
 import com.lulan.shincolle.reference.ID;
+import com.lulan.shincolle.server.ServerDataManager;
 
+import net.minecraft.world.entity.AreaEffectCloud;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
@@ -160,6 +162,11 @@ public class TargetHelper {
 
 			// vanilla monsters and slimes
 			if (target instanceof Monster || target instanceof Slime) {
+				return true;
+			}
+
+			// custom target classes configured by player
+			if (checkAttackTargetList(host, target)) {
 				return true;
 			}
 
@@ -404,10 +411,68 @@ public class TargetHelper {
 	 * Check if an entity should never be attacked (projectiles, hangings, etc.).
 	 */
 	public static boolean isEntityInvulnerable(Entity target) {
-		return target instanceof Projectile
+		if (target == null) {
+			return true;
+		}
+
+		if (target instanceof Projectile
 				|| target instanceof FireworkRocketEntity
 				|| target instanceof FishingHook
-				|| target instanceof HangingEntity;
+				|| target instanceof HangingEntity
+				|| target instanceof AreaEffectCloud) {
+			return true;
+		}
+
+		// [PORT] 1.10.2 -> 1.20.1: preserve server-side unattackable class list.
+		if (!target.level().isClientSide()) {
+			return checkUnattackTargetList(target);
+		}
+
+		return false;
+	}
+
+	/**
+	 * Check if target class is in server-side unattackable class list.
+	 */
+	public static boolean checkUnattackTargetList(Entity target) {
+		if (target == null) {
+			return false;
+		}
+
+		java.util.HashMap<Integer, String> unattackable = ServerDataManager.getUnattackableTargetClass();
+		if (unattackable == null) {
+			return false;
+		}
+
+		String targetClass = target.getClass().getSimpleName();
+		return unattackable.containsKey(targetClass.hashCode());
+	}
+
+	/**
+	 * Check if target class is in player's custom attack target list.
+	 */
+	public static boolean checkAttackTargetList(Entity host, Entity target) {
+		if (target == null || !(host instanceof IShipAttackBase attackHost)) {
+			return false;
+		}
+
+		int pid = attackHost.getPlayerUID();
+		java.util.HashMap<Integer, String> targetList = ServerDataManager.getPlayerTargetClass(pid);
+		if (targetList == null) {
+			return false;
+		}
+
+		String targetClass = target.getClass().getSimpleName();
+		if (!targetList.containsKey(targetClass.hashCode())) {
+			return false;
+		}
+
+		// don't attack owner's own tameables even if class is listed
+		if (target instanceof OwnableEntity) {
+			return !checkSameOwner(host, target);
+		}
+
+		return true;
 	}
 
 	/**

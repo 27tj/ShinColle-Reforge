@@ -114,7 +114,6 @@ public class ShipRangeAttackGoal extends Goal {
 			this.onSightTime = 0;
 
 			if (this.host.getStateFlag(ID.F.OnSightChase)) {
-				this.host.setEntityTarget(null);
 				this.stop();
 				return;
 			}
@@ -150,7 +149,6 @@ public class ShipRangeAttackGoal extends Goal {
 		if (this.delayHeavy < -40 && this.delayLight < -40) {
 			this.delayLight = 20;
 			this.delayHeavy = 20;
-			this.host.setEntityTarget(null);
 			this.stop();
 		}
 	}

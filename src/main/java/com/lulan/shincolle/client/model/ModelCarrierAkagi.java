@@ -979,7 +979,10 @@ public class ModelCarrierAkagi extends ShipModelBaseAdv<Entity> {
                 this.Head.zRot = EmotionHelper.getHeadTiltAngle(ent, f2);
 
                 if (ent.getIsSneaking()) { // 潛行, 蹲下動作
-                                           // Body
+                        // [PORT] 1.10.2 -> 1.20.1: GlStateManager.translate(0, 0.1, 0)
+                        this.offsetY += 0.1F;
+
+                        // Body
                         this.Head.xRot -= 1.0472F;
                         this.BodyMain.xRot = 1.0472F;
                         this.Butt.xRot = -0.8378F;
@@ -998,6 +1001,9 @@ public class ModelCarrierAkagi extends ShipModelBaseAdv<Entity> {
                 if (ent.getIsSitting() || ent.getIsRiding()) { // 騎乘動作
                         if (ent.getStateEmotion(ID.S.Emotion) == ID.Emotion.BORED) {
                                 setFace(1);
+                                // [PORT] 1.10.2 -> 1.20.1: GlStateManager.translate(0, 0.43, 0)
+                                this.offsetY += 0.43F;
+
                                 // head
                                 int nodf2 = (int) f2 % 60;
                                 this.Head.xRot = 0.4F;
@@ -1051,6 +1057,9 @@ public class ModelCarrierAkagi extends ShipModelBaseAdv<Entity> {
                                 this.EquipD02.xRot = 0.2F;
                                 // this.EquipD02.offsetY = -0.5F;
                         } else {
+                                // [PORT] 1.10.2 -> 1.20.1: GlStateManager.translate(0, 0.36, 0)
+                                this.offsetY += 0.36F;
+
                                 // Body
                                 this.Head.xRot += 0.1047F;
                                 this.BodyMain.xRot = -0.1396F;

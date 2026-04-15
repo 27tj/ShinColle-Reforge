@@ -27,7 +27,7 @@ public class EntityCLTenryuu extends BasicEntityShipSmall {
 		this.setStateMinor(ID.M.NumState, 5);
 		this.setGrudgeConsumption(ConfigHandler.consumeGrudgeShip[ID.ShipConsume.CL]);
 		this.setAmmoConsumption(ConfigHandler.consumeAmmoShip[ID.ShipConsume.CL]);
-		this.ModelPos = new float[]{0F, 22F, 0F, 42F};
+		this.ModelPos = new float[] { 0F, 22F, 0F, 42F };
 
 		// set attack type
 		this.StateFlag[ID.F.AtkType_AirLight] = false;
@@ -47,7 +47,8 @@ public class EntityCLTenryuu extends BasicEntityShipSmall {
 		super.setAIList();
 
 		// [PORT] 1.10.2 -> 1.20.1: CLTenryuu used skill attack at priority 0.
-		this.goalSelector.getAvailableGoals().removeIf(wrappedGoal -> wrappedGoal.getGoal() instanceof ShipSkillAttackGoal);
+		this.goalSelector.getAvailableGoals()
+				.removeIf(wrappedGoal -> wrappedGoal.getGoal() instanceof ShipSkillAttackGoal);
 		this.goalSelector.addGoal(0, new ShipSkillAttackGoal(this));
 
 		// range attack
@@ -67,12 +68,12 @@ public class EntityCLTenryuu extends BasicEntityShipSmall {
 				java.util.UUID ownerUUID = this.getOwnerUUID();
 				Player player = ownerUUID != null ? this.level().getPlayerByUUID(ownerUUID) : null;
 				if (player != null && getStateFlag(ID.F.IsMarried) && getStateFlag(ID.F.UseRingEffect) &&
-					getStateMinor(ID.M.NumGrudge) > 0 &&
-					this.distanceToSqr(player) < 256.0D) {
+						getStateMinor(ID.M.NumGrudge) > 0 &&
+						this.distanceToSqr(player) < 256.0D) {
 					int level = getStateMinor(ID.M.ShipLevel);
 					player.addEffect(new MobEffectInstance(
-						MobEffects.NIGHT_VISION,
-						100 + level, 0, false, false));
+							MobEffects.NIGHT_VISION,
+							100 + level, 0, false, false));
 				}
 			}
 		}
@@ -85,9 +86,9 @@ public class EntityCLTenryuu extends BasicEntityShipSmall {
 
 		if (!this.level().isDay()) {
 			this.shipAttrs.setAttrsBuffed(ID.Attrs.CRI,
-				this.shipAttrs.getAttrsBuffed(ID.Attrs.CRI) + 0.15F);
+					this.shipAttrs.getAttrsBuffed(ID.Attrs.CRI) + 0.15F);
 			this.shipAttrs.setAttrsBuffed(ID.Attrs.DODGE,
-				this.shipAttrs.getAttrsBuffed(ID.Attrs.DODGE) + 0.15F);
+					this.shipAttrs.getAttrsBuffed(ID.Attrs.DODGE) + 0.15F);
 		}
 	}
 

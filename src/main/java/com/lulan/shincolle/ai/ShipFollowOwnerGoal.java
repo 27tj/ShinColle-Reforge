@@ -3,14 +3,15 @@ package com.lulan.shincolle.ai;
 import java.util.EnumSet;
 
 import com.lulan.shincolle.ai.path.ShipPathNavigate;
-import com.lulan.shincolle.entity.BasicEntityMount;
 import com.lulan.shincolle.entity.BasicEntityShip;
 import com.lulan.shincolle.entity.IShipAttackBase;
 import com.lulan.shincolle.handler.ConfigHandler;
 import com.lulan.shincolle.reference.ID;
+import com.lulan.shincolle.server.ServerDataManager;
 import com.lulan.shincolle.utility.FormationHelper;
 import com.lulan.shincolle.utility.LogHelper;
 
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.TamableAnimal;
@@ -31,13 +32,13 @@ public class ShipFollowOwnerGoal extends Goal {
 	private final Mob hostEntity;
 	private final ShipPathNavigate shipNavigator;
 	private LivingEntity owner;
-	private int checkTP_T, checkTP_D;       // teleport cooldown counters
-	private int findCooldown;               // path navigation cooldown
+	private int checkTP_T, checkTP_D; // teleport cooldown counters
+	private int findCooldown; // path navigation cooldown
 	private double maxDistSq;
 	private double minDistSq;
 	private double distSq;
-	private double[] pos;                    // target position
-	private double[] ownerPosOld;            // last recorded owner position
+	private double[] pos; // target position
+	private double[] ownerPosOld; // last recorded owner position
 
 	public ShipFollowOwnerGoal(IShipAttackBase entity) {
 		this.host = entity;
@@ -230,6 +231,14 @@ public class ShipFollowOwnerGoal extends Goal {
 	 * Both BasicEntityShip and BasicEntityMount extend TamableAnimal.
 	 */
 	private LivingEntity resolveOwner() {
+		int uid = this.host.getPlayerUID();
+		if (uid > 0 && !this.hostEntity.level().isClientSide()) {
+			ServerPlayer serverPlayer = ServerDataManager.getPlayerByUID(uid);
+			if (serverPlayer != null) {
+				return serverPlayer;
+			}
+		}
+
 		if (hostEntity instanceof TamableAnimal tamable) {
 			return tamable.getOwner();
 		}

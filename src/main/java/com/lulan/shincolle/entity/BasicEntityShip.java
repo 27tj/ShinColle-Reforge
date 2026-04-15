@@ -55,6 +55,7 @@ import com.lulan.shincolle.utility.InteractHelper;
 import com.lulan.shincolle.utility.LogHelper;
 import com.lulan.shincolle.utility.ParticleHelper;
 import com.lulan.shincolle.utility.TargetHelper;
+import com.lulan.shincolle.utility.TaskHelper;
 import com.lulan.shincolle.utility.TeamHelper;
 
 import net.minecraft.core.BlockPos;
@@ -614,6 +615,7 @@ public abstract class BasicEntityShip extends TamableAnimal
 					setAIList();
 					setAITargetList();
 					decrGrudgeNum(0);
+					updateChunkLoader();
 					this.initAI = true;
 				}
 
@@ -622,6 +624,9 @@ public abstract class BasicEntityShip extends TamableAnimal
 					this.calcShipAttributes(16, true);
 					this.setUpdateFlag(ID.FlagUpdate.FormationBuff, false);
 				}
+
+				// [PORT] 1.10.2 -> 1.20.1: restore periodic task update hook.
+				TaskHelper.onUpdateTask(this);
 
 				// check every 16 ticks
 				if ((tickCount & 15) == 0) {
@@ -2154,7 +2159,19 @@ public abstract class BasicEntityShip extends TamableAnimal
 
 	@Override
 	public Entity getHostEntity() {
-		return this;
+		int uid = this.getPlayerUID();
+		if (uid > 0) {
+			if (this.level().isClientSide()) {
+				return this.getOwner();
+			}
+
+			ServerPlayer player = ServerDataManager.getPlayerByUID(uid);
+			if (player != null) {
+				return player;
+			}
+		}
+
+		return this.getOwner();
 	}
 
 	// ========== IShipAttrs Implementation ==========

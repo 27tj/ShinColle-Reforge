@@ -290,6 +290,13 @@ public class ShipSpawnEgg extends BasicItem {
 		if (nbt == null)
 			return;
 
+		// [PORT] 1.10.2 -> 1.20.1: ensure spawned ship is tamed and linked to spawner.
+		if (player != null) {
+			ship.tame(player);
+			ship.setOwnerUUID(player.getUUID());
+		}
+		ship.setEntityTarget(null);
+
 		// set owner
 		CapaTeitoku capa = player.getCapability(CapaTeitokuProvider.CAPABILITY).orElse(null);
 		if (capa != null) {
@@ -302,6 +309,12 @@ public class ShipSpawnEgg extends BasicItem {
 		// load saved ship data (from death egg)
 		if (nbt.contains("StateMinor")) {
 			CapaShipSavedValues.loadNBTData(nbt, ship);
+			if (ship.getPlayerUID() <= 0 && capa != null) {
+				int playerUID = capa.getPlayerUID();
+				if (playerUID > 0) {
+					ship.setPlayerUID(playerUID);
+				}
+			}
 		} else {
 			// construction egg: set initial level
 			ship.setShipLevel(1, true);

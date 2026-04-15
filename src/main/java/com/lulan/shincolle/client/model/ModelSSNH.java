@@ -599,6 +599,8 @@ public class ModelSSNH extends ShipModelBaseAdv<Entity> {
 	public void applyDeadPose(float f, float f1, float f2, float f3, float f4, IShipEmotion ent) {
 
 		this.setFaceHungry(ent);
+		// [PORT] 1.10.2 -> 1.20.1: GlStateManager.translate(0, 0.27, 0)
+		this.offsetY += 0.27F;
 
 		// 頭部
 		this.Head.xRot = -0.15F;
@@ -782,6 +784,9 @@ public class ModelSSNH extends ShipModelBaseAdv<Entity> {
 		// 奔跑動作
 		if (ent.getIsSprinting() || f1 > 0.9F) {
 			if (ent.getIsRiding()) {
+				// [PORT] 1.10.2 -> 1.20.1: riding sprint has slight crouch offset.
+				this.offsetY -= 0.06F;
+
 				if (f1 > 0.5F) {
 					this.Head.xRot += 0.4F;
 					this.Hair01.xRot += 0.1F;
@@ -831,6 +836,8 @@ public class ModelSSNH extends ShipModelBaseAdv<Entity> {
 
 		// 潛行跟蹲下動作
 		if (ent.getIsSneaking()) {
+			// [PORT] 1.10.2 -> 1.20.1: GlStateManager.translate(0, 0.01, 0)
+			this.offsetY += 0.01F;
 
 			// Body
 			this.Head.xRot -= 0.6283F;
@@ -863,6 +870,9 @@ public class ModelSSNH extends ShipModelBaseAdv<Entity> {
 		// 坐下動作
 		if (ent.getIsSitting() && !ent.getIsRiding()) {
 			if (ent.getTickExisted() % 512 > 256) {
+				// [PORT] 1.10.2 -> 1.20.1: bobbing sit translate
+				this.offsetY += -angleX * 0.05F - 0.1F;
+
 				this.setFaceDamaged(ent);
 				// body
 				this.Head.xRot *= 0.5F;
@@ -890,6 +900,8 @@ public class ModelSSNH extends ShipModelBaseAdv<Entity> {
 				this.LegRight01.yRot = 0.1F + angleX * 0.02F;
 			} else {
 				if (ent.getStateEmotion(ID.S.Emotion) == ID.Emotion.BORED) {
+					// [PORT] 1.10.2 -> 1.20.1: bored sit translate
+					this.offsetY += 0.26F;
 
 					this.setFaceDamaged(ent);
 
@@ -937,6 +949,8 @@ public class ModelSSNH extends ShipModelBaseAdv<Entity> {
 					// equip
 					this.EquipTBase.visible = false;
 				} else {
+					// [PORT] 1.10.2 -> 1.20.1: normal sit translate
+					this.offsetY += 0.24F;
 
 					// body
 					this.Head.xRot -= 0.7F;
@@ -992,7 +1006,11 @@ public class ModelSSNH extends ShipModelBaseAdv<Entity> {
 
 				if (ent.getIsSitting()) {
 					if (((net.minecraft.world.entity.Entity) ent).getVehicle().isShiftKeyDown()) {
+						// [PORT] 1.10.2 -> 1.20.1: player mount sneaking sit translate.
+						this.offsetY += 0.33F;
 					} else {
+						// [PORT] 1.10.2 -> 1.20.1: player mount sit translate.
+						this.offsetY += 0.24F;
 					}
 
 					// cloth
@@ -1015,7 +1033,11 @@ public class ModelSSNH extends ShipModelBaseAdv<Entity> {
 				} // end if sitting
 				else {
 					if (((net.minecraft.world.entity.Entity) ent).getVehicle().isShiftKeyDown()) {
+						// [PORT] 1.10.2 -> 1.20.1: player mount sneaking stand translate.
+						this.offsetY += 0.16F;
 					} else {
+						// [PORT] 1.10.2 -> 1.20.1: player mount stand translate.
+						this.offsetY += 0.07F;
 					}
 
 					// body
@@ -1054,6 +1076,8 @@ public class ModelSSNH extends ShipModelBaseAdv<Entity> {
 			else {
 				if (ent.getIsSitting()) {
 					if (ent.getStateEmotion(ID.S.Emotion) == ID.Emotion.BORED) {
+						// [PORT] 1.10.2 -> 1.20.1: mounted bored sit bobbing offset.
+						this.offsetY += -angleX * 0.05F - 0.16F;
 						this.setFaceDamaged(ent);
 						// body
 						this.Head.xRot *= 0.5F;
@@ -1080,6 +1104,8 @@ public class ModelSSNH extends ShipModelBaseAdv<Entity> {
 						this.LegLeft01.yRot = -0.1F - angleX * 0.02F;
 						this.LegRight01.yRot = 0.1F + angleX * 0.02F;
 					} else {
+						// [PORT] 1.10.2 -> 1.20.1: mounted sit translate.
+						this.offsetY += 0.24F;
 
 						this.setFaceDamaged(ent);
 
@@ -1126,6 +1152,8 @@ public class ModelSSNH extends ShipModelBaseAdv<Entity> {
 						this.LegRight02.zRot = 0.0F;
 					}
 				} else {
+					// [PORT] 1.10.2 -> 1.20.1: mounted stand translate.
+					this.offsetY += 0.26F;
 
 					// body
 					this.Head.xRot -= 0.7F;

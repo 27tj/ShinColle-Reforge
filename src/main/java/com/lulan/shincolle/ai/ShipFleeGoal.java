@@ -4,7 +4,9 @@ import java.util.EnumSet;
 
 import com.lulan.shincolle.entity.BasicEntityShip;
 import com.lulan.shincolle.reference.ID;
+import com.lulan.shincolle.server.ServerDataManager;
 
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
 
@@ -28,7 +30,7 @@ public class ShipFleeGoal extends Goal {
 		if (this.ship.getStateFlag(ID.F.NoFuel))
 			return false;
 
-		LivingEntity owner = this.ship.getOwner();
+		LivingEntity owner = resolveOwner();
 		if (owner == null || !owner.isAlive())
 			return false;
 
@@ -45,7 +47,7 @@ public class ShipFleeGoal extends Goal {
 
 	@Override
 	public void start() {
-		this.owner = this.ship.getOwner();
+		this.owner = resolveOwner();
 		this.pathfindCooldown = 0;
 	}
 
@@ -69,5 +71,17 @@ public class ShipFleeGoal extends Goal {
 				}
 			}
 		}
+	}
+
+	private LivingEntity resolveOwner() {
+		int uid = this.ship.getPlayerUID();
+		if (uid > 0 && !this.ship.level().isClientSide()) {
+			ServerPlayer serverPlayer = ServerDataManager.getPlayerByUID(uid);
+			if (serverPlayer != null) {
+				return serverPlayer;
+			}
+		}
+
+		return this.ship.getOwner();
 	}
 }

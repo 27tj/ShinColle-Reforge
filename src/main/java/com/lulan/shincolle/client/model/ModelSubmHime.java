@@ -816,6 +816,8 @@ public class ModelSubmHime extends ShipModelBaseAdv<Entity> {
 	public void applyDeadPose(float f, float f1, float f2, float f3, float f4, IShipEmotion ent) {
 
 		this.setFaceHungry(ent);
+		// [PORT] 1.10.2 -> 1.20.1: GlStateManager.translate(0, 0.62, 0)
+		this.offsetY += 0.62F;
 
 		// 頭部
 		this.Head.xRot = -0.15F;
@@ -1052,6 +1054,9 @@ public class ModelSubmHime extends ShipModelBaseAdv<Entity> {
 		// 奔跑動作
 		if (ent.getIsSprinting() || f1 > 0.9F) {
 			if (ent.getIsRiding()) {
+				// [PORT] 1.10.2 -> 1.20.1: riding sprint crouch offset.
+				this.offsetY += 0.06F;
+
 				if (f1 > 0.5F) {
 					this.Head.xRot += 0.4F;
 					this.Hair01.xRot += 0.1F;
@@ -1136,6 +1141,8 @@ public class ModelSubmHime extends ShipModelBaseAdv<Entity> {
 
 		// 潛行跟蹲下動作
 		if (ent.getIsSneaking()) {
+			// [PORT] 1.10.2 -> 1.20.1: GlStateManager.translate(0, 0.09, 0)
+			this.offsetY += 0.09F;
 
 			// Body
 			this.Head.xRot -= 0.6283F;
@@ -1173,6 +1180,9 @@ public class ModelSubmHime extends ShipModelBaseAdv<Entity> {
 		// 坐下動作
 		if (ent.getIsSitting() && !ent.getIsRiding()) {
 			if (ent.getTickExisted() % 512 > 256) {
+				// [PORT] 1.10.2 -> 1.20.1: idle sit bobbing offset.
+				this.offsetY += -angleX * 0.05F + 0.1F;
+
 				this.setFaceDamaged(ent);
 				// body
 				this.Head.xRot *= 0.5F;
@@ -1201,6 +1211,8 @@ public class ModelSubmHime extends ShipModelBaseAdv<Entity> {
 				this.LegRight01.yRot = 0.1F + angleX * 0.02F;
 			} else {
 				if (ent.getStateEmotion(ID.S.Emotion) == ID.Emotion.BORED) {
+					// [PORT] 1.10.2 -> 1.20.1: bored sit translate.
+					this.offsetY += 0.52F;
 
 					this.setFaceDamaged(ent);
 
@@ -1247,6 +1259,8 @@ public class ModelSubmHime extends ShipModelBaseAdv<Entity> {
 					this.LegRight02.yRot = 0.0F;
 					this.LegRight02.zRot = 0.0F;
 				} else {
+					// [PORT] 1.10.2 -> 1.20.1: normal sit translate.
+					this.offsetY += 0.495F;
 
 					// body
 					this.Head.xRot -= 0.7F;
@@ -1299,6 +1313,8 @@ public class ModelSubmHime extends ShipModelBaseAdv<Entity> {
 		if (ent.getIsRiding()) {
 			if (((net.minecraft.world.entity.Entity) ent).getVehicle() instanceof BasicEntityMount) {
 				if (ent.getIsSitting()) {
+					// [PORT] 1.10.2 -> 1.20.1: ship mount sitting translate.
+					this.offsetY += 0.4F;
 
 					// body
 					this.Head.xRot -= 0.7F;
@@ -1337,6 +1353,9 @@ public class ModelSubmHime extends ShipModelBaseAdv<Entity> {
 					this.LegRight02.xRot = 0.8F;
 				} // end if sitting
 				else {
+					// [PORT] 1.10.2 -> 1.20.1: ship mount moving translate.
+					this.offsetY += 0.22F;
+
 					// body
 					this.Head.xRot *= 0.5F;
 					this.Head.yRot *= 0.75F;
@@ -1376,6 +1395,8 @@ public class ModelSubmHime extends ShipModelBaseAdv<Entity> {
 			else {
 				if (ent.getIsSitting()) {
 					if (ent.getStateEmotion(ID.S.Emotion) == ID.Emotion.BORED) {
+						// [PORT] 1.10.2 -> 1.20.1: normal mount bored sit bobbing offset.
+						this.offsetY += -angleX * 0.05F + 0.1F;
 						this.setFaceDamaged(ent);
 						// body
 						this.Head.xRot *= 0.5F;
@@ -1403,6 +1424,8 @@ public class ModelSubmHime extends ShipModelBaseAdv<Entity> {
 						this.LegLeft01.yRot = -0.1F - angleX * 0.02F;
 						this.LegRight01.yRot = 0.1F + angleX * 0.02F;
 					} else {
+						// [PORT] 1.10.2 -> 1.20.1: normal mount sit translate.
+						this.offsetY += 0.52F;
 
 						this.setFaceDamaged(ent);
 
@@ -1450,6 +1473,8 @@ public class ModelSubmHime extends ShipModelBaseAdv<Entity> {
 						this.LegRight02.zRot = 0.0F;
 					}
 				} else {
+					// [PORT] 1.10.2 -> 1.20.1: normal mount moving translate.
+					this.offsetY += 0.495F;
 
 					// body
 					this.Head.xRot -= 0.7F;
@@ -1502,6 +1527,8 @@ public class ModelSubmHime extends ShipModelBaseAdv<Entity> {
 		if (ent.getAttackTick() > 0) {
 			if (ent.getAttackTick() > 14) {
 				if (ent.getIsRiding()) {
+					// [PORT] 1.10.2 -> 1.20.1: riding attack startup translate.
+					this.offsetY += 0.02F;
 
 					// body
 					this.Head.xRot *= 0.5F;
@@ -1528,6 +1555,8 @@ public class ModelSubmHime extends ShipModelBaseAdv<Entity> {
 					// equip
 					this.GlowEquipBase.xRot = 0.5F;
 				} else {
+					// [PORT] 1.10.2 -> 1.20.1: ground attack startup translate.
+					this.offsetY += 0.22F;
 
 					// body
 					this.Head.xRot *= 0.5F;
