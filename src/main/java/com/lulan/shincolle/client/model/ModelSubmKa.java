@@ -390,7 +390,7 @@ public class ModelSubmKa extends ShipModelBaseAdv<Entity> {
                         float red, float green, float blue, float alpha) {
                 poseStack.pushPose();
                 poseStack.scale(scale, scale, scale);
-                poseStack.translate(0F, offsetY, 0F);
+                poseStack.translate(offsetX, offsetY, offsetZ);
                 this.BodyMain.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
                 this.GlowBodyMain.render(poseStack, buffer, 0xF000F0, packedOverlay, red, green, blue, alpha);
                 poseStack.popPose();
@@ -451,6 +451,8 @@ public class ModelSubmKa extends ShipModelBaseAdv<Entity> {
                 float angleX = Mth.cos(f2 * 0.08F);
                 this.setFaceHungry(ent);
                 // body
+                // [PORT] Restored from 1.10.2 GlStateManager.translate
+                this.offsetY += angleX * 0.05F;
                 this.Head.xRot = 0.5F;
                 this.Head.yRot = 0F;
                 this.BodyMain.xRot = 1.6F;
@@ -490,6 +492,8 @@ public class ModelSubmKa extends ShipModelBaseAdv<Entity> {
                 }
 
                 // head
+                // [PORT] Restored from 1.10.2 GlStateManager.translate
+                this.offsetY += angleX * 0.05F + 0.025F;
                 this.Head.xRot = f4 * 0.014F + 0.1047F;
                 this.Head.yRot = f3 * 0.01F;
                 this.Head.zRot = 0F;
@@ -549,6 +553,8 @@ public class ModelSubmKa extends ShipModelBaseAdv<Entity> {
                 // sprinting
                 if (ent.getIsSprinting() || f1 > 0.92F) { // 奔跑動作
                                                           // body
+                        // [PORT] Restored from 1.10.2 GlStateManager.translate
+                        this.offsetY += 0.06F;
                         this.Head.xRot -= 1.1F;
                         this.BodyMain.xRot = 1.2566F;
                         // 胸部
@@ -577,6 +583,8 @@ public class ModelSubmKa extends ShipModelBaseAdv<Entity> {
 
                 if (ent.getIsSneaking()) { // 潛行, 蹲下動作
                                            // Body
+                        // [PORT] Restored from 1.10.2 GlStateManager.translate
+                        this.offsetY += 0.05F;
                         this.Head.xRot -= 1.0472F;
                         this.BodyMain.xRot = 1.0472F;
                         this.Butt.xRot = -0.8378F;
@@ -600,6 +608,8 @@ public class ModelSubmKa extends ShipModelBaseAdv<Entity> {
                 if (ent.getIsSitting() && !ent.getIsRiding()) { // 騎乘動作
                         if (ent.getStateEmotion(ID.S.Emotion) == ID.Emotion.BORED) {
                                 // body
+                                // [PORT] Restored from 1.10.2 GlStateManager.translate
+                                this.offsetY += angleX * 0.05F + 0.18F;
                                 this.Head.xRot -= 0.8F;
                                 this.BodyMain.xRot = 0.7854F;
                                 // arm
@@ -621,6 +631,8 @@ public class ModelSubmKa extends ShipModelBaseAdv<Entity> {
                                 }
                         } else {
                                 // body
+                                // [PORT] Restored from 1.10.2 GlStateManager.translate
+                                this.offsetY += 0.45F;
                                 this.Head.xRot -= 0.7F;
                                 this.BodyMain.xRot = 0.5236F;
                                 // arm

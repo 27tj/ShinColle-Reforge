@@ -417,7 +417,7 @@ public class ModelAirfieldHime extends ShipModelBaseAdv<Entity> {
 			float red, float green, float blue, float alpha) {
 		poseStack.pushPose();
 		poseStack.scale(scale, scale, scale);
-		poseStack.translate(0F, offsetY, 0F);
+		poseStack.translate(offsetX, offsetY, offsetZ);
 		this.BodyMain.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
 		this.GlowBodyMain.render(poseStack, buffer, 0xF000F0, packedOverlay, red, green, blue, alpha);
 		poseStack.popPose();
@@ -453,6 +453,8 @@ public class ModelAirfieldHime extends ShipModelBaseAdv<Entity> {
 		float addk2 = 0F;
 		float headX = 0F;
 		float headZ = 0F;
+  // [PORT] Restored from 1.10.2 GlStateManager.translate
+  this.offsetY += 0.55F;
 		this.setFaceHungry(ent);
 
 		// 移動頭部使其看人
@@ -485,6 +487,8 @@ public class ModelAirfieldHime extends ShipModelBaseAdv<Entity> {
 			this.EquipRdR01.visible = false;
 
 		// Body
+  // [PORT] Restored from 1.10.2 GlStateManager.translate
+  this.offsetY += 0.27F;
 		this.Head.xRot += 0.14F;
 		this.BodyMain.xRot = 0.4F;
 		this.Butt.xRot = -0.4F;
@@ -550,6 +554,8 @@ public class ModelAirfieldHime extends ShipModelBaseAdv<Entity> {
 		}
 
 		// leg move parm
+  // [PORT] Restored from 1.10.2 GlStateManager.translate
+  this.offsetY += angleX * 0.05F + 0.025F;
 		addk1 = angleAdd1;
 		addk2 = angleAdd2 - 0.2F;
 
@@ -616,6 +622,8 @@ public class ModelAirfieldHime extends ShipModelBaseAdv<Entity> {
 
 		if (ent.getIsSneaking()) { // 潛行, 蹲下動作
 									// Body
+   // [PORT] Restored from 1.10.2 GlStateManager.translate
+   this.offsetY += 0.07F;
 			this.Head.xRot -= 0.6283F;
 			this.BodyMain.xRot = 0.8727F;
 			// arm
@@ -633,6 +641,9 @@ public class ModelAirfieldHime extends ShipModelBaseAdv<Entity> {
 		} // end if sneaking
 
 		if (ent.getIsSitting() && !ent.getIsRiding()) { // 騎乘動作
+   // [PORT] Restored from 1.10.2 GlStateManager.translate
+   this.offsetY += 0.22F;
+   this.offsetZ += 0.2F;
 			if (ent.getStateEmotion(ID.S.Emotion) == ID.Emotion.BORED) {
 				// Body
 				this.Head.xRot += 0.14F;
@@ -811,6 +822,8 @@ public class ModelAirfieldHime extends ShipModelBaseAdv<Entity> {
 				// jojo攻擊動作
 				if (EmotionHelper.checkModelState(2, ent.getStateEmotion(ID.S.State))) {
 					// Body
+     // [PORT] Restored from 1.10.2 GlStateManager.translate
+     this.offsetY += 0.15F;
 					this.Head.yRot *= 0.8F;
 					this.Head.xRot = 0.4538F;
 					this.BodyMain.xRot = -1.0472F;

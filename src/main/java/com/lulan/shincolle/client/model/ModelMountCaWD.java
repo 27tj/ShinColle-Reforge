@@ -511,7 +511,7 @@ public class ModelMountCaWD extends ShipModelBaseAdv<Entity> {
                         float red, float green, float blue, float alpha) {
                 poseStack.pushPose();
                 poseStack.scale(scale, scale, scale);
-                poseStack.translate(0F, offsetY, 0F);
+                poseStack.translate(offsetX, offsetY, offsetZ);
                 this.BodyMain.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
                 this.GlowBodyMain.render(poseStack, buffer, 0xF000F0, packedOverlay, red, green, blue, alpha);
                 this.GlowBodyMain2.render(poseStack, buffer, 0xF000F0, packedOverlay, red, green, blue, alpha);
@@ -541,6 +541,8 @@ public class ModelMountCaWD extends ShipModelBaseAdv<Entity> {
                 }
 
                 // jaw
+                // [PORT] Restored from 1.10.2 GlStateManager.translate
+                this.offsetY += angleX * 0.025F + 0.025F;
                 this.Jaw01.xRot = angleX * 0.025F + 0.32F;
                 // cannon
                 this.CannonL02.xRot = angleX * 0.05F - 0.3F;

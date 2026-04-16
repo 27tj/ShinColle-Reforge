@@ -1319,7 +1319,7 @@ public class ModelBBKongou extends ShipModelBaseAdv<Entity> {
                         float red, float green, float blue, float alpha) {
                 poseStack.pushPose();
                 poseStack.scale(scale, scale, scale);
-                poseStack.translate(0F, offsetY, 0F);
+                poseStack.translate(offsetX, offsetY, offsetZ);
                 this.BodyMain.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
                 this.GlowBodyMain.render(poseStack, buffer, 0xF000F0, packedOverlay, red, green, blue, alpha);
                 poseStack.popPose();
@@ -1390,6 +1390,8 @@ public class ModelBBKongou extends ShipModelBaseAdv<Entity> {
                                 break;
                 }
 
+                // [PORT] Restored from 1.10.2 GlStateManager.translate
+                this.offsetY += 1.05F;
                 this.setFaceHungry(ent);
 
                 // body
@@ -1681,6 +1683,8 @@ public class ModelBBKongou extends ShipModelBaseAdv<Entity> {
                         }
 
                         // Body
+                        // [PORT] Restored from 1.10.2 GlStateManager.translate
+                        this.offsetY += 0.2F;
                         this.Head.xRot -= 0.6283F;
                         this.BodyMain.xRot = 0.8727F;
                         this.Skirt01.xRot = -0.34F;
@@ -1724,6 +1728,8 @@ public class ModelBBKongou extends ShipModelBaseAdv<Entity> {
                                         }
 
                                         // 頭部
+                                        // [PORT] Restored from 1.10.2 GlStateManager.translate
+                                        this.offsetY += 1F;
                                         this.Head.xRot = -0.35F;
                                         this.Head.yRot = 0F;
                                         // body
@@ -1760,6 +1766,8 @@ public class ModelBBKongou extends ShipModelBaseAdv<Entity> {
                                                         break;
                                         }
 
+                                        // [PORT] Restored from 1.10.2 GlStateManager.translate
+                                        this.offsetY += 0.82F;
                                         this.setFaceScorn(ent);
 
                                         // Body
@@ -1824,6 +1832,8 @@ public class ModelBBKongou extends ShipModelBaseAdv<Entity> {
                                 }
 
                                 // Body
+                                // [PORT] Restored from 1.10.2 GlStateManager.translate
+                                this.offsetY += 0.46F;
                                 this.Head.xRot += 0.14F;
                                 this.BodyMain.xRot = -0.4363F;
                                 // cloth

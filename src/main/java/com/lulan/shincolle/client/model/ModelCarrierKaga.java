@@ -654,7 +654,7 @@ public class ModelCarrierKaga extends ShipModelBaseAdv<Entity> {
                         float red, float green, float blue, float alpha) {
                 poseStack.pushPose();
                 poseStack.scale(scale, scale, scale);
-                poseStack.translate(0F, offsetY, 0F);
+                poseStack.translate(offsetX, offsetY, offsetZ);
                 this.BodyMain.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
                 this.GlowBodyMain.render(poseStack, buffer, 0xF000F0, packedOverlay, red, green, blue, alpha);
                 poseStack.popPose();
@@ -709,6 +709,8 @@ public class ModelCarrierKaga extends ShipModelBaseAdv<Entity> {
                 // [PORT] 1.10.2 -> 1.20.1: preserve legacy dead-pose grounding offset.
                 this.offsetY += 0.48F + 0.2F * ent.getScaleLevel();
 
+                // [PORT] Restored from 1.10.2 GlStateManager.translate
+                this.offsetY += 0.48F + 0.2F * ent.getScaleLevel();
                 this.setFaceHungry(ent);
 
                 if (((IShipFloating) ent).getShipDepth() > 0) {
@@ -929,6 +931,8 @@ public class ModelCarrierKaga extends ShipModelBaseAdv<Entity> {
 
                 if (ent.getIsSneaking()) { // 潛行, 蹲下動作
                                            // Body
+                        // [PORT] Restored from 1.10.2 GlStateManager.translate
+                        this.offsetY += 0.1F;
                         this.Head.xRot -= 1.0472F;
                         this.BodyMain.xRot = 1.0472F;
                         this.Butt.xRot = -0.8378F;
@@ -1001,6 +1005,8 @@ public class ModelCarrierKaga extends ShipModelBaseAdv<Entity> {
                                 // this.EquipD02.offsetY = -0.5F;
                         } else {
                                 // Body
+                                // [PORT] Restored from 1.10.2 GlStateManager.translate
+                                this.offsetY += 0.36F;
                                 this.Head.xRot += 0.1047F;
                                 this.BodyMain.xRot = -0.1396F;
                                 this.Butt.xRot = 0.1396F;

@@ -24,6 +24,7 @@ import com.lulan.shincolle.capability.CapaShipInventory;
 import com.lulan.shincolle.capability.CapaShipSavedValues;
 import com.lulan.shincolle.client.gui.inventory.ContainerShipInventory;
 import com.lulan.shincolle.crafting.EquipCalc;
+import com.lulan.shincolle.entity.other.BasicEntityItem;
 import com.lulan.shincolle.entity.other.EntityAbyssMissile;
 import com.lulan.shincolle.handler.ConfigHandler;
 import com.lulan.shincolle.init.ModBlocks;
@@ -82,7 +83,6 @@ import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -1427,17 +1427,42 @@ public abstract class BasicEntityShip extends TamableAnimal
 		if (StateMinor[ID.M.NumGrudge] <= 0) {
 			if (!getStateFlag(ID.F.NoFuel)) {
 				setStateFlag(ID.F.NoFuel, true);
-				clearAITasks();
-				clearAITargetTasks();
-				sendSyncPacketEmotion();
 			}
 		} else {
 			if (getStateFlag(ID.F.NoFuel)) {
 				setStateFlag(ID.F.NoFuel, false);
+			}
+		}
+
+		// [PORT] 1.10.2 -> 1.20.1: keep legacy safeguard that restores AI when
+		// target tasks unexpectedly become empty while still having fuel.
+		updateFuelStateByAITaskPresence();
+	}
+
+	private void updateFuelStateByAITaskPresence() {
+		boolean noFuel = this.getStateFlag(ID.F.NoFuel);
+		int targetTaskCount = this.targetSelector.getAvailableGoals().size();
+
+		if (noFuel) {
+			if (targetTaskCount > 0) {
+				this.setMorale(0);
+				clearAITasks();
+				clearAITargetTasks();
+				if (this.getVehicle() instanceof BasicEntityMount mount) {
+					mount.clearAITasks();
+				}
+				sendSyncPacketEmotion();
+			}
+		} else {
+			if (targetTaskCount < 1) {
 				clearAITasks();
 				clearAITargetTasks();
 				setAIList();
 				setAITargetList();
+				if (this.getVehicle() instanceof BasicEntityMount mount) {
+					mount.clearAITasks();
+					mount.setAIList();
+				}
 				sendSyncPacketEmotion();
 			}
 		}
@@ -3034,11 +3059,27 @@ public abstract class BasicEntityShip extends TamableAnimal
 				CompoundTag eggNbt = new CompoundTag();
 				CapaShipSavedValues.saveNBTData(eggNbt, this);
 				eggNbt.putInt("ShipClass", this.getShipClass());
+				// [PORT] 1.10.2 -> 1.20.1: keep legacy pickup-protection tags used by
+				// BasicEntityItem (owner only for saved ship eggs).
+				if (this.getOwnerUUID() != null) {
+					eggNbt.putString("owner", this.getOwnerUUID().toString());
+				}
+				if (this.ownerName != null && !this.ownerName.isEmpty()) {
+					eggNbt.putString("ownername", this.ownerName);
+				} else if (this.getOwner() != null) {
+					eggNbt.putString("ownername", this.getOwner().getName().getString());
+				}
 				egg.setTag(eggNbt);
 
-				// spawn entity item
-				ItemEntity entityItem = new ItemEntity(this.level(),
-						this.getX(), this.getY() + 0.5D, this.getZ(), egg);
+				// [PORT] 1.10.2 -> 1.20.1: use custom item entity to preserve legacy
+				// fire-proof/non-push/owner-check behavior and reduce loss risk.
+				BasicEntityItem entityItem = new BasicEntityItem(
+						ModEntities.BASIC_ENTITY_ITEM.get(),
+						this.level(),
+						this.getX(),
+						this.getY() + 0.5D,
+						this.getZ(),
+						egg);
 				this.level().addFreshEntity(entityItem);
 			}
 

@@ -168,7 +168,7 @@ public class ModelAirplaneZero extends ShipModelBaseAdv<Entity> {
 
                 poseStack.pushPose();
                 poseStack.scale(scale, scale, scale);
-                poseStack.translate(0F, offsetY, 0F);
+                poseStack.translate(offsetX, offsetY, offsetZ);
 
                 // Main body
                 this.BodyMain.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);

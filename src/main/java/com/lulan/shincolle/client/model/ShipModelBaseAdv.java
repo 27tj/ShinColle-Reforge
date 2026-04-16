@@ -23,9 +23,13 @@ import net.minecraft.world.entity.HumanoidArm;
 public abstract class ShipModelBaseAdv<T extends Entity> extends EntityModel<T> implements IModelEmotionAdv {
 
     protected float scale = 1F;
+    protected float offsetX = 0F;
     protected float offsetY = 0F;
-    private boolean offsetYBaseInitialized = false;
+    protected float offsetZ = 0F;
+    private boolean offsetBaseInitialized = false;
+    private float baseOffsetX = 0F;
     private float baseOffsetY = 0F;
+    private float baseOffsetZ = 0F;
 
     // Held item support fields
     protected ModelPart[] armMain;
@@ -136,14 +140,30 @@ public abstract class ShipModelBaseAdv<T extends Entity> extends EntityModel<T> 
     @Override
     public void prepareMobModel(T entity, float limbSwing, float limbSwingAmount, float partialTick) {
         super.prepareMobModel(entity, limbSwing, limbSwingAmount, partialTick);
-        if (!this.offsetYBaseInitialized) {
-            this.baseOffsetY = this.offsetY;
-            this.offsetYBaseInitialized = true;
-        }
-        // [PORT] 1.10.2 -> 1.20.1: offsetY accumulates former GlStateManager.translate()
+        captureBaseOffsetsIfNeeded();
+        // [PORT] 1.10.2 -> 1.20.1: offsetY accumulates former
+        // GlStateManager.translate()
         // conversions; reset each frame to avoid cross-frame drift.
-        // [REPRO?] visual verification pending: check NoFuel grounding on multiple ship classes.
+        // [REPRO?] visual verification pending: check NoFuel grounding on multiple ship
+        // classes.
+        resetOffsetsToBase();
+    }
+
+    private void captureBaseOffsetsIfNeeded() {
+        if (this.offsetBaseInitialized) {
+            return;
+        }
+
+        this.baseOffsetX = this.offsetX;
+        this.baseOffsetY = this.offsetY;
+        this.baseOffsetZ = this.offsetZ;
+        this.offsetBaseInitialized = true;
+    }
+
+    private void resetOffsetsToBase() {
+        this.offsetX = this.baseOffsetX;
         this.offsetY = this.baseOffsetY;
+        this.offsetZ = this.baseOffsetZ;
     }
 
     /**

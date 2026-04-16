@@ -394,7 +394,7 @@ public class ModelHeavyCruiserNe extends ShipModelBaseAdv<Entity> {
                         float red, float green, float blue, float alpha) {
                 poseStack.pushPose();
                 poseStack.scale(scale, scale, scale);
-                poseStack.translate(0F, offsetY, 0F);
+                poseStack.translate(offsetX, offsetY, offsetZ);
                 this.BodyMain.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
                 this.GlowBodyMain.render(poseStack, buffer, 0xF000F0, packedOverlay, red, green, blue, alpha);
                 poseStack.popPose();
@@ -418,6 +418,8 @@ public class ModelHeavyCruiserNe extends ShipModelBaseAdv<Entity> {
         @Override
         public void applyDeadPose(float f, float f1, float f2, float f3, float f4, IShipEmotion ent) {
 
+                // [PORT] Restored from 1.10.2 GlStateManager.translate
+                this.offsetY += 0.2F;
                 this.setFaceHungry(ent);
 
                 // 頭部
@@ -622,6 +624,8 @@ public class ModelHeavyCruiserNe extends ShipModelBaseAdv<Entity> {
                         // 騎乘動作
                         if (ent.getStateEmotion(ID.S.Emotion) == ID.Emotion.BORED) {
                                 // head
+                                // [PORT] Restored from 1.10.2 GlStateManager.translate
+                                this.offsetY += 0.22F;
                                 this.Head.xRot = 1.5359F;
                                 // this.Head.offsetY = 0.25F;
                                 this.GlowHead.xRot = 1.5359F;
@@ -663,6 +667,8 @@ public class ModelHeavyCruiserNe extends ShipModelBaseAdv<Entity> {
                                 this.TailR06.yRot *= 0.5F;
                         } else {
                                 // head
+                                // [PORT] Restored from 1.10.2 GlStateManager.translate
+                                this.offsetY += 0.22F;
                                 this.Head.xRot -= 0.5F;
                                 this.GlowHead.xRot -= 0.5F;
                                 // this.Head.offsetY = 0.25F;

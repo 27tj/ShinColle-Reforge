@@ -799,7 +799,7 @@ public class ModelNorthernHime extends ShipModelBaseAdv<Entity> {
                         float red, float green, float blue, float alpha) {
                 poseStack.pushPose();
                 poseStack.scale(scale, scale, scale);
-                poseStack.translate(0F, offsetY, 0F);
+                poseStack.translate(offsetX, offsetY, offsetZ);
                 this.BodyMain.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
                 this.GlowBodyMain.render(poseStack, buffer, 0xF000F0, packedOverlay, red, green, blue, alpha);
                 poseStack.popPose();
@@ -845,6 +845,8 @@ public class ModelNorthernHime extends ShipModelBaseAdv<Entity> {
         @Override
         public void applyDeadPose(float f, float f1, float f2, float f3, float f4, IShipEmotion ent) {
 
+                // [PORT] Restored from 1.10.2 GlStateManager.translate
+                this.offsetY += 0.24F;
                 this.setFaceHungry(ent);
 
                 // 移動頭部使其看人
@@ -901,6 +903,8 @@ public class ModelNorthernHime extends ShipModelBaseAdv<Entity> {
                 }
 
                 // leg move parm
+                // [PORT] Restored from 1.10.2 GlStateManager.translate
+                this.offsetY += angleX * 0.05F + 0.025F;
                 addk1 = angleAdd1 - 0.1745F;
                 addk2 = angleAdd2 - 0.1745F;
 
@@ -993,6 +997,8 @@ public class ModelNorthernHime extends ShipModelBaseAdv<Entity> {
 
                 if (ent.getIsSneaking()) { // 潛行, 蹲下動作
                                            // body
+                        // [PORT] Restored from 1.10.2 GlStateManager.translate
+                        this.offsetY += 0.02F;
                         this.Head.xRot -= 0.8727F;
                         this.BodyMain.xRot = 1.0472F;
                         // hair
@@ -1013,6 +1019,8 @@ public class ModelNorthernHime extends ShipModelBaseAdv<Entity> {
                 if (ent.getIsSitting() && !ent.getIsRiding()) { // 坐下動作
 
                         // body
+                        // [PORT] Restored from 1.10.2 GlStateManager.translate
+                        this.offsetY += 0.24F;
                         this.Head.yRot *= 0.25F;
 
                         if (ent.getStateEmotion(ID.S.Emotion) == ID.Emotion.BORED) {
@@ -1052,6 +1060,9 @@ public class ModelNorthernHime extends ShipModelBaseAdv<Entity> {
 
                         if (ent.getIsSitting()) {
                                 // arm
+                                // [PORT] Restored from 1.10.2 GlStateManager.translate
+                                this.offsetY += 0.24F;
+                                this.offsetZ += 0.27F;
                                 this.ArmLeft01.xRot = -0.8F;
                                 this.ArmLeft01.zRot = -0.35F;
                                 this.ArmRight01.xRot = -0.8F;

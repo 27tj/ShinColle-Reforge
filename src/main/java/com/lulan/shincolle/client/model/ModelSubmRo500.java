@@ -360,8 +360,10 @@ public class ModelSubmRo500 extends ShipModelBaseAdv<Entity> {
         public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay,
                         float red, float green, float blue, float alpha) {
                 poseStack.pushPose();
-                poseStack.scale(scale, scale, scale);
-                poseStack.translate(0F, offsetY, 0F);
+                // [PORT] 1.10.2 -> 1.20.1: preserve legacy slight Y compression to match
+                // grounding.
+                poseStack.scale(scale, scale * 0.95F, scale);
+                poseStack.translate(offsetX, offsetY, offsetZ);
                 this.BodyMain.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
                 this.GlowBodyMain.render(poseStack, buffer, 0xF000F0, packedOverlay, red, green, blue, alpha);
                 poseStack.popPose();
@@ -450,6 +452,8 @@ public class ModelSubmRo500 extends ShipModelBaseAdv<Entity> {
                 }
 
                 // leg move parm
+                // [PORT] Restored from 1.10.2 GlStateManager.translate
+                this.offsetY += angleX * 0.05F + 0.025F;
                 addk1 = angleAdd1 - 0.122F;
                 addk2 = angleAdd2 - 0.122F;
 
@@ -526,6 +530,8 @@ public class ModelSubmRo500 extends ShipModelBaseAdv<Entity> {
 
                 if (ent.getIsSneaking()) { // 潛行, 蹲下動作
                                            // body
+                        // [PORT] Restored from 1.10.2 GlStateManager.translate
+                        this.offsetY += 0.1F;
                         this.Head.xRot -= 0.8727F;
                         this.BodyMain.xRot = 1.0472F;
                         // hair
@@ -541,6 +547,8 @@ public class ModelSubmRo500 extends ShipModelBaseAdv<Entity> {
                                 } else {
                                 }
                                 // body
+                                // [PORT] Restored from 1.10.2 GlStateManager.translate
+                                this.offsetY += -0.21F;
                                 this.Head.xRot += 0.35F;
                                 this.BodyMain.xRot = -0.7F;
                                 // arm
@@ -564,6 +572,8 @@ public class ModelSubmRo500 extends ShipModelBaseAdv<Entity> {
                                 } else {
                                 }
                                 // body
+                                // [PORT] Restored from 1.10.2 GlStateManager.translate
+                                this.offsetY += -0.22F;
                                 this.Head.xRot += 0.2F;
                                 this.BodyMain.xRot = -0.7F;
                                 // arm

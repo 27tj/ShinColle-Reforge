@@ -89,7 +89,7 @@ public class ModelAbyssMissile extends ShipModelBaseAdv<Entity> {
                         float red, float green, float blue, float alpha) {
                 poseStack.pushPose();
                 poseStack.scale(scale, scale, scale);
-                poseStack.translate(0F, offsetY, 0F);
+                poseStack.translate(offsetX, offsetY, offsetZ);
                 this.Body.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
                 poseStack.popPose();
         }

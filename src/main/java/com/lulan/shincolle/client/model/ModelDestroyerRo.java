@@ -318,7 +318,7 @@ public class ModelDestroyerRo extends ShipModelBaseAdv<Entity> {
                         float red, float green, float blue, float alpha) {
                 poseStack.pushPose();
                 poseStack.scale(scale, scale, scale);
-                poseStack.translate(0F, offsetY, 0F);
+                poseStack.translate(offsetX, offsetY, offsetZ);
                 this.Back.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
                 this.GlowBack.render(poseStack, buffer, 0xF000F0, packedOverlay, red, green, blue, alpha);
                 poseStack.popPose();
@@ -358,6 +358,8 @@ public class ModelDestroyerRo extends ShipModelBaseAdv<Entity> {
                                 break;
                         case ID.Emotion.BORED:
                                 if (ent.getFaceTick() <= 0) {
+                                        // [PORT] Restored from 1.10.2 GlStateManager.translate
+                                        this.offsetY += 0.45F;
                                         this.setFace(1);
                                 }
                                 break;

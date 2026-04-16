@@ -770,7 +770,7 @@ public class ModelSubmYo extends ShipModelBaseAdv<Entity> {
                         float red, float green, float blue, float alpha) {
                 poseStack.pushPose();
                 poseStack.scale(scale, scale, scale);
-                poseStack.translate(0F, offsetY, 0F);
+                poseStack.translate(offsetX, offsetY, offsetZ);
                 this.BodyMain.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
                 this.GlowBodyMain.render(poseStack, buffer, 0xF000F0, packedOverlay, red, green, blue, alpha);
                 poseStack.popPose();
@@ -820,6 +820,9 @@ public class ModelSubmYo extends ShipModelBaseAdv<Entity> {
         public void applyDeadPose(float f, float f1, float f2, float f3, float f4, IShipEmotion ent) {
 
                 float angleX = Mth.cos(f2 * 0.08F);
+                // [PORT] Restored from 1.10.2 GlStateManager.translate
+                this.offsetY += 0.39F;
+                this.offsetZ += -0.1F;
                 this.setFaceHungry(ent);
 
                 this.EquipBase.visible = true;
@@ -947,6 +950,9 @@ public class ModelSubmYo extends ShipModelBaseAdv<Entity> {
 
                 if (showEquip) {
                         // head
+                        // [PORT] Restored from 1.10.2 GlStateManager.translate
+                        this.offsetY += angleX * 0.035F + 0.1F;
+                        this.offsetZ += -0.1F;
                         this.Head.xRot -= 0.7F;
                         // body
                         this.BodyMain.xRot = 0.7F;
@@ -1006,6 +1012,8 @@ public class ModelSubmYo extends ShipModelBaseAdv<Entity> {
                 if (ent.getIsSprinting() || f1 > 0.92F) { // 奔跑動作
 
                         if (showEquip) {
+                                // [PORT] Restored from 1.10.2 GlStateManager.translate
+                                this.offsetY += 0.1F;
                                 this.Head.xRot += 0.6F;
                         }
 
@@ -1032,6 +1040,8 @@ public class ModelSubmYo extends ShipModelBaseAdv<Entity> {
 
                 if (ent.getIsSneaking()) { // 潛行, 蹲下動作
                                            // Body
+                        // [PORT] Restored from 1.10.2 GlStateManager.translate
+                        this.offsetY += 0.05F;
                         this.Head.xRot -= 1.0472F;
                         this.BodyMain.xRot = 1.0472F;
                         this.Butt.xRot = -0.8378F;
@@ -1061,6 +1071,8 @@ public class ModelSubmYo extends ShipModelBaseAdv<Entity> {
                         if (ent.getStateEmotion(ID.S.Emotion) == ID.Emotion.BORED) {
                                 this.setFaceDamaged(ent);
                                 // body
+                                // [PORT] Restored from 1.10.2 GlStateManager.translate
+                                this.offsetY += -angleX * 0.05F;
                                 this.Head.xRot *= 0.5F;
                                 this.Head.yRot *= 0.75F;
                                 this.Head.xRot += 0.5F;
@@ -1117,6 +1129,8 @@ public class ModelSubmYo extends ShipModelBaseAdv<Entity> {
 
                 // attack
                 if (ent.getAttackTick() > 41) {
+                        // [PORT] Restored from 1.10.2 GlStateManager.translate
+                        this.offsetY += 0.45F;
                         setFaceAttack(ent);
                         // swing arm
                         float ft = (50 - ent.getAttackTick()) + (f2 - (int) f2);

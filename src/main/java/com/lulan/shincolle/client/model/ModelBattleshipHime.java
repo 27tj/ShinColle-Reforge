@@ -314,7 +314,7 @@ public class ModelBattleshipHime extends ShipModelBaseAdv<Entity> {
 			float red, float green, float blue, float alpha) {
 		poseStack.pushPose();
 		poseStack.scale(scale, scale, scale);
-		poseStack.translate(0F, offsetY, 0F);
+		poseStack.translate(offsetX, offsetY, offsetZ);
 		this.BodyMain.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
 		this.GlowBodyMain.render(poseStack, buffer, 0xF000F0, packedOverlay, red, green, blue, alpha);
 		poseStack.popPose();
@@ -348,6 +348,8 @@ public class ModelBattleshipHime extends ShipModelBaseAdv<Entity> {
 		float addk2 = 0F;
 		float headX = 0F;
 		float headZ = 0F;
+  // [PORT] Restored from 1.10.2 GlStateManager.translate
+  this.offsetY += 1.05F;
 		this.setFaceHungry(ent);
 
 		// 移動頭部使其看人
@@ -379,6 +381,8 @@ public class ModelBattleshipHime extends ShipModelBaseAdv<Entity> {
 		this.LegRight01.yRot = 0F;
 
 		// Body
+  // [PORT] Restored from 1.10.2 GlStateManager.translate
+  this.offsetY += 0.33F;
 		this.Head.xRot += 0.14F;
 		this.BodyMain.xRot = 0.4F;
 		this.Butt.xRot = -0.4F;
@@ -445,6 +449,8 @@ public class ModelBattleshipHime extends ShipModelBaseAdv<Entity> {
 		}
 
 		// leg move parm
+  // [PORT] Restored from 1.10.2 GlStateManager.translate
+  this.offsetY += 0.5F;
 		addk1 = angleAdd1 - 0.122F;
 		addk2 = angleAdd2 - 0.174F;
 
@@ -514,6 +520,8 @@ public class ModelBattleshipHime extends ShipModelBaseAdv<Entity> {
 		// 潛行, 蹲下動作
 		if (ent.getIsSneaking()) {
 			// Body
+   // [PORT] Restored from 1.10.2 GlStateManager.translate
+   this.offsetY += 0.08F;
 			this.Head.xRot -= 0.6283F;
 			this.BodyMain.xRot = 0.8727F;
 			// arm
@@ -534,6 +542,8 @@ public class ModelBattleshipHime extends ShipModelBaseAdv<Entity> {
 		if (ent.getIsSitting() && !ent.getIsRiding()) {
 			if (ent.getStateEmotion(ID.S.Emotion) == ID.Emotion.BORED) {
 				// Body
+    // [PORT] Restored from 1.10.2 GlStateManager.translate
+    this.offsetY += 0.65F;
 				this.Head.xRot = -1.2217F;
 				this.Head.yRot = this.Head.yRot * 0.5F;
 				this.BodyMain.xRot = 1.2217F;
@@ -648,6 +658,8 @@ public class ModelBattleshipHime extends ShipModelBaseAdv<Entity> {
 				} // end if sitting
 				else {
 					// Body
+     // [PORT] Restored from 1.10.2 GlStateManager.translate
+     this.offsetY += 0.17F;
 					this.Head.xRot += 0.1745F;
 					this.BodyMain.xRot = -0.35F;
 					// arm

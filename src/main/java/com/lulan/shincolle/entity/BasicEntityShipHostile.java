@@ -545,9 +545,6 @@ public abstract class BasicEntityShipHostile extends Mob
 
 	@Override
 	public boolean attackEntityWithAmmo(Entity target) {
-		if (!decrAmmoNum(0, this.getAmmoConsumption()))
-			return false;
-
 		setCombatTick(this.tickCount);
 		float atk = getAttackBaseDamage(1, target);
 
@@ -580,9 +577,6 @@ public abstract class BasicEntityShipHostile extends Mob
 
 	@Override
 	public boolean attackEntityWithHeavyAmmo(Entity target) {
-		if (!decrAmmoNum(1, this.getAmmoConsumption()))
-			return false;
-
 		setCombatTick(this.tickCount);
 		float atk = getAttackBaseDamage(2, target);
 		float kbValue = 0.15F;
@@ -1034,19 +1028,19 @@ public abstract class BasicEntityShipHostile extends Mob
 	}
 
 	public boolean hasAmmoLight() {
-		return StateMinor[ID.M.NumAmmoLight] >= StateMinor[ID.M.AmmoCon];
+		return true;
 	}
 
 	public boolean hasAmmoHeavy() {
-		return StateMinor[ID.M.NumAmmoHeavy] >= StateMinor[ID.M.AmmoCon];
+		return true;
 	}
 
 	public boolean useAmmoLight() {
-		return StateFlag[ID.F.UseAmmoLight];
+		return true;
 	}
 
 	public boolean useAmmoHeavy() {
-		return StateFlag[ID.F.UseAmmoHeavy];
+		return true;
 	}
 
 	public int getLevel() {

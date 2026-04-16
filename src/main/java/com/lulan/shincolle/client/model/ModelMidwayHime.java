@@ -720,7 +720,7 @@ public class ModelMidwayHime extends ShipModelBaseAdv<Entity> {
 			float red, float green, float blue, float alpha) {
 		poseStack.pushPose();
 		poseStack.scale(scale, scale, scale);
-		poseStack.translate(0F, offsetY, 0F);
+		poseStack.translate(offsetX, offsetY, offsetZ);
 		this.BodyMain.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
 		this.GlowBodyMain.render(poseStack, buffer, 0xF000F0, packedOverlay, red, green, blue, alpha);
 		this.GlowBodyMain2.render(poseStack, buffer, 0xF000F0, packedOverlay, red, green, blue, alpha);
@@ -765,6 +765,8 @@ public class ModelMidwayHime extends ShipModelBaseAdv<Entity> {
 	@Override
 	public void applyDeadPose(float f, float f1, float f2, float f3, float f4, IShipEmotion ent) {
 
+  // [PORT] Restored from 1.10.2 GlStateManager.translate
+  this.offsetY += 0.59F;
 		this.setFaceHungry(ent);
 
 		// 頭部
@@ -863,6 +865,8 @@ public class ModelMidwayHime extends ShipModelBaseAdv<Entity> {
 		}
 
 		// leg move parm
+  // [PORT] Restored from 1.10.2 GlStateManager.translate
+  this.offsetY += angleX * 0.025F + 0.025F;
 		addk1 = angleAdd1 * 0.6F - 0.27F;
 		addk2 = angleAdd2 * 0.6F - 0.19F;
 
@@ -968,6 +972,8 @@ public class ModelMidwayHime extends ShipModelBaseAdv<Entity> {
 		// 潛行跟蹲下動作
 		if (ent.getIsSneaking()) {
 			// Body
+   // [PORT] Restored from 1.10.2 GlStateManager.translate
+   this.offsetY += 0.09F;
 			this.Head.xRot -= 0.6283F;
 			this.BodyMain.xRot = 0.8727F;
 			this.Skirt01.xRot = -0.34F;
@@ -1002,6 +1008,8 @@ public class ModelMidwayHime extends ShipModelBaseAdv<Entity> {
 		if (ent.getIsSitting() && !ent.getIsRiding()) {
 			if (ent.getTickExisted() % 512 > 256) {
 				// body
+    // [PORT] Restored from 1.10.2 GlStateManager.translate
+    this.offsetY += 0.51F;
 				this.Head.xRot -= 0.7F;
 				this.BodyMain.xRot = 0.35F;
 				this.Skirt01.xRot = -0.23F;
@@ -1051,6 +1059,8 @@ public class ModelMidwayHime extends ShipModelBaseAdv<Entity> {
 			} else {
 				if (ent.getStateEmotion(ID.S.Emotion) == ID.Emotion.BORED) {
 					// Body
+     // [PORT] Restored from 1.10.2 GlStateManager.translate
+     this.offsetY += 0.43F;
 					this.Head.xRot -= 0.1F;
 					this.BodyMain.xRot = 0F;
 					this.Butt.xRot = -0.2F;

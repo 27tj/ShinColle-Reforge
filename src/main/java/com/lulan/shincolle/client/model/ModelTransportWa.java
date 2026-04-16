@@ -643,7 +643,7 @@ public class ModelTransportWa extends ShipModelBaseAdv<Entity> {
                         float red, float green, float blue, float alpha) {
                 poseStack.pushPose();
                 poseStack.scale(scale, scale, scale);
-                poseStack.translate(0F, offsetY, 0F);
+                poseStack.translate(offsetX, offsetY, offsetZ);
                 this.BodyMain.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
                 this.GlowBodyMain.render(poseStack, buffer, 0xF000F0, packedOverlay, red, green, blue, alpha);
                 poseStack.popPose();
@@ -700,6 +700,8 @@ public class ModelTransportWa extends ShipModelBaseAdv<Entity> {
         @Override
         public void applyDeadPose(float f, float f1, float f2, float f3, float f4, IShipEmotion ent) {
 
+                // [PORT] Restored from 1.10.2 GlStateManager.translate
+                this.offsetY += 0.12F;
                 this.setFaceHungry(ent);
 
                 // 頭部
@@ -826,6 +828,8 @@ public class ModelTransportWa extends ShipModelBaseAdv<Entity> {
                 if (ent.getIsSneaking()) {
                         // 潛行, 蹲下動作
                         // Body
+                        // [PORT] Restored from 1.10.2 GlStateManager.translate
+                        this.offsetY += 0.05F;
                         this.Head.xRot -= 1.0472F;
                         this.BodyMain.xRot = 1.0472F;
                         if (hideLeg) {
@@ -848,6 +852,8 @@ public class ModelTransportWa extends ShipModelBaseAdv<Entity> {
                         // fly mode
                         if (hideLeg) {
                                 if (ent.getStateEmotion(ID.S.Emotion) == ID.Emotion.BORED) {
+                                        // [PORT] Restored from 1.10.2 GlStateManager.translate
+                                        this.offsetY += 0.54F;
                                         setFace(3);
 
                                         // body
@@ -867,6 +873,8 @@ public class ModelTransportWa extends ShipModelBaseAdv<Entity> {
                                         this.LegRight01.yRot = 0F;
                                         this.LegRight01.zRot = -0.03F;
                                 } else {
+                                        // [PORT] Restored from 1.10.2 GlStateManager.translate
+                                        this.offsetY += -0.17F;
                                         setFace(1);
 
                                         // body
@@ -914,6 +922,8 @@ public class ModelTransportWa extends ShipModelBaseAdv<Entity> {
                                         this.LegRight01.zRot = -0.03F;
                                 } else {
                                         // body
+                                        // [PORT] Restored from 1.10.2 GlStateManager.translate
+                                        this.offsetY += 0.42F;
                                         this.Head.xRot -= 0.7F;
                                         this.BodyMain.xRot = 0.5236F;
                                         // arm

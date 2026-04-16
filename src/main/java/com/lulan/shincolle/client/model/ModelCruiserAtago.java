@@ -927,7 +927,7 @@ public class ModelCruiserAtago extends ShipModelBaseAdv<Entity> {
                         float red, float green, float blue, float alpha) {
                 poseStack.pushPose();
                 poseStack.scale(scale, scale, scale);
-                poseStack.translate(0F, offsetY, 0F);
+                poseStack.translate(offsetX, offsetY, offsetZ);
                 this.BodyMain.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
                 this.GlowBodyMain.render(poseStack, buffer, 0xF000F0, packedOverlay, red, green, blue, alpha);
                 poseStack.popPose();
@@ -972,9 +972,13 @@ public class ModelCruiserAtago extends ShipModelBaseAdv<Entity> {
                 // [PORT] 1.10.2 -> 1.20.1: preserve legacy dead-pose grounding offset.
                 this.offsetY += 0.58F + 0.26F * ent.getScaleLevel();
 
+                // [PORT] Restored from 1.10.2 GlStateManager.translate
+                this.offsetY += 0.58F + 0.26F * ent.getScaleLevel();
                 this.setFaceHungry(ent);
 
                 // body
+                // [PORT] Restored from 1.10.2 GlStateManager.translate
+                this.offsetY += 0.58F;
                 this.Head.xRot = 0.55F;
                 this.Head.yRot = -0.2F;
                 this.BodyMain.xRot = -0.7F;
@@ -1188,6 +1192,8 @@ public class ModelCruiserAtago extends ShipModelBaseAdv<Entity> {
                         // 潛行, 蹲下動作
 
                         // body
+                        // [PORT] Restored from 1.10.2 GlStateManager.translate
+                        this.offsetY += 0.03F + this.scale * 0.06F;
                         this.Head.xRot -= 1.0472F;
                         this.BodyMain.xRot = 1.0472F;
                         this.Butt.xRot = -0.4F;
@@ -1224,6 +1230,8 @@ public class ModelCruiserAtago extends ShipModelBaseAdv<Entity> {
                         // if caressing
                         if (ent.getStateEmotion(ID.S.Emotion3) == ID.Emotion3.CARESS) {
                                 // body
+                                // [PORT] Restored from 1.10.2 GlStateManager.translate
+                                this.offsetY += 0.34F;
                                 this.Head.xRot -= 0.91F;
                                 this.BodyMain.xRot = 0.7F;
                                 this.BodyMain.yRot = 0F;
@@ -1302,6 +1310,8 @@ public class ModelCruiserAtago extends ShipModelBaseAdv<Entity> {
                                 } else {
 
                                         // Body
+                                        // [PORT] Restored from 1.10.2 GlStateManager.translate
+                                        this.offsetY += 0.35F;
                                         this.Head.xRot -= 0.1F;
                                         this.BodyMain.xRot = 0F;
                                         this.Butt.xRot = -0.2F;

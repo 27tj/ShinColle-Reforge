@@ -67,6 +67,12 @@ public class ModelDestroyerI extends ShipModelBaseAdv<Entity> {
     // Dynamic Y offset set by animation, applied in renderToBuffer
     private float animOffsetY = 0F;
 
+        // Legacy 1.10.2 global Y translations (GlStateManager.translate)
+        private static final float DEAD_POSE_OFFSET_Y = 0.75F;
+        private static final float STANDING_OFFSET_Y = 0.42F;
+        private static final float SIT_BORED_OFFSET_Y = 0.5F;
+        private static final float SIT_NORMAL_OFFSET_Y = 0.68F;
+
     public ModelDestroyerI(ModelPart root) {
         super();
 
@@ -532,7 +538,7 @@ public class ModelDestroyerI extends ShipModelBaseAdv<Entity> {
         this.setFace(2);
 
         // Translate up (original: GlStateManager.translate(0F, 0.75F, 0F))
-        this.animOffsetY = 0.75F;
+        this.animOffsetY = DEAD_POSE_OFFSET_Y;
 
         // Body collapsed forward
         this.PBack.xRot = 1.4835F;
@@ -596,7 +602,7 @@ public class ModelDestroyerI extends ShipModelBaseAdv<Entity> {
             this.PBack.zRot = -0.31F;
 
             // Standing offset (original: GlStateManager.translate(0F, 0.42F, 0F))
-            this.animOffsetY += 0.42F;
+            this.animOffsetY += STANDING_OFFSET_Y;
         }
     }
 
@@ -650,9 +656,8 @@ public class ModelDestroyerI extends ShipModelBaseAdv<Entity> {
      */
     private void motionSit(IShipEmotion ent, float angleZ) {
         if (ent.getStateEmotion(ID.S.Emotion) == ID.Emotion.BORED) {
-            // Bored sitting - lying down pose
-            this.animOffsetY += 0.5F;
-
+                        // Bored sitting - lying down pose
+                        this.animOffsetY += SIT_BORED_OFFSET_Y;
             this.PBack.zRot = 0.6F;
             this.PNeck.zRot = -0.25F;
             this.PHead.zRot = -0.3F;
@@ -664,9 +669,8 @@ public class ModelDestroyerI extends ShipModelBaseAdv<Entity> {
             this.PTailEnd.zRot = -0.6F;
             this.PJawBottom.zRot = -0.7F;
         } else {
-            // Normal sitting - curled up
-            this.animOffsetY += 0.68F;
-
+                        // Normal sitting - curled up
+                        this.animOffsetY += SIT_NORMAL_OFFSET_Y;
             this.PBack.zRot = -0.8F;
             this.PNeck.zRot = -0.3F;
             this.PLegRight.zRot = -0.8F;

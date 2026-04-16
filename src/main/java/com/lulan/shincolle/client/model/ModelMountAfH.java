@@ -308,6 +308,8 @@ public class ModelMountAfH extends ShipModelBaseAdv<Entity> {
                 }
 
                 // Jaw animation
+                // [PORT] Restored from 1.10.2 GlStateManager.translate
+                this.offsetY += angleX * 0.025F + 0.025F;
                 this.Jaw.xRot = angleX * 0.1F + 0.4F;
 
                 // Cannon oscillation

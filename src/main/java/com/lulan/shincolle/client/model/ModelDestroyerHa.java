@@ -244,9 +244,13 @@ public class ModelDestroyerHa extends ShipModelBaseAdv<Entity> {
         @Override
         public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay,
                         float red, float green, float blue, float alpha) {
+                // [PORT] 1.10.2 -> 1.20.1: model used fixed render transform without base
+                // scaling.
+                // Reversing the translation/scale order back to match 1.10.2 to prevent
+                // hovering.
                 poseStack.pushPose();
+                poseStack.translate(offsetX, offsetY, offsetZ);
                 poseStack.scale(scale, scale, scale);
-                poseStack.translate(0F, offsetY, 0F);
                 this.Back.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
                 this.GlowBack.render(poseStack, buffer, 0xF000F0, packedOverlay, red, green, blue, alpha);
                 poseStack.popPose();
@@ -281,6 +285,8 @@ public class ModelDestroyerHa extends ShipModelBaseAdv<Entity> {
                         case ID.Emotion.O_O:
                         case ID.Emotion.HUNGRY:
                                 if (ent.getFaceTick() <= 0) {
+                                        // [PORT] Restored from 1.10.2 GlStateManager.translate
+                                        this.offsetY += 0.5F;
                                         this.setFace(2);
                                 }
                                 break;
@@ -314,6 +320,8 @@ public class ModelDestroyerHa extends ShipModelBaseAdv<Entity> {
                 // [PORT] 1.10.2 -> 1.20.1: legacy dead pose uses face index 2.
                 this.setFace(2);
 
+                // [PORT] Restored from 1.10.2 GlStateManager.translate
+                this.offsetY += 0.5F;
                 this.Back.xRot = 0F;
                 this.Back.zRot = -1.66F;
                 this.NeckBack.xRot = 0.1745F;

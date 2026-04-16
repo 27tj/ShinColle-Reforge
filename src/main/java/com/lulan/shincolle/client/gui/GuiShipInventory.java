@@ -23,6 +23,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
 
 /**
  * GUI screen for the ship entity inventory.
@@ -141,12 +142,62 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
 
         BasicEntityShip ship = this.menu.getShip();
         if (ship != null) {
+            renderInventoryPageIndicators(graphics, ship);
             renderInfoPageTabIndicator(graphics);
             renderEntityPreview(graphics, mouseX, mouseY, ship);
             renderMoraleIcon(graphics, ship);
             renderShipIdentityIcons(graphics, ship);
             renderAIPageTabs(graphics);
             renderAIPageContentBg(graphics, ship);
+            renderInventoryTaskOverlay(graphics, ship);
+        }
+    }
+
+    /**
+     * Render inventory page lock overlays and current page indicator (left tabs).
+     */
+    private void renderInventoryPageIndicators(GuiGraphics graphics, BasicEntityShip ship) {
+        int maxPage = ship.getInventoryPageSize();
+
+        if (maxPage <= 1) {
+            graphics.blit(TEXTURE, this.leftPos + 62, this.topPos + 90, 80, 214, 6, 34);
+        }
+        if (maxPage <= 0) {
+            graphics.blit(TEXTURE, this.leftPos + 62, this.topPos + 54, 80, 214, 6, 34);
+        }
+
+        int invPage = this.menu.getInventoryPage();
+        int tabY = this.topPos + 18 + Mth.clamp(invPage, 0, 2) * 36;
+        graphics.blit(TEXTURE, this.leftPos + 62, tabY, 74, 214, 6, 34);
+    }
+
+    /**
+     * Render legacy task icon/slot overlay in the inventory panel (page 0 only).
+     * Keeps 1.10.2 behavior where active task is shown near lower-left inventory
+     * area.
+     */
+    private void renderInventoryTaskOverlay(GuiGraphics graphics, BasicEntityShip ship) {
+        if (this.menu.getInventoryPage() != 0) {
+            return;
+        }
+
+        int task = ship.getStateMinor(ID.M.Task);
+        if (task < 1 || task > 4) {
+            return;
+        }
+
+        graphics.blit(TEXTURE, this.leftPos + 25, this.topPos + 107, 33, 225, 18, 18);
+        graphics.blit(TEXTURE, this.leftPos + 26, this.topPos + 109, 151 + (task - 1) * 16, 236, 18, 18);
+
+        // Crafting task uses dedicated 3x3 task slots (slot 12..20 in ship inventory).
+        if (task == 4) {
+            for (int i = 0; i < 9; i++) {
+                ItemStack stack = ship.getCapaShipInventory().getStackInSlot(i + 12);
+                int u = stack.isEmpty() ? 33 : 51;
+                int x = this.leftPos + 7 + (i % 3) * 18;
+                int y = this.topPos + 53 + (i / 3) * 18;
+                graphics.blit(TEXTURE, x, y, u, 225, 18, 18);
+            }
         }
     }
 
@@ -668,9 +719,10 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
 
     /** Render page 7 labels: Task selection */
     private void renderPage7Labels(GuiGraphics graphics, BasicEntityShip ship) {
-        graphics.drawString(this.font, " Metadata", 187, 159, 0x000000, false);
-        graphics.drawString(this.font, " Ore Dict", 187, 172, 0x000000, false);
-        graphics.drawString(this.font, " NBT Tag", 187, 185, 0x000000, false);
+        graphics.drawString(this.font, " " + tr("gui.shincolle.crane.usemeta", "Metadata"), 187, 159, 0x000000, false);
+        graphics.drawString(this.font, " " + tr("gui.shincolle.crane.useoredict", "Ore Dict"), 187, 172, 0x000000,
+                false);
+        graphics.drawString(this.font, " " + tr("gui.shincolle.crane.usenbt", "NBT Tag"), 187, 185, 0x000000, false);
     }
 
     /** Render page 8 labels: Task side directions */
@@ -1019,11 +1071,11 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
                 tips.add(Component.literal(tr("gui.shincolle.ai.crafting", "Crafting")));
             }
         } else if (relY <= 170) {
-            tips.add(Component.literal("Metadata"));
+            tips.add(Component.literal(tr("gui.shincolle.crane.usemeta", "Metadata")));
         } else if (relY <= 183) {
-            tips.add(Component.literal("Ore Dict"));
+            tips.add(Component.literal(tr("gui.shincolle.crane.useoredict", "Ore Dict")));
         } else if (relY <= 196) {
-            tips.add(Component.literal("NBT Tag"));
+            tips.add(Component.literal(tr("gui.shincolle.crane.usenbt", "NBT Tag")));
         }
 
         if (!tips.isEmpty()) {

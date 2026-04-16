@@ -386,7 +386,7 @@ public class ModelDestroyerShimakaze extends ShipModelBaseAdv<Entity> {
                 // Determine scale from entity scale level
                 poseStack.pushPose();
                 poseStack.scale(scale, scale, scale);
-                poseStack.translate(0F, offsetY, 0F);
+                poseStack.translate(offsetX, offsetY, offsetZ);
 
                 this.BodyMain.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
 
@@ -666,6 +666,8 @@ public class ModelDestroyerShimakaze extends ShipModelBaseAdv<Entity> {
 
                 if (ent.getIsSitting() || ent.getIsRiding()) {
                         if (ent.getStateEmotion(ID.S.Emotion) == ID.Emotion.BORED) {
+                                // [PORT] Restored from 1.10.2 GlStateManager.translate
+                                this.offsetY += 0.575F;
                                 this.Head.xRot = -1.48F;
                                 this.Head.yRot = 0F;
                                 this.Head.zRot = 0F;
@@ -679,6 +681,8 @@ public class ModelDestroyerShimakaze extends ShipModelBaseAdv<Entity> {
                                 this.LegLeft.zRot = 0.1745F;
                                 this.LegRight.zRot = -0.35F;
                         } else {
+                                // [PORT] Restored from 1.10.2 GlStateManager.translate
+                                this.offsetY += 0.45F;
                                 this.Head.xRot -= 0.7F;
                                 this.BodyMain.xRot = 0.5236F;
                                 this.HairL01.xRot -= 0.2F;
@@ -697,6 +701,8 @@ public class ModelDestroyerShimakaze extends ShipModelBaseAdv<Entity> {
                 }
 
                 if (ent.getAttackTick() > 20) {
+                        // [PORT] Restored from 1.10.2 GlStateManager.translate
+                        this.offsetY += 0.14F + ent.getScaleLevel() * 0.07F;
                         this.Head.xRot = -0.8727F;
                         this.Head.yRot = 1.0472F;
                         this.Head.zRot = -0.7F;

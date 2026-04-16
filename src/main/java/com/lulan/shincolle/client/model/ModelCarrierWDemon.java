@@ -488,7 +488,7 @@ public class ModelCarrierWDemon extends ShipModelBaseAdv<Entity> {
 			float red, float green, float blue, float alpha) {
 		poseStack.pushPose();
 		poseStack.scale(scale, scale, scale);
-		poseStack.translate(0F, offsetY, 0F);
+		poseStack.translate(offsetX, offsetY, offsetZ);
 		this.BodyMain.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
 		this.GlowBodyMain.render(poseStack, buffer, 0xF000F0, packedOverlay, red, green, blue, alpha);
 		this.GlowBodyMain2.render(poseStack, buffer, 0xF000F0, packedOverlay, red, green, blue, alpha);
@@ -523,6 +523,8 @@ public class ModelCarrierWDemon extends ShipModelBaseAdv<Entity> {
 	@Override
 	public void applyDeadPose(float f, float f1, float f2, float f3, float f4, IShipEmotion ent) {
 
+  // [PORT] Restored from 1.10.2 GlStateManager.translate
+  this.offsetY += 0.48F;
 		this.setFaceHungry(ent);
 
 		// 頭部
@@ -648,6 +650,8 @@ public class ModelCarrierWDemon extends ShipModelBaseAdv<Entity> {
 		}
 
 		// leg move parm
+  // [PORT] Restored from 1.10.2 GlStateManager.translate
+  this.offsetY += angleX * 0.05F + 0.025F;
 		addk1 = angleAdd1 * 0.6F - 0.35F;
 		addk2 = angleAdd2 * 0.6F - 0.07F;
 
@@ -753,6 +757,8 @@ public class ModelCarrierWDemon extends ShipModelBaseAdv<Entity> {
 
 		if (ent.getIsSneaking()) { // 潛行, 蹲下動作
 									// Body
+   // [PORT] Restored from 1.10.2 GlStateManager.translate
+   this.offsetY += 0.05F;
 			this.Head.xRot -= 0.6283F;
 			this.BodyMain.xRot = 0.8727F;
 			this.Butt.xRot = -0.6283F;
@@ -830,6 +836,8 @@ public class ModelCarrierWDemon extends ShipModelBaseAdv<Entity> {
 				// this.EquipR01.offsetY = 0.6F;
 			} else {
 				// body
+    // [PORT] Restored from 1.10.2 GlStateManager.translate
+    this.offsetY += 0.4F;
 				this.Neck.xRot = 0.35F;
 				this.BodyMain.xRot = -0.6283F;
 				this.Butt.xRot = -0.6283F;

@@ -580,7 +580,7 @@ public class ModelBattleshipRe extends ShipModelBaseAdv<Entity> {
 			float red, float green, float blue, float alpha) {
 		poseStack.pushPose();
 		poseStack.scale(scale, scale, scale);
-		poseStack.translate(0F, offsetY, 0F);
+		poseStack.translate(offsetX, offsetY, offsetZ);
 		this.BodyMain.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
 		this.GlowBodyMain.render(poseStack, buffer, 0xF000F0, packedOverlay, red, green, blue, alpha);
 		poseStack.popPose();
@@ -729,8 +729,7 @@ public class ModelBattleshipRe extends ShipModelBaseAdv<Entity> {
 		float addk2 = 0;
 
 		// [PORT] 1.10.2 -> 1.20.1: restore base standing height offset.
-		this.offsetY += 0.63F;
-
+		this.offsetY += 2.18F; // Was 0.63F in 1.10.2 but this caused her to float above ground
 		// 水上漂浮
 		if (ent.getShipDepth(0) > 0D) {
 			this.offsetY += angleX * 0.05F + 0.025F;
@@ -823,7 +822,7 @@ public class ModelBattleshipRe extends ShipModelBaseAdv<Entity> {
 			if (t2 > 700) { // run type 1
 							// 高度
 				this.offsetY += 0.05F;
-							// 手臂晃動
+				// 手臂晃動
 				this.ArmLeft01.xRot = Mth.cos(f * 0.8F) * 0.1F - 2.0944F;
 				this.ArmLeft01.yRot = -0.5236F;
 				this.ArmLeft01.zRot = 0F;
@@ -881,7 +880,7 @@ public class ModelBattleshipRe extends ShipModelBaseAdv<Entity> {
 			} else if (t2 > 400) { // run type 2
 									// 高度
 				this.offsetY += 0.05F;
-									// 手臂晃動
+				// 手臂晃動
 				this.ArmLeft01.xRot = -1.0472F;
 				this.ArmLeft01.yRot = 0.2618F;
 				this.ArmLeft01.zRot = 0F;
@@ -936,7 +935,7 @@ public class ModelBattleshipRe extends ShipModelBaseAdv<Entity> {
 			} else { // run type 3
 						// 高度
 				this.offsetY += 0.1F;
-						// 手臂晃動
+				// 手臂晃動
 				this.ArmLeft01.xRot = Mth.cos(f * 0.8F) * 0.1F + 0.6981F;
 				this.ArmLeft01.yRot = 0F;
 				this.ArmLeft01.zRot = -0.6981F;
@@ -997,7 +996,7 @@ public class ModelBattleshipRe extends ShipModelBaseAdv<Entity> {
 		if (ent.getIsSneaking()) { // 潛行, 蹲下動作
 									// 高度
 			this.offsetY += 0.1F;
-									// 手臂晃動
+			// 手臂晃動
 			this.ArmLeft01.xRot = 0.5236F;
 			this.ArmLeft01.yRot = 0F;
 			this.ArmLeft01.zRot = -0.5236F;

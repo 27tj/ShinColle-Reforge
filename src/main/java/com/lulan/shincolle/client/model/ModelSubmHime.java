@@ -784,7 +784,7 @@ public class ModelSubmHime extends ShipModelBaseAdv<Entity> {
 			float red, float green, float blue, float alpha) {
 		poseStack.pushPose();
 		poseStack.scale(scale, scale, scale);
-		poseStack.translate(0F, offsetY, 0F);
+		poseStack.translate(offsetX, offsetY, offsetZ);
 		this.BodyMain.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
 		this.GlowBodyMain.render(poseStack, buffer, 0xF000F0, packedOverlay, red, green, blue, alpha);
 		poseStack.popPose();
@@ -815,6 +815,8 @@ public class ModelSubmHime extends ShipModelBaseAdv<Entity> {
 	@Override
 	public void applyDeadPose(float f, float f1, float f2, float f3, float f4, IShipEmotion ent) {
 
+  // [PORT] Restored from 1.10.2 GlStateManager.translate
+  this.offsetY += 0.62F;
 		this.setFaceHungry(ent);
 		// [PORT] 1.10.2 -> 1.20.1: GlStateManager.translate(0, 0.62, 0)
 		this.offsetY += 0.62F;
@@ -910,6 +912,8 @@ public class ModelSubmHime extends ShipModelBaseAdv<Entity> {
 		}
 
 		// leg move parm
+  // [PORT] Restored from 1.10.2 GlStateManager.translate
+  this.offsetY += angleX * 0.025F + 0.025F;
 		addk1 = angleAdd1 * 0.6F - 0.3F;
 		addk2 = angleAdd2 * 0.6F - 0.2F;
 
@@ -1064,6 +1068,8 @@ public class ModelSubmHime extends ShipModelBaseAdv<Entity> {
 					this.Hair03.xRot -= 0.2F;
 				}
 			} else {
+    // [PORT] Restored from 1.10.2 GlStateManager.translate
+    this.offsetY += 0.06F;
 				this.Head.xRot -= 1.1F;
 				this.Hair01.xRot += 0.6F;
 				this.Hair02.xRot += 0.5F;
@@ -1145,6 +1151,8 @@ public class ModelSubmHime extends ShipModelBaseAdv<Entity> {
 			this.offsetY += 0.09F;
 
 			// Body
+   // [PORT] Restored from 1.10.2 GlStateManager.translate
+   this.offsetY += 0.09F;
 			this.Head.xRot -= 0.6283F;
 			this.BodyMain.xRot = 0.8727F;
 			this.Skirt01.xRot = -0.34F;
@@ -1183,8 +1191,12 @@ public class ModelSubmHime extends ShipModelBaseAdv<Entity> {
 				// [PORT] 1.10.2 -> 1.20.1: idle sit bobbing offset.
 				this.offsetY += -angleX * 0.05F + 0.1F;
 
+    // [PORT] Restored from 1.10.2 GlStateManager.translate
+    this.offsetY += 0.52F;
 				this.setFaceDamaged(ent);
 				// body
+    // [PORT] Restored from 1.10.2 GlStateManager.translate
+    this.offsetY += -angleX * 0.05F + 0.1F;
 				this.Head.xRot *= 0.5F;
 				this.Head.yRot *= 0.75F;
 				this.Head.xRot += 0.5F;
@@ -1263,6 +1275,8 @@ public class ModelSubmHime extends ShipModelBaseAdv<Entity> {
 					this.offsetY += 0.495F;
 
 					// body
+     // [PORT] Restored from 1.10.2 GlStateManager.translate
+     this.offsetY += 0.495F;
 					this.Head.xRot -= 0.7F;
 					this.BodyMain.xRot = 0.35F;
 					this.Hair01.xRot += 0.3F;

@@ -2,7 +2,9 @@ package com.lulan.shincolle.block;
 
 import javax.annotation.Nullable;
 
+import com.lulan.shincolle.entity.other.BasicEntityItem;
 import com.lulan.shincolle.init.ModBlockEntities;
+import com.lulan.shincolle.init.ModEntities;
 import com.lulan.shincolle.tileentity.TileMultiGrudgeHeavy;
 
 import net.minecraft.core.BlockPos;
@@ -11,7 +13,6 @@ import net.minecraft.world.Containers;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
@@ -65,7 +66,19 @@ public class BlockGrudgeHeavy extends BasicBlockMulti {
                 CompoundTag tag = dropStack.getOrCreateTag();
                 tag.putIntArray("Mats", mats);
                 tag.putInt("Fuel", tile.getPowerRemained());
-                Block.popResource(level, pos, dropStack);
+
+                // [PORT] 1.10.2 -> 1.20.1: heavy grudge core drop used a custom item
+                // entity to reduce accidental loss.
+                if (!level.isClientSide()) {
+                    BasicEntityItem dropEntity = new BasicEntityItem(
+                            ModEntities.BASIC_ENTITY_ITEM.get(),
+                            level,
+                            pos.getX() + 0.5D,
+                            pos.getY() + 0.25D,
+                            pos.getZ() + 0.5D,
+                            dropStack);
+                    level.addFreshEntity(dropEntity);
+                }
 
                 // Drop any items in inventory slots
                 ItemStackHandler inv = tile.getInventory();

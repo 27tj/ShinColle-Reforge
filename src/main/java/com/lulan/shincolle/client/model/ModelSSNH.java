@@ -556,7 +556,7 @@ public class ModelSSNH extends ShipModelBaseAdv<Entity> {
 			float red, float green, float blue, float alpha) {
 		poseStack.pushPose();
 		poseStack.scale(scale, scale, scale);
-		poseStack.translate(0F, offsetY, 0F);
+		poseStack.translate(offsetX, offsetY, offsetZ);
 		this.BodyMain.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
 		this.GlowBodyMain.render(poseStack, buffer, 0xF000F0, packedOverlay, red, green, blue, alpha);
 		poseStack.popPose();
@@ -598,6 +598,8 @@ public class ModelSSNH extends ShipModelBaseAdv<Entity> {
 	@Override
 	public void applyDeadPose(float f, float f1, float f2, float f3, float f4, IShipEmotion ent) {
 
+  // [PORT] Restored from 1.10.2 GlStateManager.translate
+  this.offsetY += 0.27F;
 		this.setFaceHungry(ent);
 		// [PORT] 1.10.2 -> 1.20.1: GlStateManager.translate(0, 0.27, 0)
 		this.offsetY += 0.27F;
@@ -686,6 +688,8 @@ public class ModelSSNH extends ShipModelBaseAdv<Entity> {
 		}
 
 		// leg move parm
+  // [PORT] Restored from 1.10.2 GlStateManager.translate
+  this.offsetY += angleX * 0.025F + 0.025F;
 		addk1 = angleAdd1 * 0.6F - 0.1F;
 		addk2 = angleAdd2 * 0.6F - 0.1F;
 
@@ -793,6 +797,8 @@ public class ModelSSNH extends ShipModelBaseAdv<Entity> {
 					this.Hair02.xRot -= 0.2F;
 				}
 			} else {
+    // [PORT] Restored from 1.10.2 GlStateManager.translate
+    this.offsetY += -0.06F;
 				this.Head.xRot -= 1.3F;
 				this.Hair01.xRot += 0.6F;
 				this.Hair02.xRot += 0.5F;
@@ -840,6 +846,8 @@ public class ModelSSNH extends ShipModelBaseAdv<Entity> {
 			this.offsetY += 0.01F;
 
 			// Body
+   // [PORT] Restored from 1.10.2 GlStateManager.translate
+   this.offsetY += 0.01F;
 			this.Head.xRot -= 0.6283F;
 			this.BodyMain.xRot = 0.8727F;
 			this.Cloth03.xRot = -0.34F;
@@ -873,8 +881,12 @@ public class ModelSSNH extends ShipModelBaseAdv<Entity> {
 				// [PORT] 1.10.2 -> 1.20.1: bobbing sit translate
 				this.offsetY += -angleX * 0.05F - 0.1F;
 
+    // [PORT] Restored from 1.10.2 GlStateManager.translate
+    this.offsetY += 0.26F;
 				this.setFaceDamaged(ent);
 				// body
+    // [PORT] Restored from 1.10.2 GlStateManager.translate
+    this.offsetY += -angleX * 0.05F - 0.1F;
 				this.Head.xRot *= 0.5F;
 				this.Head.yRot *= 0.75F;
 				this.Head.xRot += 0.5F;
@@ -953,6 +965,8 @@ public class ModelSSNH extends ShipModelBaseAdv<Entity> {
 					this.offsetY += 0.24F;
 
 					// body
+     // [PORT] Restored from 1.10.2 GlStateManager.translate
+     this.offsetY += 0.24F;
 					this.Head.xRot -= 0.7F;
 					this.BodyMain.xRot = 0.35F;
 					this.Hair01.xRot += 0.3F;
@@ -1014,6 +1028,9 @@ public class ModelSSNH extends ShipModelBaseAdv<Entity> {
 					}
 
 					// cloth
+     // [PORT] Restored from 1.10.2 GlStateManager.translate
+     this.offsetY += 0.33F;
+     this.offsetZ += 0.27F;
 					this.Cloth02.xRot = -0.13F;
 					// this.Cloth02.offsetY = -0.11F;
 					this.Cloth03.xRot = -0.07F;

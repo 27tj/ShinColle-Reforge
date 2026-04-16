@@ -743,7 +743,7 @@ public class ModelBattleshipRu extends ShipModelBaseAdv<Entity> {
                         float red, float green, float blue, float alpha) {
                 poseStack.pushPose();
                 poseStack.scale(scale, scale, scale);
-                poseStack.translate(0F, offsetY, 0F);
+                poseStack.translate(offsetX, offsetY, offsetZ);
                 this.BodyMain.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
                 this.GlowBodyMain.render(poseStack, buffer, 0xF000F0, packedOverlay, red, green, blue, alpha);
                 poseStack.popPose();
@@ -793,6 +793,8 @@ public class ModelBattleshipRu extends ShipModelBaseAdv<Entity> {
         @Override
         public void applyDeadPose(float f, float f1, float f2, float f3, float f4, IShipEmotion ent) {
 
+                // [PORT] Restored from 1.10.2 GlStateManager.translate
+                this.offsetY += 0.66F;
                 this.setFaceHungry(ent);
 
                 // body
@@ -876,6 +878,8 @@ public class ModelBattleshipRu extends ShipModelBaseAdv<Entity> {
                 this.BoobR.xRot = angleX * 0.06F - 0.67F;
                 // body
                 this.Ahoke.zRot = angleX * 0.03F + 0.3F;
+                // [PORT] Restored from 1.10.2 GlStateManager.translate
+                this.offsetY += -0.12F;
                 this.BodyMain.xRot = -0.1047F;
                 this.BodyMain.yRot = 0F;
                 this.BodyMain.zRot = 0F;
@@ -950,6 +954,8 @@ public class ModelBattleshipRu extends ShipModelBaseAdv<Entity> {
 
                         setFace(1);
                         // body
+                        // [PORT] Restored from 1.10.2 GlStateManager.translate
+                        this.offsetY += 0.12F;
                         this.BodyMain.xRot = 1.0471975511965976F;
                         this.BodyMain.yRot = 0.0F;
                         this.BodyMain.zRot = 0.0F;
@@ -974,6 +980,8 @@ public class ModelBattleshipRu extends ShipModelBaseAdv<Entity> {
                         if (spStand)
 
                                 // body
+                                // [PORT] Restored from 1.10.2 GlStateManager.translate
+                                this.offsetY += -0.12F;
                                 this.BodyMain.xRot = -0.1F;
                         this.BodyMain.yRot = 0F;
                         this.BodyMain.zRot = 0F;
@@ -1018,6 +1026,8 @@ public class ModelBattleshipRu extends ShipModelBaseAdv<Entity> {
                         if (spStand)
 
                                 // Body
+                                // [PORT] Restored from 1.10.2 GlStateManager.translate
+                                this.offsetY += -0.12F;
                                 this.Head.xRot -= 0.6283F;
                         this.BodyMain.xRot = 0.8727F;
                         // arm
@@ -1056,8 +1066,12 @@ public class ModelBattleshipRu extends ShipModelBaseAdv<Entity> {
                 if (ent.getIsSitting() || ent.getIsRiding()) {
                         if (spStand)
 
+                                // [PORT] Restored from 1.10.2 GlStateManager.translate
+                                this.offsetY += -0.12F;
                                 if (ent.getStateEmotion(ID.S.Emotion) == ID.Emotion.BORED) {
                                         // body
+                                        // [PORT] Restored from 1.10.2 GlStateManager.translate
+                                        this.offsetY += 0.25F;
                                         this.BodyMain.xRot = -0.10471975511965977F;
                                         this.BodyMain.yRot = -0.3490658503988659F;
                                         this.BodyMain.zRot = 0.0F;
@@ -1091,6 +1105,8 @@ public class ModelBattleshipRu extends ShipModelBaseAdv<Entity> {
                                 } else if (ent.getStateEmotion(ID.S.Emotion4) == ID.Emotion.BORED &&
                                                 showWeapon) {
                                         // body
+                                        // [PORT] Restored from 1.10.2 GlStateManager.translate
+                                        this.offsetY += 0.52F;
                                         this.BodyMain.xRot = 0.7853981633974483F;
                                         this.Butt.xRot = 0.2617993877991494F;
                                         this.Head.xRot = 0.5235987755982988F;
@@ -1126,6 +1142,8 @@ public class ModelBattleshipRu extends ShipModelBaseAdv<Entity> {
                                         this.EquipRBase.zRot = 0.0F;
                                 } else if (!this.EquipLBase.visible) {
                                         // body
+                                        // [PORT] Restored from 1.10.2 GlStateManager.translate
+                                        this.offsetY += 0.2F;
                                         this.BodyMain.xRot = 0.18203784098300857F;
                                         this.Butt.xRot = 0.2617993877991494F;
                                         this.Head.xRot -= 0.20943951023931953F;

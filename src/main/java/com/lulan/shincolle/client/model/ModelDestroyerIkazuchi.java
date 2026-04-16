@@ -530,7 +530,7 @@ public class ModelDestroyerIkazuchi extends ShipModelBaseAdv<Entity> {
                         float red, float green, float blue, float alpha) {
                 poseStack.pushPose();
                 poseStack.scale(scale, scale, scale);
-                poseStack.translate(0F, offsetY, 0F);
+                poseStack.translate(offsetX, offsetY, offsetZ);
                 this.BodyMain.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
                 this.GlowBodyMain.render(poseStack, buffer, 0xF000F0, packedOverlay, red, green, blue, alpha);
                 poseStack.popPose();
@@ -564,6 +564,8 @@ public class ModelDestroyerIkazuchi extends ShipModelBaseAdv<Entity> {
                 // [PORT] 1.10.2 -> 1.20.1: preserve legacy dead-pose grounding offset.
                 this.offsetY += 0.51F + 0.24F * ent.getScaleLevel();
 
+                // [PORT] Restored from 1.10.2 GlStateManager.translate
+                this.offsetY += 0.51F + 0.24F * ent.getScaleLevel();
                 this.setFaceHungry(ent);
 
                 // body
@@ -718,6 +720,8 @@ public class ModelDestroyerIkazuchi extends ShipModelBaseAdv<Entity> {
 
                 if (ent.getIsSneaking()) { // 潛行, 蹲下動作
                                            // Body
+                        // [PORT] Restored from 1.10.2 GlStateManager.translate
+                        this.offsetY += 0.05F;
                         this.Head.xRot -= 1.0472F;
                         this.BodyMain.xRot = 1.0472F;
                         this.Butt.xRot = -0.4F;
@@ -807,6 +811,8 @@ public class ModelDestroyerIkazuchi extends ShipModelBaseAdv<Entity> {
                                 }
                         } else if (ent.getStateEmotion(ID.S.Emotion) == ID.Emotion.BORED) {
                                 // head
+                                // [PORT] Restored from 1.10.2 GlStateManager.translate
+                                this.offsetY += 0.375F;
                                 this.Head.xRot -= 0.1F;
                                 // body
                                 this.BodyMain.xRot = -0.25F;

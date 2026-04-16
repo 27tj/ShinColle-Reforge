@@ -1311,7 +1311,7 @@ public class ModelBattleshipYamato extends ShipModelBaseAdv<Entity> {
                         float red, float green, float blue, float alpha) {
                 poseStack.pushPose();
                 poseStack.scale(scale, scale, scale);
-                poseStack.translate(0F, offsetY, 0F);
+                poseStack.translate(offsetX, offsetY, offsetZ);
                 this.BodyMain.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
                 this.GlowBodyMain.render(poseStack, buffer, 0xF000F0, packedOverlay, red, green, blue, alpha);
                 poseStack.popPose();
@@ -1583,6 +1583,8 @@ public class ModelBattleshipYamato extends ShipModelBaseAdv<Entity> {
 
                 if (ent.getIsSneaking()) { // 潛行, 蹲下動作
                                            // Body
+                        // [PORT] Restored from 1.10.2 GlStateManager.translate
+                        this.offsetY += 0.07F;
                         this.Head.xRot -= 1.0472F;
                         this.BodyMain.xRot = 1.0472F;
                         this.Butt.xRot = -0.8378F;
@@ -1616,6 +1618,8 @@ public class ModelBattleshipYamato extends ShipModelBaseAdv<Entity> {
                         // 騎乘動作
                         if (showCannon) {
                                 // Body
+                                // [PORT] Restored from 1.10.2 GlStateManager.translate
+                                this.offsetY += 0.4F;
                                 this.Head.xRot -= 0.2F;
                                 this.BodyMain.xRot = -0.1396F;
                                 this.Butt.xRot = 0.1396F;
@@ -1649,6 +1653,8 @@ public class ModelBattleshipYamato extends ShipModelBaseAdv<Entity> {
                                 this.EquipLCBase02_1.yRot = 0F;
                         } else if (ent.getStateEmotion(ID.S.Emotion) == ID.Emotion.BORED) {
                                 // Body
+                                // [PORT] Restored from 1.10.2 GlStateManager.translate
+                                this.offsetY += 0.5F;
                                 this.Head.xRot -= 0.21F;
                                 this.Head.yRot -= 0.4363F;
                                 this.BodyMain.xRot = 0.2618F;
@@ -1694,6 +1700,8 @@ public class ModelBattleshipYamato extends ShipModelBaseAdv<Entity> {
                                 this.AnchorR.zRot = 0.7F;
                         } else {
                                 // Body
+                                // [PORT] Restored from 1.10.2 GlStateManager.translate
+                                this.offsetY += 0.54F;
                                 this.Head.xRot += 0.1047F;
                                 this.BodyMain.xRot = -0.1396F;
                                 this.Butt.xRot = 0.1396F;

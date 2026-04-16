@@ -687,7 +687,7 @@ public class ModelIsolatedHime extends ShipModelBaseAdv<Entity> {
 			float red, float green, float blue, float alpha) {
 		poseStack.pushPose();
 		poseStack.scale(scale, scale, scale);
-		poseStack.translate(0F, offsetY, 0F);
+		poseStack.translate(offsetX, offsetY, offsetZ);
 		this.BodyMain.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
 		this.GlowBodyMain.render(poseStack, buffer, 0xF000F0, packedOverlay, red, green, blue, alpha);
 		poseStack.popPose();
@@ -753,6 +753,8 @@ public class ModelIsolatedHime extends ShipModelBaseAdv<Entity> {
 	@Override
 	public void applyDeadPose(float f, float f1, float f2, float f3, float f4, IShipEmotion ent) {
 
+  // [PORT] Restored from 1.10.2 GlStateManager.translate
+  this.offsetY += 0.43F;
 		this.setFaceHungry(ent);
 
 		// Body
@@ -843,6 +845,8 @@ public class ModelIsolatedHime extends ShipModelBaseAdv<Entity> {
 		}
 
 		// leg move parm
+  // [PORT] Restored from 1.10.2 GlStateManager.translate
+  this.offsetY += angleX * 0.05F + 0.025F;
 		addk1 = angleAdd1 - 0.157F;
 		addk2 = angleAdd2 - 0.296F;
 
@@ -935,6 +939,8 @@ public class ModelIsolatedHime extends ShipModelBaseAdv<Entity> {
 		// 潛行跟蹲下動作
 		if (ent.getIsSneaking()) {
 			// Body
+   // [PORT] Restored from 1.10.2 GlStateManager.translate
+   this.offsetY += 0.06F;
 			this.Head.xRot -= 0.6283F;
 			this.BodyMain.xRot = 0.8727F;
 			this.Skirt01.xRot = -0.35F;
@@ -957,6 +963,8 @@ public class ModelIsolatedHime extends ShipModelBaseAdv<Entity> {
 		// 坐下動作
 		if (ent.getIsSitting() && !ent.getIsRiding()) {
 			if (ent.getTickExisted() % 512 > 256) {
+    // [PORT] Restored from 1.10.2 GlStateManager.translate
+    this.offsetY += 0.48F;
 				this.setFaceScorn(ent);
 
 				// Body
@@ -1001,6 +1009,8 @@ public class ModelIsolatedHime extends ShipModelBaseAdv<Entity> {
 			} else {
 				if (ent.getStateEmotion(ID.S.Emotion) == ID.Emotion.BORED) {
 					// Body
+     // [PORT] Restored from 1.10.2 GlStateManager.translate
+     this.offsetY += 0.27F;
 					this.Head.xRot += 0.14F;
 					this.BodyMain.xRot = -0.4363F;
 					this.Skirt01.xRot = -0.35F;
@@ -1154,6 +1164,8 @@ public class ModelIsolatedHime extends ShipModelBaseAdv<Entity> {
 				} // end if sitting
 				else {
 					// body
+     // [PORT] Restored from 1.10.2 GlStateManager.translate
+     this.offsetY += 0.03F;
 					this.Head.xRot -= 0.7F;
 					this.BodyMain.xRot = 0.35F;
 					// hair

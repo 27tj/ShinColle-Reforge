@@ -53,7 +53,7 @@ public class ModelBasicEntityItem extends ShipModelBaseAdv<Entity> {
             float red, float green, float blue, float alpha) {
         poseStack.pushPose();
         poseStack.scale(scale, scale, scale);
-        poseStack.translate(0F, offsetY, 0F);
+        poseStack.translate(offsetX, offsetY, offsetZ);
         this.shape1.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
         poseStack.popPose();
     }

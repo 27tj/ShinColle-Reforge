@@ -521,7 +521,7 @@ public class ModelCarrierHime extends ShipModelBaseAdv<Entity> {
 			float red, float green, float blue, float alpha) {
 		poseStack.pushPose();
 		poseStack.scale(scale, scale, scale);
-		poseStack.translate(0F, offsetY, 0F);
+		poseStack.translate(offsetX, offsetY, offsetZ);
 		this.BodyMain.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
 		this.GlowBodyMain.render(poseStack, buffer, 0xF000F0, packedOverlay, red, green, blue, alpha);
 		poseStack.popPose();
@@ -571,6 +571,8 @@ public class ModelCarrierHime extends ShipModelBaseAdv<Entity> {
 	@Override
 	public void applyDeadPose(float f, float f1, float f2, float f3, float f4, IShipEmotion ent) {
 
+  // [PORT] Restored from 1.10.2 GlStateManager.translate
+  this.offsetY += 0.49F;
 		this.setFaceHungry(ent);
 
 		// head
@@ -677,6 +679,8 @@ public class ModelCarrierHime extends ShipModelBaseAdv<Entity> {
 		}
 
 		// leg move
+  // [PORT] Restored from 1.10.2 GlStateManager.translate
+  this.offsetY += angleX * 0.05F + 0.025F;
 		addk1 = angleAdd1 * 0.5F - 0.35F;
 		addk2 = angleAdd2 * 0.5F - 0.1745F;
 
@@ -770,6 +774,8 @@ public class ModelCarrierHime extends ShipModelBaseAdv<Entity> {
 		// 奔跑動作
 		if (ent.getIsSprinting() || f1 > 0.95F) {
 			// body
+   // [PORT] Restored from 1.10.2 GlStateManager.translate
+   this.offsetY += 0.05F;
 			this.Head.xRot -= 0.4F;
 			this.BodyMain.xRot = 0.7F;
 			this.Butt.xRot -= 0.7F;
@@ -792,6 +798,8 @@ public class ModelCarrierHime extends ShipModelBaseAdv<Entity> {
 		// 潛行, 蹲下動作
 		if (ent.getIsSneaking()) {
 			// Body
+   // [PORT] Restored from 1.10.2 GlStateManager.translate
+   this.offsetY += 0.05F;
 			this.Head.xRot -= 1.0472F;
 			this.BodyMain.xRot = 1.0472F;
 			this.Butt.xRot = -0.4F;
@@ -829,6 +837,9 @@ public class ModelCarrierHime extends ShipModelBaseAdv<Entity> {
 			if (ent.getIsSitting()) {
 				if (ent.getStateEmotion(ID.S.Emotion) == ID.Emotion.BORED) {
 					// Body
+     // [PORT] Restored from 1.10.2 GlStateManager.translate
+     this.offsetY += 0.65F;
+     this.offsetZ += -0.27F;
 					this.Head.xRot = -1.2217F;
 					this.Head.yRot = 0F;
 					this.Head.zRot = 0F;
@@ -860,6 +871,8 @@ public class ModelCarrierHime extends ShipModelBaseAdv<Entity> {
 					this.GlowBodyMain2.visible = false;
 				} else {
 					// head
+     // [PORT] Restored from 1.10.2 GlStateManager.translate
+     this.offsetY += 0.51F;
 					this.Head.yRot -= 0.4F;
 					this.Head.zRot += 0.2F;
 					// body
@@ -901,6 +914,8 @@ public class ModelCarrierHime extends ShipModelBaseAdv<Entity> {
 				}
 			} else {
 				// body
+    // [PORT] Restored from 1.10.2 GlStateManager.translate
+    this.offsetY += 0.56F;
 				this.BodyMain.xRot = -0.45F;
 				this.Butt.xRot = -0.2F;
 				this.Skirt01.xRot = -0.13F;

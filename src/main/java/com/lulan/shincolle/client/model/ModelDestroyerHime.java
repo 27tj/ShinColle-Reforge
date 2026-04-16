@@ -668,7 +668,7 @@ public class ModelDestroyerHime extends ShipModelBaseAdv<Entity> {
                         float red, float green, float blue, float alpha) {
                 poseStack.pushPose();
                 poseStack.scale(scale, scale, scale);
-                poseStack.translate(0F, offsetY, 0F);
+                poseStack.translate(offsetX, offsetY, offsetZ);
                 this.BodyMain.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
                 this.GlowBodyMain.render(poseStack, buffer, 0xF000F0, packedOverlay, red, green, blue, alpha);
                 poseStack.popPose();
@@ -724,6 +724,8 @@ public class ModelDestroyerHime extends ShipModelBaseAdv<Entity> {
         @Override
         public void applyDeadPose(float f, float f1, float f2, float f3, float f4, IShipEmotion ent) {
 
+                // [PORT] Restored from 1.10.2 GlStateManager.translate
+                this.offsetY += 0.59F;
                 this.setFaceHungry(ent);
 
                 // body
@@ -947,6 +949,8 @@ public class ModelDestroyerHime extends ShipModelBaseAdv<Entity> {
                 if (ent.getIsSneaking()) {
 
                         // Body
+                        // [PORT] Restored from 1.10.2 GlStateManager.translate
+                        this.offsetY += 0.07F;
                         this.Head.xRot -= 0.6283F;
                         this.BodyMain.xRot = 0.8727F;
                         // arm
@@ -979,6 +983,8 @@ public class ModelDestroyerHime extends ShipModelBaseAdv<Entity> {
                         if (ent.getStateEmotion(ID.S.Emotion) == ID.Emotion.BORED) {
                                 if (ent.getStateEmotion(ID.S.Emotion4) == ID.Emotion.BORED) {
 
+                                        // [PORT] Restored from 1.10.2 GlStateManager.translate
+                                        this.offsetY += 0.46F;
                                         this.setFaceDamaged(ent);
 
                                         // body
@@ -1023,6 +1029,8 @@ public class ModelDestroyerHime extends ShipModelBaseAdv<Entity> {
                                         // this.EquipBaseR.offsetY = -0.62F;
                                 } else {
                                         // body
+                                        // [PORT] Restored from 1.10.2 GlStateManager.translate
+                                        this.offsetY += 0.43F;
                                         this.Head.xRot -= 0.7F;
                                         this.BodyMain.xRot = 0.35F;
                                         this.BeltBase.xRot = -0.5F;

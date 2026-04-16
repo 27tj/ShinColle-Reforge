@@ -307,7 +307,7 @@ public class ModelBattleshipTa extends ShipModelBaseAdv<Entity> {
                         float red, float green, float blue, float alpha) {
                 poseStack.pushPose();
                 poseStack.scale(scale, scale, scale);
-                poseStack.translate(0F, offsetY, 0F);
+                poseStack.translate(offsetX, offsetY, offsetZ);
                 this.BodyMain.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
                 this.GlowBodyMain.render(poseStack, buffer, 0xF000F0, packedOverlay, red, green, blue, alpha);
                 poseStack.popPose();
@@ -342,6 +342,8 @@ public class ModelBattleshipTa extends ShipModelBaseAdv<Entity> {
         @Override
         public void applyDeadPose(float f, float f1, float f2, float f3, float f4, IShipEmotion ent) {
 
+                // [PORT] Restored from 1.10.2 GlStateManager.translate
+                this.offsetY += 0.62F;
                 this.setFaceHungry(ent);
 
                 // 頭部
@@ -399,6 +401,8 @@ public class ModelBattleshipTa extends ShipModelBaseAdv<Entity> {
                 }
 
                 // leg move parm
+                // [PORT] Restored from 1.10.2 GlStateManager.translate
+                this.offsetY += angleX * 0.05F + 0.025F;
                 addk1 = angleRun - 0.35F;
                 addk2 = angleRun2 - 0.087F;
 
@@ -475,6 +479,8 @@ public class ModelBattleshipTa extends ShipModelBaseAdv<Entity> {
 
                 if (ent.getIsSneaking()) { // 潛行, 蹲下動作
                                            // leg move parm
+                        // [PORT] Restored from 1.10.2 GlStateManager.translate
+                        this.offsetY += 0.05F;
                         addk1 -= 0.52F;
                         addk2 -= 1F;
                         // Body
@@ -494,6 +500,8 @@ public class ModelBattleshipTa extends ShipModelBaseAdv<Entity> {
                 if (ent.getIsSitting() || ent.getIsRiding()) { // 騎乘動作
                         if (ent.getStateEmotion(ID.S.Emotion) == ID.Emotion.BORED) {
                                 // leg move parm
+                                // [PORT] Restored from 1.10.2 GlStateManager.translate
+                                this.offsetY += 0.65F;
                                 addk1 = -0.087F;
                                 addk2 = 0.174F;
                                 // hair
@@ -517,6 +525,8 @@ public class ModelBattleshipTa extends ShipModelBaseAdv<Entity> {
                                 this.Cloak05.xRot = 0F;
                         } else {
                                 // leg move parm
+                                // [PORT] Restored from 1.10.2 GlStateManager.translate
+                                this.offsetY += 0.51F;
                                 addk1 = -1.0472F;
                                 addk2 = -1.3F;
                                 // hair

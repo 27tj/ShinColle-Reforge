@@ -563,7 +563,7 @@ public class ModelBattleshipNagato extends ShipModelBaseAdv<Entity> {
                         float red, float green, float blue, float alpha) {
                 poseStack.pushPose();
                 poseStack.scale(scale, scale, scale);
-                poseStack.translate(0F, offsetY, 0F);
+                poseStack.translate(offsetX, offsetY, offsetZ);
                 this.BodyMain.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
                 this.GlowBodyMain.render(poseStack, buffer, 0xF000F0, packedOverlay, red, green, blue, alpha);
                 poseStack.popPose();
@@ -659,6 +659,8 @@ public class ModelBattleshipNagato extends ShipModelBaseAdv<Entity> {
                 }
 
                 // leg move parm
+                // [PORT] Restored from 1.10.2 GlStateManager.translate
+                this.offsetY += angleX * 0.05F + 0.025F;
                 addk1 = angleAdd1 - 0.2118F;
                 addk2 = angleAdd2 - 0.1118F;
 
@@ -780,6 +782,8 @@ public class ModelBattleshipNagato extends ShipModelBaseAdv<Entity> {
                 if (ent.getIsSitting() || ent.getIsRiding()) { // 騎乘動作
                         if (showCannon) {
                                 // Body
+                                // [PORT] Restored from 1.10.2 GlStateManager.translate
+                                this.offsetY += 0.42F;
                                 this.BodyMain.xRot = -0.09F;
                                 // arm
                                 this.ArmLeft01.xRot = 0.52F;
@@ -851,6 +855,8 @@ public class ModelBattleshipNagato extends ShipModelBaseAdv<Entity> {
                                 case 0: // heavy atk phase 0
                                 case 2: // heavy atk phase 2
                                         // Body
+                                        // [PORT] Restored from 1.10.2 GlStateManager.translate
+                                        this.offsetY += scale * 0.35F + 0F;
                                         this.Head.xRot -= 1.22F;
                                         this.BodyMain.xRot = 1.75F;
                                         // hair

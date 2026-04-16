@@ -521,7 +521,7 @@ public class ModelCarrierWo extends ShipModelBaseAdv<Entity> {
 			float red, float green, float blue, float alpha) {
 		poseStack.pushPose();
 		poseStack.scale(scale, scale, scale);
-		poseStack.translate(0F, offsetY, 0F);
+		poseStack.translate(offsetX, offsetY, offsetZ);
 		this.BodyMain.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
 		this.GlowBodyMain.render(poseStack, buffer, 0xF000F0, packedOverlay, red, green, blue, alpha);
 		poseStack.popPose();
@@ -566,6 +566,8 @@ public class ModelCarrierWo extends ShipModelBaseAdv<Entity> {
 	@Override
 	public void applyDeadPose(float f, float f1, float f2, float f3, float f4, IShipEmotion ent) {
 
+  // [PORT] Restored from 1.10.2 GlStateManager.translate
+  this.offsetY += 0.41F;
 		this.setFaceHungry(ent);
 
 		// 頭部
@@ -581,6 +583,8 @@ public class ModelCarrierWo extends ShipModelBaseAdv<Entity> {
 		// 身體角度
 		// this.Butt.offsetY = 0F;
 		// 身體角度
+  // [PORT] Restored from 1.10.2 GlStateManager.translate
+  this.offsetY += 0.41F;
 		this.BodyMain.xRot = 0.2094F;
 		this.BodyMain.yRot = 0F;
 		this.BodyMain.zRot = 0F;
@@ -832,6 +836,8 @@ public class ModelCarrierWo extends ShipModelBaseAdv<Entity> {
 
 		if (ent.getIsSneaking()) {
 			// 潛行, 蹲下動作
+   // [PORT] Restored from 1.10.2 GlStateManager.translate
+   this.offsetY += 0.05F;
 			this.ArmLeft01.xRot = 0.7F;
 			this.ArmRight01.xRot = 0.7F;
 			this.BodyMain.xRot = 0.5F;

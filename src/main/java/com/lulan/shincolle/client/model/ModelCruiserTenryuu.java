@@ -617,7 +617,7 @@ public class ModelCruiserTenryuu extends ShipModelBaseAdv<Entity> {
 			float red, float green, float blue, float alpha) {
 		poseStack.pushPose();
 		poseStack.scale(scale, scale, scale);
-		poseStack.translate(0F, offsetY, 0F);
+		poseStack.translate(offsetX, offsetY, offsetZ);
 		this.BodyMain.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
 		this.GlowBodyMain.render(poseStack, buffer, 0xF000F0, packedOverlay, red, green, blue, alpha);
 		poseStack.popPose();
@@ -889,6 +889,8 @@ public class ModelCruiserTenryuu extends ShipModelBaseAdv<Entity> {
 		if (ent.getIsSprinting() || f1 > 0.9F) {
 			// 奔跑動作
 			// body
+   // [PORT] Restored from 1.10.2 GlStateManager.translate
+   this.offsetY += this.scale * 0.1F;
 			this.Head.xRot -= 0.6F;
 			this.BodyMain.xRot = 0.9F;
 			this.Butt.xRot -= 0.7F;
@@ -919,6 +921,8 @@ public class ModelCruiserTenryuu extends ShipModelBaseAdv<Entity> {
 		if (ent.getIsSneaking()) {
 			// 潛行, 蹲下動作
 			// Body
+   // [PORT] Restored from 1.10.2 GlStateManager.translate
+   this.offsetY += this.scale * 0.06F;
 			this.Head.xRot -= 1.0472F;
 			this.BodyMain.xRot = 1.0472F;
 			this.Butt.xRot = -0.4F;
@@ -950,6 +954,8 @@ public class ModelCruiserTenryuu extends ShipModelBaseAdv<Entity> {
 		if (ent.getIsSitting() || ent.getIsRiding()) {
 			if (ent.getStateEmotion(ID.S.Emotion) == ID.Emotion.BORED) {
 				// body
+    // [PORT] Restored from 1.10.2 GlStateManager.translate
+    this.offsetY += 0.41F;
 				this.BodyMain.xRot = 0.7F;
 				this.Butt.xRot = -0.79F;
 				this.Head.xRot -= 1.2F;
@@ -1009,6 +1015,8 @@ public class ModelCruiserTenryuu extends ShipModelBaseAdv<Entity> {
 				this.Skirt02.xRot = -0.26F;
 			} else {
 				// body
+    // [PORT] Restored from 1.10.2 GlStateManager.translate
+    this.offsetY += 0.46F;
 				this.BodyMain.xRot = 0.08726646259971647F;
 				this.Butt.xRot = -0.17453292519943295F;
 				this.Head.xRot -= 0.2F;
@@ -1058,6 +1066,8 @@ public class ModelCruiserTenryuu extends ShipModelBaseAdv<Entity> {
 			if (ent.getAttackTick() == 60)
 				ent.setAttackTick(0);
 			// body
+   // [PORT] Restored from 1.10.2 GlStateManager.translate
+   this.offsetY += 0.22F + ent.getScaleLevel() * 0.12F;
 			this.Head.xRot = -0.4363323129985824F;
 			this.Head.yRot = 0.0F;
 			this.Head.zRot = 0.0F;
