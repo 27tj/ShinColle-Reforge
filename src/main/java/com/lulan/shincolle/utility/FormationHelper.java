@@ -409,7 +409,7 @@ public class FormationHelper {
 		}
 		// apply guard mode
 		else {
-			ship.setOrderedToSit(false);
+			ship.setEntitySit(false);
 			ship.setGuardedEntity(null);
 			ship.setGuardedPos(x, y, z, 0, 1);
 			ship.setStateFlag(ID.F.CanFollow, false);
@@ -450,7 +450,7 @@ public class FormationHelper {
 		}
 		// apply guard
 		else {
-			ship.setOrderedToSit(false);
+			ship.setEntitySit(false);
 			ship.setGuardedPos(-1, -1, -1, 0, 2);
 			ship.setGuardedEntity(guarded);
 			ship.setStateFlag(ID.F.CanFollow, false);

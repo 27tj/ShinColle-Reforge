@@ -147,8 +147,6 @@ public class ServerEventHandler {
                     6);
         } else if (deadEntity instanceof BasicEntityShipHostile) {
             // [PORT] 1.10.2 -> 1.20.1: keep hostile death AOE reaction path.
-            // [PORT?] Hostile particle-emotion API is not currently exposed in 1.20.1 base
-            // class.
             EntityHelper.applyShipEmotesAOEHostile(
                     deadEntity.level(), deadEntity.getX(), deadEntity.getY(), deadEntity.getZ(), 48D, 6);
         }

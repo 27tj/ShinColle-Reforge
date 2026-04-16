@@ -26,7 +26,7 @@ public class ShipSitGoal extends Goal {
 
 	@Override
 	public void start() {
-		this.ship.setOrderedToSit(true);
+		this.ship.setEntitySit(true);
 		this.ship.setJumping(false);
 	}
 
@@ -42,6 +42,6 @@ public class ShipSitGoal extends Goal {
 
 	@Override
 	public void stop() {
-		this.ship.setOrderedToSit(false);
+		this.ship.setEntitySit(false);
 	}
 }

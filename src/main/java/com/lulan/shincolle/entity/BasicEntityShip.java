@@ -1157,7 +1157,7 @@ public abstract class BasicEntityShip extends TamableAnimal
 		}
 		// out of world: rescue teleport
 		else if (source == this.damageSources().fellOutOfWorld()) {
-			this.setOrderedToSit(false);
+			this.setEntitySit(false);
 			this.stopRiding();
 			this.teleportTo(this.getX(), 4D, this.getZ());
 			return false;
@@ -1173,7 +1173,7 @@ public abstract class BasicEntityShip extends TamableAnimal
 		// owner damage bypass: skip DEF, dodge, friendly fire, SvS, resist, light
 		if (source.getEntity() instanceof Player &&
 				TeamHelper.checkSameOwner(source.getEntity(), this)) {
-			this.setOrderedToSit(false);
+			this.setEntitySit(false);
 			this.setStateEmotion(ID.S.Emotion, ID.Emotion.O_O, true);
 			return super.hurt(source, amount);
 		}
@@ -1188,7 +1188,7 @@ public abstract class BasicEntityShip extends TamableAnimal
 
 			// self damage immunity
 			if (attacker.equals(this)) {
-				this.setOrderedToSit(false);
+				this.setEntitySit(false);
 				return false;
 			}
 
@@ -1227,7 +1227,7 @@ public abstract class BasicEntityShip extends TamableAnimal
 				reducedAtk = 0F;
 
 			// cancel sitting
-			this.setOrderedToSit(false);
+			this.setEntitySit(false);
 
 			// set revenge target
 			this.setEntityRevengeTarget(attacker);
@@ -2081,7 +2081,7 @@ public abstract class BasicEntityShip extends TamableAnimal
 
 	@Override
 	public boolean getIsSitting() {
-		return this.isOrderedToSit();
+		return this.isInSittingPose();
 	}
 
 	@Override
@@ -2097,6 +2097,7 @@ public abstract class BasicEntityShip extends TamableAnimal
 	@Override
 	public void setEntitySit(boolean sit) {
 		this.setOrderedToSit(sit);
+		this.setInSittingPose(sit);
 		if (sit) {
 			this.jumping = false;
 			if (this.shipNavigator != null)

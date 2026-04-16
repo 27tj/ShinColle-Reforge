@@ -558,6 +558,8 @@ public class C2SGUIInputPacket {
 			if (sid > 0) {
 				Entity shipEnt = level.getEntity(sid);
 				if (shipEnt instanceof BasicEntityShip ship) {
+					if (ship.getStateFlag(ID.F.NoFuel))
+						continue;
 					ship.setTarget(target instanceof net.minecraft.world.entity.LivingEntity le ? le : null);
 					ship.setEntityTarget(target);
 				}
@@ -585,6 +587,8 @@ public class C2SGUIInputPacket {
 			if (sid > 0) {
 				Entity shipEnt = level.getEntity(sid);
 				if (shipEnt instanceof BasicEntityShip ship) {
+					if (ship.getStateFlag(ID.F.NoFuel))
+						continue;
 					ship.setStateMinor(ID.M.GuardID, target.getId());
 					ship.setStateMinor(ID.M.GuardX, (int) target.getX());
 					ship.setStateMinor(ID.M.GuardY, (int) target.getY());
@@ -648,7 +652,9 @@ public class C2SGUIInputPacket {
 			if (sid > 0) {
 				Entity shipEnt = player.serverLevel().getEntity(sid);
 				if (shipEnt instanceof BasicEntityShip ship) {
-					ship.setOrderedToSit(false);
+					if (ship.getStateFlag(ID.F.NoFuel))
+						continue;
+					ship.setEntitySit(false);
 
 					// Set guard position if coordinates are provided
 					if (values.length >= 7) {

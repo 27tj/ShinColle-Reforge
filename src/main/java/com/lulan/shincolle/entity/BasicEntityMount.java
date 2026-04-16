@@ -24,6 +24,7 @@ import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.ai.goal.Goal.Flag;
 import net.minecraft.world.level.Level;
 
 /**
@@ -45,6 +46,7 @@ public abstract class BasicEntityMount extends TamableAnimal
 	protected double shipDepth;
 	protected AttrsAdv shipAttrs;
 	protected int attackTime, attackTime2;
+	protected int startEmotion, startEmotion2;
 	protected int revengeTime;
 	protected float[] seatPos = new float[] { 0F, 0F, 0F };
 	protected float[] seatPos2 = new float[] { 0F, 0F, 0F };
@@ -496,11 +498,11 @@ public abstract class BasicEntityMount extends TamableAnimal
 	}
 
 	public int getFaceTick() {
-		return 0;
+		return this.startEmotion;
 	}
 
 	public int getHeadTiltTick() {
-		return 0;
+		return this.startEmotion2;
 	}
 
 	public int getAttackTick() {
@@ -516,9 +518,11 @@ public abstract class BasicEntityMount extends TamableAnimal
 	}
 
 	public void setFaceTick(int par1) {
+		this.startEmotion = par1;
 	}
 
 	public void setHeadTiltTick(int par1) {
+		this.startEmotion2 = par1;
 	}
 
 	public void setAttackTick(int par1) {

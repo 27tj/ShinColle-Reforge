@@ -264,7 +264,7 @@ public class C2SInputPacket {
 
 		if (entity instanceof BasicEntityShip ship) {
 			if (TargetHelper.checkSameOwner(player, ship)) {
-				ship.setOrderedToSit(false);
+				ship.setEntitySit(false);
 				ship.startRiding(player, true);
 				ship.getShipNavigate().stop();
 				ship.sendSyncPacketRiders();

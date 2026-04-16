@@ -44,6 +44,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
  */
 public class ParticleHelper {
 
+    private static final float TEAM_CIRCLE_ENTITY_SCALE = 0.35F;
+
     /**
      * Spawn attack particles at a position. Type IDs match the original mod's
      * particle system.
@@ -395,7 +397,7 @@ public class ParticleHelper {
     private static void spawnTeamCircleClient(Entity entity, int teamId) {
         ClientLevel level = (ClientLevel) entity.level();
         Minecraft.getInstance().particleEngine.add(
-                new ParticleTeam(level, entity, 1.0f, teamId));
+                new ParticleTeam(level, entity, TEAM_CIRCLE_ENTITY_SCALE, teamId));
     }
 
     @OnlyIn(Dist.CLIENT)

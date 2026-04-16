@@ -8,22 +8,20 @@ import com.lulan.shincolle.entity.IShipFloating;
 import com.lulan.shincolle.entity.IShipGuardian;
 import com.lulan.shincolle.reference.ID;
 
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
-import net.minecraft.world.level.block.Blocks;
 
 /**
  * Floating goal - makes ships rise toward water surface.
  * Ported from EntityAIShipFloating (setMutexBits: 8)
  *
  * 5-tier graduated upward velocity based on depth:
- *   depth > 4.0: +0.025
- *   depth > 2.0: +0.015
- *   depth > 1.3: +0.007
- *   depth > 0.47: +0.003
- *   depth > 0.15: +0.0015
+ * depth > 4.0: +0.025
+ * depth > 2.0: +0.015
+ * depth > 1.3: +0.007
+ * depth > 0.47: +0.003
+ * depth > 0.15: +0.0015
  */
 public class ShipFloatingGoal extends Goal {
 
@@ -56,8 +54,9 @@ public class ShipFloatingGoal extends Goal {
 		if (hostShip != null) {
 			if (hostShip.getStateFlag(ID.F.CanFloatUp) &&
 					hostShip.getShipDepth() > hostShip.getShipFloatingDepth()) {
-				// block floating when: riding, sitting, crane, navigating, or in guard position
-				if (hostShip.isPassenger() || hostShip.isOrderedToSit() ||
+				// block floating when: no fuel, riding, sitting, crane, navigating, or in guard
+				// position
+				if (hostShip.getStateFlag(ID.F.NoFuel) || hostShip.isPassenger() || hostShip.isOrderedToSit() ||
 						hostShip.getStateMinor(ID.M.CraneState) > 0 ||
 						!hostShip.getShipNavigate().noPath() ||
 						isInGuardPosition(hostShip)) {

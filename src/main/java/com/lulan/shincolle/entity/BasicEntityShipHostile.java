@@ -110,8 +110,7 @@ public abstract class BasicEntityShipHostile extends Mob
 
 	// smoke particle positions (for client rendering)
 	protected float smokeX, smokeY;
-
-	// ========== Constructor ==========
+	protected int emoteDelay;
 
 	protected BasicEntityShipHostile(EntityType<? extends BasicEntityShipHostile> type, Level level) {
 		super(type, level);
@@ -401,10 +400,9 @@ public abstract class BasicEntityShipHostile extends Mob
 	public void tick() {
 		super.tick();
 		updateSwingTime();
-	}
-
-	@Override
-	public void aiStep() {
+		if (this.emoteDelay > 0) {
+			this.emoteDelay--;
+		}
 		if (this.tickCount == 5) {
 			this.initAI = false;
 		}
@@ -711,6 +709,89 @@ public abstract class BasicEntityShipHostile extends Mob
 	}
 
 	public void applyEmotesReaction(int type) {
+		switch (type) {
+			case 2: // damaged
+				if (this.emoteDelay <= 0) {
+					this.emoteDelay = 40;
+					reactionDamaged();
+				}
+				break;
+			case 3: // attack
+				if (this.random.nextInt(7) == 0 && this.emoteDelay <= 0) {
+					this.emoteDelay = 60;
+					reactionAttack();
+				}
+				break;
+			case 6: // shock
+				reactionShock();
+				break;
+			default: // idle
+				if (this.random.nextInt(3) == 0 && this.emoteDelay <= 0) {
+					this.emoteDelay = 20;
+					reactionIdle();
+				}
+				break;
+		}
+	}
+
+	public void applyParticleEmotion(int type) {
+		float h = this.getBbHeight() * 0.6F;
+
+		if (!this.level().isClientSide()) {
+			com.lulan.shincolle.network.S2CSpawnParticlePacket packet = new com.lulan.shincolle.network.S2CSpawnParticlePacket(
+					(byte) 36, this.getId(),
+					new byte[] { (byte) (((int) (h * 100)) >> 8), (byte) ((int) (h * 100) & 0xFF), 0, (byte) type });
+			ModNetworking.sendToAllTracking(packet, this);
+		} else {
+			com.lulan.shincolle.utility.ParticleHelper.spawnEmotionParticle(this, type);
+		}
+	}
+
+	protected void reactionShock() {
+		switch (this.random.nextInt(6)) {
+			case 1 -> applyParticleEmotion(0); // drop
+			case 2 -> applyParticleEmotion(8); // cry
+			case 3 -> applyParticleEmotion(4); // !
+			default -> applyParticleEmotion(12); // omg
+		}
+	}
+
+	protected void reactionAttack() {
+		switch (this.random.nextInt(15)) {
+			case 1 -> applyParticleEmotion(33); // :p
+			case 2 -> applyParticleEmotion(17); // gg
+			case 3 -> applyParticleEmotion(7); // note
+			case 4 -> applyParticleEmotion(9); // hungry
+			case 5 -> applyParticleEmotion(1); // love
+			case 7 -> applyParticleEmotion(16); // haha
+			case 8 -> applyParticleEmotion(14); // +_+
+			case 10 -> applyParticleEmotion(18); // sigh
+			default -> applyParticleEmotion(4); // !
+		}
+	}
+
+	protected void reactionDamaged() {
+		switch (this.random.nextInt(15)) {
+			case 1 -> applyParticleEmotion(4); // !
+			case 2 -> applyParticleEmotion(5); // ...
+			case 3 -> applyParticleEmotion(2); // panic
+			case 4 -> applyParticleEmotion(3); // ?
+			case 5 -> applyParticleEmotion(8); // cry
+			case 7 -> applyParticleEmotion(10); // dizzy
+			case 8 -> applyParticleEmotion(0); // sweat
+			default -> applyParticleEmotion(6); // angry
+		}
+	}
+
+	protected void reactionIdle() {
+		switch (this.random.nextInt(15)) {
+			case 3 -> applyParticleEmotion(7); // note
+			case 6 -> applyParticleEmotion(3); // ?
+			case 7 -> applyParticleEmotion(16); // haha
+			case 9 -> applyParticleEmotion(29); // blink
+			case 10 -> applyParticleEmotion(18); // sigh
+			default -> applyParticleEmotion(11); // find
+		}
 	}
 
 	public void applySoundAtAttacker(int type, Entity target) {
