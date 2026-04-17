@@ -15,7 +15,9 @@ It is simply a direct port of the version released for Forge 1.10.2, so there ar
 We would appreciate any requests submitted via issues or comments.
 
 Support server (Discord): https://discord.gg/t76XJgJugQ
+
 Author's X: https://x.com/kousakirai
+
 PinkaLulan's GitHub: https://github.com/PinkaLulan/ShinColle
 
 (original description)
