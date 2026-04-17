@@ -90,7 +90,7 @@ public class TargetHelper {
 			}
 
 			// null / alive / self check
-			if (target == null || !target.isAlive() || host == null || host.equals(target)) {
+			if (isInvalidTarget(host, target)) {
 				return false;
 			}
 
@@ -189,7 +189,7 @@ public class TargetHelper {
 
 		@Override
 		public boolean test(Entity target) {
-			if (target == null || !target.isAlive() || host == null || host.equals(target)) {
+			if (isInvalidTarget(host, target)) {
 				return false;
 			}
 
@@ -232,7 +232,7 @@ public class TargetHelper {
 
 		@Override
 		public boolean test(Entity target) {
-			if (target == null || !target.isAlive() || host == null || host.equals(target)) {
+			if (isInvalidTarget(host, target)) {
 				return false;
 			}
 
@@ -281,7 +281,7 @@ public class TargetHelper {
 
 		@Override
 		public boolean test(Entity target) {
-			if (target == null || !target.isAlive() || host == null || host.equals(target)) {
+			if (isInvalidTarget(host, target)) {
 				return false;
 			}
 
@@ -555,5 +555,9 @@ public class TargetHelper {
 		}
 		// players don't have a UID in this system — return -1
 		return -1;
+	}
+
+	private static boolean isInvalidTarget(Entity host, Entity target) {
+		return target == null || !target.isAlive() || host == null || host.equals(target);
 	}
 }

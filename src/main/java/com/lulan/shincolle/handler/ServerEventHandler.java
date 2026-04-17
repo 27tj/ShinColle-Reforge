@@ -12,6 +12,7 @@ import com.lulan.shincolle.utility.LogHelper;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -68,9 +69,7 @@ public class ServerEventHandler {
      */
     @SubscribeEvent
     public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
-        if (!event.getEntity().level().isClientSide()) {
-            ServerDataManager.updatePlayerID(event.getEntity());
-        }
+        updatePlayerCacheOnServer(event.getEntity());
     }
 
     /**
@@ -78,9 +77,7 @@ public class ServerEventHandler {
      */
     @SubscribeEvent
     public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event) {
-        if (!event.getEntity().level().isClientSide()) {
-            ServerDataManager.updatePlayerID(event.getEntity());
-        }
+        updatePlayerCacheOnServer(event.getEntity());
     }
 
     /**
@@ -88,9 +85,7 @@ public class ServerEventHandler {
      */
     @SubscribeEvent
     public static void onPlayerChangeDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
-        if (!event.getEntity().level().isClientSide()) {
-            ServerDataManager.updatePlayerID(event.getEntity());
-        }
+        updatePlayerCacheOnServer(event.getEntity());
     }
 
     /**
@@ -99,10 +94,11 @@ public class ServerEventHandler {
     @SubscribeEvent
     public static void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
         if (!event.getEntity().level().isClientSide()) {
-            CapaTeitoku capa = ServerDataManager.getTeitokuCapability(event.getEntity());
+            Player player = event.getEntity();
+            CapaTeitoku capa = ServerDataManager.getTeitokuCapability(player);
             if (capa != null && capa.getPlayerUID() > 0) {
-                ServerDataManager.updatePlayerID(event.getEntity());
-                LogHelper.info("player logged out: " + event.getEntity().getGameProfile().getName()
+                updatePlayerCacheOnServer(player);
+                LogHelper.info("player logged out: " + player.getGameProfile().getName()
                         + " uid=" + capa.getPlayerUID());
             }
         }
@@ -149,6 +145,12 @@ public class ServerEventHandler {
             // [PORT] 1.10.2 -> 1.20.1: keep hostile death AOE reaction path.
             EntityHelper.applyShipEmotesAOEHostile(
                     deadEntity.level(), deadEntity.getX(), deadEntity.getY(), deadEntity.getZ(), 48D, 6);
+        }
+    }
+
+    private static void updatePlayerCacheOnServer(Player player) {
+        if (player != null && !player.level().isClientSide()) {
+            ServerDataManager.updatePlayerID(player);
         }
     }
 }

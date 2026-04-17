@@ -49,6 +49,9 @@ public class ShipSpawnEgg extends BasicItem {
 	public static final String TAG_SHIP_CLASS = "ShipClass";
 	/** Legacy tag name, kept for backward compatibility */
 	public static final String TAG_SHIP_TYPE = "ShipType";
+	private static final String TAG_STATE_MINOR = "StateMinor";
+	private static final String TAG_CUSTOM_NAME = "customname";
+	private static final String CHAT_LEVEL_FAIL_KEY = "chat.shincolle:levelfail";
 	public static final int MOB_OFFSET = 2000;
 
 	private static Map<Integer, RegistryObject<? extends EntityType<?>>> ENTITY_MAP;
@@ -191,16 +194,8 @@ public class ShipSpawnEgg extends BasicItem {
 		int shipClass = getShipClass(stack);
 
 		// XP cost for saved eggs (eggs with stored ship data)
-		if (!player.getAbilities().instabuild && nbt.contains("StateMinor")) {
-			int[] attrs = nbt.getIntArray("StateMinor");
-			if (attrs.length > 0) {
-				int shipLevel = attrs[0] / 3; // StateMinor[0] = ShipLevel (raw level)
-				if (player.experienceLevel < shipLevel) {
-					player.sendSystemMessage(Component.translatable("chat.shincolle:levelfail"));
-					return InteractionResult.FAIL;
-				}
-				player.giveExperienceLevels(-shipLevel);
-			}
+		if (!consumeSavedEggXpCost(player, nbt)) {
+			return InteractionResult.FAIL;
 		}
 
 		// spawn entity
@@ -220,12 +215,7 @@ public class ShipSpawnEgg extends BasicItem {
 			level.addFreshEntity(ship);
 
 			// set custom name if present
-			if (nbt.contains("customname")) {
-				String name = nbt.getString("customname");
-				if (!name.isEmpty()) {
-					ship.setCustomName(Component.literal(name));
-				}
-			}
+			applyEggCustomName(ship, nbt);
 
 			// recalc attributes
 			ship.calcShipAttributes(31, true);
@@ -243,6 +233,37 @@ public class ShipSpawnEgg extends BasicItem {
 		}
 
 		return InteractionResult.CONSUME;
+	}
+
+	private static boolean consumeSavedEggXpCost(Player player, CompoundTag nbt) {
+		if (player.getAbilities().instabuild || !nbt.contains(TAG_STATE_MINOR)) {
+			return true;
+		}
+
+		int[] attrs = nbt.getIntArray(TAG_STATE_MINOR);
+		if (attrs.length <= 0) {
+			return true;
+		}
+
+		int shipLevel = attrs[0] / 3; // StateMinor[0] = ShipLevel (raw level)
+		if (player.experienceLevel < shipLevel) {
+			player.sendSystemMessage(Component.translatable(CHAT_LEVEL_FAIL_KEY));
+			return false;
+		}
+
+		player.giveExperienceLevels(-shipLevel);
+		return true;
+	}
+
+	private static void applyEggCustomName(BasicEntityShip ship, CompoundTag nbt) {
+		if (!nbt.contains(TAG_CUSTOM_NAME)) {
+			return;
+		}
+
+		String name = nbt.getString(TAG_CUSTOM_NAME);
+		if (!name.isEmpty()) {
+			ship.setCustomName(Component.literal(name));
+		}
 	}
 
 	// ===== Entity Creation =====

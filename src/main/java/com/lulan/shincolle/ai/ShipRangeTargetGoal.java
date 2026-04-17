@@ -83,14 +83,14 @@ public class ShipRangeTargetGoal extends Goal {
 			}
 
 			// 2. Anti-Sub: target invisible/submarine entities
-			if (targets == null || targets.isEmpty()) {
+			if (hasNoTargets(targets)) {
 				if (this.hostShip.getStateFlag(ID.F.AntiSS)) {
 					targets = findTargetsByType(searchBox, IShipInvisible.class);
 				}
 			}
 
 			// 3. PVP First: target other player's ships
-			if (targets == null || targets.isEmpty()) {
+			if (hasNoTargets(targets)) {
 				if (this.hostShip.getStateFlag(ID.F.PVPFirst)) {
 					targets = findTargetsByType(searchBox, BasicEntityShip.class);
 				}
@@ -98,7 +98,7 @@ public class ShipRangeTargetGoal extends Goal {
 		}
 
 		// 4. Normal: any valid target
-		if (targets == null || targets.isEmpty()) {
+		if (hasNoTargets(targets)) {
 			targets = this.entity.level().getEntitiesOfClass(LivingEntity.class, searchBox,
 					this::isValidTarget);
 		}
@@ -132,6 +132,10 @@ public class ShipRangeTargetGoal extends Goal {
 			}
 		}
 		return result.isEmpty() ? null : result;
+	}
+
+	private static boolean hasNoTargets(List<LivingEntity> targets) {
+		return targets == null || targets.isEmpty();
 	}
 
 	/**

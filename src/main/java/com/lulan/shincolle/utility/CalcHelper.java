@@ -11,6 +11,11 @@ import net.minecraft.util.Mth;
  * Math and calculation helper utilities.
  */
 public class CalcHelper {
+	private static final int NORM_TABLE_SIZE = 2000;
+	private static final float NORM_MEAN = 0.5F;
+	private static final float NORM_SD = 0.2F;
+	private static final float NORM_STEP = 0.00025F;
+	private static final float NORM_SCALE = 0.50132566F;
 
 	/**
 	 * Pre-computed normal distribution table (half curve).
@@ -18,12 +23,12 @@ public class CalcHelper {
 	 * Computed as: normalDist(0.5 - i*0.00025, mean=0.5, sd=0.2) * 0.50132566
 	 * Minimum clamped to NORM_MIN.
 	 */
-	public static final float[] NORM_TABLE = new float[2000];
+	public static final float[] NORM_TABLE = new float[NORM_TABLE_SIZE];
 	private static final float NORM_MIN = 0.2F;
 
 	static {
-		for (int i = 0; i < 2000; i++) {
-			NORM_TABLE[i] = calcNormalDist(0.5F - i * 0.00025F, 0.5F, 0.2F) * 0.50132566F;
+		for (int i = 0; i < NORM_TABLE_SIZE; i++) {
+			NORM_TABLE[i] = calcNormalDist(NORM_MEAN - i * NORM_STEP, NORM_MEAN, NORM_SD) * NORM_SCALE;
 			if (NORM_TABLE[i] < NORM_MIN)
 				NORM_TABLE[i] = NORM_MIN;
 		}
@@ -49,7 +54,7 @@ public class CalcHelper {
 	 * @param x distance from mean (0-1999), clamped to NORM_MIN outside range
 	 */
 	public static float getNormDist(int x) {
-		if (x >= 0 && x < 2000) {
+		if (x >= 0 && x < NORM_TABLE_SIZE) {
 			return NORM_TABLE[x];
 		}
 		return NORM_MIN;

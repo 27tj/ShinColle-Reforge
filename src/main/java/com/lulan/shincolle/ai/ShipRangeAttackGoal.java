@@ -16,6 +16,9 @@ import net.minecraft.world.entity.ai.goal.Goal;
  * Ported from EntityAIShipRangeAttack (setMutexBits: 1)
  */
 public class ShipRangeAttackGoal extends Goal {
+	private static final int INITIAL_LIGHT_DELAY = 20;
+	private static final int INITIAL_HEAVY_DELAY = 40;
+	private static final int STUCK_RESET_THRESHOLD = -40;
 
 	private final IShipCannonAttack host;
 	private final Mob entity;
@@ -34,10 +37,10 @@ public class ShipRangeAttackGoal extends Goal {
 		this.entity = (Mob) host;
 		this.setFlags(EnumSet.of(Goal.Flag.MOVE));
 
-		this.delayLight = 20;
-		this.delayHeavy = 40;
-		this.maxDelayLight = 20;
-		this.maxDelayHeavy = 40;
+		this.delayLight = INITIAL_LIGHT_DELAY;
+		this.delayHeavy = INITIAL_HEAVY_DELAY;
+		this.maxDelayLight = INITIAL_LIGHT_DELAY;
+		this.maxDelayHeavy = INITIAL_HEAVY_DELAY;
 	}
 
 	@Override
@@ -46,19 +49,13 @@ public class ShipRangeAttackGoal extends Goal {
 			return false;
 		}
 
-		if (this.host.getIsRiding()) {
-			if (this.entity.getVehicle() instanceof BasicEntityMount) {
-				return false;
-			}
+		if (isMountedOnShipMount()) {
+			return false;
 		}
 
 		Entity target = this.host.getEntityTarget();
 
-		if (target != null && target.isAlive() &&
-				((this.host.getAttackType(ID.F.AtkType_Light) && this.host.getStateFlag(ID.F.UseAmmoLight)
-						&& this.host.hasAmmoLight()) ||
-						(this.host.getAttackType(ID.F.AtkType_Heavy) && this.host.getStateFlag(ID.F.UseAmmoHeavy)
-								&& this.host.hasAmmoHeavy()))) {
+		if (target != null && target.isAlive() && canUseAnyRangedAttack()) {
 			this.target = target;
 			return true;
 		}
@@ -146,11 +143,25 @@ public class ShipRangeAttackGoal extends Goal {
 		}
 
 		// reset if stuck too long without hitting
-		if (this.delayHeavy < -40 && this.delayLight < -40) {
-			this.delayLight = 20;
-			this.delayHeavy = 20;
+		if (this.delayHeavy < STUCK_RESET_THRESHOLD && this.delayLight < STUCK_RESET_THRESHOLD) {
+			this.delayLight = INITIAL_LIGHT_DELAY;
+			this.delayHeavy = INITIAL_LIGHT_DELAY;
 			this.stop();
 		}
+	}
+
+	private boolean isMountedOnShipMount() {
+		return this.host.getIsRiding() && this.entity.getVehicle() instanceof BasicEntityMount;
+	}
+
+	private boolean canUseAnyRangedAttack() {
+		boolean canUseLight = this.host.getAttackType(ID.F.AtkType_Light)
+				&& this.host.getStateFlag(ID.F.UseAmmoLight)
+				&& this.host.hasAmmoLight();
+		boolean canUseHeavy = this.host.getAttackType(ID.F.AtkType_Heavy)
+				&& this.host.getStateFlag(ID.F.UseAmmoHeavy)
+				&& this.host.hasAmmoHeavy();
+		return canUseLight || canUseHeavy;
 	}
 
 	private void updateAttackParms() {

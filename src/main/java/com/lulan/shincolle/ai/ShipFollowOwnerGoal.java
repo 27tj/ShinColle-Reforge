@@ -27,6 +27,7 @@ import net.minecraft.world.entity.ai.goal.Goal;
  * Formation mode uses FormationHelper for position calculation.
  */
 public class ShipFollowOwnerGoal extends Goal {
+	private static final double OWNER_TELEPORT_Y_OFFSET = 0.75D;
 
 	private final IShipAttackBase host;
 	private final Mob hostEntity;
@@ -56,12 +57,7 @@ public class ShipFollowOwnerGoal extends Goal {
 		if (host == null)
 			return false;
 
-		// not sitting, not riding, not leashed, can follow, not craned, has grudge
-		if (host.getIsSitting() || host.getIsRiding() ||
-				(hostEntity instanceof BasicEntityShip ship && ship.isLeashed()) ||
-				!host.getStateFlag(ID.F.CanFollow) ||
-				host.getStateMinor(ID.M.CraneState) >= 1 ||
-				host.getStateMinor(ID.M.NumGrudge) <= 0) {
+		if (isFollowBlockedState()) {
 			return false;
 		}
 
@@ -80,11 +76,7 @@ public class ShipFollowOwnerGoal extends Goal {
 		if (host == null || owner == null)
 			return false;
 
-		if (host.getIsSitting() || host.getIsRiding() ||
-				(hostEntity instanceof BasicEntityShip ship && ship.isLeashed()) ||
-				!host.getStateFlag(ID.F.CanFollow) ||
-				host.getStateMinor(ID.M.CraneState) >= 1 ||
-				host.getStateMinor(ID.M.NumGrudge) <= 0) {
+		if (isFollowBlockedState()) {
 			this.stop();
 			return false;
 		}
@@ -160,7 +152,7 @@ public class ShipFollowOwnerGoal extends Goal {
 				this.checkTP_D = 0;
 				LogHelper.debug("DEBUG: follow AI: distSQ > " + ConfigHandler.shipTeleport[1] +
 						" , teleport to target.");
-				this.hostEntity.teleportTo(this.owner.getX(), this.owner.getY() + 0.75D, this.owner.getZ());
+				teleportToOwner();
 				return;
 			}
 		}
@@ -169,7 +161,22 @@ public class ShipFollowOwnerGoal extends Goal {
 		if (this.checkTP_T > ConfigHandler.shipTeleport[0]) {
 			this.checkTP_T = 0;
 			LogHelper.debug("DEBUG: follow AI: stuck time exceeded, teleport to target.");
-			this.hostEntity.teleportTo(this.owner.getX(), this.owner.getY() + 0.75D, this.owner.getZ());
+			teleportToOwner();
+		}
+	}
+
+	private boolean isFollowBlockedState() {
+		return host.getIsSitting()
+				|| host.getIsRiding()
+				|| (hostEntity instanceof BasicEntityShip ship && ship.isLeashed())
+				|| !host.getStateFlag(ID.F.CanFollow)
+				|| host.getStateMinor(ID.M.CraneState) >= 1
+				|| host.getStateMinor(ID.M.NumGrudge) <= 0;
+	}
+
+	private void teleportToOwner() {
+		if (this.owner != null) {
+			this.hostEntity.teleportTo(this.owner.getX(), this.owner.getY() + OWNER_TELEPORT_Y_OFFSET, this.owner.getZ());
 		}
 	}
 

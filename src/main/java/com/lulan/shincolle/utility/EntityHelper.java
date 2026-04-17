@@ -10,6 +10,7 @@ import com.lulan.shincolle.entity.IShipNavigator;
 import com.lulan.shincolle.reference.ID;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.FlyingMob;
@@ -36,6 +37,17 @@ import net.minecraft.world.phys.Vec3;
  * Ported from 1.10.2 EntityHelper.
  */
 public class EntityHelper {
+	private static final double SURFACE_Y_OFFSET = 0.1D;
+	private static final double MIN_TRAVEL_VEC_SQR = 1.0E-6D;
+	private static final double FLOAT_UP_THRESHOLD = 0.1D;
+	private static final double FLOAT_DOWN_THRESHOLD = -0.1D;
+	private static final double FLOAT_UP_ACCEL = 0.04D;
+	private static final double FLOAT_UP_MAX_VELOCITY = 0.12D;
+	private static final double FLOAT_DOWN_ACCEL = 0.02D;
+	private static final double FLOAT_DOWN_MAX_VELOCITY = -0.08D;
+	private static final double FLOAT_HOVER_DAMPING = 0.8D;
+	private static final double WATER_DRAG = 0.8D;
+	private static final double COLLISION_BUMP_UP_VELOCITY = 0.3D;
 
 	/**
 	 * Update ship navigator - called every tick on server side.
@@ -114,10 +126,7 @@ public class EntityHelper {
 			return;
 
 		Level level = entity.level();
-		BlockPos pos = new BlockPos(
-				net.minecraft.util.Mth.floor(entity.getX()),
-				(int) entity.getBoundingBox().minY,
-				net.minecraft.util.Mth.floor(entity.getZ()));
+		BlockPos pos = getEntityFeetBlockPos(entity);
 		// [PORT] 1.10.2 -> 1.20.1: restore legacy depth contract used by
 		// ShipFloatingGoal
 		// (single-column liquid depth + CanFloatUp flag from top block material).
@@ -176,17 +185,7 @@ public class EntityHelper {
 		Level level = ship.level();
 
 		// find water surface
-		BlockPos surfacePos = pos;
-		while (surfacePos.getY() < level.getMaxBuildHeight()) {
-			FluidState above = level.getFluidState(surfacePos.above());
-			if (!above.is(FluidTags.WATER)) {
-				break;
-			}
-			surfacePos = surfacePos.above();
-		}
-
-		// target Y is the water surface
-		double targetY = surfacePos.getY() + 0.1D;
+		double targetY = findWaterSurfaceY(level, pos);
 		double currentY = ship.getY();
 
 		// do not set motion here directly, just update floating depth
@@ -214,7 +213,7 @@ public class EntityHelper {
 		// [PORT] 1.10.2 -> 1.20.1: restore legacy water horizontal acceleration.
 		// ShipMoveHelper controls facing/speed, while travelVec provides forward
 		// intent.
-		if (travelVec.lengthSqr() > 1.0E-6D) {
+		if (travelVec.lengthSqr() > MIN_TRAVEL_VEC_SQR) {
 			ship.moveRelative(ship.getSpeed() * 0.4F, travelVec);
 		}
 
@@ -223,25 +222,24 @@ public class EntityHelper {
 
 		// vertical adjustment
 		double vy = motion.y;
-		if (floatingDepth > 0.1D) {
+		if (floatingDepth > FLOAT_UP_THRESHOLD) {
 			// push up toward surface
-			vy = Math.min(vy + 0.04D, 0.12D);
-		} else if (floatingDepth < -0.1D) {
+			vy = Math.min(vy + FLOAT_UP_ACCEL, FLOAT_UP_MAX_VELOCITY);
+		} else if (floatingDepth < FLOAT_DOWN_THRESHOLD) {
 			// sink if below target depth
-			vy = Math.max(vy - 0.02D, -0.08D);
+			vy = Math.max(vy - FLOAT_DOWN_ACCEL, FLOAT_DOWN_MAX_VELOCITY);
 		} else {
 			// hover at surface
-			vy *= 0.8D;
+			vy *= FLOAT_HOVER_DAMPING;
 		}
 
 		// [PORT] 1.10.2 -> 1.20.1: keep the classic "bump up" when colliding in water.
 		if (ship.horizontalCollision && ship.level().getFluidState(ship.blockPosition().above()).is(FluidTags.WATER)) {
-			vy = Math.max(vy, 0.3D);
+			vy = Math.max(vy, COLLISION_BUMP_UP_VELOCITY);
 		}
 
 		// apply drag in water
-		double drag = 0.8D;
-		ship.setDeltaMovement(motion.x * drag, vy, motion.z * drag);
+		ship.setDeltaMovement(motion.x * WATER_DRAG, vy, motion.z * WATER_DRAG);
 	}
 
 	/**
@@ -262,16 +260,7 @@ public class EntityHelper {
 		BlockPos pos = entity.blockPosition();
 		Level level = entity.level();
 
-		// find water surface
-		BlockPos surfacePos = pos;
-		while (surfacePos.getY() < level.getMaxBuildHeight()) {
-			FluidState above = level.getFluidState(surfacePos.above());
-			if (!above.is(FluidTags.WATER))
-				break;
-			surfacePos = surfacePos.above();
-		}
-
-		double targetY = surfacePos.getY() + 0.1D;
+		double targetY = findWaterSurfaceY(level, pos);
 		double currentY = entity.getY();
 		floating.setShipFloatingDepth(targetY - currentY);
 	}
@@ -333,11 +322,28 @@ public class EntityHelper {
 	 * Check if entity is standing in liquid.
 	 */
 	public static boolean checkEntityIsInLiquid(Entity entity) {
-		BlockPos pos = new BlockPos(
-				net.minecraft.util.Mth.floor(entity.getX()),
-				(int) entity.getBoundingBox().minY,
-				net.minecraft.util.Mth.floor(entity.getZ()));
+		BlockPos pos = getEntityFeetBlockPos(entity);
 		return BlockHelper.checkBlockIsLiquid(entity.level().getBlockState(pos));
+	}
+
+	private static BlockPos getEntityFeetBlockPos(Entity entity) {
+		return new BlockPos(
+				Mth.floor(entity.getX()),
+				(int) entity.getBoundingBox().minY,
+				Mth.floor(entity.getZ()));
+	}
+
+	private static double findWaterSurfaceY(Level level, BlockPos origin) {
+		BlockPos surfacePos = origin;
+		while (surfacePos.getY() < level.getMaxBuildHeight()) {
+			FluidState above = level.getFluidState(surfacePos.above());
+			if (!above.is(FluidTags.WATER)) {
+				break;
+			}
+			surfacePos = surfacePos.above();
+		}
+
+		return surfacePos.getY() + SURFACE_Y_OFFSET;
 	}
 
 	/**

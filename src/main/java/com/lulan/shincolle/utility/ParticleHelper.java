@@ -45,6 +45,9 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public class ParticleHelper {
 
     private static final float TEAM_CIRCLE_ENTITY_SCALE = 0.35F;
+    private static final double ATTACK_TEXT_Y_OFFSET = 1.0D;
+    private static final double DEFAULT_ATTACK_LOOK_Y = 1.0D;
+    private static final int STICKY_LIGHTNING_STRIP_COUNT = 4;
 
     /**
      * Spawn attack particles at a position. Type IDs match the original mod's
@@ -76,11 +79,11 @@ public class ParticleHelper {
                 case 9 -> level.addParticle(ParticleTypes.BUBBLE, x, y, z, 0, 0.1, 0);
 
                 // Text/indicator particles (types 10-14) - use custom ParticleTexts
-                case 10 -> spawnTextParticleClient((ClientLevel) level, x, y + 1, z, 1.0f, 0); // miss
-                case 11 -> spawnTextParticleClient((ClientLevel) level, x, y + 1, z, 1.0f, 1); // critical
-                case 12 -> spawnTextParticleClient((ClientLevel) level, x, y + 1, z, 1.0f, 2); // double hit
-                case 13 -> spawnTextParticleClient((ClientLevel) level, x, y + 1, z, 1.0f, 3); // triple hit
-                case 14 -> spawnTextParticleClient((ClientLevel) level, x, y + 1, z, 1.0f, 4); // dodge
+                case 10 -> spawnAttackTextIndicator((ClientLevel) level, x, y, z, 0); // miss
+                case 11 -> spawnAttackTextIndicator((ClientLevel) level, x, y, z, 1); // critical
+                case 12 -> spawnAttackTextIndicator((ClientLevel) level, x, y, z, 2); // double hit
+                case 13 -> spawnAttackTextIndicator((ClientLevel) level, x, y, z, 3); // triple hit
+                case 14 -> spawnAttackTextIndicator((ClientLevel) level, x, y, z, 4); // dodge
 
                 // Weapon effect particles (types 15-20)
                 case 15 -> level.addParticle(ParticleTypes.SPLASH, x, y, z, lookX, lookY, lookZ);
@@ -140,7 +143,7 @@ public class ParticleHelper {
      * Spawn attack particles with default look direction (upward).
      */
     public static void spawnAttackParticleAt(Level level, double x, double y, double z, int type) {
-        spawnAttackParticleAt(level, x, y, z, 0.0, 1.0, 0.0, type);
+        spawnAttackParticleAt(level, x, y, z, 0.0, DEFAULT_ATTACK_LOOK_Y, 0.0, type);
     }
 
     /**
@@ -448,10 +451,15 @@ public class ParticleHelper {
         // 2026/04/07：GitHub Copilotによって確認済み
         // Keep legacy visual density: railgun beam emitted 4 sticky-lightning strips
         // per tick.
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < STICKY_LIGHTNING_STRIP_COUNT; i++) {
             Minecraft.getInstance().particleEngine.add(
                     new ParticleStickyLightning(level, entity, scale, life, type));
         }
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    private static void spawnAttackTextIndicator(ClientLevel level, double x, double y, double z, int textType) {
+        spawnTextParticleClient(level, x, y + ATTACK_TEXT_Y_OFFSET, z, 1.0f, textType);
     }
 
     @OnlyIn(Dist.CLIENT)

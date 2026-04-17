@@ -24,6 +24,17 @@ import net.minecraft.world.entity.ai.goal.Goal;
  * depth > 0.15: +0.0015
  */
 public class ShipFloatingGoal extends Goal {
+	private static final double DEPTH_TIER_1 = 4D;
+	private static final double DEPTH_TIER_2 = 2D;
+	private static final double DEPTH_TIER_3 = 1.3D;
+	private static final double DEPTH_TIER_4 = 0.47D;
+	private static final double DEPTH_TIER_5 = 0.15D;
+
+	private static final double FLOAT_SPEED_TIER_1 = 0.025D;
+	private static final double FLOAT_SPEED_TIER_2 = 0.015D;
+	private static final double FLOAT_SPEED_TIER_3 = 0.007D;
+	private static final double FLOAT_SPEED_TIER_4 = 0.003D;
+	private static final double FLOAT_SPEED_TIER_5 = 0.0015D;
 
 	private final IShipFloating host;
 	private final BasicEntityShip hostShip;
@@ -52,38 +63,11 @@ public class ShipFloatingGoal extends Goal {
 	public boolean canUse() {
 		// ship type
 		if (hostShip != null) {
-			if (hostShip.getStateFlag(ID.F.CanFloatUp) &&
-					hostShip.getShipDepth() > hostShip.getShipFloatingDepth()) {
-				// block floating when: no fuel, riding, sitting, crane, navigating, or in guard
-				// position
-				if (hostShip.getStateFlag(ID.F.NoFuel) || hostShip.isPassenger() || hostShip.isOrderedToSit() ||
-						hostShip.getStateMinor(ID.M.CraneState) > 0 ||
-						!hostShip.getShipNavigate().noPath() ||
-						isInGuardPosition(hostShip)) {
-					return false;
-				}
-				return true;
-			}
-			return false;
+			return canFloatShip(hostShip);
 		}
 		// mount type
 		else if (hostMount != null && hostMount.getHostEntity() != null) {
-			if (hostMount.getShipDepth() > hostMount.getShipFloatingDepth()) {
-				Entity hostEntity = hostMount.getHostEntity();
-				if (hostEntity instanceof BasicEntityShip ship) {
-					// check host ship state
-					if (ship.isOrderedToSit() || ship.getStateMinor(ID.M.CraneState) > 0 ||
-							!ship.getShipNavigate().noPath() || isInGuardPosition(ship)) {
-						return false;
-					}
-				}
-				// check mount's own navigator and guard
-				if (!hostMount.getShipNavigate().noPath() || isInGuardPosition(hostMount)) {
-					return false;
-				}
-				return true;
-			}
-			return false;
+			return canFloatMount(hostMount);
 		}
 
 		// fallback
@@ -95,22 +79,55 @@ public class ShipFloatingGoal extends Goal {
 		double depth = this.host.getShipDepth();
 
 		// 5-tier graduated float speeds matching original
-		if (depth > 4D) {
-			this.hostLiving.setDeltaMovement(
-					this.hostLiving.getDeltaMovement().add(0D, 0.025D, 0D));
-		} else if (depth > 2D) {
-			this.hostLiving.setDeltaMovement(
-					this.hostLiving.getDeltaMovement().add(0D, 0.015D, 0D));
-		} else if (depth > 1.3D) {
-			this.hostLiving.setDeltaMovement(
-					this.hostLiving.getDeltaMovement().add(0D, 0.007D, 0D));
-		} else if (depth > 0.47D) {
-			this.hostLiving.setDeltaMovement(
-					this.hostLiving.getDeltaMovement().add(0D, 0.003D, 0D));
-		} else if (depth > 0.15D) {
-			this.hostLiving.setDeltaMovement(
-					this.hostLiving.getDeltaMovement().add(0D, 0.0015D, 0D));
+		if (depth > DEPTH_TIER_1) {
+			applyVerticalBoost(FLOAT_SPEED_TIER_1);
+		} else if (depth > DEPTH_TIER_2) {
+			applyVerticalBoost(FLOAT_SPEED_TIER_2);
+		} else if (depth > DEPTH_TIER_3) {
+			applyVerticalBoost(FLOAT_SPEED_TIER_3);
+		} else if (depth > DEPTH_TIER_4) {
+			applyVerticalBoost(FLOAT_SPEED_TIER_4);
+		} else if (depth > DEPTH_TIER_5) {
+			applyVerticalBoost(FLOAT_SPEED_TIER_5);
 		}
+	}
+
+	private boolean canFloatShip(BasicEntityShip ship) {
+		if (!ship.getStateFlag(ID.F.CanFloatUp) || ship.getShipDepth() <= ship.getShipFloatingDepth()) {
+			return false;
+		}
+
+		// block floating when: no fuel, riding, sitting, crane, navigating, or in guard
+		// position
+		return !(ship.getStateFlag(ID.F.NoFuel)
+				|| ship.isPassenger()
+				|| ship.isOrderedToSit()
+				|| ship.getStateMinor(ID.M.CraneState) > 0
+				|| !ship.getShipNavigate().noPath()
+				|| isInGuardPosition(ship));
+	}
+
+	private boolean canFloatMount(BasicEntityMount mount) {
+		if (mount.getShipDepth() <= mount.getShipFloatingDepth()) {
+			return false;
+		}
+
+		Entity hostEntity = mount.getHostEntity();
+		if (hostEntity instanceof BasicEntityShip ship) {
+			if (ship.isOrderedToSit()
+					|| ship.getStateMinor(ID.M.CraneState) > 0
+					|| !ship.getShipNavigate().noPath()
+					|| isInGuardPosition(ship)) {
+				return false;
+			}
+		}
+
+		// check mount's own navigator and guard
+		return mount.getShipNavigate().noPath() && !isInGuardPosition(mount);
+	}
+
+	private void applyVerticalBoost(double amount) {
+		this.hostLiving.setDeltaMovement(this.hostLiving.getDeltaMovement().add(0D, amount, 0D));
 	}
 
 	/**
