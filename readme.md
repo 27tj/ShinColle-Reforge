@@ -3,7 +3,11 @@ Forge1.10.2で公開されていたものをそのまま移植しただけです
 issueやコメントにて要望を頂けるとありがたいです。
 
 サポートサーバー(discord): https://discord.gg/t76XJgJugQ
+
+
 作者のX： https://x.com/kousakirai
+
+
 PinkaLulan氏のgithub： https://github.com/PinkaLulan/ShinColle
 
 This mod is a port of ShinColle by PinkaLulan to Forge 1.20.1, created with permission.
