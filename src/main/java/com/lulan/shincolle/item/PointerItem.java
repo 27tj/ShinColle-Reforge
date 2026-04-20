@@ -64,6 +64,15 @@ public class PointerItem extends BasicItem {
 	public static final int MODE_GROUP = 1;
 	public static final int MODE_FORMATION = 2;
 
+	public static int toggleCaressMode(int currentMode) {
+		if (currentMode >= 0 && currentMode <= 2) {
+			return currentMode + 3;
+		} else if (currentMode >= 3 && currentMode <= 5) {
+			return currentMode - 3;
+		}
+		return MODE_SINGLE;
+	}
+
 	public PointerItem() {
 		super(new Properties().stacksTo(1));
 	}

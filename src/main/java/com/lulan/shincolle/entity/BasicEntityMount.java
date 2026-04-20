@@ -152,10 +152,10 @@ public abstract class BasicEntityMount extends TamableAnimal
 	// ========== AI ==========
 
 	public void clearAITasks() {
-		this.goalSelector.getAvailableGoals().clear();
-	}
+                this.goalSelector.removeAllGoals(goal -> true);
+        }
 
-	public void setAIList() {
+        public void setAIList() {
 		this.clearAITasks();
 
 		BasicEntityMount self = this;

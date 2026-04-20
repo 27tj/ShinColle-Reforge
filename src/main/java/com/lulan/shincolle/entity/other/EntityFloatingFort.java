@@ -46,7 +46,7 @@ public class EntityFloatingFort extends BasicEntityAirplane {
 	@Override
 	public void tick() {
 		if (this.level().isClientSide() && this.isAlive() && (this.tickCount & 1) == 0) {
-			// 2026/04/07：GitHub Copilotによって確認済み
+			// 2026/04/07・哦itHub Copilot縺ｫ繧医▲縺ｦ遒ｺ隱肴ｸ医∩
 			ParticleHelper.spawnAttackParticleAt(this.level(), this.getX(), this.getY() + 0.2D, this.getZ(),
 					-this.getDeltaMovement().x * 0.5D, 0.07D, -this.getDeltaMovement().z * 0.5D, 29);
 		}
@@ -82,7 +82,7 @@ public class EntityFloatingFort extends BasicEntityAirplane {
 			this.numAmmoHeavy--;
 		}
 
-		// 2026/04/07：GitHub Copilotによって確認済み
+		// 2026/04/07・哦itHub Copilot縺ｫ繧医▲縺ｦ遒ｺ隱肴ｸ医∩
 		impactExplosion();
 		return true;
 	}
@@ -134,7 +134,7 @@ public class EntityFloatingFort extends BasicEntityAirplane {
 			serverLevel.sendParticles(ParticleTypes.FLAME, x, y, z, 10, 0.6D, 0.6D, 0.6D, 0.06D);
 		}
 
-		// 2026/04/07：GitHub Copilotによって確認済み
+		// 2026/04/07・哦itHub Copilot縺ｫ繧医▲縺ｦ遒ｺ隱肴ｸ医∩
 		this.discard();
 	}
 

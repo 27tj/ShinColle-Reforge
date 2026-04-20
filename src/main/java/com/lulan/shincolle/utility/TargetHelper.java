@@ -11,6 +11,7 @@ import com.lulan.shincolle.entity.BasicEntityShipHostile;
 import com.lulan.shincolle.entity.IShipAttackBase;
 import com.lulan.shincolle.entity.IShipInvisible;
 import com.lulan.shincolle.entity.IShipOwner;
+import com.lulan.shincolle.utility.DebugProfiler;
 import com.lulan.shincolle.handler.ConfigHandler;
 import com.lulan.shincolle.reference.ID;
 import com.lulan.shincolle.server.ServerDataManager;
@@ -27,6 +28,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.FireworkRocketEntity;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.phys.AABB;
 
 /**
@@ -324,48 +326,59 @@ public class TargetHelper {
 	 */
 	public static void updateTarget(IShipAttackBase host) {
 		Entity hostEntity = (Entity) host;
-
-		// clear dead or friendly attack target
-		Entity atkTarget = host.getEntityTarget();
-		if (atkTarget != null) {
-			if (!atkTarget.isAlive()) {
-				host.setEntityTarget(null);
-			} else if (checkSameOwner(hostEntity, atkTarget)) {
-				host.setEntityTarget(null);
-			}
-		}
-
-		// clear dead or expired revenge target
-		Entity rvgTarget = host.getEntityRevengeTarget();
-		if (rvgTarget != null) {
-			if (!rvgTarget.isAlive()) {
-				host.setEntityRevengeTarget(null);
-			} else if (host.getTickExisted() - host.getEntityRevengeTime() > 200) {
-				host.setEntityRevengeTarget(null);
-			}
-		}
-
-		// clear vanilla attack target for hostile ships
-		if (host instanceof BasicEntityShipHostile hostile) {
-			LivingEntity vanillaTarget = hostile.getTarget();
-			if (vanillaTarget != null) {
-				if (!vanillaTarget.isAlive()) {
-					hostile.setTarget(null);
-				} else if (checkSameOwner(hostEntity, vanillaTarget)) {
-					hostile.setTarget(null);
-				}
-			}
-		}
-
-		// clear invisible target every 64 ticks if no detection equipment
-		if ((host.getTickExisted() & 63) == 0) {
-			Entity target = host.getEntityTarget();
-			if (target != null && target.isInvisible()) {
-				if (host.getStateMinor(ID.M.LevelFlare) < 1
-						&& host.getStateMinor(ID.M.LevelSearchlight) < 1) {
+		ProfilerFiller profiler = DebugProfiler.push(hostEntity.level(), "shincolle.target.update");
+		try {
+			// clear dead or friendly attack target
+			Entity atkTarget = host.getEntityTarget();
+			if (atkTarget != null) {
+				if (!atkTarget.isAlive()) {
+					DebugProfiler.count(profiler, "shincolle.target.update.clear_attack_target_dead");
+					host.setEntityTarget(null);
+				} else if (checkSameOwner(hostEntity, atkTarget)) {
+					DebugProfiler.count(profiler, "shincolle.target.update.clear_attack_target_friendly");
 					host.setEntityTarget(null);
 				}
 			}
+
+			// clear dead or expired revenge target
+			Entity rvgTarget = host.getEntityRevengeTarget();
+			if (rvgTarget != null) {
+				if (!rvgTarget.isAlive()) {
+					DebugProfiler.count(profiler, "shincolle.target.update.clear_revenge_dead");
+					host.setEntityRevengeTarget(null);
+				} else if (host.getTickExisted() - host.getEntityRevengeTime() > 200) {
+					DebugProfiler.count(profiler, "shincolle.target.update.clear_revenge_expired");
+					host.setEntityRevengeTarget(null);
+				}
+			}
+
+			// clear vanilla attack target for hostile ships
+			if (host instanceof BasicEntityShipHostile hostile) {
+				LivingEntity vanillaTarget = hostile.getTarget();
+				if (vanillaTarget != null) {
+					if (!vanillaTarget.isAlive()) {
+						DebugProfiler.count(profiler, "shincolle.target.update.clear_vanilla_target_dead");
+						hostile.setTarget(null);
+					} else if (checkSameOwner(hostEntity, vanillaTarget)) {
+						DebugProfiler.count(profiler, "shincolle.target.update.clear_vanilla_target_friendly");
+						hostile.setTarget(null);
+					}
+				}
+			}
+
+			// clear invisible target every 64 ticks if no detection equipment
+			if ((host.getTickExisted() & 63) == 0) {
+				Entity target = host.getEntityTarget();
+				if (target != null && target.isInvisible()) {
+					if (host.getStateMinor(ID.M.LevelFlare) < 1
+							&& host.getStateMinor(ID.M.LevelSearchlight) < 1) {
+						DebugProfiler.count(profiler, "shincolle.target.update.clear_invisible_undetectable");
+						host.setEntityTarget(null);
+					}
+				}
+			}
+		} finally {
+			DebugProfiler.pop(profiler);
 		}
 	}
 

@@ -266,12 +266,12 @@ public abstract class BasicEntitySummon extends Mob implements IShipOwner {
 	// ========== AI Task Management ==========
 
 	protected void clearAITasks() {
-		this.goalSelector.getAvailableGoals().clear();
+		this.goalSelector.removeAllGoals(goal -> true);
 	}
 
 	protected void clearAITargetTasks() {
 		this.setTarget(null);
 		this.atkTarget = null;
-		this.targetSelector.getAvailableGoals().clear();
+		this.targetSelector.removeAllGoals(goal -> true);
 	}
 }

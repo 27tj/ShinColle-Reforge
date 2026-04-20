@@ -8,10 +8,12 @@ import com.lulan.shincolle.entity.IShipAttackBase;
 import com.lulan.shincolle.entity.IShipFloating;
 import com.lulan.shincolle.entity.IShipNavigator;
 import com.lulan.shincolle.reference.ID;
+import com.lulan.shincolle.utility.DebugProfiler;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.FlyingMob;
 import net.minecraft.world.entity.LivingEntity;
@@ -87,33 +89,44 @@ public class EntityHelper {
 		if (!(entity instanceof IShipNavigator navEntity))
 			return;
 
-		ShipPathNavigate pathNavi = navEntity.getShipNavigate();
-		ShipMoveHelper moveHelper = navEntity.getShipMoveHelper();
+		ProfilerFiller profiler = DebugProfiler.push(entity.level(), "shincolle.entity.navigator.tick_custom");
+		try {
 
-		if (pathNavi == null || moveHelper == null)
-			return;
+			ShipPathNavigate pathNavi = navEntity.getShipNavigate();
+			ShipMoveHelper moveHelper = navEntity.getShipMoveHelper();
 
-		if (!pathNavi.noPath()) {
-			// clear vanilla navigator when custom path is active
-			entity.getNavigation().stop();
-
-			// clear if sitting or leashed
-			if (entity instanceof BasicEntityShip ship) {
-				if (ship.isOrderedToSit() || ship.isLeashed()) {
-					pathNavi.clearPathEntity();
-					return;
-				}
+			if (pathNavi == null || moveHelper == null) {
+				DebugProfiler.count(profiler, "shincolle.entity.navigator.tick_custom.no_path_or_move_helper");
+				return;
 			}
 
-			// tick custom navigator and move helper
-			pathNavi.onUpdateNavigation();
-			moveHelper.onUpdateMoveHelper();
-		}
+			if (!pathNavi.noPath()) {
+				// clear vanilla navigator when custom path is active
+				entity.getNavigation().stop();
 
-		// [PORT] 1.10.2 -> 1.20.1: keep vanilla path disabled in liquid to avoid
-		// mixed vanilla/custom navigation steering.
-		if (!entity.getNavigation().isDone() && checkEntityIsInLiquid(entity)) {
-			entity.getNavigation().stop();
+				// clear if sitting or leashed
+				if (entity instanceof BasicEntityShip ship) {
+					if (ship.isOrderedToSit() || ship.isLeashed()) {
+						DebugProfiler.count(profiler, "shincolle.entity.navigator.tick_custom.clear_path_sit_or_leashed");
+						pathNavi.clearPathEntity();
+						return;
+					}
+				}
+
+				DebugProfiler.count(profiler, "shincolle.entity.navigator.tick_custom.update_custom_path");
+				// tick custom navigator and move helper
+				pathNavi.onUpdateNavigation();
+				moveHelper.onUpdateMoveHelper();
+			}
+
+			// [PORT] 1.10.2 -> 1.20.1: keep vanilla path disabled in liquid to avoid
+			// mixed vanilla/custom navigation steering.
+			if (!entity.getNavigation().isDone() && checkEntityIsInLiquid(entity)) {
+				DebugProfiler.count(profiler, "shincolle.entity.navigator.tick_custom.clear_vanilla_path_in_liquid");
+				entity.getNavigation().stop();
+			}
+		} finally {
+			DebugProfiler.pop(profiler);
 		}
 	}
 
@@ -203,6 +216,7 @@ public class EntityHelper {
 	 * - Vertical movement controlled by floating depth
 	 */
 	public static void moveEntityInFluid(BasicEntityShip ship, Vec3 travelVec) {
+<<<<<<< Updated upstream
 		if (!ship.isInWater())
 			return;
 
@@ -216,10 +230,45 @@ public class EntityHelper {
 		if (travelVec.lengthSqr() > MIN_TRAVEL_VEC_SQR) {
 			ship.moveRelative(ship.getSpeed() * 0.4F, travelVec);
 		}
+=======
+		ProfilerFiller profiler = DebugProfiler.push(ship.level(), "shincolle.entity.move_in_fluid");
+		try {
+			if (!ship.isInWater())
+				return;
 
-		Vec3 motion = ship.getDeltaMovement();
-		double floatingDepth = ship.getShipFloatingDepth();
+			double depth = ship.getShipDepth();
+			if (depth <= 0D)
+				return;
 
+			// [PORT] 1.10.2 -> 1.20.1: restore legacy water horizontal acceleration.
+			// ShipMoveHelper controls facing/speed, while travelVec provides forward
+			// intent.
+			if (travelVec.lengthSqr() > 1.0E-6D) {
+				DebugProfiler.count(profiler, "shincolle.entity.move_in_fluid.apply_horizontal_accel");
+				ship.moveRelative(ship.getSpeed() * 0.4F, travelVec);
+			}
+>>>>>>> Stashed changes
+
+			Vec3 motion = ship.getDeltaMovement();
+			double floatingDepth = ship.getShipFloatingDepth();
+
+			// vertical adjustment
+			double vy = motion.y;
+			if (floatingDepth > 0.1D) {
+				DebugProfiler.count(profiler, "shincolle.entity.move_in_fluid.vertical_rise");
+				// push up toward surface
+				vy = Math.min(vy + 0.04D, 0.12D);
+			} else if (floatingDepth < -0.1D) {
+				DebugProfiler.count(profiler, "shincolle.entity.move_in_fluid.vertical_sink");
+				// sink if below target depth
+				vy = Math.max(vy - 0.02D, -0.08D);
+			} else {
+				DebugProfiler.count(profiler, "shincolle.entity.move_in_fluid.vertical_hover");
+				// hover at surface
+				vy *= 0.8D;
+			}
+
+<<<<<<< Updated upstream
 		// vertical adjustment
 		double vy = motion.y;
 		if (floatingDepth > FLOAT_UP_THRESHOLD) {
@@ -240,6 +289,20 @@ public class EntityHelper {
 
 		// apply drag in water
 		ship.setDeltaMovement(motion.x * WATER_DRAG, vy, motion.z * WATER_DRAG);
+=======
+			// [PORT] 1.10.2 -> 1.20.1: keep the classic "bump up" when colliding in water.
+			if (ship.horizontalCollision && ship.level().getFluidState(ship.blockPosition().above()).is(FluidTags.WATER)) {
+				DebugProfiler.count(profiler, "shincolle.entity.move_in_fluid.collision_bump");
+				vy = Math.max(vy, 0.3D);
+			}
+
+			// apply drag in water
+			double drag = 0.8D;
+			ship.setDeltaMovement(motion.x * drag, vy, motion.z * drag);
+		} finally {
+			DebugProfiler.pop(profiler);
+		}
+>>>>>>> Stashed changes
 	}
 
 	/**

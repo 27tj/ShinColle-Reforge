@@ -63,12 +63,17 @@ public class ShipFleeGoal extends Goal {
 			this.pathfindCooldown = 20;
 
 			if (this.owner != null && this.owner.isAlive()) {
-				this.ship.getShipNavigate().tryMoveToEntityLiving(this.owner, 1.2D);
+				boolean canMove = false;
+                                if (this.ship.isPassenger() && this.ship.getVehicle() instanceof com.lulan.shincolle.entity.BasicEntityMount mount) {
+                                        canMove = mount.getShipNavigate().tryMoveToEntityLiving(this.owner, 1.2D);
+                                } else {
+                                        canMove = this.ship.getShipNavigate().tryMoveToEntityLiving(this.owner, 1.2D);
+                                }
 
-				// teleport if too far and stuck
-				if (this.ship.distanceToSqr(this.owner) > 1024D) {
-					this.ship.teleportTo(this.owner.getX(), this.owner.getY(), this.owner.getZ());
-				}
+                                // move failed or stuck, teleport entity
+                                if (!canMove || this.ship.distanceToSqr(this.owner) > 1024D) {
+                                        this.ship.teleportTo(this.owner.getX(), this.owner.getY(), this.owner.getZ());
+                                }
 			}
 		}
 	}

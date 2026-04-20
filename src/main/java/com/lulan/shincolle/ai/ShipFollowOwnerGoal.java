@@ -8,10 +8,14 @@ import com.lulan.shincolle.entity.IShipAttackBase;
 import com.lulan.shincolle.handler.ConfigHandler;
 import com.lulan.shincolle.reference.ID;
 import com.lulan.shincolle.server.ServerDataManager;
+import com.lulan.shincolle.utility.DebugProfiler;
 import com.lulan.shincolle.utility.FormationHelper;
 import com.lulan.shincolle.utility.LogHelper;
 
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
+import com.lulan.shincolle.item.PointerItem;
+import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.TamableAnimal;
@@ -54,39 +58,70 @@ public class ShipFollowOwnerGoal extends Goal {
 
 	@Override
 	public boolean canUse() {
-		if (host == null)
-			return false;
+		ProfilerFiller profiler = DebugProfiler.push(this.hostEntity.level(), "shincolle.ai.follow_owner.can_use");
+		try {
+			if (host == null) {
+				DebugProfiler.count(profiler, "shincolle.ai.follow_owner.blocked.no_host");
+				return false;
+			}
 
 		if (isFollowBlockedState()) {
 			return false;
 		}
 
-		LivingEntity ownerEntity = resolveOwner();
-		if (ownerEntity == null)
-			return false;
+			LivingEntity ownerEntity = resolveOwner();
+			if (ownerEntity == null) {
+				DebugProfiler.count(profiler, "shincolle.ai.follow_owner.blocked.no_owner");
+				return false;
+			}
 
-		this.owner = ownerEntity;
-		updateDistance();
+			this.owner = ownerEntity;
+			updateDistance();
 
-		return distSq > this.maxDistSq;
+			boolean canUse = distSq > this.maxDistSq;
+			if (canUse) {
+				DebugProfiler.count(profiler, "shincolle.ai.follow_owner.can_use.success");
+			} else {
+				DebugProfiler.count(profiler, "shincolle.ai.follow_owner.can_use.in_range");
+			}
+			return canUse;
+		} finally {
+			DebugProfiler.pop(profiler);
+		}
 	}
 
 	@Override
 	public boolean canContinueToUse() {
-		if (host == null || owner == null)
-			return false;
+		ProfilerFiller profiler = DebugProfiler.push(this.hostEntity.level(), "shincolle.ai.follow_owner.continue");
+		try {
+			if (host == null || owner == null) {
+				DebugProfiler.count(profiler, "shincolle.ai.follow_owner.continue.no_host_or_owner");
+				return false;
+			}
 
-		if (isFollowBlockedState()) {
+		if (host.getIsSitting() || host.getIsRiding() ||
+				(hostEntity instanceof BasicEntityShip ship && ship.isLeashed()) ||
+				!host.getStateFlag(ID.F.CanFollow) ||
+				host.getStateMinor(ID.M.CraneState) >= 1 ||
+				host.getStateMinor(ID.M.NumGrudge) <= 0) {
 			this.stop();
 			return false;
 		}
 
-		// still outside min range, keep going
-		if (this.distSq > this.minDistSq) {
-			return true;
-		}
+			// still outside min range, keep going
+			if (this.distSq > this.minDistSq) {
+				DebugProfiler.count(profiler, "shincolle.ai.follow_owner.continue.keep_following");
+				return true;
+			}
 
-		return !shipNavigator.noPath() || canUse();
+			boolean cont = !shipNavigator.noPath() || canUse();
+			if (!cont) {
+				DebugProfiler.count(profiler, "shincolle.ai.follow_owner.continue.finished");
+			}
+			return cont;
+		} finally {
+			DebugProfiler.pop(profiler);
+		}
 	}
 
 	@Override
@@ -106,53 +141,59 @@ public class ShipFollowOwnerGoal extends Goal {
 
 	@Override
 	public void tick() {
-		if (host == null)
-			return;
-
-		this.findCooldown--;
-		this.checkTP_T++;
-
-		// update follow range every 32 ticks
-		if (hostEntity.tickCount % 32 == 0) {
-			LivingEntity ownerEntity = resolveOwner();
-			if (ownerEntity != null) {
-				this.owner = ownerEntity;
-				updateDistance();
-			} else {
-				this.stop();
+		ProfilerFiller profiler = DebugProfiler.push(this.hostEntity.level(), "shincolle.ai.follow_owner.tick");
+		try {
+			if (host == null) {
+				DebugProfiler.count(profiler, "shincolle.ai.follow_owner.tick.no_host");
 				return;
 			}
-		}
 
-		// reached min distance, stop
-		if (this.distSq <= this.minDistSq) {
-			this.shipNavigator.clearPathEntity();
-		}
+			this.findCooldown--;
+			this.checkTP_T++;
 
-		// pathfind every cooldown cycle
-		if (this.findCooldown <= 0) {
-			this.findCooldown = 32;
-			this.shipNavigator.tryMoveToXYZ(pos[0], pos[1], pos[2], 1D);
-		}
+			// update follow range every 32 ticks
+			if (hostEntity.tickCount % 32 == 0) {
+				LivingEntity ownerEntity = resolveOwner();
+				if (ownerEntity != null) {
+					this.owner = ownerEntity;
+					updateDistance();
+				} else {
+					DebugProfiler.count(profiler, "shincolle.ai.follow_owner.tick.owner_lost");
+					this.stop();
+					return;
+				}
+			}
 
-		// look toward owner
-		if (this.owner != null) {
-			this.hostEntity.getLookControl().setLookAt(this.owner, 20F, 40F);
-		}
+			// reached min distance, stop
+			if (this.distSq <= this.minDistSq) {
+				this.shipNavigator.clearPathEntity();
+			}
 
-		// ===== Teleport check =====
-		if (!ConfigHandler.canTeleport())
-			return;
+			// pathfind every cooldown cycle
+			if (this.findCooldown <= 0) {
+				this.findCooldown = 32;
+				DebugProfiler.count(profiler, "shincolle.ai.follow_owner.tick.path_request");
+				this.shipNavigator.tryMoveToXYZ(pos[0], pos[1], pos[2], 1D);
+			}
 
-		// distance-based teleport
-		if (this.distSq > ConfigHandler.shipTeleport[1]) {
-			this.checkTP_D++;
+			// look toward owner
+			if (this.owner != null) {
+				this.hostEntity.getLookControl().setLookAt(this.owner, 20F, 40F);
+			}
+
+			// ===== Teleport check =====
+			if (!ConfigHandler.canTeleport())
+				return;
+
+			// distance-based teleport
+			if (this.distSq > ConfigHandler.shipTeleport[1]) {
+				this.checkTP_D++;
 
 			if (this.checkTP_D > ConfigHandler.shipTeleport[0]) {
 				this.checkTP_D = 0;
 				LogHelper.debug("DEBUG: follow AI: distSQ > " + ConfigHandler.shipTeleport[1] +
 						" , teleport to target.");
-				teleportToOwner();
+				this.hostEntity.teleportTo(this.owner.getX(), this.owner.getY() + 0.75D, this.owner.getZ());
 				return;
 			}
 		}
@@ -161,22 +202,7 @@ public class ShipFollowOwnerGoal extends Goal {
 		if (this.checkTP_T > ConfigHandler.shipTeleport[0]) {
 			this.checkTP_T = 0;
 			LogHelper.debug("DEBUG: follow AI: stuck time exceeded, teleport to target.");
-			teleportToOwner();
-		}
-	}
-
-	private boolean isFollowBlockedState() {
-		return host.getIsSitting()
-				|| host.getIsRiding()
-				|| (hostEntity instanceof BasicEntityShip ship && ship.isLeashed())
-				|| !host.getStateFlag(ID.F.CanFollow)
-				|| host.getStateMinor(ID.M.CraneState) >= 1
-				|| host.getStateMinor(ID.M.NumGrudge) <= 0;
-	}
-
-	private void teleportToOwner() {
-		if (this.owner != null) {
-			this.hostEntity.teleportTo(this.owner.getX(), this.owner.getY() + OWNER_TELEPORT_Y_OFFSET, this.owner.getZ());
+			this.hostEntity.teleportTo(this.owner.getX(), this.owner.getY() + 0.75D, this.owner.getZ());
 		}
 	}
 
@@ -202,9 +228,30 @@ public class ShipFollowOwnerGoal extends Goal {
 						ownerPosOld[0], ownerPosOld[2]);
 
 				ownerPosOld[0] = owner.getX();
-				ownerPosOld[1] = owner.getY();
-				ownerPosOld[2] = owner.getZ();
-			}
+                                ownerPosOld[1] = owner.getY();
+                                ownerPosOld[2] = owner.getZ();
+
+                                // draw moving particle
+                                if (owner instanceof ServerPlayer player) {
+                                        boolean showPart = com.lulan.shincolle.handler.ConfigHandler.alwaysShowTeamCircle() || 
+                                                           player.getMainHandItem().getItem() instanceof com.lulan.shincolle.item.PointerItem ||
+                                                           player.getOffhandItem().getItem() instanceof com.lulan.shincolle.item.PointerItem;
+                                        if (showPart) {
+                                                com.lulan.shincolle.utility.ParticleHelper.spawnTeamCircleAtPlayer(player, pos[0], pos[1], pos[2], 4);
+                                        }
+                                }
+                        }
+
+                        if (this.hostEntity.tickCount % 16 == 0) {
+                                if (owner instanceof ServerPlayer player) {
+                                        boolean showPart = com.lulan.shincolle.handler.ConfigHandler.alwaysShowTeamCircle() || 
+                                                           player.getMainHandItem().getItem() instanceof com.lulan.shincolle.item.PointerItem ||
+                                                           player.getOffhandItem().getItem() instanceof com.lulan.shincolle.item.PointerItem;
+                                        if (showPart) {
+                                                com.lulan.shincolle.utility.ParticleHelper.spawnTeamCircleAtPlayer(player, pos[0], pos[1], pos[2], 6);
+                                        }
+                                }
+                        }
 
 			if (host.getStateFlag(ID.F.PickItem))
 				this.maxDistSq = 64D;

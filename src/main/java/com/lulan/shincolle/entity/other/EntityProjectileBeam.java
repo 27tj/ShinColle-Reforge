@@ -171,7 +171,7 @@ public class EntityProjectileBeam extends Entity implements IShipOwner, IShipCus
 		}
 
 		if (this.level().isClientSide()) {
-			// 2026/04/07：GitHub Copilotによって確認済み
+			// 2026/04/07・哦itHub Copilot縺ｫ繧医▲縺ｦ遒ｺ隱肴ｸ医∩
 			int particleLife = Math.max(1, this.beamLifetime - this.tickCount);
 			ParticleHelper.spawnStickyLightningParticle(this, 0F, particleLife, 4);
 		}

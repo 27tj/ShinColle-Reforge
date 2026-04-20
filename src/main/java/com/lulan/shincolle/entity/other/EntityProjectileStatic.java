@@ -136,7 +136,7 @@ public class EntityProjectileStatic extends Entity implements IShipOwner, IShipC
 		if (this.level().isClientSide()) {
 			if (this.tickCount == 1) {
 				this.effectLifetime = this.entityData.get(EFFECT_LIFETIME);
-				// 2026/04/07：GitHub Copilotによって確認済み
+				// 2026/04/07・哦itHub Copilot縺ｫ繧医▲縺ｦ遒ｺ隱肴ｸ医∩
 				ParticleHelper.spawnSphereLightParticle(this, 5, (float) this.effectLifetime, this.effectRadius * 2F);
 			}
 			return;
@@ -184,7 +184,7 @@ public class EntityProjectileStatic extends Entity implements IShipOwner, IShipC
 	 * center. effectDamage is interpreted as pull force for this mode.
 	 */
 	private void applyBlackHolePull() {
-		// 2026/04/07：GitHub Copilotによって確認済み
+		// 2026/04/07・哦itHub Copilot縺ｫ繧医▲縺ｦ遒ｺ隱肴ｸ医∩
 		AABB effectBox = this.getBoundingBox().inflate(this.effectRadius);
 		List<Entity> entities = this.level().getEntities(this, effectBox);
 

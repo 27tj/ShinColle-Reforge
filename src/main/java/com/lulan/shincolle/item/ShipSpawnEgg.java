@@ -188,14 +188,39 @@ public class ShipSpawnEgg extends BasicItem {
 		double z = spawnPos.getZ() + 0.5D;
 
 		CompoundTag nbt = stack.getTag();
-		if (nbt == null)
-			return InteractionResult.FAIL;
 
-		int shipClass = getShipClass(stack);
+		int shipClass = -1;
+		if (nbt != null && hasSpecificShipClassTag(nbt)) {
+			shipClass = getShipClass(stack);
+		} else {
+			// [PORT] 1.10.2 -> 1.20.1: Random ship rolls happen dynamically if no ship class is present.
+			int buildType = (nbt != null && nbt.contains("BuildType")) ? nbt.getByte("BuildType") : 0;
+			int[] mats = new int[4];
+			if (nbt != null) {
+				mats[0] = nbt.getInt("Grudge");
+				mats[1] = nbt.getInt("Abyssium");
+				mats[2] = nbt.getInt("Ammo");
+				mats[3] = nbt.getInt("Polymetal");
+			}
+			shipClass = com.lulan.shincolle.crafting.ShipCalc.rollShipType(buildType, mats, level.random);
+		}
 
 		// XP cost for saved eggs (eggs with stored ship data)
+<<<<<<< Updated upstream
 		if (!consumeSavedEggXpCost(player, nbt)) {
 			return InteractionResult.FAIL;
+=======
+		if (!player.getAbilities().instabuild && nbt != null && nbt.contains("StateMinor")) {
+			int[] attrs = nbt.getIntArray("StateMinor");
+			if (attrs.length > 0) {
+				int shipLevel = attrs[0] / 3; // StateMinor[0] = ShipLevel (raw level)
+				if (player.experienceLevel < shipLevel) {
+					player.sendSystemMessage(Component.translatable("chat.shincolle:levelfail"));
+					return InteractionResult.FAIL;
+				}
+				player.giveExperienceLevels(-shipLevel);
+			}
+>>>>>>> Stashed changes
 		}
 
 		// spawn entity
@@ -215,7 +240,16 @@ public class ShipSpawnEgg extends BasicItem {
 			level.addFreshEntity(ship);
 
 			// set custom name if present
+<<<<<<< Updated upstream
 			applyEggCustomName(ship, nbt);
+=======
+			if (nbt != null && nbt.contains("customname")) {
+				String name = nbt.getString("customname");
+				if (!name.isEmpty()) {
+					ship.setCustomName(Component.literal(name));
+				}
+			}
+>>>>>>> Stashed changes
 
 			// recalc attributes
 			ship.calcShipAttributes(31, true);
@@ -308,8 +342,6 @@ public class ShipSpawnEgg extends BasicItem {
 	 */
 	private static void initShipFromEgg(BasicEntityShip ship, ItemStack eggStack, Player player) {
 		CompoundTag nbt = eggStack.getTag();
-		if (nbt == null)
-			return;
 
 		// [PORT] 1.10.2 -> 1.20.1: ensure spawned ship is tamed and linked to spawner.
 		if (player != null) {
@@ -328,7 +360,7 @@ public class ShipSpawnEgg extends BasicItem {
 		}
 
 		// load saved ship data (from death egg)
-		if (nbt.contains("StateMinor")) {
+		if (nbt != null && nbt.contains("StateMinor")) {
 			CapaShipSavedValues.loadNBTData(nbt, ship);
 			if (ship.getPlayerUID() <= 0 && capa != null) {
 				int playerUID = capa.getPlayerUID();

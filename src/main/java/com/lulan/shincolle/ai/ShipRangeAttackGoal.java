@@ -6,7 +6,9 @@ import com.lulan.shincolle.entity.BasicEntityMount;
 import com.lulan.shincolle.entity.IShipCannonAttack;
 import com.lulan.shincolle.handler.ConfigHandler;
 import com.lulan.shincolle.reference.ID;
+import com.lulan.shincolle.utility.DebugProfiler;
 
+import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
@@ -45,6 +47,7 @@ public class ShipRangeAttackGoal extends Goal {
 
 	@Override
 	public boolean canUse() {
+<<<<<<< Updated upstream
 		if (this.host.getIsSitting() || this.host.getStateMinor(ID.M.CraneState) > 0) {
 			return false;
 		}
@@ -52,15 +55,46 @@ public class ShipRangeAttackGoal extends Goal {
 		if (isMountedOnShipMount()) {
 			return false;
 		}
+=======
+		ProfilerFiller profiler = DebugProfiler.push(this.entity.level(), "shincolle.ai.range_attack.can_use");
+		try {
+			if (this.host.getIsSitting() || this.host.getStateMinor(ID.M.CraneState) > 0) {
+				DebugProfiler.count(profiler, "shincolle.ai.range_attack.blocked.sit_or_crane");
+				return false;
+			}
+>>>>>>> Stashed changes
 
-		Entity target = this.host.getEntityTarget();
+			if (this.host.getIsRiding()) {
+				if (this.entity.getVehicle() instanceof BasicEntityMount) {
+					DebugProfiler.count(profiler, "shincolle.ai.range_attack.blocked.mount_controls_attack");
+					return false;
+				}
+			}
 
+<<<<<<< Updated upstream
 		if (target != null && target.isAlive() && canUseAnyRangedAttack()) {
 			this.target = target;
 			return true;
 		}
+=======
+			Entity target = this.host.getEntityTarget();
 
-		return false;
+			if (target != null && target.isAlive() &&
+					((this.host.getAttackType(ID.F.AtkType_Light) && this.host.getStateFlag(ID.F.UseAmmoLight)
+							&& this.host.hasAmmoLight()) ||
+							(this.host.getAttackType(ID.F.AtkType_Heavy) && this.host.getStateFlag(ID.F.UseAmmoHeavy)
+									&& this.host.hasAmmoHeavy()))) {
+				this.target = target;
+				DebugProfiler.count(profiler, "shincolle.ai.range_attack.can_use.success");
+				return true;
+			}
+>>>>>>> Stashed changes
+
+			DebugProfiler.count(profiler, "shincolle.ai.range_attack.can_use.no_valid_target_or_ammo");
+			return false;
+		} finally {
+			DebugProfiler.pop(profiler);
+		}
 	}
 
 	@Override
@@ -91,62 +125,81 @@ public class ShipRangeAttackGoal extends Goal {
 
 	@Override
 	public void tick() {
-		if (this.target == null)
-			return;
-
-		// update attributes periodically
-		if (this.entity.tickCount % 64 == 0) {
-			this.updateAttackParms();
-		}
-
-		this.delayLight--;
-		this.delayHeavy--;
-
-		double distSq = this.entity.distanceToSqr(this.target);
-		boolean onSight = this.entity.getSensing().hasLineOfSight(this.target);
-
-		if (onSight) {
-			++this.onSightTime;
-		} else {
-			this.onSightTime = 0;
-
-			if (this.host.getStateFlag(ID.F.OnSightChase)) {
-				this.stop();
+		ProfilerFiller profiler = DebugProfiler.push(this.entity.level(), "shincolle.ai.range_attack.tick");
+		try {
+			if (this.target == null) {
+				DebugProfiler.count(profiler, "shincolle.ai.range_attack.tick.no_target");
 				return;
 			}
-		}
 
-		// stop moving if in range and has sight
-		if (distSq < this.rangeSq && onSight && !this.host.getStateFlag(ID.F.UseMelee)) {
-			this.host.getShipNavigate().clearPathEntity();
-		} else {
-			// chase target
-			if (this.entity.tickCount % 32 == 0) {
-				this.host.getShipNavigate().tryMoveToEntityLiving(this.target, 1.0D);
+			// update attributes periodically
+			if (this.entity.tickCount % 64 == 0) {
+				this.updateAttackParms();
 			}
-		}
 
-		this.entity.getLookControl().setLookAt(this.target, 30.0F, 30.0F);
+			this.delayLight--;
+			this.delayHeavy--;
 
-		// fire if delay done, on sight, in range, and aimed long enough
-		if (onSight && distSq <= this.rangeSq && this.onSightTime >= this.aimTime) {
-			// light attack
-			if (this.delayLight <= 0 && this.host.useAmmoLight() && this.host.hasAmmoLight()) {
-				this.host.attackEntityWithAmmo(this.target);
-				this.delayLight = this.maxDelayLight;
+			double distSq = this.entity.distanceToSqr(this.target);
+			boolean onSight = this.entity.getSensing().hasLineOfSight(this.target);
+
+			if (onSight) {
+				++this.onSightTime;
+			} else {
+				this.onSightTime = 0;
+
+				if (this.host.getStateFlag(ID.F.OnSightChase)) {
+					DebugProfiler.count(profiler, "shincolle.ai.range_attack.tick.lost_sight_stop");
+					this.stop();
+					return;
+				}
 			}
-			// heavy attack
-			if (this.delayHeavy <= 0 && this.host.useAmmoHeavy() && this.host.hasAmmoHeavy()) {
-				this.host.attackEntityWithHeavyAmmo(this.target);
-				this.delayHeavy = this.maxDelayHeavy;
-			}
-		}
 
+			// stop moving if in range and has sight
+			if (distSq < this.rangeSq && onSight && !this.host.getStateFlag(ID.F.UseMelee)) {
+				this.host.getShipNavigate().clearPathEntity();
+			} else {
+				// chase target
+				if (this.entity.tickCount % 32 == 0) {
+					this.host.getShipNavigate().tryMoveToEntityLiving(this.target, 1.0D);
+				}
+			}
+
+			this.entity.getLookControl().setLookAt(this.target, 30.0F, 30.0F);
+
+			// fire if delay done, on sight, in range, and aimed long enough
+			if (onSight && distSq <= this.rangeSq && this.onSightTime >= this.aimTime) {
+				// light attack
+				if (this.delayLight <= 0 && this.host.useAmmoLight() && this.host.hasAmmoLight()) {
+					DebugProfiler.count(profiler, "shincolle.ai.range_attack.tick.fire_light");
+					this.host.attackEntityWithAmmo(this.target);
+					this.delayLight = this.maxDelayLight;
+				}
+				// heavy attack
+				if (this.delayHeavy <= 0 && this.host.useAmmoHeavy() && this.host.hasAmmoHeavy()) {
+					DebugProfiler.count(profiler, "shincolle.ai.range_attack.tick.fire_heavy");
+					this.host.attackEntityWithHeavyAmmo(this.target);
+					this.delayHeavy = this.maxDelayHeavy;
+				}
+			}
+
+<<<<<<< Updated upstream
 		// reset if stuck too long without hitting
 		if (this.delayHeavy < STUCK_RESET_THRESHOLD && this.delayLight < STUCK_RESET_THRESHOLD) {
 			this.delayLight = INITIAL_LIGHT_DELAY;
 			this.delayHeavy = INITIAL_LIGHT_DELAY;
 			this.stop();
+=======
+			// reset if stuck too long without hitting
+			if (this.delayHeavy < -40 && this.delayLight < -40) {
+				DebugProfiler.count(profiler, "shincolle.ai.range_attack.tick.stuck_reset");
+				this.delayLight = 20;
+				this.delayHeavy = 20;
+				this.stop();
+			}
+		} finally {
+			DebugProfiler.pop(profiler);
+>>>>>>> Stashed changes
 		}
 	}
 

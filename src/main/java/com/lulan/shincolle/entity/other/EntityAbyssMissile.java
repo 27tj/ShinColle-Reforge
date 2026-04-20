@@ -354,7 +354,7 @@ public class EntityAbyssMissile extends Entity implements IShipOwner, IShipAttrs
 		if (!this.level().isClientSide()) {
 			float missileAtk = this.attrs.getAttackDamage();
 
-			// 2026/04/07：GitHub Copilotによって確認済み
+			// 2026/04/07・哦itHub Copilot縺ｫ繧医▲縺ｦ遒ｺ隱肴ｸ医∩
 			CombatHelper.specialAttackEffect(this.host, this.type,
 					new float[] { (float) this.getX(), (float) this.getY(), (float) this.getZ() });
 

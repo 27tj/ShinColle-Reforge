@@ -643,7 +643,7 @@ public abstract class BasicEntityAirplane extends BasicEntitySummon
 	@Override
 	public MissileData getMissileData(int type) {
 		if (this.host != null) {
-			// 2026/04/07：GitHub Copilotによって確認済み
+			// 2026/04/07・哦itHub Copilot縺ｫ繧医▲縺ｦ遒ｺ隱肴ｸ医∩
 			return this.host.getMissileData(type);
 		}
 		return new MissileData();

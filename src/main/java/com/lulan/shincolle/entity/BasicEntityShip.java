@@ -20,6 +20,8 @@ import com.lulan.shincolle.ai.ShipWanderGoal;
 import com.lulan.shincolle.ai.ShipWatchClosestGoal;
 import com.lulan.shincolle.ai.path.ShipMoveHelper;
 import com.lulan.shincolle.ai.path.ShipPathNavigate;
+import com.lulan.shincolle.capability.CapaTeitoku;
+import com.lulan.shincolle.capability.CapaTeitokuProvider;
 import com.lulan.shincolle.capability.CapaShipInventory;
 import com.lulan.shincolle.capability.CapaShipSavedValues;
 import com.lulan.shincolle.client.gui.inventory.ContainerShipInventory;
@@ -426,18 +428,14 @@ public abstract class BasicEntityShip extends TamableAnimal
 	}
 
 	protected void clearAITasks() {
-		this.goalSelector.getAvailableGoals().clear();
-	}
+                this.goalSelector.removeAllGoals(goal -> true);
+        }
 
-	protected void clearAITargetTasks() {
-		this.setTarget(null);
-		this.setEntityTarget(null);
-		this.targetSelector.getAvailableGoals().clear();
-	}
-
-	// ========== NBT Save/Load ==========
-
-	@Override
+        protected void clearAITargetTasks() {
+                this.setTarget(null);
+                this.setEntityTarget(null);
+                this.targetSelector.removeAllGoals(goal -> true);
+        }
 	public void addAdditionalSaveData(CompoundTag nbt) {
 		super.addAdditionalSaveData(nbt);
 
@@ -482,14 +480,14 @@ public abstract class BasicEntityShip extends TamableAnimal
 			if ((this.tickCount & 15) == 0) {
 				int hpState = this.getStateEmotion(ID.S.HPState);
 				if (hpState >= ID.HPState.MINOR) {
-					// MINOR (小破): light smoke only, 1 particle
+					// MINOR (蟆冗ｴ): light smoke only, 1 particle
 					this.level().addParticle(net.minecraft.core.particles.ParticleTypes.SMOKE,
 							this.getX() + (this.random.nextDouble() - 0.5) * this.getBbWidth(),
 							this.getY() + this.getBbHeight() * 0.5 + this.random.nextDouble() * 0.5,
 							this.getZ() + (this.random.nextDouble() - 0.5) * this.getBbWidth(),
 							0, 0.02, 0);
 					if (hpState >= ID.HPState.MODERATE) {
-						// MODERATE (中破): additional fire particle
+						// MODERATE (荳ｭ遐ｴ): additional fire particle
 						this.level().addParticle(net.minecraft.core.particles.ParticleTypes.FLAME,
 								this.getX() + (this.random.nextDouble() - 0.5) * this.getBbWidth(),
 								this.getY() + this.random.nextDouble() * this.getBbHeight() * 0.5,
@@ -497,7 +495,7 @@ public abstract class BasicEntityShip extends TamableAnimal
 								0, 0.01, 0);
 					}
 					if (hpState >= ID.HPState.HEAVY) {
-						// HEAVY (大破): heavy smoke + fire (isOnFire overlay handled separately)
+						// HEAVY (螟ｧ遐ｴ): heavy smoke + fire (isOnFire overlay handled separately)
 						this.level().addParticle(net.minecraft.core.particles.ParticleTypes.LARGE_SMOKE,
 								this.getX() + (this.random.nextDouble() - 0.5) * this.getBbWidth(),
 								this.getY() + this.random.nextDouble() * this.getBbHeight(),
@@ -524,19 +522,49 @@ public abstract class BasicEntityShip extends TamableAnimal
 		}
 
 		ItemStack pointer = getClientPointerInUse(clientPlayer);
-		if (pointer.isEmpty() || PointerItem.getMode(pointer) > PointerItem.MODE_FORMATION) {
+		int mode = PointerItem.getMode(pointer);
+		if (pointer.isEmpty() || mode > PointerItem.MODE_FORMATION) {
 			return;
 		}
 
-		ParticleHelper.spawnTeamCircle(this, 0);
+		CapaTeitoku capa = clientPlayer.getCapability(CapaTeitokuProvider.CAPABILITY).orElse(null);
+		if (capa == null) {
+			return;
+		}
+
+		int teamId = capa.getSelectTeam();
+		boolean isSelected = false;
+		for (int i = 0; i < CapaTeitoku.SLOT_NUM; i++) {
+			if (capa.getTeamSID(teamId, i) == this.getId()) {
+				isSelected = true;
+				break;
+			}
+		}
+
+		int circleType;
+		if (isSelected) {
+			switch (mode) {
+				case PointerItem.MODE_GROUP:
+					circleType = 2;
+					break;
+				case PointerItem.MODE_FORMATION:
+					circleType = 3;
+					break;
+				default:
+					circleType = 1;
+					break;
+			}
+		} else {
+			circleType = mode == PointerItem.MODE_FORMATION ? 3 : 0;
+		}
+
+		ParticleHelper.spawnTeamCircle(this, circleType);
 
 		if (!this.getStateFlag(ID.F.CanFollow)) {
-			// [RENDER?] 目視検証必須: 1.10.2 では guard block 側マーカー/線も表示。
-			// 1.20.1 ではまず ship と guarded entity の team circle 描画を復元。
 			updateClientGuardedEntity();
 			Entity guarded = this.getGuardedEntity();
 			if (guarded != null && guarded.level() == this.level()) {
-				ParticleHelper.spawnTeamCircle(guarded, 0);
+				ParticleHelper.spawnTeamCircle(guarded, 6);
 			}
 		}
 	}
@@ -1163,7 +1191,7 @@ public abstract class BasicEntityShip extends TamableAnimal
 			return false;
 		}
 
-		// check if attacker is a potion source → recalculate damage, bypass DEF
+		// check if attacker is a potion source 竊・recalculate damage, bypass DEF
 		float potionAtk = BuffHelper.getPotionDamage(this, source, amount);
 		if (potionAtk > 0F) {
 			amount = potionAtk;

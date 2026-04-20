@@ -105,6 +105,46 @@ public class ServerEventHandler {
     }
 
     /**
+     * Handle entity drops (adds Grudge item).
+     */
+    @SubscribeEvent
+    public static void onDrop(net.minecraftforge.event.entity.living.LivingDropsEvent event) {
+        LivingEntity host = event.getEntity();
+        if (host.level().isClientSide()) {
+            return;
+        }
+
+        // mob: drop grudge
+        boolean isMob = host instanceof net.minecraft.world.entity.monster.Enemy
+                || host instanceof net.minecraft.world.entity.monster.Slime
+                || host instanceof net.minecraft.world.entity.animal.AbstractGolem;
+
+        if (isMob) {
+            if (host.level().getGameRules().getBoolean(net.minecraft.world.level.GameRules.RULE_DOMOBLOOT)) {
+                // if config has drop rate setting
+                double dropRate = ConfigHandler.dropRateGrudge();
+                int numGrudge = (int) dropRate;
+
+                // numGrudge > 0 means drop at least that many
+                if (numGrudge > 0) {
+                    net.minecraft.world.item.ItemStack drop = new net.minecraft.world.item.ItemStack(
+                            com.lulan.shincolle.init.ModItems.GRUDGE.get(), numGrudge);
+                    event.getDrops().add(new net.minecraft.world.entity.item.ItemEntity(
+                            host.level(), host.getX(), host.getY(), host.getZ(), drop));
+                }
+
+                // fraction chance for 1 more
+                if (host.getRandom().nextFloat() < (dropRate - (float) numGrudge)) {
+                    net.minecraft.world.item.ItemStack drop = new net.minecraft.world.item.ItemStack(
+                            com.lulan.shincolle.init.ModItems.GRUDGE.get(), 1);
+                    event.getDrops().add(new net.minecraft.world.entity.item.ItemEntity(
+                            host.level(), host.getX(), host.getY(), host.getZ(), drop));
+                }
+            }
+        }
+    }
+
+    /**
      * Handle entity death side effects (kill count, morale and nearby emote
      * reaction).
      */

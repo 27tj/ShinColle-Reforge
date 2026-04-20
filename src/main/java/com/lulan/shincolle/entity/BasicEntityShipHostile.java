@@ -25,6 +25,7 @@ import com.lulan.shincolle.reference.unitclass.MissileData;
 import com.lulan.shincolle.utility.BlockHelper;
 import com.lulan.shincolle.utility.BuffHelper;
 import com.lulan.shincolle.utility.CombatHelper;
+import com.lulan.shincolle.utility.DebugProfiler;
 import com.lulan.shincolle.utility.EntityHelper;
 import com.lulan.shincolle.utility.TargetHelper;
 
@@ -36,6 +37,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
+import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.DifficultyInstance;
@@ -322,13 +324,13 @@ public abstract class BasicEntityShipHostile extends Mob
 	}
 
 	protected void clearAITasks() {
-		this.goalSelector.getAvailableGoals().clear();
+		this.goalSelector.removeAllGoals(goal -> true);
 	}
 
 	protected void clearAITargetTasks() {
 		this.setTarget(null);
 		this.setEntityTarget(null);
-		this.targetSelector.getAvailableGoals().clear();
+		this.targetSelector.removeAllGoals(goal -> true);
 	}
 
 	// ========== NBT Save/Load ==========
@@ -543,34 +545,46 @@ public abstract class BasicEntityShipHostile extends Mob
 
 	@Override
 	public boolean attackEntityWithAmmo(Entity target) {
-		setCombatTick(this.tickCount);
-		float atk = getAttackBaseDamage(1, target);
+		ProfilerFiller profiler = DebugProfiler.push(this.level(), "shincolle.hostile.attack.light");
+		try {
+			setCombatTick(this.tickCount);
+			float atk = getAttackBaseDamage(1, target);
 
-		// calc distance for miss rate
-		float dist = (float) Math.sqrt(this.distanceToSqr(target));
+			// calc distance for miss rate
+			float dist = (float) Math.sqrt(this.distanceToSqr(target));
 
-		// apply combat rate (miss/crit/dhit/thit)
-		atk = CombatHelper.applyCombatRateToDamage(this, target, true, dist, atk);
+			// apply combat rate (miss/crit/dhit/thit)
+			atk = CombatHelper.applyCombatRateToDamage(this, target, true, dist, atk);
 
-		// hostile light attack uses direct damage (not missiles)
-		applySoundAtAttacker(1, target);
+			// hostile light attack uses direct damage (not missiles)
+			applySoundAtAttacker(1, target);
 
-		// if missed
-		if (atk <= 0F)
-			return true;
+			// if missed
+			if (atk <= 0F) {
+				DebugProfiler.count(profiler, "shincolle.hostile.attack.light.missed_or_zero");
+				return true;
+			}
 
-		// check friendly fire
-		if (CombatHelper.isFriendlyFire(this, target))
-			atk = 0F;
+			// check friendly fire
+			if (CombatHelper.isFriendlyFire(this, target)) {
+				atk = 0F;
+				DebugProfiler.count(profiler, "shincolle.hostile.attack.light.friendly_fire_blocked");
+			}
 
-		if (atk <= 0F)
-			return true;
+			if (atk <= 0F)
+				return true;
 
-		boolean isTargetHurt = target.hurt(this.damageSources().mobProjectile(this, this), atk);
-		if (isTargetHurt) {
-			applyEmotesReaction(3);
+			boolean isTargetHurt = target.hurt(this.damageSources().mobProjectile(this, this), atk);
+			if (isTargetHurt) {
+				DebugProfiler.count(profiler, "shincolle.hostile.attack.light.hit_success");
+				applyEmotesReaction(3);
+			} else {
+				DebugProfiler.count(profiler, "shincolle.hostile.attack.light.hit_fail");
+			}
+			return isTargetHurt;
+		} finally {
+			DebugProfiler.pop(profiler);
 		}
-		return isTargetHurt;
 	}
 
 	@Override
@@ -598,7 +612,7 @@ public abstract class BasicEntityShipHostile extends Mob
 		}
 		EntityAbyssMissile missile = new EntityAbyssMissile(
 				ModEntities.ABYSS_MISSILE.get(), this.level());
-		// 2026/04/07：GitHub Copilotによって確認済み
+		// 2026/04/07・哦itHub Copilot縺ｫ繧医▲縺ｦ遒ｺ隱肴ｸ医∩
 		missile.initMissile(this, md.type, moveType,
 				atk, kbValue, launchPos, tarX, tarY, tarZ,
 				160, 0.25F, md.vel0, md.accY1, md.accY2);

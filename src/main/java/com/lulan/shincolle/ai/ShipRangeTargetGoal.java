@@ -11,8 +11,10 @@ import com.lulan.shincolle.entity.IShipAttackBase;
 import com.lulan.shincolle.entity.IShipFlyable;
 import com.lulan.shincolle.entity.IShipInvisible;
 import com.lulan.shincolle.reference.ID;
+import com.lulan.shincolle.utility.DebugProfiler;
 import com.lulan.shincolle.utility.TargetHelper;
 
+import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.FlyingMob;
 import net.minecraft.world.entity.LivingEntity;
@@ -58,65 +60,96 @@ public class ShipRangeTargetGoal extends Goal {
 
 	@Override
 	public boolean canUse() {
-		if (this.host.getIsSitting() || this.host.getStateMinor(ID.M.CraneState) > 0) {
-			return false;
-		}
-
-		// check every 8 ticks
-		if (this.host.getTickExisted() % 8 != 0) {
-			return false;
-		}
-
-		updateRange();
-
-		AABB searchBox = this.entity.getBoundingBox().inflate(this.range, this.range * 0.75D, this.range);
-		List<LivingEntity> targets = null;
-
-		// Priority-based target selection for friendly ships
-		if (this.hostShip != null) {
-			// 1. Anti-Air: target flying entities first
-			if (this.hostShip.getStateFlag(ID.F.AntiAir)) {
-				targets = findTargetsByType(searchBox, IShipFlyable.class);
-				// also search for vanilla flying mobs
-				List<LivingEntity> flyingTargets = findTargetsByType(searchBox, FlyingMob.class);
-				targets = unionLists(targets, flyingTargets);
+		ProfilerFiller profiler = DebugProfiler.push(this.entity.level(), "shincolle.ai.range_target.can_use");
+		try {
+			if (this.host.getIsSitting() || this.host.getStateMinor(ID.M.CraneState) > 0) {
+				DebugProfiler.count(profiler, "shincolle.ai.range_target.blocked.sit_or_crane");
+				return false;
 			}
 
+			// check every 8 ticks
+			if (this.host.getTickExisted() % 8 != 0) {
+				DebugProfiler.count(profiler, "shincolle.ai.range_target.blocked.tick_gate");
+				return false;
+			}
+
+			updateRange();
+
+			AABB searchBox = this.entity.getBoundingBox().inflate(this.range, this.range * 0.75D, this.range);
+			List<LivingEntity> targets = null;
+
+<<<<<<< Updated upstream
 			// 2. Anti-Sub: target invisible/submarine entities
 			if (hasNoTargets(targets)) {
 				if (this.hostShip.getStateFlag(ID.F.AntiSS)) {
 					targets = findTargetsByType(searchBox, IShipInvisible.class);
+=======
+			// Priority-based target selection for friendly ships
+			if (this.hostShip != null) {
+				// 1. Anti-Air: target flying entities first
+				if (this.hostShip.getStateFlag(ID.F.AntiAir)) {
+					targets = findTargetsByType(searchBox, IShipFlyable.class);
+					// also search for vanilla flying mobs
+					List<LivingEntity> flyingTargets = findTargetsByType(searchBox, FlyingMob.class);
+					targets = unionLists(targets, flyingTargets);
+>>>>>>> Stashed changes
 				}
-			}
 
+<<<<<<< Updated upstream
 			// 3. PVP First: target other player's ships
 			if (hasNoTargets(targets)) {
 				if (this.hostShip.getStateFlag(ID.F.PVPFirst)) {
 					targets = findTargetsByType(searchBox, BasicEntityShip.class);
+=======
+				// 2. Anti-Sub: target invisible/submarine entities
+				if (targets == null || targets.isEmpty()) {
+					if (this.hostShip.getStateFlag(ID.F.AntiSS)) {
+						targets = findTargetsByType(searchBox, IShipInvisible.class);
+					}
+				}
+
+				// 3. PVP First: target other player's ships
+				if (targets == null || targets.isEmpty()) {
+					if (this.hostShip.getStateFlag(ID.F.PVPFirst)) {
+						targets = findTargetsByType(searchBox, BasicEntityShip.class);
+					}
+>>>>>>> Stashed changes
 				}
 			}
-		}
 
+<<<<<<< Updated upstream
 		// 4. Normal: any valid target
 		if (hasNoTargets(targets)) {
 			targets = this.entity.level().getEntitiesOfClass(LivingEntity.class, searchBox,
 					this::isValidTarget);
 		}
-
-		if (targets != null && !targets.isEmpty()) {
-			// sort by distance
-			targets.sort(Comparator.comparingDouble(e -> this.entity.distanceToSqr(e)));
-
-			// pick nearest, or random from top 3
-			if (targets.size() > 2) {
-				this.targetEntity = targets.get(this.entity.getRandom().nextInt(3));
-			} else {
-				this.targetEntity = targets.get(0);
+=======
+			// 4. Normal: any valid target
+			if (targets == null || targets.isEmpty()) {
+				targets = this.entity.level().getEntitiesOfClass(LivingEntity.class, searchBox,
+						this::isValidTarget);
 			}
-			return true;
-		}
+>>>>>>> Stashed changes
 
-		return false;
+			if (targets != null && !targets.isEmpty()) {
+				// sort by distance
+				targets.sort(Comparator.comparingDouble(e -> this.entity.distanceToSqr(e)));
+
+				// pick nearest, or random from top 3
+				if (targets.size() > 2) {
+					this.targetEntity = targets.get(this.entity.getRandom().nextInt(3));
+				} else {
+					this.targetEntity = targets.get(0);
+				}
+				DebugProfiler.count(profiler, "shincolle.ai.range_target.can_use.success");
+				return true;
+			}
+
+			DebugProfiler.count(profiler, "shincolle.ai.range_target.can_use.no_target");
+			return false;
+		} finally {
+			DebugProfiler.pop(profiler);
+		}
 	}
 
 	/**

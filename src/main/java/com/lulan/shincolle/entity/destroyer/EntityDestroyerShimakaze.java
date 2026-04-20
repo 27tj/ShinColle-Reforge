@@ -169,7 +169,7 @@ public class EntityDestroyerShimakaze extends BasicEntityShipSmall implements IS
 		}
 
 		// spawn 5 missiles in cross pattern
-		// 2026/04/07：GitHub Copilotによって確認済み
+		// 2026/04/07・哦itHub Copilot縺ｫ繧医▲縺ｦ遒ｺ隱肴ｸ医∩
 		spawnMissile(atk, kbValue, launchPos, tarX, tarY + tarHeightOff, tarZ,
 				md, moveType);
 		spawnMissile(atk, kbValue, launchPos, tarX + 3.5F, tarY + tarHeightOff, tarZ + 3.5F,
