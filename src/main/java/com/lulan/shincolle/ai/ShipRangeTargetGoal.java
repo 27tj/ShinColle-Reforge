@@ -78,12 +78,6 @@ public class ShipRangeTargetGoal extends Goal {
 			AABB searchBox = this.entity.getBoundingBox().inflate(this.range, this.range * 0.75D, this.range);
 			List<LivingEntity> targets = null;
 
-<<<<<<< Updated upstream
-			// 2. Anti-Sub: target invisible/submarine entities
-			if (hasNoTargets(targets)) {
-				if (this.hostShip.getStateFlag(ID.F.AntiSS)) {
-					targets = findTargetsByType(searchBox, IShipInvisible.class);
-=======
 			// Priority-based target selection for friendly ships
 			if (this.hostShip != null) {
 				// 1. Anti-Air: target flying entities first
@@ -92,15 +86,8 @@ public class ShipRangeTargetGoal extends Goal {
 					// also search for vanilla flying mobs
 					List<LivingEntity> flyingTargets = findTargetsByType(searchBox, FlyingMob.class);
 					targets = unionLists(targets, flyingTargets);
->>>>>>> Stashed changes
 				}
 
-<<<<<<< Updated upstream
-			// 3. PVP First: target other player's ships
-			if (hasNoTargets(targets)) {
-				if (this.hostShip.getStateFlag(ID.F.PVPFirst)) {
-					targets = findTargetsByType(searchBox, BasicEntityShip.class);
-=======
 				// 2. Anti-Sub: target invisible/submarine entities
 				if (targets == null || targets.isEmpty()) {
 					if (this.hostShip.getStateFlag(ID.F.AntiSS)) {
@@ -113,23 +100,14 @@ public class ShipRangeTargetGoal extends Goal {
 					if (this.hostShip.getStateFlag(ID.F.PVPFirst)) {
 						targets = findTargetsByType(searchBox, BasicEntityShip.class);
 					}
->>>>>>> Stashed changes
 				}
 			}
 
-<<<<<<< Updated upstream
-		// 4. Normal: any valid target
-		if (hasNoTargets(targets)) {
-			targets = this.entity.level().getEntitiesOfClass(LivingEntity.class, searchBox,
-					this::isValidTarget);
-		}
-=======
 			// 4. Normal: any valid target
 			if (targets == null || targets.isEmpty()) {
 				targets = this.entity.level().getEntitiesOfClass(LivingEntity.class, searchBox,
 						this::isValidTarget);
 			}
->>>>>>> Stashed changes
 
 			if (targets != null && !targets.isEmpty()) {
 				// sort by distance

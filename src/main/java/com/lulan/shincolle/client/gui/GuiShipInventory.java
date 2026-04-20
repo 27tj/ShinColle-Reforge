@@ -590,32 +590,32 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
     }
 
     private static String getMoraleDisplayName(int morale) {
-        if (morale >= ID.Morale.L_Excited) {
+        if (morale > ID.Morale.L_Excited) {
             return tr("gui.shincolle.morale0", "Excited");
         }
-        if (morale >= ID.Morale.L_Happy) {
+        if (morale > ID.Morale.L_Happy) {
             return tr("gui.shincolle.morale1", "Happy");
         }
-        if (morale >= ID.Morale.L_Normal) {
+        if (morale > ID.Morale.L_Normal) {
             return tr("gui.shincolle.morale2", "Normal");
         }
-        if (morale >= ID.Morale.L_Tired) {
+        if (morale > ID.Morale.L_Tired) {
             return tr("gui.shincolle.morale3", "Tired");
         }
         return tr("gui.shincolle.morale4", "Exhausted");
     }
 
     private static int getMoraleDisplayColor(int morale) {
-        if (morale >= ID.Morale.L_Excited) {
+        if (morale > ID.Morale.L_Excited) {
             return 0xFF5500;
         }
-        if (morale >= ID.Morale.L_Happy) {
+        if (morale > ID.Morale.L_Happy) {
             return 0xFFFF00;
         }
-        if (morale >= ID.Morale.L_Normal) {
+        if (morale > ID.Morale.L_Normal) {
             return 0x00FF00;
         }
-        if (morale >= ID.Morale.L_Tired) {
+        if (morale > ID.Morale.L_Tired) {
             return 0xAAAAAA;
         }
         return 0xFF0000;

@@ -1,9 +1,11 @@
 package com.lulan.shincolle.handler;
 
 import com.lulan.shincolle.capability.CapaTeitoku;
+import com.lulan.shincolle.capability.CapaTeitokuProvider;
 import com.lulan.shincolle.entity.BasicEntityShip;
 import com.lulan.shincolle.entity.BasicEntityShipHostile;
 import com.lulan.shincolle.entity.IShipAttackBase;
+import com.lulan.shincolle.init.ModItems;
 import com.lulan.shincolle.reference.Reference;
 import com.lulan.shincolle.server.ServerDataManager;
 import com.lulan.shincolle.utility.EntityHelper;
@@ -13,6 +15,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -65,6 +68,58 @@ public class ServerEventHandler {
     }
 
     /**
+     * Player periodic server tick:
+     * - updates ring ownership/active state
+     * - keeps player UID initialized
+     * - runs hostile mob/boss spawn ticks
+     * - decrements team cooldown
+     */
+    @SubscribeEvent
+    public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
+        if (event.phase != TickEvent.Phase.START) {
+            return;
+        }
+
+        Player player = event.player;
+        if (player == null || player.level().isClientSide()) {
+            return;
+        }
+
+        CapaTeitoku capa = player.getCapability(CapaTeitokuProvider.CAPABILITY).orElse(null);
+        if (capa == null) {
+            return;
+        }
+
+        // [PORT] 1.10.2 -> 1.20.1: keep ring possession tracking used by ring-gated
+        // systems (spawn, movement buffs).
+        if ((player.tickCount & 15) == 0) {
+            updateRingState(player, capa);
+        }
+
+        // every 32 ticks: ensure UID exists and run slower periodic logic
+        if (player.tickCount > 0 && (player.tickCount & 31) == 0) {
+            if (capa.getPlayerUID() < 100) {
+                ServerDataManager.updatePlayerID(player);
+                if (capa.getPlayerUID() < 100) {
+                    LogHelper.debug("player tick: failed to initialize player UID, skip spawn tick");
+                    return;
+                }
+            }
+
+            if ((player.tickCount & 127) == 0) {
+                EntityHelper.spawnMobShip(player, capa);
+            }
+        }
+
+        EntityHelper.spawnBossShip(player, capa);
+
+        int teamCooldown = capa.getTeamCooldown();
+        if (teamCooldown > 0) {
+            capa.setTeamCooldown(teamCooldown - 1);
+        }
+    }
+
+    /**
      * Assign or update player UID on login.
      */
     @SubscribeEvent
@@ -100,46 +155,6 @@ public class ServerEventHandler {
                 updatePlayerCacheOnServer(player);
                 LogHelper.info("player logged out: " + player.getGameProfile().getName()
                         + " uid=" + capa.getPlayerUID());
-            }
-        }
-    }
-
-    /**
-     * Handle entity drops (adds Grudge item).
-     */
-    @SubscribeEvent
-    public static void onDrop(net.minecraftforge.event.entity.living.LivingDropsEvent event) {
-        LivingEntity host = event.getEntity();
-        if (host.level().isClientSide()) {
-            return;
-        }
-
-        // mob: drop grudge
-        boolean isMob = host instanceof net.minecraft.world.entity.monster.Enemy
-                || host instanceof net.minecraft.world.entity.monster.Slime
-                || host instanceof net.minecraft.world.entity.animal.AbstractGolem;
-
-        if (isMob) {
-            if (host.level().getGameRules().getBoolean(net.minecraft.world.level.GameRules.RULE_DOMOBLOOT)) {
-                // if config has drop rate setting
-                double dropRate = ConfigHandler.dropRateGrudge();
-                int numGrudge = (int) dropRate;
-
-                // numGrudge > 0 means drop at least that many
-                if (numGrudge > 0) {
-                    net.minecraft.world.item.ItemStack drop = new net.minecraft.world.item.ItemStack(
-                            com.lulan.shincolle.init.ModItems.GRUDGE.get(), numGrudge);
-                    event.getDrops().add(new net.minecraft.world.entity.item.ItemEntity(
-                            host.level(), host.getX(), host.getY(), host.getZ(), drop));
-                }
-
-                // fraction chance for 1 more
-                if (host.getRandom().nextFloat() < (dropRate - (float) numGrudge)) {
-                    net.minecraft.world.item.ItemStack drop = new net.minecraft.world.item.ItemStack(
-                            com.lulan.shincolle.init.ModItems.GRUDGE.get(), 1);
-                    event.getDrops().add(new net.minecraft.world.entity.item.ItemEntity(
-                            host.level(), host.getX(), host.getY(), host.getZ(), drop));
-                }
             }
         }
     }
@@ -192,5 +207,41 @@ public class ServerEventHandler {
         if (player != null && !player.level().isClientSide()) {
             ServerDataManager.updatePlayerID(player);
         }
+    }
+
+    private static void updateRingState(Player player, CapaTeitoku capa) {
+        ItemStack ring = findRingStack(player);
+        boolean hasRing = !ring.isEmpty();
+
+        if (capa.hasRing() && !hasRing) {
+            if (player.getAbilities().flying) {
+                player.getAbilities().flying = false;
+                player.onUpdateAbilities();
+            }
+            capa.setRingFlying(false);
+            capa.setRingActive(false);
+        }
+
+        capa.setHasRing(hasRing);
+
+        if (!ring.isEmpty() && ring.hasTag()) {
+            capa.setRingActive(ring.getTag().getBoolean("isActive"));
+        }
+    }
+
+    private static ItemStack findRingStack(Player player) {
+        for (ItemStack stack : player.getInventory().items) {
+            if (!stack.isEmpty() && stack.getItem() == ModItems.MARRIAGE_RING.get()) {
+                return stack;
+            }
+        }
+
+        for (ItemStack stack : player.getInventory().offhand) {
+            if (!stack.isEmpty() && stack.getItem() == ModItems.MARRIAGE_RING.get()) {
+                return stack;
+            }
+        }
+
+        return ItemStack.EMPTY;
     }
 }

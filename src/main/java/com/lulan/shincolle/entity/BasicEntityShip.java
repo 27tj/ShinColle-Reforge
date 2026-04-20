@@ -12,6 +12,7 @@ import com.lulan.shincolle.ai.ShipFollowOwnerGoal;
 import com.lulan.shincolle.ai.ShipGuardingGoal;
 import com.lulan.shincolle.ai.ShipLookIdleGoal;
 import com.lulan.shincolle.ai.ShipOpenDoorGoal;
+import com.lulan.shincolle.ai.ShipRangeAttackGoal;
 import com.lulan.shincolle.ai.ShipRangeTargetGoal;
 import com.lulan.shincolle.ai.ShipRevengeTargetGoal;
 import com.lulan.shincolle.ai.ShipSitGoal;
@@ -395,19 +396,18 @@ public abstract class BasicEntityShip extends TamableAnimal
 
 	protected void setAIList() {
 		// high priority
+		this.goalSelector.addGoal(0, new ShipSkillAttackGoal(this));
 		this.goalSelector.addGoal(1, new ShipSitGoal(this));
 		this.goalSelector.addGoal(2, new ShipFleeGoal(this));
 		this.goalSelector.addGoal(3, new ShipGuardingGoal(this));
 		this.goalSelector.addGoal(4, new ShipFollowOwnerGoal(this));
 		this.goalSelector.addGoal(5, new ShipOpenDoorGoal(this, true));
+		this.goalSelector.addGoal(11, new ShipRangeAttackGoal(this));
 
 		// melee attack
 		if (getStateFlag(ID.F.UseMelee)) {
 			this.goalSelector.addGoal(15, new ShipAttackOnCollideGoal(this, 1.0D));
 		}
-
-		// skill attack
-		this.goalSelector.addGoal(12, new ShipSkillAttackGoal(this));
 
 		// idle AI
 		this.goalSelector.addGoal(23, new ShipFloatingGoal(this));
@@ -2942,9 +2942,8 @@ public abstract class BasicEntityShip extends TamableAnimal
 					InteractHelper.interactKaitaiHammer(this, player, stack);
 					return InteractionResult.SUCCESS;
 				}
-				// use wedding ring: requires level 100+, not married, sneaking, same owner
+				// use wedding ring: requires not married, sneaking, same owner
 				else if (stack.getItem() == ModItems.MARRIAGE_RING.get() && !this.getStateFlag(ID.F.IsMarried)
-						&& this.getLevel() >= 100
 						&& player.isShiftKeyDown() && TeamHelper.checkSameOwner(this, player)) {
 					InteractHelper.interactWeddingRing(this, player, stack);
 					return InteractionResult.SUCCESS;

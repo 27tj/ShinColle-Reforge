@@ -47,22 +47,12 @@ public class ShipRangeAttackGoal extends Goal {
 
 	@Override
 	public boolean canUse() {
-<<<<<<< Updated upstream
-		if (this.host.getIsSitting() || this.host.getStateMinor(ID.M.CraneState) > 0) {
-			return false;
-		}
-
-		if (isMountedOnShipMount()) {
-			return false;
-		}
-=======
 		ProfilerFiller profiler = DebugProfiler.push(this.entity.level(), "shincolle.ai.range_attack.can_use");
 		try {
 			if (this.host.getIsSitting() || this.host.getStateMinor(ID.M.CraneState) > 0) {
 				DebugProfiler.count(profiler, "shincolle.ai.range_attack.blocked.sit_or_crane");
 				return false;
 			}
->>>>>>> Stashed changes
 
 			if (this.host.getIsRiding()) {
 				if (this.entity.getVehicle() instanceof BasicEntityMount) {
@@ -71,12 +61,6 @@ public class ShipRangeAttackGoal extends Goal {
 				}
 			}
 
-<<<<<<< Updated upstream
-		if (target != null && target.isAlive() && canUseAnyRangedAttack()) {
-			this.target = target;
-			return true;
-		}
-=======
 			Entity target = this.host.getEntityTarget();
 
 			if (target != null && target.isAlive() &&
@@ -88,7 +72,6 @@ public class ShipRangeAttackGoal extends Goal {
 				DebugProfiler.count(profiler, "shincolle.ai.range_attack.can_use.success");
 				return true;
 			}
->>>>>>> Stashed changes
 
 			DebugProfiler.count(profiler, "shincolle.ai.range_attack.can_use.no_valid_target_or_ammo");
 			return false;
@@ -183,13 +166,6 @@ public class ShipRangeAttackGoal extends Goal {
 				}
 			}
 
-<<<<<<< Updated upstream
-		// reset if stuck too long without hitting
-		if (this.delayHeavy < STUCK_RESET_THRESHOLD && this.delayLight < STUCK_RESET_THRESHOLD) {
-			this.delayLight = INITIAL_LIGHT_DELAY;
-			this.delayHeavy = INITIAL_LIGHT_DELAY;
-			this.stop();
-=======
 			// reset if stuck too long without hitting
 			if (this.delayHeavy < -40 && this.delayLight < -40) {
 				DebugProfiler.count(profiler, "shincolle.ai.range_attack.tick.stuck_reset");
@@ -199,7 +175,6 @@ public class ShipRangeAttackGoal extends Goal {
 			}
 		} finally {
 			DebugProfiler.pop(profiler);
->>>>>>> Stashed changes
 		}
 	}
 

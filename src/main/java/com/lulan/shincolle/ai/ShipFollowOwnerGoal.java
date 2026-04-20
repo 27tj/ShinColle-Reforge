@@ -99,11 +99,7 @@ public class ShipFollowOwnerGoal extends Goal {
 				return false;
 			}
 
-		if (host.getIsSitting() || host.getIsRiding() ||
-				(hostEntity instanceof BasicEntityShip ship && ship.isLeashed()) ||
-				!host.getStateFlag(ID.F.CanFollow) ||
-				host.getStateMinor(ID.M.CraneState) >= 1 ||
-				host.getStateMinor(ID.M.NumGrudge) <= 0) {
+		if (isFollowBlockedState()) {
 			this.stop();
 			return false;
 		}
@@ -189,20 +185,25 @@ public class ShipFollowOwnerGoal extends Goal {
 			if (this.distSq > ConfigHandler.shipTeleport[1]) {
 				this.checkTP_D++;
 
-			if (this.checkTP_D > ConfigHandler.shipTeleport[0]) {
-				this.checkTP_D = 0;
-				LogHelper.debug("DEBUG: follow AI: distSQ > " + ConfigHandler.shipTeleport[1] +
-						" , teleport to target.");
-				this.hostEntity.teleportTo(this.owner.getX(), this.owner.getY() + 0.75D, this.owner.getZ());
-				return;
+				if (this.checkTP_D > ConfigHandler.shipTeleport[0]) {
+					this.checkTP_D = 0;
+					DebugProfiler.count(profiler, "shincolle.ai.follow_owner.tick.teleport_by_distance");
+					LogHelper.debug("DEBUG: follow AI: distSQ > " + ConfigHandler.shipTeleport[1] +
+							" , teleport to target.");
+					this.hostEntity.teleportTo(this.owner.getX(), this.owner.getY() + 0.75D, this.owner.getZ());
+					return;
+				}
 			}
-		}
 
-		// stuck-time-based teleport
-		if (this.checkTP_T > ConfigHandler.shipTeleport[0]) {
-			this.checkTP_T = 0;
-			LogHelper.debug("DEBUG: follow AI: stuck time exceeded, teleport to target.");
-			this.hostEntity.teleportTo(this.owner.getX(), this.owner.getY() + 0.75D, this.owner.getZ());
+			// stuck-time-based teleport
+			if (this.checkTP_T > ConfigHandler.shipTeleport[0]) {
+				this.checkTP_T = 0;
+				DebugProfiler.count(profiler, "shincolle.ai.follow_owner.tick.teleport_by_stuck_time");
+				LogHelper.debug("DEBUG: follow AI: stuck time exceeded, teleport to target.");
+				this.hostEntity.teleportTo(this.owner.getX(), this.owner.getY() + 0.75D, this.owner.getZ());
+			}
+		} finally {
+			DebugProfiler.pop(profiler);
 		}
 	}
 
@@ -277,6 +278,30 @@ public class ShipFollowOwnerGoal extends Goal {
 		double distY = pos[1] - this.hostEntity.getY();
 		double distZ = pos[2] - this.hostEntity.getZ();
 		this.distSq = distX * distX + distY * distY + distZ * distZ;
+	}
+
+	/**
+	 * Guard checks shared by canUse/canContinueToUse.
+	 * Mirrors legacy follow-owner preconditions.
+	 */
+	private boolean isFollowBlockedState() {
+		if (this.host.getIsSitting() || this.host.getIsRiding()) {
+			return true;
+		}
+
+		if (!this.host.getStateFlag(ID.F.CanFollow)) {
+			return true;
+		}
+
+		if (this.host.getStateMinor(ID.M.CraneState) > 0) {
+			return true;
+		}
+
+		if (this.host.getStateMinor(ID.M.NumGrudge) <= 0) {
+			return true;
+		}
+
+		return false;
 	}
 
 	/**

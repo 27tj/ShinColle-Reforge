@@ -206,21 +206,8 @@ public class ShipSpawnEgg extends BasicItem {
 		}
 
 		// XP cost for saved eggs (eggs with stored ship data)
-<<<<<<< Updated upstream
 		if (!consumeSavedEggXpCost(player, nbt)) {
 			return InteractionResult.FAIL;
-=======
-		if (!player.getAbilities().instabuild && nbt != null && nbt.contains("StateMinor")) {
-			int[] attrs = nbt.getIntArray("StateMinor");
-			if (attrs.length > 0) {
-				int shipLevel = attrs[0] / 3; // StateMinor[0] = ShipLevel (raw level)
-				if (player.experienceLevel < shipLevel) {
-					player.sendSystemMessage(Component.translatable("chat.shincolle:levelfail"));
-					return InteractionResult.FAIL;
-				}
-				player.giveExperienceLevels(-shipLevel);
-			}
->>>>>>> Stashed changes
 		}
 
 		// spawn entity
@@ -240,16 +227,7 @@ public class ShipSpawnEgg extends BasicItem {
 			level.addFreshEntity(ship);
 
 			// set custom name if present
-<<<<<<< Updated upstream
 			applyEggCustomName(ship, nbt);
-=======
-			if (nbt != null && nbt.contains("customname")) {
-				String name = nbt.getString("customname");
-				if (!name.isEmpty()) {
-					ship.setCustomName(Component.literal(name));
-				}
-			}
->>>>>>> Stashed changes
 
 			// recalc attributes
 			ship.calcShipAttributes(31, true);

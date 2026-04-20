@@ -42,7 +42,7 @@ public class Values {
 	 * index by {@link ID.AttrsBase}
 	 */
 	public static final Map<Integer, float[]> ShipAttrMap = Collections
-			.unmodifiableMap(new HashMap<Integer, float[]>() {
+			.unmodifiableMap(new HashMap<>() {
 				{
 					// player NO USE FOR NOW HP ATK DEF SPD MOV HIT HP ATK DEF SPD MOV HIT
 					put((int) ID.ShipClass.PlayerBASE,
@@ -211,7 +211,7 @@ public class Values {
 	 * index by ID.AttrsBase
 	 */
 	public static final Map<Integer, float[]> HostileShipAttrMap = Collections
-			.unmodifiableMap(new HashMap<Integer, float[]>() {
+			.unmodifiableMap(new HashMap<>() {
 				{
 					// destroyer HP ATK DEF SPD MOV HIT
 					put((int) ID.ShipClass.DDAkatsuki, new float[] { 0.35F, 0.35F, 0.35F, 1F, 1.1F, 0.7F });
@@ -247,7 +247,7 @@ public class Values {
 	 * data: 0:Width, 1:Ride, 2:RideSit, 3:Sit, 4:Stand
 	 */
 	public static final Map<Integer, float[]> ShipLeashHeight = Collections
-			.unmodifiableMap(new HashMap<Integer, float[]>() {
+			.unmodifiableMap(new HashMap<>() {
 				{
 					// destroyer
 					put((int) ID.ShipClass.DDI, new float[] { 0.8F, 0.8F, 0.8F, 0.8F, 0.8F });
@@ -346,7 +346,7 @@ public class Values {
 	 * line 6: 11x61
 	 */
 	public static final Map<Integer, int[]> ShipNameIconMap = Collections
-			.unmodifiableMap(new HashMap<Integer, int[]>() {
+			.unmodifiableMap(new HashMap<>() {
 				{
 					// file 0
 					// line 1
@@ -599,7 +599,7 @@ public class Values {
 	 * 
 	 * index by page number
 	 */
-	public static final List<Integer> ShipBookList = Collections.unmodifiableList(new ArrayList<Integer>() {
+	public static final List<Integer> ShipBookList = Collections.unmodifiableList(new ArrayList<>() {
 		{
 			add((int) ID.ShipClass.DDI);
 			add((int) ID.ShipClass.DDRO);
@@ -635,7 +635,7 @@ public class Values {
 	 * 
 	 * index by page number
 	 */
-	public static final List<Integer> EnemyBookList = Collections.unmodifiableList(new ArrayList<Integer>() {
+	public static final List<Integer> EnemyBookList = Collections.unmodifiableList(new ArrayList<>() {
 		{
 			add((int) ID.ShipClass.DDShimakaze);
 			add((int) ID.ShipClass.BBNagato);
@@ -665,7 +665,7 @@ public class Values {
 	 * map <ship class id(int), ship type(byte)>
 	 * used by guidebook entity gallery to look up ship type icon
 	 */
-	public static final Map<Integer, Byte> ShipTypeMap = Collections.unmodifiableMap(new HashMap<Integer, Byte>() {
+	public static final Map<Integer, Byte> ShipTypeMap = Collections.unmodifiableMap(new HashMap<>() {
 		{
 			// Destroyers
 			put((int) ID.ShipClass.DDI, ID.ShipType.DESTROYER);
@@ -732,7 +732,7 @@ public class Values {
 	 * font: MS Mincho
 	 * size: 12
 	 */
-	public static final Map<Byte, int[]> ShipTypeIconMap = Collections.unmodifiableMap(new HashMap<Byte, int[]>() {
+	public static final Map<Byte, int[]> ShipTypeIconMap = Collections.unmodifiableMap(new HashMap<>() {
 		{
 			put(ID.ShipType.TRANSPORT, new int[] { 12, 74 });
 			put(ID.ShipType.DESTROYER, new int[] { 41, 0 });
@@ -782,7 +782,7 @@ public class Values {
 	 * note: 新增裝備要記得在LargeRecipe新增回收價格
 	 */
 	public static final Map<Integer, float[]> EquipAttrsMain = Collections
-			.unmodifiableMap(new HashMap<Integer, float[]>() {
+			.unmodifiableMap(new HashMap<>() {
 				{
 					// single cannon HP AL AH AAL AAH DEF SPD MOV RNG CRI DHit THit Miss AA ASM
 					// Dodge XP GRUD AMMO HPRES KB
@@ -1028,7 +1028,7 @@ public class Values {
 	 * 2:aircraft-R, engine, armor, radar, ammo
 	 * 3:aircraft-T/F/B
 	 */
-	public static final Map<Integer, int[]> EquipAttrsMisc = Collections.unmodifiableMap(new HashMap<Integer, int[]>() {
+	public static final Map<Integer, int[]> EquipAttrsMisc = Collections.unmodifiableMap(new HashMap<>() {
 		{
 			// single cannon Type Rare Type/Mean MatsType, EnchType
 			put((int) ID.EquipType.CANNON_SI + (int) ID.EquipSubID.CANNON_SINGLE_5 * 100,
@@ -1251,7 +1251,7 @@ public class Values {
 	 * HP, XP, AMMO
 	 */
 	public static final Map<Integer, float[]> FormationAttrs = Collections
-			.unmodifiableMap(new HashMap<Integer, float[]>() {
+			.unmodifiableMap(new HashMap<>() {
 				{
 					// Line Ahead HP, ATK_L ATK_H ATK_AL ATK_AH DEF SPD, MOV HIT, CRI DHIT THIT MISS
 					// AA ASM DODGE XP GRU AMMO HPRES KB
@@ -1343,7 +1343,7 @@ public class Values {
 	 * HP
 	 */
 	public static final Map<Integer, float[]> MoraleAttrs = Collections
-			.unmodifiableMap(new HashMap<Integer, float[]>() {
+			.unmodifiableMap(new HashMap<>() {
 				{
 					// HP, ATK_L ATK_H ATK_AL ATK_AH DEF SPD, MOV HIT, CRI DHIT THIT MISS AA ASM
 					// DODGE XP GRU AMMO HPRES KB
@@ -1463,7 +1463,7 @@ public class Values {
 	 * for item icon: 4:iconID
 	 */
 	@SuppressWarnings("rawtypes")
-	public static final Map<Integer, List> BookList = Collections.unmodifiableMap(new HashMap<Integer, List>() {
+	public static final Map<Integer, List> BookList = Collections.unmodifiableMap(new HashMap<>() {
 		{
 			// chap 0: introduction
 			// page 0

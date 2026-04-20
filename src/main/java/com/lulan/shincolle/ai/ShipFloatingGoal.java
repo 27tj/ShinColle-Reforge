@@ -62,77 +62,22 @@ public class ShipFloatingGoal extends Goal {
 	}
 
 	@Override
-	public boolean canUse() {
-<<<<<<< Updated upstream
-		// ship type
-		if (hostShip != null) {
-			return canFloatShip(hostShip);
-		}
-		// mount type
-		else if (hostMount != null && hostMount.getHostEntity() != null) {
-			return canFloatMount(hostMount);
-		}
-=======
-		ProfilerFiller profiler = DebugProfiler.push(this.hostLiving.level(), "shincolle.ai.floating.can_use");
-		try {
-			// ship type
-			if (hostShip != null) {
-				if (hostShip.getStateFlag(ID.F.CanFloatUp) &&
-						hostShip.getShipDepth() > hostShip.getShipFloatingDepth()) {
-					// block floating when: no fuel, riding, sitting, crane, navigating, or in guard
-					// position
-					if (hostShip.getStateFlag(ID.F.NoFuel) || hostShip.isPassenger() || hostShip.isOrderedToSit() ||
-							hostShip.getStateMinor(ID.M.CraneState) > 0 ||
-							!hostShip.getShipNavigate().noPath() ||
-							isInGuardPosition(hostShip)) {
-						DebugProfiler.count(profiler, "shincolle.ai.floating.blocked.ship_state_guard");
-						return false;
-					}
-					DebugProfiler.count(profiler, "shincolle.ai.floating.can_use.ship_success");
-					return true;
-				}
-				DebugProfiler.count(profiler, "shincolle.ai.floating.blocked.ship_depth_or_surface");
-				return false;
-			}
-			// mount type
-			else if (hostMount != null && hostMount.getHostEntity() != null) {
-				if (hostMount.getShipDepth() > hostMount.getShipFloatingDepth()) {
-					Entity hostEntity = hostMount.getHostEntity();
-					if (hostEntity instanceof BasicEntityShip ship) {
-						// check host ship state
-						if (ship.isOrderedToSit() || ship.getStateMinor(ID.M.CraneState) > 0 ||
-								!ship.getShipNavigate().noPath() || isInGuardPosition(ship)) {
-							DebugProfiler.count(profiler, "shincolle.ai.floating.blocked.mount_host_state_guard");
-							return false;
-						}
-					}
-					// check mount's own navigator and guard
-					if (!hostMount.getShipNavigate().noPath() || isInGuardPosition(hostMount)) {
-						DebugProfiler.count(profiler, "shincolle.ai.floating.blocked.mount_state_guard");
-						return false;
-					}
-					DebugProfiler.count(profiler, "shincolle.ai.floating.can_use.mount_success");
-					return true;
-				}
-				DebugProfiler.count(profiler, "shincolle.ai.floating.blocked.mount_depth");
-				return false;
-			}
->>>>>>> Stashed changes
+public boolean canUse() {
+        // ship type
+        if (hostShip != null) {
+                return canFloatShip(hostShip);
+        }
+        // mount type
+        else if (hostMount != null && hostMount.getHostEntity() != null) {
+                return canFloatMount(hostMount);
+        }
 
-			// fallback
-			boolean canUse = host.getShipDepth() > host.getShipFloatingDepth();
-			if (canUse) {
-				DebugProfiler.count(profiler, "shincolle.ai.floating.can_use.fallback_success");
-			}
-			return canUse;
-		} finally {
-			DebugProfiler.pop(profiler);
-		}
-	}
+        // fallback
+        return host.getShipDepth() > host.getShipFloatingDepth();
+}
 
-	@Override
-	public void tick() {
-<<<<<<< Updated upstream
+@Override
+public void tick() {
 		double depth = this.host.getShipDepth();
 
 		// 5-tier graduated float speeds matching original
@@ -152,36 +97,6 @@ public class ShipFloatingGoal extends Goal {
 	private boolean canFloatShip(BasicEntityShip ship) {
 		if (!ship.getStateFlag(ID.F.CanFloatUp) || ship.getShipDepth() <= ship.getShipFloatingDepth()) {
 			return false;
-=======
-		ProfilerFiller profiler = DebugProfiler.push(this.hostLiving.level(), "shincolle.ai.floating.tick");
-		try {
-			double depth = this.host.getShipDepth();
-
-			// 5-tier graduated float speeds matching original
-			if (depth > 4D) {
-				DebugProfiler.count(profiler, "shincolle.ai.floating.tick.band_4_0");
-				this.hostLiving.setDeltaMovement(
-						this.hostLiving.getDeltaMovement().add(0D, 0.025D, 0D));
-			} else if (depth > 2D) {
-				DebugProfiler.count(profiler, "shincolle.ai.floating.tick.band_2_0");
-				this.hostLiving.setDeltaMovement(
-						this.hostLiving.getDeltaMovement().add(0D, 0.015D, 0D));
-			} else if (depth > 1.3D) {
-				DebugProfiler.count(profiler, "shincolle.ai.floating.tick.band_1_3");
-				this.hostLiving.setDeltaMovement(
-						this.hostLiving.getDeltaMovement().add(0D, 0.007D, 0D));
-			} else if (depth > 0.47D) {
-				DebugProfiler.count(profiler, "shincolle.ai.floating.tick.band_0_47");
-				this.hostLiving.setDeltaMovement(
-						this.hostLiving.getDeltaMovement().add(0D, 0.003D, 0D));
-			} else if (depth > 0.15D) {
-				DebugProfiler.count(profiler, "shincolle.ai.floating.tick.band_0_15");
-				this.hostLiving.setDeltaMovement(
-						this.hostLiving.getDeltaMovement().add(0D, 0.0015D, 0D));
-			}
-		} finally {
-			DebugProfiler.pop(profiler);
->>>>>>> Stashed changes
 		}
 
 		// block floating when: no fuel, riding, sitting, crane, navigating, or in guard

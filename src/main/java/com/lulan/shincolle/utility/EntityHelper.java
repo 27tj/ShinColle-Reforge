@@ -1,20 +1,27 @@
 package com.lulan.shincolle.utility;
 
 import com.lulan.shincolle.ai.path.ShipMoveHelper;
+import com.lulan.shincolle.capability.CapaTeitoku;
 import com.lulan.shincolle.ai.path.ShipPathNavigate;
 import com.lulan.shincolle.entity.BasicEntityShip;
 import com.lulan.shincolle.entity.BasicEntityShipHostile;
 import com.lulan.shincolle.entity.IShipAttackBase;
 import com.lulan.shincolle.entity.IShipFloating;
 import com.lulan.shincolle.entity.IShipNavigator;
+import com.lulan.shincolle.handler.ConfigHandler;
+import com.lulan.shincolle.init.ModEntities;
 import com.lulan.shincolle.reference.ID;
-import com.lulan.shincolle.utility.DebugProfiler;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.BiomeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.tags.FluidTags;
-import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.FlyingMob;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
@@ -24,11 +31,13 @@ import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.entity.monster.Blaze;
 import net.minecraft.world.entity.monster.Guardian;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.ChatFormatting;
 
 /**
  * Helper for ship entity movement and navigation.
@@ -50,6 +59,11 @@ public class EntityHelper {
 	private static final double FLOAT_HOVER_DAMPING = 0.8D;
 	private static final double WATER_DRAG = 0.8D;
 	private static final double COLLISION_BUMP_UP_VELOCITY = 0.3D;
+	private static final double GLOBAL_SCAN_LIMIT = 30000000D;
+	private static final int SPAWN_OFFSET_MIN = 20;
+	private static final int SPAWN_OFFSET_RANGE = 30;
+	private static final int BOSS_SPAWN_OFFSET_MIN = 32;
+	private static final int BOSS_SPAWN_OFFSET_RANGE = 32;
 
 	/**
 	 * Update ship navigator - called every tick on server side.
@@ -89,44 +103,33 @@ public class EntityHelper {
 		if (!(entity instanceof IShipNavigator navEntity))
 			return;
 
-		ProfilerFiller profiler = DebugProfiler.push(entity.level(), "shincolle.entity.navigator.tick_custom");
-		try {
+		ShipPathNavigate pathNavi = navEntity.getShipNavigate();
+		ShipMoveHelper moveHelper = navEntity.getShipMoveHelper();
 
-			ShipPathNavigate pathNavi = navEntity.getShipNavigate();
-			ShipMoveHelper moveHelper = navEntity.getShipMoveHelper();
+		if (pathNavi == null || moveHelper == null)
+			return;
 
-			if (pathNavi == null || moveHelper == null) {
-				DebugProfiler.count(profiler, "shincolle.entity.navigator.tick_custom.no_path_or_move_helper");
-				return;
-			}
+		if (!pathNavi.noPath()) {
+			// clear vanilla navigator when custom path is active
+			entity.getNavigation().stop();
 
-			if (!pathNavi.noPath()) {
-				// clear vanilla navigator when custom path is active
-				entity.getNavigation().stop();
-
-				// clear if sitting or leashed
-				if (entity instanceof BasicEntityShip ship) {
-					if (ship.isOrderedToSit() || ship.isLeashed()) {
-						DebugProfiler.count(profiler, "shincolle.entity.navigator.tick_custom.clear_path_sit_or_leashed");
-						pathNavi.clearPathEntity();
-						return;
-					}
+			// clear if sitting or leashed
+			if (entity instanceof BasicEntityShip ship) {
+				if (ship.isOrderedToSit() || ship.isLeashed()) {
+					pathNavi.clearPathEntity();
+					return;
 				}
-
-				DebugProfiler.count(profiler, "shincolle.entity.navigator.tick_custom.update_custom_path");
-				// tick custom navigator and move helper
-				pathNavi.onUpdateNavigation();
-				moveHelper.onUpdateMoveHelper();
 			}
 
-			// [PORT] 1.10.2 -> 1.20.1: keep vanilla path disabled in liquid to avoid
-			// mixed vanilla/custom navigation steering.
-			if (!entity.getNavigation().isDone() && checkEntityIsInLiquid(entity)) {
-				DebugProfiler.count(profiler, "shincolle.entity.navigator.tick_custom.clear_vanilla_path_in_liquid");
-				entity.getNavigation().stop();
-			}
-		} finally {
-			DebugProfiler.pop(profiler);
+			// tick custom navigator and move helper
+			pathNavi.onUpdateNavigation();
+			moveHelper.onUpdateMoveHelper();
+		}
+
+		// [PORT] 1.10.2 -> 1.20.1: keep vanilla path disabled in liquid to avoid
+		// mixed vanilla/custom navigation steering.
+		if (!entity.getNavigation().isDone() && checkEntityIsInLiquid(entity)) {
+			entity.getNavigation().stop();
 		}
 	}
 
@@ -216,7 +219,6 @@ public class EntityHelper {
 	 * - Vertical movement controlled by floating depth
 	 */
 	public static void moveEntityInFluid(BasicEntityShip ship, Vec3 travelVec) {
-<<<<<<< Updated upstream
 		if (!ship.isInWater())
 			return;
 
@@ -230,45 +232,10 @@ public class EntityHelper {
 		if (travelVec.lengthSqr() > MIN_TRAVEL_VEC_SQR) {
 			ship.moveRelative(ship.getSpeed() * 0.4F, travelVec);
 		}
-=======
-		ProfilerFiller profiler = DebugProfiler.push(ship.level(), "shincolle.entity.move_in_fluid");
-		try {
-			if (!ship.isInWater())
-				return;
 
-			double depth = ship.getShipDepth();
-			if (depth <= 0D)
-				return;
+		Vec3 motion = ship.getDeltaMovement();
+		double floatingDepth = ship.getShipFloatingDepth();
 
-			// [PORT] 1.10.2 -> 1.20.1: restore legacy water horizontal acceleration.
-			// ShipMoveHelper controls facing/speed, while travelVec provides forward
-			// intent.
-			if (travelVec.lengthSqr() > 1.0E-6D) {
-				DebugProfiler.count(profiler, "shincolle.entity.move_in_fluid.apply_horizontal_accel");
-				ship.moveRelative(ship.getSpeed() * 0.4F, travelVec);
-			}
->>>>>>> Stashed changes
-
-			Vec3 motion = ship.getDeltaMovement();
-			double floatingDepth = ship.getShipFloatingDepth();
-
-			// vertical adjustment
-			double vy = motion.y;
-			if (floatingDepth > 0.1D) {
-				DebugProfiler.count(profiler, "shincolle.entity.move_in_fluid.vertical_rise");
-				// push up toward surface
-				vy = Math.min(vy + 0.04D, 0.12D);
-			} else if (floatingDepth < -0.1D) {
-				DebugProfiler.count(profiler, "shincolle.entity.move_in_fluid.vertical_sink");
-				// sink if below target depth
-				vy = Math.max(vy - 0.02D, -0.08D);
-			} else {
-				DebugProfiler.count(profiler, "shincolle.entity.move_in_fluid.vertical_hover");
-				// hover at surface
-				vy *= 0.8D;
-			}
-
-<<<<<<< Updated upstream
 		// vertical adjustment
 		double vy = motion.y;
 		if (floatingDepth > FLOAT_UP_THRESHOLD) {
@@ -289,20 +256,6 @@ public class EntityHelper {
 
 		// apply drag in water
 		ship.setDeltaMovement(motion.x * WATER_DRAG, vy, motion.z * WATER_DRAG);
-=======
-			// [PORT] 1.10.2 -> 1.20.1: keep the classic "bump up" when colliding in water.
-			if (ship.horizontalCollision && ship.level().getFluidState(ship.blockPosition().above()).is(FluidTags.WATER)) {
-				DebugProfiler.count(profiler, "shincolle.entity.move_in_fluid.collision_bump");
-				vy = Math.max(vy, 0.3D);
-			}
-
-			// apply drag in water
-			double drag = 0.8D;
-			ship.setDeltaMovement(motion.x * drag, vy, motion.z * drag);
-		} finally {
-			DebugProfiler.pop(profiler);
-		}
->>>>>>> Stashed changes
 	}
 
 	/**
@@ -441,6 +394,307 @@ public class EntityHelper {
 			if (ship.isAlive()) {
 				ship.applyEmotesReaction(emotesType);
 			}
+		}
+	}
+
+	/**
+	 * Spawn hostile mob ships near a player.
+	 *
+	 * [PORT] 1.10.2 -> 1.20.1: restored ring+biome gated periodic hostile fleet
+	 * spawn behavior used by exploration gameplay.
+	 */
+	public static void spawnMobShip(Player player, CapaTeitoku capa) {
+		if (!(player.level() instanceof ServerLevel level) || capa == null) {
+			return;
+		}
+
+		if (level.getDifficulty() == Difficulty.PEACEFUL) {
+			return;
+		}
+
+		if (ConfigHandler.checkRing() && !capa.hasRing()) {
+			return;
+		}
+
+		if (!isSeaOrBeachBiome(level, player.blockPosition())) {
+			return;
+		}
+
+		int[] spawnCfg = ConfigHandler.mobSpawn;
+		if (spawnCfg == null || spawnCfg.length < 5) {
+			return;
+		}
+
+		if (countLoadedHostileShips(level) > spawnCfg[0]) {
+			return;
+		}
+
+		RandomSource rng = player.getRandom();
+		if (rng.nextInt(100) > spawnCfg[1]) {
+			return;
+		}
+
+		int blockX = Mth.floor(player.getX());
+		int blockZ = Mth.floor(player.getZ());
+		int groups = Math.max(1, spawnCfg[2]);
+		int loop = 30 + groups * 30;
+
+		while (groups > 0 && loop > 0) {
+			loop--;
+			int[] spawnXZ = pickSpawnXZ(rng, blockX, blockZ, SPAWN_OFFSET_MIN, SPAWN_OFFSET_RANGE);
+			int spawnX = spawnXZ[0];
+			int spawnZ = spawnXZ[1];
+
+			int seaTestY = Mth.clamp(level.getSeaLevel() - 2, level.getMinBuildHeight(), level.getMaxBuildHeight() - 1);
+			BlockPos seaCheck = new BlockPos(spawnX, seaTestY, spawnZ);
+			if (!level.getFluidState(seaCheck).is(FluidTags.WATER)) {
+				continue;
+			}
+
+			groups--;
+			int spawnY = findTopWaterHeight(level, spawnX, seaTestY, spawnZ);
+
+			int shipNum = Math.max(1, spawnCfg[3]);
+			int range = spawnCfg[4] - spawnCfg[3];
+			if (range > 0) {
+				shipNum = spawnCfg[3] + rng.nextInt(range + 1);
+			}
+
+			for (int i = 0; i < shipNum; i++) {
+				spawnRandomHostile(level,
+						spawnX + rng.nextDouble(),
+						spawnY + 0.5D,
+						spawnZ + rng.nextDouble(),
+						rng.nextInt(10) > 7 ? 1 : 0,
+						rng);
+			}
+		}
+	}
+
+	/**
+	 * Spawn boss fleet near a player when boss cooldown reaches zero.
+	 *
+	 * [PORT] 1.10.2 -> 1.20.1: restored random invasion fleet spawns in sea/beach
+	 * biomes.
+	 */
+	public static void spawnBossShip(Player player, CapaTeitoku capa) {
+		if (!(player.level() instanceof ServerLevel level) || capa == null) {
+			return;
+		}
+
+		if (level.getDifficulty() == Difficulty.PEACEFUL) {
+			return;
+		}
+
+		boolean inSeaBiome = isSeaOrBeachBiome(level, player.blockPosition());
+		if (inSeaBiome && capa.hasRing()) {
+			capa.setBossCooldown(capa.getBossCooldown() - 1);
+		}
+
+		if (capa.getBossCooldown() > 0) {
+			return;
+		}
+
+		capa.setBossCooldown(ConfigHandler.bossCooldown());
+		RandomSource rng = player.getRandom();
+		if (rng.nextInt(4) != 0) {
+			return;
+		}
+
+		int blockX = Mth.floor(player.getX());
+		int blockZ = Mth.floor(player.getZ());
+
+		for (int tries = 0; tries < 20; tries++) {
+			int[] spawnXZ = pickSpawnXZ(rng, blockX, blockZ, BOSS_SPAWN_OFFSET_MIN, BOSS_SPAWN_OFFSET_RANGE);
+			int spawnX = spawnXZ[0];
+			int spawnZ = spawnXZ[1];
+
+			int seaTestY = Mth.clamp(level.getSeaLevel() - 2, level.getMinBuildHeight(), level.getMaxBuildHeight() - 1);
+			BlockPos seaCheck = new BlockPos(spawnX, seaTestY, spawnZ);
+			if (!level.getFluidState(seaCheck).is(FluidTags.WATER)) {
+				continue;
+			}
+
+			int spawnY = findTopWaterHeight(level, spawnX, seaTestY, spawnZ);
+			AABB checkBossBox = new AABB(
+					spawnX - 48D, spawnY - 48D, spawnZ - 48D,
+					spawnX + 48D, spawnY + 48D, spawnZ + 48D);
+
+			int bossNum = 0;
+			for (BasicEntityShipHostile mob : level.getEntitiesOfClass(BasicEntityShipHostile.class, checkBossBox)) {
+				if (mob.getScaleLevel() >= 2) {
+					bossNum++;
+				}
+			}
+
+			if (bossNum >= 2) {
+				continue;
+			}
+
+			for (int i = 0; i < ConfigHandler.spawnBossNumber(); i++) {
+				spawnRandomHostile(level,
+						spawnX + rng.nextInt(3),
+						spawnY + 0.5D,
+						spawnZ + rng.nextInt(3),
+						rng.nextInt(100) > 65 ? 3 : 2,
+						rng);
+			}
+
+			for (int i = 0; i < ConfigHandler.spawnMobNumber(); i++) {
+				spawnRandomHostile(level,
+						spawnX + rng.nextInt(3),
+						spawnY + 0.5D,
+						spawnZ + rng.nextInt(3),
+						rng.nextInt(2),
+						rng);
+			}
+
+			if (level.getServer() != null) {
+				Component text = Component.translatable(
+						rng.nextBoolean() ? "chat.shincolle.bossspawn1" : "chat.shincolle.bossspawn2")
+						.withStyle(ChatFormatting.YELLOW)
+						.append(Component.literal(" " + spawnX + " " + spawnY + " " + spawnZ)
+								.withStyle(ChatFormatting.AQUA));
+				level.getServer().getPlayerList().broadcastSystemMessage(text, false);
+			}
+
+			break;
+		}
+	}
+
+	private static boolean isSeaOrBeachBiome(ServerLevel level, BlockPos pos) {
+		return level.getBiome(pos).is(BiomeTags.IS_OCEAN)
+				|| level.getBiome(pos).is(BiomeTags.IS_BEACH)
+				|| level.getBiome(pos).is(BiomeTags.IS_RIVER);
+	}
+
+	private static int countLoadedHostileShips(ServerLevel level) {
+		AABB worldBox = new AABB(
+				-GLOBAL_SCAN_LIMIT, level.getMinBuildHeight(), -GLOBAL_SCAN_LIMIT,
+				GLOBAL_SCAN_LIMIT, level.getMaxBuildHeight(), GLOBAL_SCAN_LIMIT);
+		return level.getEntitiesOfClass(BasicEntityShipHostile.class, worldBox).size();
+	}
+
+	private static int[] pickSpawnXZ(RandomSource rng, int blockX, int blockZ, int minOffset, int offsetRange) {
+		int offX = rng.nextInt(offsetRange) + minOffset;
+		int offZ = rng.nextInt(offsetRange) + minOffset;
+		int spawnX;
+		int spawnZ;
+
+		switch (rng.nextInt(4)) {
+			case 1:
+				spawnX = blockX - offX;
+				spawnZ = blockZ - offZ;
+				break;
+			case 2:
+				spawnX = blockX + offX;
+				spawnZ = blockZ - offZ;
+				break;
+			case 3:
+				spawnX = blockX - offX;
+				spawnZ = blockZ + offZ;
+				break;
+			default:
+				spawnX = blockX + offX;
+				spawnZ = blockZ + offZ;
+				break;
+		}
+
+		return new int[] { spawnX, spawnZ };
+	}
+
+	private static int findTopWaterHeight(Level level, int x, int startY, int z) {
+		int y = Mth.clamp(startY, level.getMinBuildHeight(), level.getMaxBuildHeight() - 1);
+		BlockPos pos = new BlockPos(x, y, z);
+
+		while (y < level.getMaxBuildHeight() - 1 && level.getFluidState(pos.above()).is(FluidTags.WATER)) {
+			y++;
+			pos = pos.above();
+		}
+
+		return y;
+	}
+
+	private static void spawnRandomHostile(
+			ServerLevel level,
+			double x,
+			double y,
+			double z,
+			int scaleLevel,
+			RandomSource rng) {
+		EntityType<? extends BasicEntityShipHostile> type = pickRandomMobShipType(rng);
+		BasicEntityShipHostile mob = type.create(level);
+		if (mob == null) {
+			return;
+		}
+
+		mob.initAttrs(scaleLevel);
+		mob.moveTo(x, y, z, rng.nextFloat() * 360F, 0F);
+		level.addFreshEntity(mob);
+	}
+
+	private static EntityType<? extends BasicEntityShipHostile> pickRandomMobShipType(RandomSource rng) {
+		int ran = rng.nextInt(100);
+
+		if (ran > 75) {
+			switch (rng.nextInt(3)) {
+				case 1:
+					return ModEntities.BB_YAMATO_MOB.get();
+				case 2:
+					switch (rng.nextInt(4)) {
+						case 1:
+							return ModEntities.BB_HIEI_MOB.get();
+						case 2:
+							return ModEntities.BB_HARUNA_MOB.get();
+						case 3:
+							return ModEntities.BB_KIRISHIMA_MOB.get();
+						default:
+							return ModEntities.BB_KONGOU_MOB.get();
+					}
+				default:
+					return ModEntities.BB_NAGATO_MOB.get();
+			}
+		}
+
+		if (ran > 45) {
+			switch (rng.nextInt(3)) {
+				case 1:
+				case 2:
+					switch (rng.nextInt(4)) {
+						case 1:
+							return ModEntities.CL_TENRYUU_MOB.get();
+						case 2:
+							return ModEntities.CL_TATSUTA_MOB.get();
+						case 3:
+							return ModEntities.CA_ATAGO_MOB.get();
+						default:
+							return ModEntities.CA_TAKAO_MOB.get();
+					}
+				default:
+					switch (rng.nextInt(2)) {
+						case 1:
+							return ModEntities.CV_KAGA_MOB.get();
+						default:
+							return ModEntities.CV_AKAGI_MOB.get();
+					}
+			}
+		}
+
+		switch (rng.nextInt(7)) {
+			case 1:
+				return ModEntities.DESTROYER_HIBIKI_MOB.get();
+			case 2:
+				return ModEntities.DESTROYER_IKAZUCHI_MOB.get();
+			case 3:
+				return ModEntities.DESTROYER_INAZUMA_MOB.get();
+			case 4:
+				return ModEntities.DESTROYER_SHIMAKAZE_MOB.get();
+			case 5:
+				return ModEntities.SS_U511_MOB.get();
+			case 6:
+				return ModEntities.SS_RO500_MOB.get();
+			default:
+				return ModEntities.DESTROYER_AKATSUKI_MOB.get();
 		}
 	}
 }

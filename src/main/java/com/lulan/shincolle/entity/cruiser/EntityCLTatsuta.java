@@ -48,6 +48,7 @@ public class EntityCLTatsuta extends BasicEntityShipSmall {
 
 		// [PORT] 1.10.2 -> 1.20.1: CLTatsuta used skill attack at priority 0.
                 this.goalSelector.removeAllGoals(goal -> goal instanceof ShipSkillAttackGoal);
+		this.goalSelector.addGoal(0, new ShipSkillAttackGoal(this));
 
 		// range attack
 		this.goalSelector.addGoal(11, new ShipRangeAttackGoal(this));
