@@ -1227,6 +1227,120 @@ public final class ShinColleEntityRegistryGameTests {
 		helper.succeed();
 	}
 
+	// 2026/04/20：GitHub Copilotによって追加
+	@GameTest(template = "empty", templateNamespace = "minecraft")
+	public static void hostileRangeTargetGoalAcquiresFriendlyShip(GameTestHelper helper) {
+		ServerLevel level = helper.getLevel();
+
+		Entity hostileEntity = ModEntities.BB_KIRISHIMA_MOB.get().create(level);
+		Entity friendlyEntity = ModEntities.BB_KONGOU.get().create(level);
+
+		if (!(hostileEntity instanceof BasicEntityShipHostile hostile)) {
+			throw new AssertionError("BB_KIRISHIMA_MOB is not BasicEntityShipHostile in hostile target-acquire test.");
+		}
+		if (!(friendlyEntity instanceof BasicEntityShip friendly)) {
+			throw new AssertionError("BB_KONGOU is not BasicEntityShip in hostile target-acquire test.");
+		}
+
+		hostile.moveTo(0.5D, level.getSharedSpawnPos().getY() + 1D, 0.5D, 0F, 0F);
+		friendly.moveTo(4.5D, level.getSharedSpawnPos().getY() + 1D, 0.5D, 0F, 0F);
+
+		if (!level.addFreshEntity(hostile)) {
+			throw new AssertionError("Failed to add hostile ship for hostile target-acquire test.");
+		}
+		if (!level.addFreshEntity(friendly)) {
+			throw new AssertionError("Failed to add friendly ship for hostile target-acquire test.");
+		}
+
+		invokeNoArgProtected(hostile, "clearAITargetTasks");
+		invokeNoArgProtected(hostile, "setAITargetList");
+
+		GoalSelector selector = extractTargetSelector(hostile);
+		ShipRangeTargetGoal rangeGoal = null;
+		for (WrappedGoal wrappedGoal : selector.getAvailableGoals()) {
+			if (wrappedGoal.getGoal() instanceof ShipRangeTargetGoal goal) {
+				rangeGoal = goal;
+				break;
+			}
+		}
+
+		if (rangeGoal == null) {
+			throw new AssertionError("Hostile target selector has no ShipRangeTargetGoal instance.");
+		}
+
+		if (!rangeGoal.canUse()) {
+			throw new AssertionError("Hostile ShipRangeTargetGoal failed to acquire nearby friendly ship.");
+		}
+
+		rangeGoal.start();
+		Entity selected = hostile.getEntityTarget();
+		if (!(selected instanceof BasicEntityShip) || selected instanceof BasicEntityShipHostile) {
+			throw new AssertionError("Hostile acquired unexpected target type. expected=friendly ship actual="
+					+ (selected == null ? "null" : selected.getType().toShortString()));
+		}
+
+		hostile.discard();
+		friendly.discard();
+		helper.succeed();
+	}
+
+	// 2026/04/20：GitHub Copilotによって追加
+	@GameTest(template = "empty", templateNamespace = "minecraft")
+	public static void friendlyRangeTargetGoalAcquiresHostileShip(GameTestHelper helper) {
+		ServerLevel level = helper.getLevel();
+
+		Entity friendlyEntity = ModEntities.BB_KONGOU.get().create(level);
+		Entity hostileEntity = ModEntities.BB_KIRISHIMA_MOB.get().create(level);
+
+		if (!(friendlyEntity instanceof BasicEntityShip friendly)) {
+			throw new AssertionError("BB_KONGOU is not BasicEntityShip in friendly target-acquire test.");
+		}
+		if (!(hostileEntity instanceof BasicEntityShipHostile hostile)) {
+			throw new AssertionError("BB_KIRISHIMA_MOB is not BasicEntityShipHostile in friendly target-acquire test.");
+		}
+
+		friendly.moveTo(0.5D, level.getSharedSpawnPos().getY() + 1D, 0.5D, 0F, 0F);
+		hostile.moveTo(4.5D, level.getSharedSpawnPos().getY() + 1D, 0.5D, 0F, 0F);
+
+		if (!level.addFreshEntity(friendly)) {
+			throw new AssertionError("Failed to add friendly ship for friendly target-acquire test.");
+		}
+		if (!level.addFreshEntity(hostile)) {
+			throw new AssertionError("Failed to add hostile ship for friendly target-acquire test.");
+		}
+
+		invokeNoArgProtected(friendly, "clearAITargetTasks");
+		invokeNoArgProtected(friendly, "setAITargetList");
+
+		GoalSelector selector = extractTargetSelector(friendly);
+		ShipRangeTargetGoal rangeGoal = null;
+		for (WrappedGoal wrappedGoal : selector.getAvailableGoals()) {
+			if (wrappedGoal.getGoal() instanceof ShipRangeTargetGoal goal) {
+				rangeGoal = goal;
+				break;
+			}
+		}
+
+		if (rangeGoal == null) {
+			throw new AssertionError("Friendly target selector has no ShipRangeTargetGoal instance.");
+		}
+
+		if (!rangeGoal.canUse()) {
+			throw new AssertionError("Friendly ShipRangeTargetGoal failed to acquire nearby hostile ship.");
+		}
+
+		rangeGoal.start();
+		Entity selected = friendly.getEntityTarget();
+		if (!(selected instanceof BasicEntityShipHostile)) {
+			throw new AssertionError("Friendly acquired unexpected target type. expected=hostile ship actual="
+					+ (selected == null ? "null" : selected.getType().toShortString()));
+		}
+
+		friendly.discard();
+		hostile.discard();
+		helper.succeed();
+	}
+
 	// 2026/04/11：GitHub Copilotによって確認済み
 	@GameTest(template = "empty", templateNamespace = "minecraft")
 	public static void shipCalcRollTablesExcludeRemovedKanmusuClasses(GameTestHelper helper) {

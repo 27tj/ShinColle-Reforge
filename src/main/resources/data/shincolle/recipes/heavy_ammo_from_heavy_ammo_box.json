@@ -1,0 +1,12 @@
+{
+	"type": "minecraft:crafting_shapeless",
+	"ingredients": [
+		{
+			"item": "minecraft:ammo_3"
+		}
+	],
+	"result": {
+		"item": "shincolle:ammo_2",
+		"count": 9
+	}
+}

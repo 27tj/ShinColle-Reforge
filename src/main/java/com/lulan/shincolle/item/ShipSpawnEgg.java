@@ -11,6 +11,7 @@ import com.lulan.shincolle.entity.BasicEntityShip;
 import com.lulan.shincolle.entity.BasicEntityShipHostile;
 import com.lulan.shincolle.init.ModEntities;
 import com.lulan.shincolle.reference.ID;
+import com.lulan.shincolle.reference.Values;
 import com.lulan.shincolle.utility.LogHelper;
 
 import net.minecraft.ChatFormatting;
@@ -50,7 +51,10 @@ public class ShipSpawnEgg extends BasicItem {
 	/** Legacy tag name, kept for backward compatibility */
 	public static final String TAG_SHIP_TYPE = "ShipType";
 	private static final String TAG_STATE_MINOR = "StateMinor";
-	private static final String TAG_CUSTOM_NAME = "customname";
+	private static final String TAG_CUSTOM_NAME = "CustomName";
+	private static final String TAG_CUSTOM_NAME_LEGACY = "customname";
+	private static final String TAG_OWNER_NAME = "OwnerName";
+	private static final String TAG_OWNER_NAME_LEGACY = "ownername";
 	private static final String CHAT_LEVEL_FAIL_KEY = "chat.shincolle:levelfail";
 	public static final int MOB_OFFSET = 2000;
 
@@ -219,15 +223,24 @@ public class ShipSpawnEgg extends BasicItem {
 			return InteractionResult.FAIL;
 		}
 
-		entity.moveTo(x, y, z, player.getYRot(), 0F);
+		entity.moveTo(x, y, z, player != null ? player.getYRot() : 0F, 0F);
 
 		if (entity instanceof BasicEntityShip ship) {
 			// init ship from egg data
 			initShipFromEgg(ship, stack, player);
-			level.addFreshEntity(ship);
+
+			// [PORT] Preserve legacy priority: renamed egg hover-name first, explicit NBT
+			// name overrides afterward.
+			applyEggHoverName(ship, stack);
 
 			// set custom name if present
 			applyEggCustomName(ship, nbt);
+
+			// [PORT] Keep fresh-spawn ships combat-capable by seeding baseline resources
+			// when no saved state is provided.
+			bootstrapFreshSpawnCombatState(ship, nbt);
+
+			level.addFreshEntity(ship);
 
 			// recalc attributes
 			ship.calcShipAttributes(31, true);
@@ -240,7 +253,7 @@ public class ShipSpawnEgg extends BasicItem {
 		}
 
 		// consume item in non-creative
-		if (!player.getAbilities().instabuild) {
+		if (player != null && !player.getAbilities().instabuild) {
 			stack.shrink(1);
 		}
 
@@ -248,6 +261,10 @@ public class ShipSpawnEgg extends BasicItem {
 	}
 
 	private static boolean consumeSavedEggXpCost(Player player, CompoundTag nbt) {
+		if (player == null || nbt == null) {
+			return true;
+		}
+
 		if (player.getAbilities().instabuild || !nbt.contains(TAG_STATE_MINOR)) {
 			return true;
 		}
@@ -267,14 +284,88 @@ public class ShipSpawnEgg extends BasicItem {
 		return true;
 	}
 
+	private static void applyEggHoverName(BasicEntityShip ship, ItemStack eggStack) {
+		if (eggStack.hasCustomHoverName()) {
+			ship.setCustomName(eggStack.getHoverName());
+		}
+	}
+
 	private static void applyEggCustomName(BasicEntityShip ship, CompoundTag nbt) {
+		Component resolvedName = resolveEggCustomName(nbt);
+		if (resolvedName != null) {
+			ship.setCustomName(resolvedName);
+		}
+	}
+
+	private static Component resolveEggCustomName(CompoundTag nbt) {
+		if (nbt == null) {
+			return null;
+		}
+
+		if (nbt.contains(TAG_CUSTOM_NAME_LEGACY)) {
+			String legacyName = nbt.getString(TAG_CUSTOM_NAME_LEGACY);
+			if (!legacyName.isEmpty()) {
+				return Component.literal(legacyName);
+			}
+		}
+
 		if (!nbt.contains(TAG_CUSTOM_NAME)) {
+			return null;
+		}
+
+		String jsonName = nbt.getString(TAG_CUSTOM_NAME);
+		if (jsonName.isEmpty()) {
+			return null;
+		}
+
+		try {
+			Component parsed = Component.Serializer.fromJson(jsonName);
+			if (parsed != null) {
+				return parsed;
+			}
+		} catch (Exception e) {
+			// [PORT] 1.10.2 -> 1.20.1: tolerate malformed or non-JSON CustomName data.
+		}
+
+		return Component.literal(jsonName);
+	}
+
+	private static String resolveEggOwnerName(CompoundTag nbt) {
+		if (nbt == null) {
+			return "";
+		}
+
+		if (nbt.contains(TAG_OWNER_NAME)) {
+			String ownerName = nbt.getString(TAG_OWNER_NAME);
+			if (!ownerName.isEmpty()) {
+				return ownerName;
+			}
+		}
+
+		if (nbt.contains(TAG_OWNER_NAME_LEGACY)) {
+			return nbt.getString(TAG_OWNER_NAME_LEGACY);
+		}
+
+		return "";
+	}
+
+	private static void bootstrapFreshSpawnCombatState(BasicEntityShip ship, CompoundTag nbt) {
+		if (nbt != null && nbt.contains(TAG_STATE_MINOR)) {
 			return;
 		}
 
-		String name = nbt.getString(TAG_CUSTOM_NAME);
-		if (!name.isEmpty()) {
-			ship.setCustomName(Component.literal(name));
+		if (ship.getStateMinor(ID.M.NumGrudge) <= 0) {
+			ship.setStateMinor(ID.M.NumGrudge, Values.N.BaseGrudge);
+		}
+		if (ship.getStateMinor(ID.M.NumAmmoLight) <= 0) {
+			ship.setStateMinor(ID.M.NumAmmoLight, Values.N.BaseLightAmmo);
+		}
+		if (ship.getStateMinor(ID.M.NumAmmoHeavy) <= 0) {
+			ship.setStateMinor(ID.M.NumAmmoHeavy, Values.N.BaseHeavyAmmo);
+		}
+
+		if (ship.getStateMinor(ID.M.NumGrudge) > 0 && ship.getStateFlag(ID.F.NoFuel)) {
+			ship.setStateFlag(ID.F.NoFuel, false);
 		}
 	}
 
@@ -329,7 +420,7 @@ public class ShipSpawnEgg extends BasicItem {
 		ship.setEntityTarget(null);
 
 		// set owner
-		CapaTeitoku capa = player.getCapability(CapaTeitokuProvider.CAPABILITY).orElse(null);
+		CapaTeitoku capa = player != null ? player.getCapability(CapaTeitokuProvider.CAPABILITY).orElse(null) : null;
 		if (capa != null) {
 			int playerUID = capa.getPlayerUID();
 			if (playerUID > 0) {
@@ -579,11 +670,13 @@ public class ShipSpawnEgg extends BasicItem {
 							.literal(ChatFormatting.AQUA + Component.translatable("gui.shincolle.eggText").getString()
 									+ " " + shipLevel));
 				}
-				if (nbt.contains("customname")) {
-					tooltip.add(Component.literal(ChatFormatting.WHITE + nbt.getString("customname")));
+				Component customName = resolveEggCustomName(nbt);
+				if (customName != null && !customName.getString().isEmpty()) {
+					tooltip.add(Component.literal(ChatFormatting.WHITE + customName.getString()));
 				}
-				if (nbt.contains("OwnerName")) {
-					tooltip.add(Component.literal(ChatFormatting.RED + nbt.getString("OwnerName")));
+				String ownerName = resolveEggOwnerName(nbt);
+				if (!ownerName.isEmpty()) {
+					tooltip.add(Component.literal(ChatFormatting.RED + ownerName));
 				}
 			} else if (nbt.contains("BuildType")) {
 				// Construction egg: show material amounts

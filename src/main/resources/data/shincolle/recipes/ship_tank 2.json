@@ -7,14 +7,14 @@
   ],
   "key": {
     "P": {
-      "item": "shincolle:polymetal_nodule"
+      "item": "shincolle:abyssium"
     },
     "C": {
-      "item": "minecraft:cauldron"
+      "item": "shincolle:ship_tank_1"
     }
   },
   "result": {
-    "item": "shincolle:ship_tank",
+    "item": "shincolle:ship_tank_2",
     "count": 1
   }
 }

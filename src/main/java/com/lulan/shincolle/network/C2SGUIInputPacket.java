@@ -15,9 +15,11 @@ import com.lulan.shincolle.tileentity.TileEntityCrane;
 import com.lulan.shincolle.tileentity.TileEntitySmallShipyard;
 import com.lulan.shincolle.tileentity.TileEntityVolCore;
 import com.lulan.shincolle.tileentity.TileMultiGrudgeHeavy;
+import com.lulan.shincolle.utility.FormationHelper;
 import com.lulan.shincolle.utility.LogHelper;
 import com.lulan.shincolle.utility.PacketHelper;
 import com.lulan.shincolle.utility.TeamHelper;
+import com.lulan.shincolle.utility.TargetHelper;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -26,6 +28,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.NetworkHooks;
 
@@ -520,22 +523,48 @@ public class C2SGUIInputPacket {
 			return;
 		ServerLevel level = player.serverLevel();
 		Entity entity = level.getEntity(values[2]);
-		if (entity instanceof BasicEntityShip ship && TeamHelper.checkSameOwner(player, ship)) {
-			CapaTeitoku capa = player.getCapability(CapaTeitokuProvider.CAPABILITY).orElse(null);
-			if (capa != null) {
-				int teamId = capa.getSelectTeam();
-				for (int i = 0; i < CapaTeitoku.SLOT_NUM; i++) {
-					if (capa.getTeamMember(teamId, i) <= 0) {
-						capa.setTeamMember(teamId, i, ship.getStateMinor(ID.M.ShipUID));
-						capa.setTeamSID(teamId, i, ship.getId());
-						ship.setStateMinor(ID.M.FormatType, capa.getFormatID(teamId));
-						ship.setStateMinor(ID.M.FormatPos, i);
-						ModNetworking.sendToPlayer(S2CGUISyncPacket.syncShipsInTeam(capa, teamId), player);
-						break;
-					}
-				}
+		if (!(entity instanceof BasicEntityShip ship) || !TeamHelper.checkSameOwner(player, ship)) {
+			return;
+		}
+
+		CapaTeitoku capa = player.getCapability(CapaTeitokuProvider.CAPABILITY).orElse(null);
+		if (capa == null) {
+			return;
+		}
+
+		int teamId = capa.getSelectTeam();
+		int shipUid = ship.getStateMinor(ID.M.ShipUID);
+		int existingSlot = findTeamSlotByUID(capa, teamId, shipUid);
+
+		if (existingSlot >= 0) {
+			// [PORT] 1.10.2 -> 1.20.1: AddTeam acts as toggle; existing member is removed.
+			capa.setTeamMember(teamId, existingSlot, 0);
+			capa.setTeamSID(teamId, existingSlot, 0);
+			ship.setStateMinor(ID.M.FormatType, 0);
+			ship.setStateMinor(ID.M.FormatPos, 0);
+		} else {
+			int insertSlot = findFirstEmptySlot(capa, teamId);
+			if (insertSlot < 0) {
+				insertSlot = 0;
+			}
+
+			capa.setTeamMember(teamId, insertSlot, shipUid);
+			capa.setTeamSID(teamId, insertSlot, ship.getId());
+			ship.setStateMinor(ID.M.FormatType, capa.getFormatID(teamId));
+			ship.setStateMinor(ID.M.FormatPos, insertSlot);
+		}
+
+		// [PORT] 1.10.2 -> 1.20.1: changing team members clears formation selection.
+		capa.setFormatID(teamId, 0);
+		for (int i = 0; i < CapaTeitoku.SLOT_NUM; i++) {
+			BasicEntityShip teamShip = resolveTeamShip(level, capa, teamId, i);
+			if (teamShip != null) {
+				teamShip.setStateMinor(ID.M.FormatType, 0);
+				teamShip.setStateMinor(ID.M.FormatPos, i);
 			}
 		}
+
+		ModNetworking.sendToPlayer(S2CGUISyncPacket.syncShipsInTeam(capa, teamId), player);
 	}
 
 	/**
@@ -549,20 +578,25 @@ public class C2SGUIInputPacket {
 		Entity target = level.getEntity(values[2]);
 		if (target == null)
 			return;
+		if (TargetHelper.isEntityInvulnerable(target)
+				|| TeamHelper.checkSameOwner(player, target)
+				|| TeamHelper.checkIsAlly(player, target)) {
+			return;
+		}
+
 		CapaTeitoku capa = player.getCapability(CapaTeitokuProvider.CAPABILITY).orElse(null);
 		if (capa == null)
 			return;
 		int teamId = capa.getSelectTeam();
 		for (int i = 0; i < CapaTeitoku.SLOT_NUM; i++) {
-			int sid = capa.getTeamSID(teamId, i);
-			if (sid > 0) {
-				Entity shipEnt = level.getEntity(sid);
-				if (shipEnt instanceof BasicEntityShip ship) {
-					if (ship.getStateFlag(ID.F.NoFuel))
-						continue;
-					ship.setTarget(target instanceof net.minecraft.world.entity.LivingEntity le ? le : null);
-					ship.setEntityTarget(target);
-				}
+			BasicEntityShip ship = resolveTeamShip(level, capa, teamId, i);
+			if (ship != null) {
+				if (ship.getStateFlag(ID.F.NoFuel))
+					continue;
+				ship.setEntitySit(false);
+				ship.setTarget(target instanceof LivingEntity le ? le : null);
+				ship.setEntityTarget(target);
+				ship.applyEmotesReaction(5);
 			}
 		}
 	}
@@ -583,17 +617,12 @@ public class C2SGUIInputPacket {
 			return;
 		int teamId = capa.getSelectTeam();
 		for (int i = 0; i < CapaTeitoku.SLOT_NUM; i++) {
-			int sid = capa.getTeamSID(teamId, i);
-			if (sid > 0) {
-				Entity shipEnt = level.getEntity(sid);
-				if (shipEnt instanceof BasicEntityShip ship) {
-					if (ship.getStateFlag(ID.F.NoFuel))
-						continue;
-					ship.setStateMinor(ID.M.GuardID, target.getId());
-					ship.setStateMinor(ID.M.GuardX, (int) target.getX());
-					ship.setStateMinor(ID.M.GuardY, (int) target.getY());
-					ship.setStateMinor(ID.M.GuardZ, (int) target.getZ());
-				}
+			BasicEntityShip ship = resolveTeamShip(level, capa, teamId, i);
+			if (ship != null) {
+				if (ship.getStateFlag(ID.F.NoFuel))
+					continue;
+				FormationHelper.applyShipGuardEntity(ship, target);
+				ship.sendSyncPacketGuard();
 			}
 		}
 	}
@@ -641,32 +670,23 @@ public class C2SGUIInputPacket {
 	 * values: 0:player eid, 1:(unused dim), 2:mode, 3:guardType, 4:x, 5:y, 6:z
 	 */
 	private void handleSetMove(ServerPlayer player) {
-		if (values.length < 3)
+		if (values.length < 7)
 			return;
 		CapaTeitoku capa = player.getCapability(CapaTeitokuProvider.CAPABILITY).orElse(null);
 		if (capa == null)
 			return;
+		ServerLevel level = player.serverLevel();
 		int teamId = capa.getSelectTeam();
+		int gx = values[4];
+		int gy = values[5];
+		int gz = values[6];
 		for (int i = 0; i < CapaTeitoku.SLOT_NUM; i++) {
-			int sid = capa.getTeamSID(teamId, i);
-			if (sid > 0) {
-				Entity shipEnt = player.serverLevel().getEntity(sid);
-				if (shipEnt instanceof BasicEntityShip ship) {
-					if (ship.getStateFlag(ID.F.NoFuel))
-						continue;
-					ship.setEntitySit(false);
-
-					// Set guard position if coordinates are provided
-					if (values.length >= 7) {
-						int gx = values[4];
-						int gy = values[5];
-						int gz = values[6];
-						ship.setStateMinor(ID.M.GuardX, gx);
-						ship.setStateMinor(ID.M.GuardY, gy);
-						ship.setStateMinor(ID.M.GuardZ, gz);
-						ship.setStateMinor(ID.M.GuardDim, player.level().dimension().hashCode());
-					}
-				}
+			BasicEntityShip ship = resolveTeamShip(level, capa, teamId, i);
+			if (ship != null) {
+				if (ship.getStateFlag(ID.F.NoFuel))
+					continue;
+				FormationHelper.applyShipGuard(ship, gx, gy, gz, false);
+				ship.sendSyncPacketGuard();
 			}
 		}
 	}
@@ -983,6 +1003,39 @@ public class C2SGUIInputPacket {
 			}
 		}
 		return -1;
+	}
+
+	private static int findTeamSlotByUID(CapaTeitoku capa, int teamId, int shipUid) {
+		if (shipUid <= 0) {
+			return -1;
+		}
+		for (int i = 0; i < CapaTeitoku.SLOT_NUM; i++) {
+			if (capa.getTeamMember(teamId, i) == shipUid) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	private static int findFirstEmptySlot(CapaTeitoku capa, int teamId) {
+		for (int i = 0; i < CapaTeitoku.SLOT_NUM; i++) {
+			if (capa.getTeamMember(teamId, i) <= 0 || capa.getTeamSID(teamId, i) <= 0) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	private static BasicEntityShip resolveTeamShip(ServerLevel level, CapaTeitoku capa, int teamId, int slot) {
+		int entityId = capa.getTeamSID(teamId, slot);
+		if (entityId <= 0) {
+			return null;
+		}
+		Entity shipEnt = level.getEntity(entityId);
+		if (shipEnt instanceof BasicEntityShip ship) {
+			return ship;
+		}
+		return null;
 	}
 
 	// ========== Getters ==========

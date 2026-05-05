@@ -1,0 +1,17 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"pattern": [
+		"III",
+		"III",
+		"III"
+	],
+	"key": {
+		"I": {
+			"item": "shincolle:ammo_2"
+		}
+	},
+	"result": {
+		"item": "shincolle:ammo_3",
+		"count": 1
+	}
+}

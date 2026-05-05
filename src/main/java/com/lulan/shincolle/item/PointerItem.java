@@ -12,6 +12,7 @@ import com.lulan.shincolle.network.ModNetworking;
 import com.lulan.shincolle.reference.ID;
 import com.lulan.shincolle.tileentity.ITileGuardPoint;
 import com.lulan.shincolle.utility.ClientRuntimeHelper;
+import com.lulan.shincolle.utility.ParticleHelper;
 import com.lulan.shincolle.utility.TeamHelper;
 
 import net.minecraft.ChatFormatting;
@@ -275,6 +276,8 @@ public class PointerItem extends BasicItem {
 	private void handleRightClickClient(ItemStack stack, Player player, int mode) {
 		boolean isSneaking = player.isShiftKeyDown();
 		boolean isSprinting = player.isSprinting();
+		CapaTeitoku capa = player.getCapability(CapaTeitokuProvider.CAPABILITY).orElse(null);
+		int markerTeamId = capa != null ? capa.getSelectTeam() : 0;
 
 		// Ray trace for entities at 64 blocks
 		EntityHitResult entityHit = rayTraceEntities(player, 64.0);
@@ -287,6 +290,8 @@ public class PointerItem extends BasicItem {
 				ModNetworking.sendToServer(new C2SGUIInputPacket(
 						C2SGUIInputPacket.GuardEntity,
 						new int[] { player.getId(), 0, hitEntity.getId() }));
+				ParticleHelper.spawnAttackParticleAt(player.level(), hitEntity.getX(), hitEntity.getY(),
+						hitEntity.getZ(), 2);
 				return;
 			}
 
@@ -324,6 +329,8 @@ public class PointerItem extends BasicItem {
 					ModNetworking.sendToServer(new C2SGUIInputPacket(
 							C2SGUIInputPacket.AttackTarget,
 							new int[] { player.getId(), 0, hitEntity.getId() }));
+					ParticleHelper.spawnAttackParticleAt(player.level(), hitEntity.getX(), hitEntity.getY(),
+							hitEntity.getZ(), 2);
 				}
 			}
 			return;
@@ -365,6 +372,9 @@ public class PointerItem extends BasicItem {
 			ModNetworking.sendToServer(new C2SGUIInputPacket(
 					C2SGUIInputPacket.SetMove,
 					new int[] { player.getId(), 0, mode, guardType, x, y, z }));
+
+			ParticleHelper.spawnAttackParticleAt(player.level(), x + 0.5D, y, z + 0.5D,
+					0.3D, markerTeamId, 0D, 25);
 		}
 	}
 
@@ -377,12 +387,14 @@ public class PointerItem extends BasicItem {
 			ModNetworking.sendToServer(new C2SGUIInputPacket(
 					C2SGUIInputPacket.AttackTarget,
 					new int[] { player.getId(), 0, target.getId() }));
+			ParticleHelper.spawnAttackParticleAt(player.level(), target.getX(), target.getY(), target.getZ(), 2);
 		} else {
 			// Move to target position (include target coordinates)
 			ModNetworking.sendToServer(new C2SGUIInputPacket(
 					C2SGUIInputPacket.SetMove,
 					new int[] { player.getId(), 0, mode, 0,
 							(int) target.getX(), (int) target.getY(), (int) target.getZ() }));
+			ParticleHelper.spawnAttackParticleAt(player.level(), target.getX(), target.getY(), target.getZ(), 2);
 		}
 	}
 

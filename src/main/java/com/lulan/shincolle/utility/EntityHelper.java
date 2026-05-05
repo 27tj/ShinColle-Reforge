@@ -124,6 +124,12 @@ public class EntityHelper {
 			// tick custom navigator and move helper
 			pathNavi.onUpdateNavigation();
 			moveHelper.onUpdateMoveHelper();
+
+			// [PORT] 1.10.2 -> 1.20.1: apply movement immediately for custom
+			// ship navigation.
+			// Vanilla MoveControl can overwrite forward input before travel() in
+			// aiStep, causing ships to stand still while attacking/chasing.
+			entity.travel(new Vec3(entity.xxa, entity.yya, entity.zza));
 		}
 
 		// [PORT] 1.10.2 -> 1.20.1: keep vanilla path disabled in liquid to avoid

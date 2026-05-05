@@ -10,7 +10,6 @@ import com.lulan.shincolle.reference.Values;
 import com.lulan.shincolle.server.ServerDataManager;
 import com.lulan.shincolle.tileentity.TileEntityLightBlock;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
@@ -376,11 +375,11 @@ public class BlockHelper {
 	 */
 	@OnlyIn(Dist.CLIENT)
 	private static Entity getClientViewer() {
-		Minecraft mc = Minecraft.getInstance();
-		Entity viewer = mc.getCameraEntity();
+		Entity viewer = ClientRuntimeHelper.getClientCameraEntity();
 
-		if (viewer == null)
-			viewer = mc.player;
+		if (viewer == null) {
+			viewer = ClientRuntimeHelper.getClientPlayer();
+		}
 		if (viewer == null)
 			return null;
 
@@ -407,7 +406,9 @@ public class BlockHelper {
 		if (viewer == null)
 			return null;
 
-		duringTicks = Minecraft.getInstance().getFrameTime();
+		// [PORT] 1.10.2 -> 1.20.1: keep client partial tick usage while avoiding
+		// direct net.minecraft.client references in common utility code.
+		duringTicks = ClientRuntimeHelper.getClientFrameTime(duringTicks);
 
 		Vec3 eyePos = viewer.getEyePosition(duringTicks);
 		Vec3 lookVec = viewer.getViewVector(duringTicks);
