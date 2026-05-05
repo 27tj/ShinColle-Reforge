@@ -1,0 +1,2 @@
+- 2026-04-22: BlockHelper client-only access was routed via ClientRuntimeHelper reflection (getClientCameraEntity/getClientFrameTime) to avoid direct net.minecraft.client references in common utility code while preserving ray-trace behavior. Validation: compileJava success; runGameTestServer 37/37 pass.
+- Added docs/visual_checklist.md and docs/repro_issues.md by scanning existing [RENDER?]/[REPRO?] markers.

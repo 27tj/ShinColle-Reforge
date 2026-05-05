@@ -1,449 +1,83 @@
-# GitHub Copilot Agent Instructions
-# Minecraft Forge Mod 移植プロジェクト（1.10.2 → 1.20.1）
-
----
+# GitHub Copilot Instructions — Minecraft Mod Porting (1.10.2 → 1.20.1)
 
 ## プロジェクト概要
 
-このプロジェクトは **Minecraft Forge 1.10.2 で作成された Mod を 1.20.1 へ移植する作業** です。
-バージョン間のギャップは約 10 バージョン分に及び、Forge・Minecraft 双方で多数の破壊的変更が存在します。
-また、このプロジェクトは **進行途中であり、既存コードには未完成・不整合・暫定実装が含まれています。**
-
-### 移植の最重要原則
-
-> **「コンパイルが通ること」「旧 API が残っていないこと」は移植完了の条件ではない。**
-> **移植元（1.10.2）と同一の挙動が再現できていることが唯一のゴールである。**
-
-Copilot は常に「移植元ではどう動くか」を基準として作業してください。
-移植元の挙動が確認できない場合は、実装を完了とみなさず、必ず未確認であることを明示してください。
+このプロジェクトは Minecraft Forge Mod を **1.10.2 から 1.20.1 へ移植**する作業です。
+旧バージョンのソースコードは `original_source/` ディレクトリに配置されています。
 
 ---
 
-## 0. 作業フロー（すべての編集作業で必ず従う）
+## ディレクトリ構成の前提
 
-### PHASE 1: 移植元の挙動を確認する（編集前・必須）
-
-対象ファイルを編集する前に、**移植元（1.10.2）の対応するコードを必ず参照し、以下を文書化してください。**
-移植元コードが手元にない場合は、その旨を報告して作業を止めてください。
-
-```
-📖 移植元の挙動確認: <クラス名#メソッド名>
-
-【移植元コード（1.10.2）の要約】
-  - 何をするメソッド/クラスか:
-  - 入力: <引数・前提条件>
-  - 出力・副作用: <戻り値・状態変化・イベント発火・NBT 操作など>
-  - 呼び出し元・呼び出し条件: <どのタイミングで呼ばれるか>
-  - 特記事項: <エッジケース・null 条件・サーバー/クライアントの違いなど>
-```
-
-この確認なしに実装を始めることを禁止します。
-
-### PHASE 2: ファイルスキャン（編集前・必須）
-
-以下のパターンをすべて検索し、件数と内容を報告してください：
-
-```
-【未実装スキャン】
-  // TODO  // FIXME  // HACK  // PORT?  // BEHAVIOR?  // RENDER?  // TODO(Copilot)
-  throw new UnsupportedOperationException
-  インターフェース実装メソッドで本体が {} のみ
-
-【旧API残存スキャン（描画系）】
-  GL11.  GL13.  GL14.  GL20.
-  GlStateManager.enableAlpha    GlStateManager.disableAlpha
-  GlStateManager.enableLighting GlStateManager.disableLighting
-  GlStateManager.color(         GlStateManager.translate(
-  TileEntitySpecialRenderer     WorldRenderer（旧）
-  RenderHelper.
-
-【旧API残存スキャン（ロジック系）】
-  world.isRemote        GameRegistry.register
-  NBTTagCompound        NBTTagList        IBlockState
-  EnumFacing            EntityPlayer      TileEntity       ITickable
-  TextComponentString   TextComponentTranslation
-  NetworkRegistry.INSTANCE.newSimpleChannel
-  DamageSource.GENERIC  DamageSource.MAGIC  （静的フィールド参照）
-  entity.attackEntityFrom(    entity.remove()    world.spawnEntity(
-  new Configuration(
-
-【クライアント/サーバー混在スキャン】
-  @OnlyIn なしで Minecraft.getInstance() が呼ばれていないか
-  DistExecutor で適切に分岐されているか
-```
-
-### PHASE 3: 実装する
-
-移植元の挙動確認（PHASE 1）を参照しながら実装してください。
-実装中に移植元との差異が生じる場合は、その理由を `// [PORT]` コメントで明記してください。
-
-### PHASE 4: 再現度を自己評価する（実装後・必須）
-
-**実装が完了したと判断した時点で、必ず以下のフォーマットで再現度を自己評価して報告してください。**
-「おそらく動く」「たぶん大丈夫」は認めません。根拠のない項目は `未確認` と記載してください。
-
-```
-📊 再現度レポート: <クラス名 / 機能名>
-
-【挙動の再現状況】
-  ✅ 再現確認済み  : <具体的な挙動と確認根拠>
-  ⚠️  要検証      : <何が確認できていないか、どう確認すべきか>
-  ❌ 再現できていない: <何が違うか、なぜ違うか>
-  ❓ 移植元挙動不明 : <何がわからないか>
-
-【再現度スコア】（確認済み項目 / 全項目）
-  ロジック:   ___ / ___
-  副作用:     ___ / ___
-  エッジケース: ___ / ___
-  描画:       ___ / ___  （該当する場合）
-
-【未解決の問題】
-  - <問題1>: <推奨アクション>
-  - <問題2>: <推奨アクション>
-```
-
-スコアが低い・未確認項目がある場合は、完了とみなさず `// [REPRO?]` コメントを付与してください。
+| パス | 内容 |
+|---|---|
+| `original_source/` | 移植元となる 1.10.2 時代のオリジナルソース（読み取り専用参照用） |
+| `src/` | 移植先となる 1.20.1 用の新しいソース（実装作業対象） |
 
 ---
 
-## 1. 再現度検証の具体的な観点
+## Copilot への基本方針
 
-### 1-1. ロジックの再現
+### 1. 旧実装の確認（`original_source/` の参照）
 
-以下の観点で移植元との一致を確認してください：
+- `original_source/` 内のコードは **参照専用** です。直接編集しないでください。
+- 旧実装の挙動・ロジックを説明する際は、対象ファイルのパスとクラス名・メソッド名を明示してください。
+- 旧バージョン固有の API（例：`IBlockState`, `net.minecraftforge.fml.common.registry.GameRegistry` など）については、**廃止された旨を明記**したうえで、1.20.1 での対応する代替 API を提示してください。
 
-| 観点 | 確認内容 |
-|------|----------|
-| **戻り値** | 同じ入力に対して同じ値を返すか |
-| **副作用** | 状態変化・NBT 書き込み・イベント発火のタイミングと内容が一致するか |
-| **条件分岐** | サーバー/クライアント・null チェック・範囲チェックの条件が同一か |
-| **数値** | ダメージ・速度・距離・確率などの定数が移植元と一致するか |
-| **NBT キー** | 読み書きするキー名・型が移植元と一致するか（変更はセーブ破壊につながる） |
-| **エッジケース** | 空スタック・null エンティティ・未ロードチャンクなどの境界値処理 |
+### 2. 1.20.1 の API・実装調査
 
-### 1-2. 描画の再現
+- Minecraft 1.20.1 / Forge 47.x のAPIを前提に回答してください。
+- `net.minecraft.*` および `net.minecraftforge.*` のクラス・インターフェースは **1.20.1 時点の正しい名前空間とシグネチャ** で提示してください。
+- Mixin（Fabric）ではなく **Forge の仕組み**（`@Mod`, `IForgeRegistry`, `DeferredRegister` 等）を基本とします。
+- レジストリは旧来の `GameRegistry` ではなく `DeferredRegister<T>` を使う方針で回答してください。
 
-描画コードは GameTest で自動検証できないため、以下の観点を **`docs/visual_checklist.md`** に記録してください：
+### 3. 実装方法の提案
 
-```
-【ブロック描画】
-  □ 通常状態のテクスチャが正しく表示される
-  □ BlockEntity のアニメーションが移植元と一致して動作する
-  □ 状態変化（ON/OFF など）に応じたモデル切り替えが動作する
-
-【エンティティ描画】
-  □ モデルの形状・サイズが移植元と一致する
-  □ アニメーション（歩き・攻撃・アイドルなど）が一致する
-  □ カスタムレイヤー（装備・エフェクトなど）が正しく表示される
-  □ 視点距離による LOD（詳細度）が意図通り動作する
-
-【GUI】
-  □ レイアウト・座標が移植元と一致する
-  □ スロット・ボタンの動作が一致する
-  □ テキスト・フォントが正しく表示される
-
-【パーティクル・エフェクト】
-  □ スポーン位置・頻度・サイズが移植元と一致する
-```
-
-描画の再現が確認できていない箇所には：
-
-```java
-// [RENDER?] 目視検証必須: <移植元の見た目の説明> / <何が変わった可能性があるか>
-```
-
-### 1-3. よくある「再現度が低いパターン」
-
-以下は特に再現漏れが起きやすいケースです。実装後に必ず確認してください：
-
-#### 数値・定数の暗黙的変化
-
-```java
-// 移植元では整数ダメージ（1.10.2 は半ハート単位）だったが
-// 1.20.1 では浮動小数点で扱う → 端数処理の違いに注意
-// [PORT] 1.10.2 -> 1.20.1: ダメージ計算の精度変化を要確認
-entity.hurt(level.damageSources().magic(), damage);
-```
-
-#### DamageSource の変更（1.20〜）
-
-```java
-// ❌ 静的フィールドが廃止
-entity.attackEntityFrom(DamageSource.MAGIC, 5.0f);
-
-// ✅ レベルのファクトリから生成
-entity.hurt(level.damageSources().magic(), 5.0f);
-// カスタムダメージは DamageType をレジストリに登録
-```
-
-#### イベントのキャンセル・タイミング変化
-
-| イベント | 変化・注意点 |
-|----------|-------------|
-| `LivingDeathEvent` | キャンセル後のドロップ・経験値挙動が変わった |
-| `PlayerInteractEvent` | LEFT/RIGHT サブイベント構成が変更 |
-| `TickEvent.LevelTickEvent` | 旧 `WorldTickEvent`。`world` → `level` フィールド |
-| `ChunkEvent.Load` | 非同期処理によりタイミングが変化 |
-
-#### NBT のサイレント失敗
-
-```java
-// 型不一致で例外が出ず 0 / false / "" が返る → 移植元と動作が変わる
-// ✅ 型を指定した安全な確認
-if (nbt.contains("myKey", Tag.TAG_INT)) {
-    int val = nbt.getInt("myKey");
-}
-```
-
-#### `ItemStack` の null 扱い変化
-
-```java
-// ❌ 1.10.2 では null チェックが必要だったが 1.20.1 では isEmpty() を使う
-if (stack == null) { ... }          // ❌ 禁止
-if (stack.isEmpty()) { ... }        // ✅
-```
-
-#### エンティティライフサイクルの変化
-
-```java
-entity.remove();     // ❌ → entity.discard(); ✅
-world.spawnEntity(); // ❌ → level.addFreshEntity(); ✅
-```
+- 実装案を提示する際は、以下の順序で説明してください：
+  1. **旧実装でのアプローチ**（`original_source/` のどのクラスに相当するか）
+  2. **1.20.1 での変更点・廃止事項**
+  3. **新実装のサンプルコード**（コメント付き）
+- コードは Java 17 構文を使用してください（`var`, `record`, sealed class なども可）。
+- 副作用が大きいリファクタは提案するにとどめ、**自動適用はしない**でください。
 
 ---
 
-## 2. コメント記法（トレーサビリティ）
+## バージョン間の主要な変更点（ヒント集）
 
-| 記法 | 意味 |
-|------|------|
-| `// [PORT] 1.10.2 -> 1.20.1: <理由>` | 移植変更の記録 |
-| `// [PORT] 1.10.2 -> 1.13 -> 1.17 -> 1.20.1: <理由>` | 中間バージョン経由の変更 |
-| `// [PORT?] <不明な点>` | 移植元の挙動が不明で要確認 |
-| `// [BEHAVIOR?] <差分の説明>` | コンパイルは通るが動作等価性が不明 |
-| `// [RENDER?] <確認すべき内容>` | 描画の目視確認が必要 |
-| `// [REPRO?] <再現できていない内容>` | 再現度レポートで未解決のまま残った箇所 |
-| `// TODO(Copilot): 暫定実装。<理由>` | Copilot が生成した暫定コード |
+> Copilot はこのセクションを参考に回答の精度を高めてください。
 
----
-
-## 3. バージョン間差分の吸収（1.10.2 → 1.20.1）
-
-### 3-1. 命名規則の大変更（MCP → Mojmap、1.17〜）
-
-| 1.10.2 (MCP)                  | 1.20.1 (Mojmap)                              |
-|-------------------------------|----------------------------------------------|
-| `World`                       | `Level`                                      |
-| `WorldServer`                 | `ServerLevel`                                |
-| `WorldClient`                 | `ClientLevel`                                |
-| `EntityPlayer`                | `Player`                                     |
-| `EntityPlayerSP`              | `LocalPlayer`                                |
-| `EntityPlayerMP`              | `ServerPlayer`                               |
-| `TileEntity`                  | `BlockEntity`                                |
-| `IBlockState`                 | `BlockState`                                 |
-| `Block.getStateFromMeta`      | 削除（`BlockState` + `Property<T>` で管理）  |
-| `ItemStack.stackTagCompound`  | `ItemStack#getTag()`                         |
-| `NBTTagCompound`              | `CompoundTag`                                |
-| `NBTTagList`                  | `ListTag`                                    |
-| `Vec3d`                       | `Vec3`                                       |
-| `AxisAlignedBB`               | `AABB`                                       |
-| `EnumFacing`                  | `Direction`                                  |
-| `EnumHand`                    | `InteractionHand`                            |
-| `EnumActionResult`            | `InteractionResult`                          |
-| `RayTraceResult`              | `HitResult` / `BlockHitResult` / `EntityHitResult` |
-| `TextFormatting`              | `ChatFormatting`                             |
-| `ITextComponent`              | `Component`                                  |
-| `TextComponentString`         | `Component.literal()`                        |
-| `TextComponentTranslation`    | `Component.translatable()`                   |
-| `Entity#remove()`             | `Entity#discard()`                           |
-| `World#spawnEntity()`         | `Level#addFreshEntity()`                     |
-
-### 3-2. レジストリ（1.14〜）
-
-```java
-// ❌ 使用禁止
-GameRegistry.registerItem(item, "name");
-
-// ✅ DeferredRegister
-public static final DeferredRegister<Item> ITEMS =
-    DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
-public static final RegistryObject<Item> MY_ITEM =
-    ITEMS.register("my_item", () -> new Item(new Item.Properties()));
-```
-
-### 3-3. TileEntity → BlockEntity（1.17〜）
-
-```java
-// ✅ 1.20.1
-public class MyBE extends BlockEntity {
-    public MyBE(BlockPos pos, BlockState state) {
-        super(MY_BE_TYPE.get(), pos, state);
-    }
-    @Override public void load(CompoundTag nbt) { super.load(nbt); }
-    @Override protected void saveAdditional(CompoundTag nbt) { super.saveAdditional(nbt); }
-}
-```
-
-### 3-4. サイド判定
-
-```java
-// ❌  if (!world.isRemote)
-// ✅
-if (!level.isClientSide()) { /* サーバー処理 */ }
-```
-
-### 3-5. ネットワーク（SimpleImpl → SimpleChannel）
-
-```java
-// ❌ 使用禁止
-SimpleNetworkWrapper network = NetworkRegistry.INSTANCE.newSimpleChannel(MODID);
-
-// ✅
-public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
-    new ResourceLocation(MODID, "main"),
-    () -> "1.0", "1.0"::equals, "1.0"::equals
-);
-```
-
-handler 内では必ず `ctx.get().enqueueWork(() -> { ... })` を使うこと。
-
-### 3-6. イベントバスの分離（1.14〜）
-
-| イベント種別 | 登録先 |
-|-------------|--------|
-| `FMLCommonSetupEvent` など Mod ロード系 | MOD バス（`getModEventBus()`） |
-| `PlayerEvent`・`BlockEvent` などゲーム系 | FORGE バス（`MinecraftForge.EVENT_BUS`） |
-
-### 3-7. 描画 API（1.15〜）
-
-```java
-// ❌ 使用禁止
-GL11.glBegin(GL11.GL_QUADS);
-GlStateManager.color(r, g, b, a);
-GlStateManager.enableAlpha();
-
-// ✅ PoseStack + MultiBufferSource
-poseStack.pushPose();
-try {
-    poseStack.translate(x, y, z);
-    VertexConsumer consumer = bufferSource.getBuffer(RenderType.entityCutout(texture));
-    // 描画処理
-} finally {
-    poseStack.popPose();  // push/pop の対称性を try-finally で保証
-}
-```
-
-| 1.10.2                        | 1.20.1                              |
-|-------------------------------|-------------------------------------|
-| `TileEntitySpecialRenderer<T>`| `BlockEntityRenderer<T>`            |
-| `Render<T>`                   | `EntityRenderer<T>`                 |
-| `ModelBase` / `ModelRenderer` | `Model` / `ModelPart`               |
-| `GlStateManager.bindTexture`  | `RenderSystem.setShaderTexture`     |
-| `RenderGameOverlayEvent`      | `RenderGuiOverlayEvent`（1.19.4〜） |
-| `Gui.drawTexturedModalRect`   | `GuiGraphics#blit`                  |
-| `FontRenderer`                | `Font` / `GuiGraphics#drawString`   |
-
-### 3-8. 設定ファイル（1.13〜）
-
-```java
-// ❌ Configuration（使用禁止）
-// ✅ ForgeConfigSpec
-public static final ForgeConfigSpec.IntValue MY_VALUE =
-    BUILDER.comment("説明").defineInRange("myValue", 10, 0, 100);
-```
-
-### 3-9. リソースパック・アセット（1.13〜）
-
-- モデルパスに `block/`・`item/` プレフィックスが必須
-- 言語ファイル: `en_us.lang` → `en_us.json`
-- `blockstates/` の JSON 形式が変更（`variants` / `multipart` 構造）
+| 1.10.2 の書き方 | 1.20.1 での対応 |
+|---|---|
+| `IBlockState` | `BlockState` |
+| `BlockPos.MutableBlockPos` | 同名・一部メソッド変更あり |
+| `GameRegistry.registerBlock()` | `DeferredRegister<Block>` |
+| `GameRegistry.registerItem()` | `DeferredRegister<Item>` |
+| `@EventHandler` (FMLPreInitializationEvent 等) | `@Mod.EventBusSubscriber` + `FMLCommonSetupEvent` 等 |
+| `World` (server/client 共通) | `Level` (server: `ServerLevel`, client: `ClientLevel`) |
+| `EntityPlayer` | `Player` (`ServerPlayer` / `LocalPlayer`) |
+| `IInventory` | `Container` / `SimpleContainer` |
+| `TileEntity` | `BlockEntity` |
+| `@SideOnly(Side.CLIENT)` | `@OnlyIn(Dist.CLIENT)` |
+| `NetworkRegistry` / `SimpleNetworkWrapper` | `SimpleChannel` (NetworkDirection ベース) |
+| `IRecipe` | `Recipe<C>` + JSON レシピファイル |
 
 ---
 
-## 4. テスト戦略
+## 回答スタイルの指示
 
-### 4-1. テストの使い分け
-
-| テスト種別 | 用途 | 使用場面 |
-|-----------|------|----------|
-| **JUnit 5** | ゲームコンテキスト不要なロジック | 計算・変換・NBT 構造 |
-| **Forge GameTest** | ゲーム内サーバーサイド動作検証 | ブロック・エンティティ・イベント |
-| **目視チェックリスト** | クライアントサイド・描画の検証 | レンダリング・GUI・モデル |
-
-### 4-2. Forge GameTest
-
-```groovy
-minecraft {
-    runs {
-        gameTestServer {
-            workingDirectory project.file('run')
-            property 'forge.enabledGameTestNamespaces', project.mod_id
-        }
-    }
-}
-```
-
-```java
-@GameTestHolder(value = MyMod.MODID)
-@PrefixGameTestTemplate(false)
-public class MyBlockGameTest {
-
-    @GameTest(template = "flat_10x10")
-    public static void blockEntity_nbtRoundTrip(GameTestHelper helper) {
-        BlockPos pos = new BlockPos(1, 1, 1);
-        helper.setBlock(pos, MyMod.MY_BLOCK.get().defaultBlockState());
-        ServerLevel level = helper.getLevel();
-        MyBE be = (MyBE) level.getBlockEntity(helper.absolutePos(pos));
-        assertNotNull(be);
-        CompoundTag nbt = be.saveWithFullMetadata();
-        be.load(nbt);
-        helper.succeed();
-    }
-}
-```
-
-GameTest で優先的に検証すべき項目：
-
-```
-□ BlockEntity の NBT 読み書きの往復（移植元と同一のキー・型・値か）
-□ ブロックのインタラクション（右クリック・左クリック）
-□ エンティティのスポーン・tick・削除
-□ カスタムイベントの発火・キャンセル
-□ ダメージ・治癒の数値が移植元と一致するか
-□ ネットワークパケット送受信後の状態変化
-```
+- **日本語で回答**してください。コード・識別子は英語のまま維持してください。
+- 「このメソッドは 1.12 で廃止、1.16 で削除」のように**バージョン経緯**が分かる場合は補足してください。
+- 不明な点や Forge のバージョン差異が不確実な場合は、**推測である旨を明示**してから回答してください。
+- Minecraft の公式 Javadoc や Forge の GitHub (MinecraftForge/MinecraftForge) を根拠にできる場合はそれを示してください。
 
 ---
 
-## 5. コーディング規約
+## Ask モードでの典型的な質問パターン
 
-- Java 17 以上の構文を使用すること（`record`・`sealed class`・テキストブロックなど）
-- すべての `public` クラス・メソッドに Javadoc を記述すること（`@param`・`@return`・`@throws` 必須）
-- `null` を返す API は避け、`Optional<T>` を使用すること
-- `ItemStack` の null チェックは `stack.isEmpty()` を使うこと（`== null` は禁止）
-- アクセス修飾子は常に明示すること
-- マジックナンバーは `static final` 定数で定義すること
-- インデント: スペース 4 つ、1 行最大 120 文字
+以下のような質問を想定しています。適切なコンテキストを踏まえて回答してください。
 
----
-
-## 6. セキュリティ
-
-- ネットワークパケット受信時はサーバー側で必ず入力バリデーションを行うこと
-- プレイヤーから送られるデータを無条件に信頼しないこと
-- `Command` 登録時は適切な `permissionLevel`（通常は 2 = OP）を設定すること
-- ファイル I/O はゲームディレクトリ外へのアクセスを禁止すること
-
----
-
-## 7. エージェントへの行動指針
-
-1. **移植元の挙動確認なしに実装を始めない** — PHASE 1 の文書化なしに PHASE 3 に進むことを禁止する
-2. **実装後は必ず再現度レポートを出力する** — 「おそらく動く」は認めない。未確認は `未確認` と書く
-3. **再現度スコアが低い箇所は完了とみなさない** — `// [REPRO?]` でマークして未解決リストに残す
-4. **ファイルを開いたら PHASE 2 のスキャンを実行する** — スキャン完了前に編集を始めない
-5. **描画の問題は `[RENDER?]` でマークして目視チェックリストに転記する** — GameTest で代替しない
-6. **コンパイル成功を動作保証と混同しない** — 再現度の根拠を常に問う
-7. **移植元コードがない場合は作業を止める** — 比較対象なしに再現度を評価できない
-8. **差分を最小化する** — 移植に直接関係しないリファクタリングを勝手に行わない
-9. **NBT キー名を変更しない** — セーブデータの破壊につながるため変更前に必ず警告する
-10. **GameTest はサーバーサイド検証に集中させる** — 描画検証に GameTest を使おうとしない
+- `original_source/` の〇〇クラスは何をしているのか説明して
+- 1.10.2 の `XXX` に相当する 1.20.1 の API は何か
+- 1.20.1 でカスタムブロックエンティティを登録する方法を教えて
+- このメソッドのシグネチャが変わっているが、新バージョンではどう呼べばいいか
+- 旧実装のネットワークパケット処理を 1.20.1 に移植したい

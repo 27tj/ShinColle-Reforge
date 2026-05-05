@@ -7,14 +7,14 @@
   ],
   "key": {
     "P": {
-      "item": "shincolle:polymetal_nodule"
+      "item": "shincolle:grudge_heavy"
     },
     "C": {
-      "item": "minecraft:cauldron"
+      "item": "shincolle:ship_tank_2"
     }
   },
   "result": {
-    "item": "shincolle:ship_tank",
+    "item": "shincolle:ship_tank_3",
     "count": 1
   }
 }

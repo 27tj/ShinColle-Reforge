@@ -1666,6 +1666,48 @@ public abstract class BasicEntityShip extends TamableAnimal
 		} else {
 			this.setStateEmotion(ID.S.HPState, ID.HPState.HEAVY, false);
 		}
+
+		// [PORT] 1.10.2 -> 1.20.1: restore legacy emotion roll chain
+		// hungry > T_T > random bored/normal.
+		if (getStateFlag(ID.F.NoFuel)) {
+			if (this.getStateEmotion(ID.S.Emotion) != ID.Emotion.HUNGRY) {
+				this.setStateEmotion(ID.S.Emotion, ID.Emotion.HUNGRY, false);
+			}
+		} else if (hpRatio < 0.35F) {
+			if (this.getStateEmotion(ID.S.Emotion) != ID.Emotion.T_T) {
+				this.setStateEmotion(ID.S.Emotion, ID.Emotion.T_T, false);
+			}
+		} else {
+			switch (this.getStateEmotion(ID.S.Emotion)) {
+				case ID.Emotion.NORMAL:
+					if (this.random.nextInt(3) == 0) {
+						this.setStateEmotion(ID.S.Emotion, ID.Emotion.BORED, false);
+					}
+					break;
+				default:
+					if (this.random.nextInt(4) == 0) {
+						this.setStateEmotion(ID.S.Emotion, ID.Emotion.NORMAL, false);
+					}
+					break;
+			}
+
+			switch (this.getStateEmotion(ID.S.Emotion4)) {
+				case ID.Emotion.NORMAL:
+					if (this.random.nextInt(3) == 0) {
+						this.setStateEmotion(ID.S.Emotion4, ID.Emotion.BORED, false);
+					}
+					break;
+				default:
+					if (this.random.nextInt(3) == 0) {
+						this.setStateEmotion(ID.S.Emotion4, ID.Emotion.NORMAL, false);
+					}
+					break;
+			}
+		}
+
+		if (!this.level().isClientSide()) {
+			this.sendSyncPacketEmotion();
+		}
 	}
 
 	/** update morale over time. called every 128 ticks */
@@ -2835,7 +2877,7 @@ public abstract class BasicEntityShip extends TamableAnimal
 
 	@Override
 	public Component getDisplayName() {
-		return this.getCustomName() != null ? this.getCustomName() : Component.literal("Ship");
+		return this.getCustomName() != null ? this.getCustomName() : this.getName();
 	}
 
 	@Override

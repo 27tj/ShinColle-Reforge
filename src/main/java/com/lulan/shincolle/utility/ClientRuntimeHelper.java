@@ -3,6 +3,7 @@ package com.lulan.shincolle.utility;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.loading.FMLEnvironment;
@@ -30,6 +31,40 @@ public final class ClientRuntimeHelper {
 			return playerObj instanceof Player player ? player : null;
 		} catch (Throwable ignored) {
 			return null;
+		}
+	}
+
+	public static Entity getClientCameraEntity() {
+		if (FMLEnvironment.dist != Dist.CLIENT) {
+			return null;
+		}
+
+		try {
+			Class<?> mcClass = Class.forName("net.minecraft.client.Minecraft");
+			Method getInstance = mcClass.getMethod("getInstance");
+			Object mc = getInstance.invoke(null);
+			Method getCameraEntity = mcClass.getMethod("getCameraEntity");
+			Object camera = getCameraEntity.invoke(mc);
+			return camera instanceof Entity entity ? entity : null;
+		} catch (Throwable ignored) {
+			return null;
+		}
+	}
+
+	public static float getClientFrameTime(float fallback) {
+		if (FMLEnvironment.dist != Dist.CLIENT) {
+			return fallback;
+		}
+
+		try {
+			Class<?> mcClass = Class.forName("net.minecraft.client.Minecraft");
+			Method getInstance = mcClass.getMethod("getInstance");
+			Object mc = getInstance.invoke(null);
+			Method getFrameTime = mcClass.getMethod("getFrameTime");
+			Object value = getFrameTime.invoke(mc);
+			return value instanceof Float f ? f : fallback;
+		} catch (Throwable ignored) {
+			return fallback;
 		}
 	}
 

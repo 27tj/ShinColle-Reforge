@@ -451,7 +451,7 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
         }
 
         // Ship Name
-        String shipName = ship.getCustomName() != null ? ship.getCustomName().getString() : ship.getName().getString();
+        String shipName = ship.hasCustomName() ? ship.getCustomName().getString() : ship.getName().getString();
         graphics.drawString(this.font, shipName, 8, 6, 0x000000, false);
 
         // Level (right-aligned, gold for 150+)

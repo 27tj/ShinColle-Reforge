@@ -414,6 +414,13 @@ public abstract class BasicEntityShipHostile extends Mob
 			EntityHelper.updateShipNavigator(this);
 			TargetHelper.updateTarget(this);
 
+			// [PORT] 1.10.2 -> 1.20.1: keep legacy bridge from vanilla target AI.
+			// Some hostile targeting paths only update Mob#getTarget; mirror it to
+			// custom entityTarget so ship attack goals can engage.
+			if (this.getTarget() != null) {
+				this.setEntityTarget(this.getTarget());
+			}
+
 			super.aiStep();
 
 			// timer ticking
@@ -719,6 +726,47 @@ public abstract class BasicEntityShipHostile extends Mob
 			this.setStateEmotion(ID.S.HPState, ID.HPState.MODERATE, false);
 		} else {
 			this.setStateEmotion(ID.S.HPState, ID.HPState.HEAVY, false);
+		}
+
+		// [PORT] 1.10.2 -> 1.20.1: restore hostile legacy emotion roll chain.
+		if (getStateFlag(ID.F.NoFuel)) {
+			if (this.getStateEmotion(ID.S.Emotion) != ID.Emotion.HUNGRY) {
+				this.setStateEmotion(ID.S.Emotion, ID.Emotion.HUNGRY, false);
+			}
+		} else if (hpRatio < 0.35F) {
+			if (this.getStateEmotion(ID.S.Emotion) != ID.Emotion.T_T) {
+				this.setStateEmotion(ID.S.Emotion, ID.Emotion.T_T, false);
+			}
+		} else {
+			switch (this.getStateEmotion(ID.S.Emotion)) {
+				case ID.Emotion.NORMAL:
+					if (this.random.nextInt(4) == 0) {
+						this.setStateEmotion(ID.S.Emotion, ID.Emotion.BORED, false);
+					}
+					break;
+				default:
+					if (this.random.nextInt(2) == 0) {
+						this.setStateEmotion(ID.S.Emotion, ID.Emotion.NORMAL, false);
+					}
+					break;
+			}
+
+			switch (this.getStateEmotion(ID.S.Emotion4)) {
+				case ID.Emotion.NORMAL:
+					if (this.random.nextInt(3) == 0) {
+						this.setStateEmotion(ID.S.Emotion4, ID.Emotion.BORED, false);
+					}
+					break;
+				default:
+					if (this.random.nextInt(2) == 0) {
+						this.setStateEmotion(ID.S.Emotion4, ID.Emotion.NORMAL, false);
+					}
+					break;
+			}
+		}
+
+		if (!this.level().isClientSide()) {
+			this.sendSyncPacket(0);
 		}
 	}
 
