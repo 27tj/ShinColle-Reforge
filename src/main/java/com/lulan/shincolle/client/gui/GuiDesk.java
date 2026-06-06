@@ -31,6 +31,7 @@ import net.minecraft.world.item.ItemStack;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * GUI screen for the admiral's desk block.
@@ -449,7 +450,7 @@ public class GuiDesk extends AbstractContainerScreen<ContainerDesk> {
 
             // Name
             if (entity.hasCustomName()) {
-                rs.name = entity.getCustomName().getString();
+                rs.name = Objects.requireNonNull(entity.getCustomName()).getString();
             } else {
                 rs.name = entity.getName().getString();
             }
@@ -533,7 +534,7 @@ public class GuiDesk extends AbstractContainerScreen<ContainerDesk> {
             RadarShip rs = shipList.get(i);
             if (rs != null && rs.ship instanceof BasicEntityShip ship) {
                 int morale = ship.getMorale();
-                int ix = 44; // default
+                int ix; // default
                 if (morale >= 85)
                     ix = 0; // excited
                 else if (morale >= 50)
@@ -572,13 +573,13 @@ public class GuiDesk extends AbstractContainerScreen<ContainerDesk> {
         if (bookChapNum == 4 && bookPageNum > 0) {
             int idx = bookPageNum - 1;
             List<Integer> list = Values.ShipBookList;
-            if (idx >= 0 && idx < list.size()) {
+            if (idx < list.size()) {
                 shipClass = list.get(idx);
             }
         } else if (bookChapNum == 5 && bookPageNum > 0) {
             int idx = bookPageNum - 1;
             List<Integer> list = Values.EnemyBookList;
-            if (idx >= 0 && idx < list.size()) {
+            if (idx < list.size()) {
                 shipClass = list.get(idx);
             }
         }
@@ -745,7 +746,6 @@ public class GuiDesk extends AbstractContainerScreen<ContainerDesk> {
                     colorLT = Enums.EnumColors.CYAN.getValue();
                 }
                 strLB = strOK;
-                colorLB = Enums.EnumColors.WHITE.getValue();
                 break;
             case TEAMSTATE_BAN:
                 if (tempCD > 0) {
@@ -756,20 +756,17 @@ public class GuiDesk extends AbstractContainerScreen<ContainerDesk> {
                     colorLT = Enums.EnumColors.YELLOW.getValue();
                 }
                 strLB = strOK;
-                colorLB = Enums.EnumColors.WHITE.getValue();
                 break;
             case TEAMSTATE_CREATE:
                 g.drawString(this.font, ChatFormatting.WHITE + strTeamID + "  " +
                         ChatFormatting.YELLOW + this.capa.getPlayerUID(),
                         10, 43, 0, false);
                 strLB = strOK;
-                colorLB = Enums.EnumColors.WHITE.getValue();
                 strLT = strCancel;
                 colorLT = Enums.EnumColors.GRAY_LIGHT.getValue();
                 break;
             case TEAMSTATE_RENAME:
                 strLB = strOK;
-                colorLB = Enums.EnumColors.WHITE.getValue();
                 strLT = strCancel;
                 colorLT = Enums.EnumColors.GRAY_LIGHT.getValue();
                 break;
@@ -780,7 +777,6 @@ public class GuiDesk extends AbstractContainerScreen<ContainerDesk> {
                     strLB = strBanList;
                     colorLB = Enums.EnumColors.YELLOW.getValue();
                     strRT = strRename;
-                    colorRT = Enums.EnumColors.WHITE.getValue();
 
                     if (capa.getTeamCooldown() > 0) {
                         strRB = String.valueOf(capa.getTeamCooldown() / 20);
@@ -1134,7 +1130,7 @@ public class GuiDesk extends AbstractContainerScreen<ContainerDesk> {
                 break;
             case 6: // OK - create team
                 String name = textField.getValue();
-                if (name != null && name.length() > 1) {
+                if (name.length() > 1) {
                     ModNetworking.sendToServer(new C2SGUIInputPacket(
                             C2SGUIInputPacket.Desk_Create, new int[0], name));
                     this.tempCD = CLICKCD;
@@ -1153,7 +1149,7 @@ public class GuiDesk extends AbstractContainerScreen<ContainerDesk> {
                 break;
             case 6: // OK - rename team
                 String name = textField.getValue();
-                if (name != null && name.length() > 1) {
+                if (name.length() > 1) {
                     ModNetworking.sendToServer(new C2SGUIInputPacket(
                             C2SGUIInputPacket.Desk_Rename, new int[0], name));
                     this.tempCD = CLICKCD;
@@ -1243,7 +1239,7 @@ public class GuiDesk extends AbstractContainerScreen<ContainerDesk> {
         if (listFocus == LISTCLICK_TEAM) {
             int idx = listClicked[LISTCLICK_TEAM] + listNum[LISTCLICK_TEAM];
             List<Integer> knownTeams = getKnownTeamIdsForDisplay();
-            if (knownTeams != null && idx >= 0 && idx < knownTeams.size()) {
+            if (idx >= 0 && idx < knownTeams.size()) {
                 return knownTeams.get(idx);
             }
         }
@@ -1356,22 +1352,19 @@ public class GuiDesk extends AbstractContainerScreen<ContainerDesk> {
     }
 
     private void handleTargetClick(int btn) {
-        switch (btn) {
-            case 0: // Remove target
-                int clicked = listClicked[LISTCLICK_TARGET] + listNum[LISTCLICK_TARGET];
-                if (clicked >= 0 && clicked < tarList.size()) {
-                    String tarStr = tarList.get(clicked);
-                    ModNetworking.sendToServer(new C2SGUIInputPacket(
-                            C2SGUIInputPacket.SetTarClass, new int[0], tarStr));
-                    tarList.remove(clicked);
-                    listClicked[LISTCLICK_TARGET] = -1;
-                }
-                break;
-            default:
-                if (btn >= 1 && btn <= 13) {
-                    listClicked[LISTCLICK_TARGET] = btn - 1;
-                }
-                break;
+        if (btn == 0) { // Remove target
+            int clicked = listClicked[LISTCLICK_TARGET] + listNum[LISTCLICK_TARGET];
+            if (clicked >= 0 && clicked < tarList.size()) {
+                String tarStr = tarList.get(clicked);
+                ModNetworking.sendToServer(new C2SGUIInputPacket(
+                        C2SGUIInputPacket.SetTarClass, new int[0], tarStr));
+                tarList.remove(clicked);
+                listClicked[LISTCLICK_TARGET] = -1;
+            }
+        } else {
+            if (btn >= 1 && btn <= 13) {
+                listClicked[LISTCLICK_TARGET] = btn - 1;
+            }
         }
     }
 
@@ -1385,8 +1378,6 @@ public class GuiDesk extends AbstractContainerScreen<ContainerDesk> {
         switch (this.guiFunc) {
             case 1: // Radar
                 listSize = shipList.size();
-                maxVisible = 5;
-                listId = LISTCLICK_RADAR;
                 break;
             case 2: // Book (entity gallery zoom)
                 if ((bookChapNum == 4 || bookChapNum == 5) && bookPageNum > 0) {
@@ -1404,7 +1395,6 @@ public class GuiDesk extends AbstractContainerScreen<ContainerDesk> {
             case 3: // Team
                 if (listFocus == LISTCLICK_TEAM) {
                     listSize = getKnownTeamIdsForDisplay().size();
-                    maxVisible = 5;
                     listId = LISTCLICK_TEAM;
                 } else if (listFocus == LISTCLICK_ALLY) {
                     listSize = capa != null ? capa.getAllyList().size() : 0;

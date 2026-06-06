@@ -22,10 +22,7 @@ public class EnchantHelper {
 
 	// init roll table
 	static {
-		/**
-		 * table: 0:for weapon, 1:armor, 2:misc
-		 */
-		EnchantTable.add(new Enchantment[] {
+        EnchantTable.add(new Enchantment[] {
 				Enchantments.RESPIRATION, Enchantments.THORNS, Enchantments.FROST_WALKER,
 				Enchantments.SHARPNESS, Enchantments.SMITE, Enchantments.BANE_OF_ARTHROPODS,
 				Enchantments.KNOCKBACK, Enchantments.FIRE_ASPECT, Enchantments.MOB_LOOTING,

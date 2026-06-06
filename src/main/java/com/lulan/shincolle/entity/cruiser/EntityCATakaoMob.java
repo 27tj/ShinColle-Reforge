@@ -92,8 +92,4 @@ public class EntityCATakaoMob extends BasicEntityShipHostile {
 		return result;
 	}
 
-	@Override
-	public int getEquipType() {
-		return 1;
-	}
 }

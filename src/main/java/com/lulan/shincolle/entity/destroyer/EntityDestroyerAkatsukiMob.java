@@ -92,9 +92,4 @@ public class EntityDestroyerAkatsukiMob extends BasicEntityShipHostile implement
 	public void setRiderType(int type) {
 	}
 
-	@Override
-	public int getEquipType() {
-		return 1;
-	}
-
 }

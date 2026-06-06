@@ -1147,8 +1147,6 @@ public class ModelBBHaruna extends ShipModelBaseAdv<Entity> {
                 this.EquipCL1Base01L2.yRot = this.Head.yRot;
                 this.EquipCL1Base01R1.yRot = this.Head.yRot;
                 this.EquipCL1Base01R2.yRot = this.Head.yRot;
-                this.Hair01.xRot = this.Hair01.xRot;
-                this.Hair02.xRot = this.Hair02.xRot;
         }
 
         @Override
@@ -1280,10 +1278,10 @@ public class ModelBBHaruna extends ShipModelBaseAdv<Entity> {
                 float angleX4 = Mth.cos(f2 * 0.1F + 1.40F + f * 0.5F);
                 float angleAdd1 = Mth.cos(f * 0.7F) * f1;
                 float angleAdd2 = Mth.cos(f * 0.7F + 3.1415927F) * f1;
-                float addk1 = 0;
-                float addk2 = 0;
+                float addk1;
+                float addk2;
                 float headX = 0F;
-                float headZ = 0F;
+                float headZ;
                 float addHL1 = 0F;
                 float addHR1 = 0F;
                 float addHL2 = 0F;

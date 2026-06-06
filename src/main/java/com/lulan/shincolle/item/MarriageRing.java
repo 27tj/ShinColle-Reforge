@@ -51,17 +51,15 @@ public class MarriageRing extends BasicItem {
 			// update player capability
 			CapaTeitoku capa = player.getCapability(CapaTeitokuProvider.CAPABILITY).orElse(null);
 
-			if (capa != null) {
-				capa.setRingActive(newState);
+            capa.setRingActive(newState);
 
-				// disable fly when deactivating
-				if (!newState && !player.getAbilities().instabuild && capa.isRingFlying()) {
-					player.getAbilities().flying = false;
-					capa.setRingFlying(false);
-					player.onUpdateAbilities();
-				}
-			}
-		}
+            // disable fly when deactivating
+            if (!newState && !player.getAbilities().instabuild && capa.isRingFlying()) {
+                player.getAbilities().flying = false;
+                capa.setRingFlying(false);
+                player.onUpdateAbilities();
+            }
+        }
 
 		return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
 	}
@@ -72,7 +70,8 @@ public class MarriageRing extends BasicItem {
 	@Override
 	public boolean isFoil(ItemStack stack) {
 		if (stack.hasTag()) {
-			return stack.getTag().getBoolean("isActive");
+            assert stack.getTag() != null;
+            return stack.getTag().getBoolean("isActive");
 		}
 		return false;
 	}
@@ -89,10 +88,8 @@ public class MarriageRing extends BasicItem {
 			return;
 
 		CapaTeitoku capa = owner.getCapability(CapaTeitokuProvider.CAPABILITY).orElse(null);
-		if (capa == null)
-			return;
 
-		// water breathing (passive) - both sides
+        // water breathing (passive) - both sides
 		if (ConfigHandler.ringAbility[0] >= 0 && capa.getMarriageNum() >= ConfigHandler.ringAbility[0]
 				&& (owner.tickCount & 127) == 0) {
 			if (owner.getAirSupply() < 300) {
@@ -154,13 +151,11 @@ public class MarriageRing extends BasicItem {
 		Player player = ClientRuntimeHelper.getClientPlayer();
 		if (player != null) {
 			CapaTeitoku capa = player.getCapability(CapaTeitokuProvider.CAPABILITY).orElse(null);
-			if (capa != null) {
-				tooltip.add(Component.literal(
-						ChatFormatting.AQUA + Component.translatable("gui.shincolle.ringText").getString() + " "
-								+ capa.getMarriageNum()));
-				return;
-			}
-		}
+            tooltip.add(Component.literal(
+                    ChatFormatting.AQUA + Component.translatable("gui.shincolle.ringText").getString() + " "
+                            + capa.getMarriageNum()));
+            return;
+        }
 
 		tooltip.add(Component.literal(
 				ChatFormatting.AQUA + Component.translatable("gui.shincolle.ringText").getString()));

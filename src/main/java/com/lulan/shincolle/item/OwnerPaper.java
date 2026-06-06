@@ -38,32 +38,30 @@ public class OwnerPaper extends BasicItem {
 		if (!level.isClientSide && !player.isShiftKeyDown()) {
 			CapaTeitoku capa = ServerDataManager.getTeitokuCapability(player);
 
-			if (capa != null) {
-				CompoundTag nbt = stack.getOrCreateTag();
+            CompoundTag nbt = stack.getOrCreateTag();
 
-				// first time use
-				if (!nbt.contains(SignIDA)) {
-					nbt.putString(SignNameA, player.getName().getString());
-					nbt.putString(SignNameB, "");
-					nbt.putInt(SignIDA, capa.getPlayerUID());
-					nbt.putInt(SignIDB, -1);
-					nbt.putBoolean("signPos", false);
-				}
-				// use > second time
-				else {
-					// signPos: true -> sign at A, false -> sign at B
-					if (nbt.getBoolean("signPos")) {
-						nbt.putString(SignNameA, player.getName().getString());
-						nbt.putInt(SignIDA, capa.getPlayerUID());
-						nbt.putBoolean("signPos", false);
-					} else {
-						nbt.putString(SignNameB, player.getName().getString());
-						nbt.putInt(SignIDB, capa.getPlayerUID());
-						nbt.putBoolean("signPos", true);
-					}
-				}
-			}
-		}
+            // first time use
+            if (!nbt.contains(SignIDA)) {
+                nbt.putString(SignNameA, player.getName().getString());
+                nbt.putString(SignNameB, "");
+                nbt.putInt(SignIDA, capa.getPlayerUID());
+                nbt.putInt(SignIDB, -1);
+                nbt.putBoolean("signPos", false);
+            }
+            // use > second time
+            else {
+                // signPos: true -> sign at A, false -> sign at B
+                if (nbt.getBoolean("signPos")) {
+                    nbt.putString(SignNameA, player.getName().getString());
+                    nbt.putInt(SignIDA, capa.getPlayerUID());
+                    nbt.putBoolean("signPos", false);
+                } else {
+                    nbt.putString(SignNameB, player.getName().getString());
+                    nbt.putInt(SignIDB, capa.getPlayerUID());
+                    nbt.putBoolean("signPos", true);
+                }
+            }
+        }
 
 		return InteractionResultHolder.pass(stack);
 	}

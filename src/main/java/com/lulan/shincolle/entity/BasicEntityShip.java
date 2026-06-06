@@ -57,6 +57,7 @@ import net.minecraft.world.phys.Vec3;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 /**
  * SHIP DATA
@@ -301,7 +302,7 @@ public abstract class BasicEntityShip extends TamableAnimal
 		if (this.getStateFlag(ID.F.NoFuel) || this.random.nextInt(10) > 3)
 			return;
 
-		SoundEvent sound = null;
+		SoundEvent sound;
 
 		// married ship: 20% chance to play marriage sound instead of ambient
 		if (this.getStateFlag(ID.F.IsMarried)) {
@@ -492,11 +493,8 @@ public abstract class BasicEntityShip extends TamableAnimal
 		}
 
 		CapaTeitoku capa = clientPlayer.getCapability(CapaTeitokuProvider.CAPABILITY).orElse(null);
-		if (capa == null) {
-			return;
-		}
 
-		int teamId = capa.getSelectTeam();
+        int teamId = capa.getSelectTeam();
 		boolean isSelected = false;
 		for (int i = 0; i < CapaTeitoku.SLOT_NUM; i++) {
 			if (capa.getTeamSID(teamId, i) == this.getId()) {
@@ -803,18 +801,18 @@ public abstract class BasicEntityShip extends TamableAnimal
 		// set attrs to MC entity attributes (server-side only)
 		if (!this.level().isClientSide()) {
 			if (this.getAttribute(Attributes.MAX_HEALTH) != null) {
-				this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(
+				Objects.requireNonNull(this.getAttribute(Attributes.MAX_HEALTH)).setBaseValue(
 						this.shipAttrs.getAttrsBuffed(ID.Attrs.HP));
 			}
 			if (this.getAttribute(Attributes.MOVEMENT_SPEED) != null) {
-				this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(
+				Objects.requireNonNull(this.getAttribute(Attributes.MOVEMENT_SPEED)).setBaseValue(
 						this.shipAttrs.getAttrsBuffed(ID.Attrs.MOV));
 			}
 			if (this.getAttribute(Attributes.FOLLOW_RANGE) != null) {
-				this.getAttribute(Attributes.FOLLOW_RANGE).setBaseValue(64);
+				Objects.requireNonNull(this.getAttribute(Attributes.FOLLOW_RANGE)).setBaseValue(64);
 			}
 			if (this.getAttribute(Attributes.KNOCKBACK_RESISTANCE) != null) {
-				this.getAttribute(Attributes.KNOCKBACK_RESISTANCE).setBaseValue(
+				Objects.requireNonNull(this.getAttribute(Attributes.KNOCKBACK_RESISTANCE)).setBaseValue(
 						this.shipAttrs.getAttrsBuffed(ID.Attrs.KB));
 			}
 
@@ -944,15 +942,15 @@ public abstract class BasicEntityShip extends TamableAnimal
 
 		// apply config scale to equip attrs
 		float[] equip = this.shipAttrs.getAttrsEquip();
-		equip[ID.Attrs.HP] *= ConfigHandler.scaleShip[ID.AttrsBase.HP];
-		equip[ID.Attrs.ATK_L] *= ConfigHandler.scaleShip[ID.AttrsBase.ATK];
-		equip[ID.Attrs.ATK_H] *= ConfigHandler.scaleShip[ID.AttrsBase.ATK];
-		equip[ID.Attrs.ATK_AL] *= ConfigHandler.scaleShip[ID.AttrsBase.ATK];
-		equip[ID.Attrs.ATK_AH] *= ConfigHandler.scaleShip[ID.AttrsBase.ATK];
-		equip[ID.Attrs.DEF] *= ConfigHandler.scaleShip[ID.AttrsBase.DEF];
-		equip[ID.Attrs.SPD] *= ConfigHandler.scaleShip[ID.AttrsBase.SPD];
-		equip[ID.Attrs.MOV] *= ConfigHandler.scaleShip[ID.AttrsBase.MOV];
-		equip[ID.Attrs.HIT] *= ConfigHandler.scaleShip[ID.AttrsBase.HIT];
+		equip[ID.Attrs.HP] *= (float) ConfigHandler.scaleShip[ID.AttrsBase.HP];
+		equip[ID.Attrs.ATK_L] *= (float) ConfigHandler.scaleShip[ID.AttrsBase.ATK];
+		equip[ID.Attrs.ATK_H] *= (float) ConfigHandler.scaleShip[ID.AttrsBase.ATK];
+		equip[ID.Attrs.ATK_AL] *= (float) ConfigHandler.scaleShip[ID.AttrsBase.ATK];
+		equip[ID.Attrs.ATK_AH] *= (float) ConfigHandler.scaleShip[ID.AttrsBase.ATK];
+		equip[ID.Attrs.DEF] *= (float) ConfigHandler.scaleShip[ID.AttrsBase.DEF];
+		equip[ID.Attrs.SPD] *= (float) ConfigHandler.scaleShip[ID.AttrsBase.SPD];
+		equip[ID.Attrs.MOV] *= (float) ConfigHandler.scaleShip[ID.AttrsBase.MOV];
+		equip[ID.Attrs.HIT] *= (float) ConfigHandler.scaleShip[ID.AttrsBase.HIT];
 	}
 
 	/** reset attack effect map */
@@ -1631,31 +1629,25 @@ public abstract class BasicEntityShip extends TamableAnimal
 				this.setStateEmotion(ID.S.Emotion, ID.Emotion.T_T, false);
 			}
 		} else {
-			switch (this.getStateEmotion(ID.S.Emotion)) {
-				case ID.Emotion.NORMAL:
-					if (this.random.nextInt(3) == 0) {
-						this.setStateEmotion(ID.S.Emotion, ID.Emotion.BORED, false);
-					}
-					break;
-				default:
-					if (this.random.nextInt(4) == 0) {
-						this.setStateEmotion(ID.S.Emotion, ID.Emotion.NORMAL, false);
-					}
-					break;
-			}
+            if (this.getStateEmotion(ID.S.Emotion) == ID.Emotion.NORMAL) {
+                if (this.random.nextInt(3) == 0) {
+                    this.setStateEmotion(ID.S.Emotion, ID.Emotion.BORED, false);
+                }
+            } else {
+                if (this.random.nextInt(4) == 0) {
+                    this.setStateEmotion(ID.S.Emotion, ID.Emotion.NORMAL, false);
+                }
+            }
 
-			switch (this.getStateEmotion(ID.S.Emotion4)) {
-				case ID.Emotion.NORMAL:
-					if (this.random.nextInt(3) == 0) {
-						this.setStateEmotion(ID.S.Emotion4, ID.Emotion.BORED, false);
-					}
-					break;
-				default:
-					if (this.random.nextInt(3) == 0) {
-						this.setStateEmotion(ID.S.Emotion4, ID.Emotion.NORMAL, false);
-					}
-					break;
-			}
+            if (this.getStateEmotion(ID.S.Emotion4) == ID.Emotion.NORMAL) {
+                if (this.random.nextInt(3) == 0) {
+                    this.setStateEmotion(ID.S.Emotion4, ID.Emotion.BORED, false);
+                }
+            } else {
+                if (this.random.nextInt(3) == 0) {
+                    this.setStateEmotion(ID.S.Emotion4, ID.Emotion.NORMAL, false);
+                }
+            }
 		}
 
 		if (!this.level().isClientSide()) {
@@ -3764,28 +3756,25 @@ public abstract class BasicEntityShip extends TamableAnimal
 
 	/** Reaction emotes when attacking. */
 	public void reactionAttack() {
-		switch (BuffHelper.getMoraleLevel(this.getMorale())) {
-			case ID.Morale.Excited:
-				this.setStateEmotion(ID.S.Emotion, ID.Emotion.XD, true);
-				switch (this.random.nextInt(8)) {
-					case 1 -> applyParticleEmotion(33); // :p
-					case 2 -> applyParticleEmotion(17); // gg
-					case 3 -> applyParticleEmotion(19); // lick
-					case 4 -> applyParticleEmotion(16); // ha
-					default -> applyParticleEmotion(7); // note
-				}
-				break;
-			default:
-				switch (this.random.nextInt(8)) {
-					case 1 -> applyParticleEmotion(14); // +_+
-					case 2 -> applyParticleEmotion(30); // pif
-					case 3 -> applyParticleEmotion(7); // note
-					case 4 -> applyParticleEmotion(4); // !
-					case 5 -> applyParticleEmotion(7); // note
-					default -> applyParticleEmotion(6); // angry
-				}
-				break;
-		}
+        if (BuffHelper.getMoraleLevel(this.getMorale()) == ID.Morale.Excited) {
+            this.setStateEmotion(ID.S.Emotion, ID.Emotion.XD, true);
+            switch (this.random.nextInt(8)) {
+                case 1 -> applyParticleEmotion(33); // :p
+                case 2 -> applyParticleEmotion(17); // gg
+                case 3 -> applyParticleEmotion(19); // lick
+                case 4 -> applyParticleEmotion(16); // ha
+                default -> applyParticleEmotion(7); // note
+            }
+        } else {
+            switch (this.random.nextInt(8)) {
+                case 1 -> applyParticleEmotion(14); // +_+
+                case 2 -> applyParticleEmotion(30); // pif
+                case 3 -> applyParticleEmotion(7); // note
+                case 4 -> applyParticleEmotion(4); // !
+                case 5 -> applyParticleEmotion(7); // note
+                default -> applyParticleEmotion(6); // angry
+            }
+        }
 	}
 
 	/** Reaction emotes when damaged. */
@@ -3842,10 +3831,11 @@ public abstract class BasicEntityShip extends TamableAnimal
 		switch (BuffHelper.getMoraleLevel(this.getMorale())) {
 			case ID.Morale.Excited, ID.Morale.Happy:
 				if (this.getStateFlag(ID.F.IsMarried) && this.random.nextInt(2) == 0) {
-					switch (this.random.nextInt(3)) {
-						case 1 -> applyParticleEmotion(31);
-						default -> applyParticleEmotion(15);
-					}
+                    if (this.random.nextInt(3) == 1) {
+                        applyParticleEmotion(31);
+                    } else {
+                        applyParticleEmotion(15);
+                    }
 					return;
 				}
 				switch (this.random.nextInt(10)) {
@@ -3862,10 +3852,11 @@ public abstract class BasicEntityShip extends TamableAnimal
 				break;
 			case ID.Morale.Normal:
 				if (this.getStateFlag(ID.F.IsMarried) && this.random.nextInt(2) == 0) {
-					switch (this.random.nextInt(3)) {
-						case 1 -> applyParticleEmotion(1);
-						default -> applyParticleEmotion(15);
-					}
+                    if (this.random.nextInt(3) == 1) {
+                        applyParticleEmotion(1);
+                    } else {
+                        applyParticleEmotion(15);
+                    }
 					return;
 				}
 				switch (this.random.nextInt(8)) {

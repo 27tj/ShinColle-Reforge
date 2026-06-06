@@ -253,7 +253,8 @@ public class TileEntitySmallShipyard extends BasicTileInventory implements MenuP
 		int polymetal = getSlotCount(SLOT_POLYMETAL);
 
 		boolean buildShip = (buildType == 1 || buildType == 3);
-		ItemStack result = SmallRecipes.calculateResult(grudge, abyssium, ammo, polymetal, buildShip, level.random);
+        assert level != null;
+        ItemStack result = SmallRecipes.calculateResult(grudge, abyssium, ammo, polymetal, buildShip, level.random);
 
 		if (!result.isEmpty()) {
 			// Place result in output slot
@@ -379,7 +380,8 @@ public class TileEntitySmallShipyard extends BasicTileInventory implements MenuP
 		boolean nowActive = isBuilding();
 		if (isActive != nowActive) {
 			isActive = nowActive;
-			BlockSmallShipyard.updateBlockState(isActive, this.level, this.worldPosition);
+            assert this.level != null;
+            BlockSmallShipyard.updateBlockState(isActive, this.level, this.worldPosition);
 			sendUpdate = true;
 		}
 

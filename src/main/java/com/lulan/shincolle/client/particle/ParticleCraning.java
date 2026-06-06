@@ -42,15 +42,12 @@ public class ParticleCraning extends Particle {
         this.vt2 = new double[8][3];
         this.hasPhysics = false; // can clip = false
 
-        switch (type) {
-            default: // craning
-                this.lifetime = 127;
-                this.rCol = 0.6F;
-                this.gCol = 0F;
-                this.bCol = 0F;
-                this.len = 0F;
-                break;
-        }
+        // craning
+        this.lifetime = 127;
+        this.rCol = 0.6F;
+        this.gCol = 0F;
+        this.bCol = 0F;
+        this.len = 0F;
     }
 
     @Override
@@ -259,19 +256,15 @@ public class ParticleCraning extends Particle {
     @Override
     public void tick() {
         // update pos
-        switch (particleType) {
-            default:
-                float half = lifetime * 0.45F;
-                float half2 = lifetime - half;
+        float half = lifetime * 0.45F;
+        float half2 = lifetime - half;
 
-                if (age <= half) {
-                    len = age / half * lenMax;
-                } else if (age > half && age <= half2) {
-                    len = lenMax;
-                } else if (age > half2) {
-                    len = (lifetime - age) / half * lenMax;
-                }
-                break;
+        if (age <= half) {
+            len = age / half * lenMax;
+        } else if (age > half && age <= half2) {
+            len = lenMax;
+        } else if (age > half2) {
+            len = (lifetime - age) / half * lenMax;
         }
 
         if (this.age++ > this.lifetime) {

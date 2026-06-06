@@ -24,7 +24,7 @@ public class LogHelper {
     }
 
     public static void fatal(Object object) {
-        LOGGER.error("[FATAL] " + object);
+        LOGGER.error("[FATAL] {}", object);
     }
 
     public static void trace(Object object) {

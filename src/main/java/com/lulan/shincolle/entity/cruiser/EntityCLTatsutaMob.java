@@ -73,8 +73,4 @@ public class EntityCLTatsutaMob extends BasicEntityShipHostile {
 		return EntityDimensions.fixed(this.entityWidth, this.entityHeight);
 	}
 
-	@Override
-	public int getEquipType() {
-		return 1;
-	}
 }

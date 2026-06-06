@@ -1245,8 +1245,8 @@ public class ModelBBHiei extends ShipModelBaseAdv<Entity> {
                 float angleX4 = Mth.cos(f2 * 0.1F + 1.40F + f * 0.5F);
                 float angleAdd1 = Mth.cos(f * 0.7F) * f1;
                 float angleAdd2 = Mth.cos(f * 0.7F + 3.1415927F) * f1;
-                float addk1 = 0;
-                float addk2 = 0;
+                float addk1;
+                float addk2;
                 float addCA031 = 0;
                 float addCA032 = 0;
                 float t2 = ent.getTickExisted() & 511;
@@ -1597,9 +1597,7 @@ public class ModelBBHiei extends ShipModelBaseAdv<Entity> {
                                 // this.ClothA03.offsetX = -0.2F;
                                 this.ClothA03a.yRot = -0.7F;
                                 // this.ClothA03a.offsetX = 0.2F;
-                                addCA031 = 0F;
-                                addCA032 = 0F;
-                                // arm
+                            // arm
                                 this.ArmLeft01.xRot = 2.5F;
                                 this.ArmLeft01.zRot = 0.1F;
                                 this.ArmLeft02.zRot = 1F;
@@ -1643,8 +1641,6 @@ public class ModelBBHiei extends ShipModelBaseAdv<Entity> {
                                         // this.ClothA03.offsetX = -0.2F + az * 0.73F;
                                         this.ClothA03a.yRot = -this.ClothA03.yRot;
                                         // this.ClothA03a.offsetX = -this.ClothA03.offsetX;
-                                        addCA031 = 0F;
-                                        addCA032 = 0F + az * 0.3F;
                                 } else if (parTick < 45F) {
                                         setFace(3);
                                         // arm
@@ -1657,8 +1653,6 @@ public class ModelBBHiei extends ShipModelBaseAdv<Entity> {
                                         // this.ClothA03.offsetX = 0.53F;
                                         this.ClothA03a.yRot = 1.45F;
                                         // this.ClothA03a.offsetX = -0.53F;
-                                        addCA031 = 0F;
-                                        addCA032 = 0.3F;
                                 } else if (parTick < 53F) {
                                         float az = Mth.cos((parTick - 45F) * 0.125F * 1.5708F);
 
@@ -1672,8 +1666,6 @@ public class ModelBBHiei extends ShipModelBaseAdv<Entity> {
                                         // this.ClothA03.offsetX = -0.2F + az * 0.73F;
                                         this.ClothA03a.yRot = -this.ClothA03.yRot;
                                         // this.ClothA03a.offsetX = -this.ClothA03.offsetX;
-                                        addCA031 = 0F;
-                                        addCA032 = 0F + az * 0.3F;
                                 }
                         }
                 } // end if sitting

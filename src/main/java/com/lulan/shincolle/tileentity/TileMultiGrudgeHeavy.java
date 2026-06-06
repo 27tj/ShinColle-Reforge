@@ -345,7 +345,8 @@ public class TileMultiGrudgeHeavy extends BasicTileInventory implements MenuProv
 
 	private void buildComplete() {
 		boolean buildShip = (buildType == 1 || buildType == 3);
-		ItemStack result = LargeRecipes.calculateResult(
+        assert level != null;
+        ItemStack result = LargeRecipes.calculateResult(
 				matsBuild[0], matsBuild[1], matsBuild[2], matsBuild[3],
 				buildShip, level.random);
 

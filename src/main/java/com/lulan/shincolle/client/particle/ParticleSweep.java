@@ -46,33 +46,24 @@ public class ParticleSweep extends Particle {
 		this.particleType = type;
 		this.hasPhysics = false;
 
-		switch (type) {
-			/**
-			 * type 0: sword sweep right to left
-			 * parms: 0:scale1, 1:scale2, 2:scale3, 3:fade, 4:maxAge, 5:R, 6:G, 7:B, 8:A
-			 * scale1: height
-			 * scale2: forward/backward width
-			 * scale3: left/right width, makes effect tilt from vertical
-			 */
-			case 0:
-				this.swpScale1 = parms[0];
-				this.swpScale2 = parms[1];
-				this.swpScale3 = parms[2];
-				this.swpFad = parms[3];
-				this.lifetime = (int) parms[4];
-				this.rCol = parms[5];
-				this.gCol = parms[6];
-				this.bCol = parms[7];
-				this.alpha = parms[8];
-				this.setPos(entity.getX(), entity.getY() + entity.getBbHeight() * 0.6F, entity.getZ());
+        if (type == 0) {
+            this.swpScale1 = parms[0];
+            this.swpScale2 = parms[1];
+            this.swpScale3 = parms[2];
+            this.swpFad = parms[3];
+            this.lifetime = (int) parms[4];
+            this.rCol = parms[5];
+            this.gCol = parms[6];
+            this.bCol = parms[7];
+            this.alpha = parms[8];
+            this.setPos(entity.getX(), entity.getY() + entity.getBbHeight() * 0.6F, entity.getZ());
 
-				if (this.host instanceof LivingEntity) {
-					this.swpAngle = ((LivingEntity) this.host).yBodyRot;
-				} else {
-					this.swpAngle = this.host.getYRot();
-				}
-				break;
-		}
+            if (this.host instanceof LivingEntity) {
+                this.swpAngle = ((LivingEntity) this.host).yBodyRot;
+            } else {
+                this.swpAngle = this.host.getYRot();
+            }
+        }
 
 		// init pos
 		this.xo = this.x;
@@ -97,10 +88,8 @@ public class ParticleSweep extends Particle {
 		float maxV = minV + 0.4995F;
 		// Use camera entity's width for offset calculation
 		float entityWidth = 0.6F; // default player-like width
-		if (camera.getEntity() != null) {
-			entityWidth = camera.getEntity().getBbWidth();
-		}
-		float[] pos1 = CalcHelper.rotateXZByAxis(entityWidth * 0.35F, 0F, this.swpAngle * Values.N.DIV_PI_180, 1F);
+        entityWidth = camera.getEntity().getBbWidth();
+        float[] pos1 = CalcHelper.rotateXZByAxis(entityWidth * 0.35F, 0F, this.swpAngle * Values.N.DIV_PI_180, 1F);
 
 		RenderSystem.setShaderTexture(0, TEXTURE1);
 		RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
@@ -200,21 +189,17 @@ public class ParticleSweep extends Particle {
 		this.setPos(this.host.getX(), this.host.getY() + this.host.getBbHeight() * 0.6F, this.host.getZ());
 
 		// update beam
-		switch (this.particleType) {
-			case 0: // out from host's back
-			{
-				// angle
-				if (this.host instanceof LivingEntity) {
-					this.swpAngle = ((LivingEntity) this.host).yBodyRot;
-				} else {
-					this.swpAngle = this.host.getYRot();
-				}
+        if (this.particleType == 0) { // out from host's back
+            // angle
+            if (this.host instanceof LivingEntity) {
+                this.swpAngle = ((LivingEntity) this.host).yBodyRot;
+            } else {
+                this.swpAngle = this.host.getYRot();
+            }
 
-				// alpha fade
-				this.alpha *= 0.6F;
-			}
-				break;
-		}
+            // alpha fade
+            this.alpha *= 0.6F;
+        }
 	}
 
 }

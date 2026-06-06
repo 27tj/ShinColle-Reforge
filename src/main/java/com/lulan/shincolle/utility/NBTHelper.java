@@ -34,7 +34,7 @@ public class NBTHelper {
 		for (int i = 0; i < nameTags.size(); ++i) {
 			String str = nameTags.getString(i);
 
-			if (str != null && str.length() > 0) {
+			if (str.length() > 0) {
 				nameList.add(str);
 			}
 		}

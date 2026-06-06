@@ -1245,8 +1245,8 @@ public class ModelBBKirishima extends ShipModelBaseAdv<Entity> {
                 float angleX4 = Mth.cos(f2 * 0.1F + 1.40F + f * 0.5F);
                 float angleAdd1 = Mth.cos(f * 0.7F) * f1;
                 float angleAdd2 = Mth.cos(f * 0.7F + 3.1415927F) * f1;
-                float addk1 = 0;
-                float addk2 = 0;
+                float addk1;
+                float addk2;
                 float t2 = ent.getTickExisted() & 511;
                 boolean spcStand = ent.getStateEmotion(ID.S.Emotion) == ID.Emotion.BORED;
 
@@ -1370,11 +1370,9 @@ public class ModelBBKirishima extends ShipModelBaseAdv<Entity> {
                 this.EquipCL1Base01R2.yRot = this.Head.yRot * 0.75F;
 
                 // run
-                if (ent.getIsSprinting() || f1 > 0.9F) {
-                        // no pose
-                }
+            ent.getIsSprinting();// no pose
 
-                // head tilt angle
+            // head tilt angle
                 this.Head.zRot = EmotionHelper.getHeadTiltAngle(ent, f2);
 
                 // sneak

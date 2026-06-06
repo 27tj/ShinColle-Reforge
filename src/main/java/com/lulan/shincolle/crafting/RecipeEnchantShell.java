@@ -19,8 +19,10 @@ import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Custom crafting recipe: Enchant Shell
@@ -141,8 +143,8 @@ public class RecipeEnchantShell implements CraftingRecipe {
 
         // Use the first effect from the potion
         MobEffectInstance effect = effects.get(0);
-        String potionId = net.minecraftforge.registries.ForgeRegistries.MOB_EFFECTS
-                .getKey(effect.getEffect()).toString();
+        String potionId = Objects.requireNonNull(ForgeRegistries.MOB_EFFECTS
+                .getKey(effect.getEffect())).toString();
         int amplifier = effect.getAmplifier();
 
         // Apply/stack potion NBT onto the ammo

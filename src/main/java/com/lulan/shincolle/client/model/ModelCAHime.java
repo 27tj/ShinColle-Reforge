@@ -513,7 +513,7 @@ public class ModelCAHime extends ShipModelBaseAdv<Entity> {
 		boolean fh4 = fh1 & fh2;
 
 		// hat state 2, 3, 4
-		if (fh2 || fh3 || fh4) {
+		if (fh2 || fh3) {
 			this.HatBase.visible = true;
 			this.Hair01.visible = false;
 			this.Horn01.visible = true;
@@ -676,8 +676,8 @@ public class ModelCAHime extends ShipModelBaseAdv<Entity> {
 		float angleX2 = Mth.cos(f2 * 0.08F + 0.6F + f * 0.5F);
 		float angleAdd1 = Mth.cos(f * 0.7F) * f1;
 		float angleAdd2 = Mth.cos(f * 0.7F + 3.1415927F) * f1;
-		float addk1 = 0;
-		float addk2 = 0;
+		float addk1;
+		float addk2;
 		int state = ent.getStateEmotion(ID.S.State);
 		boolean ft1 = EmotionHelper.checkModelState(0, state);
 		boolean ft2 = EmotionHelper.checkModelState(1, state);
@@ -916,13 +916,12 @@ public class ModelCAHime extends ShipModelBaseAdv<Entity> {
 		this.Head.zRot = EmotionHelper.getHeadTiltAngle(ent, f2);
 
 		// 潛行, 蹲下動作
-		if (ent.getIsSneaking()) {
-			// head
-			// this.Head.offsetY = 0.2F;
-			// this.GlowHead.offsetY = 0.2F;
-		} // end if sneaking
+        ent.getIsSneaking();// head
+// this.Head.offsetY = 0.2F;
+// this.GlowHead.offsetY = 0.2F;
+// end if sneaking
 
-		// 坐下, 騎乘動作
+        // 坐下, 騎乘動作
 		if (ent.getIsSitting() || ent.getIsRiding()) {
 			if (ent.getStateEmotion(ID.S.Emotion) == ID.Emotion.BORED) {
 				// hat state 4

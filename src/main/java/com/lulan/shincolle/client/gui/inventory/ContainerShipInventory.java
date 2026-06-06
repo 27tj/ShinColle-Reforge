@@ -93,7 +93,7 @@ public class ContainerShipInventory extends AbstractContainerMenu {
         ItemStack result = ItemStack.EMPTY;
         Slot slot = this.slots.get(index);
 
-        if (slot != null && slot.hasItem()) {
+        if (slot.hasItem()) {
             ItemStack slotStack = slot.getItem();
             result = slotStack.copy();
 

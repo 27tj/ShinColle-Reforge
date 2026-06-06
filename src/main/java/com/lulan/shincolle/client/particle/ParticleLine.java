@@ -41,20 +41,14 @@ public class ParticleLine extends Particle {
 		this.particleType = type;
 		this.hasPhysics = false;
 
-		switch (type) {
-			/**
-			 * parms: height, width forward, width backward, R, G, B, A, px, py, pz, mx, my,
-			 * mz
-			 */
-			case 0: // high speed blur
-				this.lifetime = 50;
-				this.rCol = parms[3];
-				this.gCol = parms[4];
-				this.bCol = parms[5];
-				this.alpha = parms[6];
-				this.setPos(parms[7], parms[8], parms[9]);
-				break;
-		}
+        if (type == 0) { // high speed blur
+            this.lifetime = 50;
+            this.rCol = parms[3];
+            this.gCol = parms[4];
+            this.bCol = parms[5];
+            this.alpha = parms[6];
+            this.setPos(parms[7], parms[8], parms[9]);
+        }
 
 		// init pos
 		this.xo = this.x;
@@ -181,13 +175,11 @@ public class ParticleLine extends Particle {
 			return;
 		}
 
-		switch (this.particleType) {
-			case 0:
-				this.parms[0] *= 0.88F;
-				this.parms[2] *= 0.85F;
-				this.alpha *= 0.9F;
-				break;
-		}
+        if (this.particleType == 0) {
+            this.parms[0] *= 0.88F;
+            this.parms[2] *= 0.85F;
+            this.alpha *= 0.9F;
+        }
 	}
 
 }

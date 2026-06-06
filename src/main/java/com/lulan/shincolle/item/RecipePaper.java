@@ -24,9 +24,10 @@ public class RecipePaper extends BasicItem {
 	public void appendHoverText(ItemStack stack, Level level, List<Component> tooltip, TooltipFlag flag) {
 		if (stack.hasTag()) {
 			CompoundTag nbt = stack.getTag();
-			ListTag tagList = nbt.getList("Recipe", Tag.TAG_COMPOUND);
+            assert nbt != null;
+            ListTag tagList = nbt.getList("Recipe", Tag.TAG_COMPOUND);
 
-			if (tagList != null && tagList.size() > 0) {
+			if (tagList.size() > 0) {
 				ItemStack[] stacks = new ItemStack[10];
 
 				for (int i = 0; i < tagList.size(); i++) {

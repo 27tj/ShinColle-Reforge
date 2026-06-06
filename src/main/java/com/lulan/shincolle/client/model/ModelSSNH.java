@@ -591,9 +591,7 @@ public class ModelSSNH extends ShipModelBaseAdv<Entity> {
 		this.GlowHead.xRot = this.Head.xRot;
 		this.GlowHead.yRot = this.Head.yRot;
 		this.GlowHead.zRot = this.Head.zRot;
-		this.Hair01.xRot = this.Hair01.xRot;
-		this.Hair02.xRot = this.Hair02.xRot;
-	}
+    }
 
 	@Override
 	public void applyDeadPose(float f, float f1, float f2, float f3, float f4, IShipEmotion ent) {
@@ -673,10 +671,10 @@ public class ModelSSNH extends ShipModelBaseAdv<Entity> {
 		float angleX6 = Mth.cos(f2 * 0.08F + 2.4F + f * 0.5F);
 		float angleAdd1 = Mth.cos(f * 0.7F) * f1 * 0.5F;
 		float angleAdd2 = Mth.cos(f * 0.7F + 3.1415927F) * f1 * 0.5F;
-		float addk1 = 0F;
-		float addk2 = 0F;
-		float headX = 0F;
-		float headZ = 0F;
+		float addk1;
+		float addk2;
+		float headX;
+		float headZ;
 		int state = ent.getStateEmotion(ID.S.State);
 		boolean showTorpedo = EmotionHelper.checkModelState(2, state);
 
@@ -798,7 +796,7 @@ public class ModelSSNH extends ShipModelBaseAdv<Entity> {
 				}
 			} else {
     // [PORT] Restored from 1.10.2 GlStateManager.translate
-    this.offsetY += -0.06F;
+                this.offsetY -= 0.06F;
 				this.Head.xRot -= 1.3F;
 				this.Hair01.xRot += 0.6F;
 				this.Hair02.xRot += 0.5F;

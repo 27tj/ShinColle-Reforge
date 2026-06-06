@@ -147,14 +147,12 @@ public class ShipSkillHandler {
 			case 1: // heavy attack
 				if (target != null) {
 					ship.attackEntityWithHeavyAmmo(target);
-				} else if (targetPos != null) {
+				} else {
 					ship.attackEntityWithHeavyAmmo(targetPos);
 				}
 
-				if (target != null || targetPos != null) {
-					ship.setStateTimer(ID.T.MountSkillCD2, getAttackDelay(atkSpd, 2));
-				}
-				break;
+                ship.setStateTimer(ID.T.MountSkillCD2, getAttackDelay(atkSpd, 2));
+                break;
 			case 2: // light air attack
 				if (ship instanceof BasicEntityShipCV cv && target != null) {
 					cv.attackEntityWithAircraft(target);

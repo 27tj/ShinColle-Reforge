@@ -1446,8 +1446,8 @@ public class ModelBattleshipYamato extends ShipModelBaseAdv<Entity> {
                 float angleX3 = Mth.cos(f2 * 0.08F + 0.9F + f * 0.5F);
                 float angleAdd1 = Mth.cos(f * 0.7F) * f1;
                 float angleAdd2 = Mth.cos(f * 0.7F + 3.1415927F) * f1;
-                float addk1 = 0;
-                float addk2 = 0;
+                float addk1;
+                float addk2;
                 boolean showCannon = EmotionHelper.checkModelState(0, ent.getStateEmotion(ID.S.State));
                 boolean showUmbrella = EmotionHelper.checkModelState(2, ent.getStateEmotion(ID.S.State));
 
@@ -1509,15 +1509,14 @@ public class ModelBattleshipYamato extends ShipModelBaseAdv<Entity> {
                         this.ArmRight01.yRot = 0F;
                         this.ArmRight01.zRot = 0.1571F;
                         this.ArmRight02.xRot = -1.4835F;
-                        this.ArmRight02.zRot = 0F;
                 } else {
                         this.ArmRight01.xRot = angleAdd1 * 0.25F + 0.18F;
                         this.ArmRight01.yRot = 0F;
                         this.ArmRight01.zRot = -angleX * 0.03F + 0.26F;
                         this.ArmRight02.xRot = 0F;
-                        this.ArmRight02.zRot = 0F;
                 }
-                // leg
+            this.ArmRight02.zRot = 0F;
+            // leg
                 this.LegLeft01.yRot = 0F;
                 this.LegLeft01.zRot = 0.1396F;
                 this.LegLeft02.xRot = 0F;

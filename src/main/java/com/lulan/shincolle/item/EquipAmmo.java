@@ -122,13 +122,11 @@ public class EquipAmmo extends BasicEquip implements IShipEffectItem {
 
 	@Override
 	public int getMissileMoveType(int meta) {
-		switch (meta) {
-			case 8: // cluster bomb
-				return 1;
-			default:
-				return -1;
-		}
-	}
+        if (meta == 8) { // cluster bomb
+            return 1;
+        }
+        return -1;
+    }
 
 	@Override
 	public int getMissileSpeedLevel(int meta) {
@@ -148,7 +146,8 @@ public class EquipAmmo extends BasicEquip implements IShipEffectItem {
 			case 7: // enchant shell
 				if (stack.hasTag()) {
 					CompoundTag nbt = stack.getTag();
-					ListTag nbtlist = nbt.getList(PLIST, Tag.TAG_COMPOUND);
+                    assert nbt != null;
+                    ListTag nbtlist = nbt.getList(PLIST, Tag.TAG_COMPOUND);
 
 					for (int i = 0; i < nbtlist.size(); i++) {
 						CompoundTag nbtX = nbtlist.getCompound(i);

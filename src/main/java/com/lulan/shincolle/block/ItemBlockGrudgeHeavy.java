@@ -27,7 +27,8 @@ public class ItemBlockGrudgeHeavy extends BlockItem implements IShipResourceItem
 	public void appendHoverText(ItemStack stack, Level level, List<Component> tooltip, TooltipFlag flag) {
 		if (stack.hasTag()) {
 			CompoundTag nbt = stack.getTag();
-			if (nbt.contains("mats")) {
+            assert nbt != null;
+            if (nbt.contains("mats")) {
 				int[] mats = nbt.getIntArray("mats");
 				if (mats.length >= 4) {
 					tooltip.add(Component.literal(

@@ -22,6 +22,7 @@ import net.minecraft.world.phys.Vec3;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Base class for airplane (carrier aircraft) entities.
@@ -514,12 +515,12 @@ public abstract class BasicEntityAirplane extends BasicEntitySummon
 
 	/** Apply computed attrs to entity attributes. Called from both init helpers. */
 	private void applyInitAttrs() {
-		this.getAttribute(Attributes.MAX_HEALTH)
+		Objects.requireNonNull(this.getAttribute(Attributes.MAX_HEALTH))
 				.setBaseValue(this.shipAttrs.getAttrsBuffed(ID.Attrs.HP));
-		this.getAttribute(Attributes.MOVEMENT_SPEED)
+		Objects.requireNonNull(this.getAttribute(Attributes.MOVEMENT_SPEED))
 				.setBaseValue(this.shipAttrs.getAttrsBuffed(ID.Attrs.MOV));
-		this.getAttribute(Attributes.FOLLOW_RANGE).setBaseValue(64D);
-		this.getAttribute(Attributes.KNOCKBACK_RESISTANCE).setBaseValue(1D);
+		Objects.requireNonNull(this.getAttribute(Attributes.FOLLOW_RANGE)).setBaseValue(64D);
+		Objects.requireNonNull(this.getAttribute(Attributes.KNOCKBACK_RESISTANCE)).setBaseValue(1D);
 
 		if (this.getHealth() < this.getMaxHealth()) {
 			this.setHealth(this.getMaxHealth());

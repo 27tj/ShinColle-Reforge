@@ -63,7 +63,7 @@ public class ShipFleeGoal extends Goal {
 			this.pathfindCooldown = 20;
 
 			if (this.owner != null && this.owner.isAlive()) {
-				boolean canMove = false;
+				boolean canMove;
                                 if (this.ship.isPassenger() && this.ship.getVehicle() instanceof com.lulan.shincolle.entity.BasicEntityMount mount) {
                                         canMove = mount.getShipNavigate().tryMoveToEntityLiving(this.owner, 1.2D);
                                 } else {

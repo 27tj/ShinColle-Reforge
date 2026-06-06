@@ -662,8 +662,8 @@ public class ModelCarrierWo extends ShipModelBaseAdv<Entity> {
 	public void applyNormalPose(float f, float f1, float f2, float f3, float f4, IShipEmotion ent) {
 
 		float angleZ = Mth.cos(f2 * 0.08F);
-		float addk1 = 0;
-		float addk2 = 0;
+		float addk1;
+		float addk2;
 
 		// 水上漂浮
 		if (ent.getShipDepth(0) > 0D) {
@@ -714,8 +714,8 @@ public class ModelCarrierWo extends ShipModelBaseAdv<Entity> {
 		this.HairR01.zRot = 0.314F;
 		this.HairR02.zRot = -0.2618F;
 		// 腿擺動
-		addk1 += -0.349F;
-		addk2 += -0.349F;
+        addk1 -= 0.349F;
+        addk2 -= 0.349F;
 		this.LegLeft01.yRot = 0F;
 		this.LegLeft01.zRot = 0.052F;
 		this.LegLeft02.xRot = 0F;
@@ -741,14 +741,14 @@ public class ModelCarrierWo extends ShipModelBaseAdv<Entity> {
 			this.EquipLC01.xRot = this.Head.xRot;
 			this.EquipRC01.xRot = this.Head.xRot;
 
-			this.EquipT01L.xRot = angleZ * 0.05F + -0.2618F;
-			this.EquipT01L.zRot = angleZ * 0.05F + -0.2618F;
+			this.EquipT01L.xRot = angleZ * 0.05F - 0.2618F;
+			this.EquipT01L.zRot = angleZ * 0.05F - 0.2618F;
 			this.EquipT02L.xRot = angleZ * 0.1F;
 			this.EquipT02L.zRot = angleZ * 0.1F;
 			this.EquipT03L.xRot = angleZ * 0.25F;
 			this.EquipT03L.zRot = angleZ * 0.25F;
 
-			this.EquipT01R.xRot = angleZ * 0.05F + -0.2618F;
+			this.EquipT01R.xRot = angleZ * 0.05F - 0.2618F;
 			this.EquipT01R.zRot = -angleZ * 0.05F + 0.2618F;
 			this.EquipT02R.xRot = angleZ * 0.1F;
 			this.EquipT02R.zRot = -angleZ * 0.1F;
@@ -756,7 +756,7 @@ public class ModelCarrierWo extends ShipModelBaseAdv<Entity> {
 			this.EquipT03R.zRot = -angleZ * 0.25F;
 
 			this.EquipTB01L.xRot = -angleZ * 0.05F + 0.2618F;
-			this.EquipTB01L.zRot = angleZ * 0.05F + -0.2618F;
+			this.EquipTB01L.zRot = angleZ * 0.05F - 0.2618F;
 			this.EquipTB02L.xRot = -angleZ * 0.1F;
 			this.EquipTB02L.zRot = angleZ * 0.1F;
 			this.EquipTB03L.xRot = -angleZ * 0.25F;
@@ -935,12 +935,12 @@ public class ModelCarrierWo extends ShipModelBaseAdv<Entity> {
 				this.BodyMain.yRot = -1.57F;
 				this.BodyMain.zRot = -0.0873F;
 				// 脖子角度
-				this.Head.xRot += -0.25F;
+                this.Head.xRot -= 0.25F;
 				this.Head.yRot += 0.4F;
 				this.Head.zRot += 0F;
 				// 腿擺動
-				addk1 = angleZ * 0.3F + -1.0472F;
-				addk2 = -angleZ * 0.3F + -1.0472F;
+				addk1 = angleZ * 0.3F - 1.0472F;
+				addk2 = -angleZ * 0.3F - 1.0472F;
 				this.LegLeft01.yRot = 0F;
 				this.LegRight01.yRot = 0F;
 				this.LegLeft01.zRot = 0.05236F;

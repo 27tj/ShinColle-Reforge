@@ -29,7 +29,7 @@ public class ParticleEmotion extends Particle {
 			"textures/particles/particleemotion.png");
 	public static final int EMO_NUMBER = 30;
 
-	private Entity host = null;
+	private Entity host;
     private final int particleType;
     private final float particleIconX;
     private final float particleIconY;
@@ -663,16 +663,15 @@ public class ParticleEmotion extends Particle {
 			newPos = CalcHelper.rotateXZByAxis(frontDist, leftDist, angle, 1F);
 			addx += newPos[1];
 			addy -= 0.2D;
-			addz += newPos[0];
-		} else // block type
+        } else // block type
 		{
 			newPos = CalcHelper.rotateXZByAxis(0F, -0.2F, angle, 1F);
 			addx += newPos[1];
 			addy += 0.5D;
-			addz += newPos[0];
-		}
+        }
+        addz += newPos[0];
 
-		// enlarge if boss entity
+        // enlarge if boss entity
 		float addx2 = 0F;
 		float addy2 = 0F;
 		float addz2 = 0F;

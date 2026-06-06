@@ -169,9 +169,9 @@ public class ParticleStickyLightning extends Particle {
         float px = (float) (Mth.lerp(partialTick, this.xo, this.x) - camPos.x());
         float py = (float) (Mth.lerp(partialTick, this.yo, this.y) - camPos.y());
         float pz = (float) (Mth.lerp(partialTick, this.zo, this.z) - camPos.z());
-        float offx = 0F;
-        float offz = 0F;
-        float offy = 0F;
+        float offx;
+        float offz;
+        float offy;
 
         if (this.age % 2 == 0) {
             for (int i = 0; i < numStem; i++) {
@@ -266,16 +266,15 @@ public class ParticleStickyLightning extends Particle {
         float hostWidth = (this.host != null) ? this.host.getBbWidth() : 1.0F;
 
         // change position
-        switch (this.particleType) {
-            case 3: // yamato cannon charging out
-                // particle position
-                float[] partPos2 = CalcHelper.rotateXZByAxis(hostWidth * 2F, 0F,
-                        (((LivingEntity) host).yBodyRot % 360) * Values.N.DIV_PI_180, 1F);
+        if (this.particleType == 3) { // yamato cannon charging out
+            // particle position
+            assert host != null;
+            float[] partPos2 = CalcHelper.rotateXZByAxis(hostWidth * 2F, 0F,
+                    (((LivingEntity) host).yBodyRot % 360) * Values.N.DIV_PI_180, 1F);
 
-                this.x = this.host.getX() + partPos2[1];
-                this.y = this.host.getY() + hostHeight * 0.6D;
-                this.z = this.host.getZ() + partPos2[0];
-                break;
+            this.x = this.host.getX() + partPos2[1];
+            this.y = this.host.getY() + hostHeight * 0.6D;
+            this.z = this.host.getZ() + partPos2[0];
         }
 
         // change color

@@ -892,10 +892,10 @@ public class ModelSubmHime extends ShipModelBaseAdv<Entity> {
 		float angleX6 = Mth.cos(f2 * 0.08F + 2.4F + f * 0.5F);
 		float angleAdd1 = Mth.cos(f * 0.7F) * f1 * 0.5F;
 		float angleAdd2 = Mth.cos(f * 0.7F + 3.1415927F) * f1 * 0.5F;
-		float addk1 = 0F;
-		float addk2 = 0F;
-		float headX = 0F;
-		float headZ = 0F;
+		float addk1;
+		float addk2;
+		float headX;
+		float headZ;
 		float addHL1 = 0F;
 		float addHR1 = 0F;
 		float addHL2 = 0F;
@@ -953,15 +953,12 @@ public class ModelSubmHime extends ShipModelBaseAdv<Entity> {
 		this.BoobR.yRot = 0.087F;
 		this.BoobR.zRot = 0.07F;
 
-		if (collar) {
-			// this.BoobL.offsetX = 0F;
-			// this.BoobR.offsetX = 0F;
-		} else {
-			// this.BoobL.offsetX = -0.05F;
-			// this.BoobR.offsetX = 0.05F;
-		}
+        // this.BoobL.offsetX = 0F;
+        // this.BoobR.offsetX = 0F;
+        // this.BoobL.offsetX = -0.05F;
+        // this.BoobR.offsetX = 0.05F;
 
-		this.Collar01.xRot = 0.035F;
+        this.Collar01.xRot = 0.035F;
 		this.Collar03.xRot = angleX * 0.08F + 0.26F;
 		this.Collar04.xRot = -angleX * 0.08F + 0.45F;
 		// cloth
@@ -1555,8 +1552,8 @@ public class ModelSubmHime extends ShipModelBaseAdv<Entity> {
 					this.Ahoke01.yRot = 0.8F;
 					this.Ahoke01.zRot = 0.4F;
 					this.Hair01.xRot += 0.2F;
-					this.Hair02.xRot += -0.1F;
-					this.Hair03.xRot += -0.1F;
+                    this.Hair02.xRot -= 0.1F;
+                    this.Hair03.xRot -= 0.1F;
 					addHL1 = -0.6F;
 					addHR1 = -0.6F;
 					addHL2 = -0.5F;

@@ -223,7 +223,7 @@ public class EquipCalc {
 
 		int itemType = itemID % 100; // equip type
 		int itemMeta = itemID / 100; // equip sub ID (variant)
-		int enchType = 0; // enchant type: 0=weapon, 1=armor, 2=misc
+		int enchType; // enchant type: 0=weapon, 1=armor, 2=misc
 
 		ItemStack item;
 		switch (itemType) {
@@ -232,18 +232,15 @@ public class EquipCalc {
 			case ID.EquipType.CANNON_TW_HI:
 			case ID.EquipType.CANNON_TR:
 				item = new ItemStack(ModItems.EQUIP_CANNON.get());
-				enchType = 0;
-				break;
+                break;
 			case ID.EquipType.GUN_LO:
 			case ID.EquipType.GUN_HI:
 				item = new ItemStack(ModItems.EQUIP_MACHINEGUN.get());
-				enchType = 0;
-				break;
+                break;
 			case ID.EquipType.TORPEDO_LO:
 			case ID.EquipType.TORPEDO_HI:
 				item = new ItemStack(ModItems.EQUIP_TORPEDO.get());
-				enchType = 0;
-				break;
+                break;
 			case ID.EquipType.AIR_T_LO:
 			case ID.EquipType.AIR_T_HI:
 			case ID.EquipType.AIR_F_LO:
@@ -253,8 +250,7 @@ public class EquipCalc {
 			case ID.EquipType.AIR_R_LO:
 			case ID.EquipType.AIR_R_HI:
 				item = new ItemStack(ModItems.EQUIP_AIRPLANE.get());
-				enchType = 0;
-				break;
+                break;
 			case ID.EquipType.RADAR_LO:
 			case ID.EquipType.RADAR_HI:
 				item = new ItemStack(ModItems.EQUIP_RADAR.get());
@@ -294,8 +290,7 @@ public class EquipCalc {
 			case ID.EquipType.AMMO_LO:
 			case ID.EquipType.AMMO_HI:
 				item = new ItemStack(ModItems.EQUIP_AMMO.get());
-				enchType = 0;
-				break;
+                break;
 			default:
 				return ItemStack.EMPTY;
 		}

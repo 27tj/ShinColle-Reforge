@@ -505,8 +505,8 @@ public class ModelHeavyCruiserNe extends ShipModelBaseAdv<Entity> {
                 float angleX2 = Mth.cos(f2 * 0.08F + 0.6F + f * 0.5F);
                 float angleAdd1 = Mth.cos(f * 0.7F) * f1;
                 float angleAdd2 = Mth.cos(f * 0.7F + 3.1415927F) * f1;
-                float addk1 = 0;
-                float addk2 = 0;
+                float addk1;
+                float addk2;
 
                 // 水上漂浮
                 if (ent.getShipDepth(0) > 0D) {
@@ -614,13 +614,13 @@ public class ModelHeavyCruiserNe extends ShipModelBaseAdv<Entity> {
                 // head tilt angle
                 this.Head.zRot = EmotionHelper.getHeadTiltAngle(ent, f2);
 
-                if (ent.getIsSneaking()) { // 潛行, 蹲下動作
-                                           // head
-                                           // this.Head.offsetY = 0.2F;
-                                           // this.GlowHead.offsetY = 0.2F;
-                } // end if sneaking
+            ent.getIsSneaking();// 潛行, 蹲下動作
+// head
+// this.Head.offsetY = 0.2F;
+// this.GlowHead.offsetY = 0.2F;
+// end if sneaking
 
-                if (ent.getIsSitting() || ent.getIsRiding()) {
+            if (ent.getIsSitting() || ent.getIsRiding()) {
                         // 騎乘動作
                         if (ent.getStateEmotion(ID.S.Emotion) == ID.Emotion.BORED) {
                                 // head

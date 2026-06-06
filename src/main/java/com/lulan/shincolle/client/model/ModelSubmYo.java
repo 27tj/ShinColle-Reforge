@@ -822,7 +822,7 @@ public class ModelSubmYo extends ShipModelBaseAdv<Entity> {
                 float angleX = Mth.cos(f2 * 0.08F);
                 // [PORT] Restored from 1.10.2 GlStateManager.translate
                 this.offsetY += 0.39F;
-                this.offsetZ += -0.1F;
+            this.offsetZ -= 0.1F;
                 this.setFaceHungry(ent);
 
                 this.EquipBase.visible = true;
@@ -906,8 +906,8 @@ public class ModelSubmYo extends ShipModelBaseAdv<Entity> {
                 float angleAdd2 = Mth.cos(f * 0.7F + 3.1415927F) * f1 * 0.7F;
                 float addk1 = 0F;
                 float addk2 = 0F;
-                float headX = 0F;
-                float headZ = 0F;
+                float headX;
+                float headZ;
 
                 // 水上漂浮
                 if (ent.getShipDepth(0) > 0D) {
@@ -920,8 +920,7 @@ public class ModelSubmYo extends ShipModelBaseAdv<Entity> {
                 this.Head.xRot = f4 * 0.014F;
                 this.Head.yRot = f3 * 0.01F;
                 this.Head.zRot = 0F;
-                headX = this.Head.xRot * -0.5F;
-                // boob
+            // boob
                 this.BoobL.xRot = angleX * 0.08F - 0.76F;
                 this.BoobR.xRot = angleX * 0.08F - 0.76F;
                 // body
@@ -952,7 +951,7 @@ public class ModelSubmYo extends ShipModelBaseAdv<Entity> {
                         // head
                         // [PORT] Restored from 1.10.2 GlStateManager.translate
                         this.offsetY += angleX * 0.035F + 0.1F;
-                        this.offsetZ += -0.1F;
+                    this.offsetZ -= 0.1F;
                         this.Head.xRot -= 0.7F;
                         // body
                         this.BodyMain.xRot = 0.7F;

@@ -52,18 +52,16 @@ public class EquipDrum extends BasicEquip {
 
 	@Override
 	public int[] getResourceValue(int meta) {
-		switch (this.getEquipTypeIDFromMeta(meta)) {
-			case ID.EquipType.DRUM_LO: // 120
-				return new int[] {
-						itemRand.nextInt(4) + 5,
-						itemRand.nextInt(5) + 9,
-						itemRand.nextInt(4) + 4,
-						itemRand.nextInt(3) + 3
-				};
-			default:
-				return new int[] { 0, 0, 0, 0 };
-		}
-	}
+        if (this.getEquipTypeIDFromMeta(meta) == ID.EquipType.DRUM_LO) { // 120
+            return new int[]{
+                    itemRand.nextInt(4) + 5,
+                    itemRand.nextInt(5) + 9,
+                    itemRand.nextInt(4) + 4,
+                    itemRand.nextInt(3) + 3
+            };
+        }
+        return new int[]{0, 0, 0, 0};
+    }
 
 	@Override
 	public void appendHoverText(ItemStack stack, Level level, List<Component> tooltip, TooltipFlag flag) {

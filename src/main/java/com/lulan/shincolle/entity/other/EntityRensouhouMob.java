@@ -1,6 +1,7 @@
 package com.lulan.shincolle.entity.other;
 
 import java.util.EnumSet;
+import java.util.Objects;
 
 import com.lulan.shincolle.entity.BasicEntityShipHostile;
 import com.lulan.shincolle.entity.BasicEntitySummon;
@@ -112,9 +113,9 @@ public class EntityRensouhouMob extends BasicEntitySummon {
 			this.shipAttrs.setAttrsBuffed(ID.Attrs.MOV,
 					hostile.getAttrs().getMoveSpeed());
 
-			this.getAttribute(Attributes.MAX_HEALTH)
+			Objects.requireNonNull(this.getAttribute(Attributes.MAX_HEALTH))
 					.setBaseValue(this.shipAttrs.getAttrsBuffed(ID.Attrs.HP));
-			this.getAttribute(Attributes.MOVEMENT_SPEED)
+			Objects.requireNonNull(this.getAttribute(Attributes.MOVEMENT_SPEED))
 					.setBaseValue(this.shipAttrs.getAttrsBuffed(ID.Attrs.MOV));
 
 			if (this.getHealth() < this.getMaxHealth()) {

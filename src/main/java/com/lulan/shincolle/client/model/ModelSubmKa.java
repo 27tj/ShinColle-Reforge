@@ -120,7 +120,7 @@ public class ModelSubmKa extends ShipModelBaseAdv<Entity> {
                 this.GlowArmLeft01 = this.GlowBodyMain.getChild("GlowArmLeft01");
                 this.GlowArmLeft02 = this.GlowArmLeft01.getChild("GlowArmLeft02");
                 this.EquipT01a = this.GlowArmLeft02.getChild("EquipT01a");
-                this.EquipT01b = this.EquipT01a != null ? this.EquipT01a.getChild("EquipT01b") : null;
+                this.EquipT01b = this.EquipT01a.getChild("EquipT01b");
                 this.loadFaceParts(this.GlowHead);
         }
 
@@ -481,10 +481,10 @@ public class ModelSubmKa extends ShipModelBaseAdv<Entity> {
                 float angleX3 = Mth.cos(f2 * 0.1F + 0.9F + f * 0.5F);
                 float angleAdd1 = Mth.cos(f * 0.7F) * f1 * 0.7F;
                 float angleAdd2 = Mth.cos(f * 0.7F + 3.1415927F) * f1 * 0.7F;
-                float addk1 = 0F;
-                float addk2 = 0F;
-                float headX = 0F;
-                float headZ = 0F;
+                float addk1;
+                float addk2;
+                float headX;
+                float headZ;
 
                 // 水上漂浮
                 if (ent.getShipDepth(0) > 0D) {
@@ -497,8 +497,7 @@ public class ModelSubmKa extends ShipModelBaseAdv<Entity> {
                 this.Head.xRot = f4 * 0.014F + 0.1047F;
                 this.Head.yRot = f3 * 0.01F;
                 this.Head.zRot = 0F;
-                headX = this.Head.xRot * -0.5F;
-                // boob
+            // boob
                 this.BoobL.xRot = angleX * 0.08F - 0.76F;
                 this.BoobR.xRot = angleX * 0.08F - 0.76F;
                 // body

@@ -132,8 +132,7 @@ public class TargetWrench extends BasicItem {
 		// get player UID
 		CapaTeitoku capa = player.getCapability(CapaTeitokuProvider.CAPABILITY).orElse(null);
 		int uid = 0;
-		if (capa != null)
-			uid = capa.getPlayerUID();
+        uid = capa.getPlayerUID();
 		if (uid <= 0)
 			return false;
 

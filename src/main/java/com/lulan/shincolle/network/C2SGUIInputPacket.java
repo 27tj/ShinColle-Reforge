@@ -528,11 +528,8 @@ public class C2SGUIInputPacket {
 		}
 
 		CapaTeitoku capa = player.getCapability(CapaTeitokuProvider.CAPABILITY).orElse(null);
-		if (capa == null) {
-			return;
-		}
 
-		int teamId = capa.getSelectTeam();
+        int teamId = capa.getSelectTeam();
 		int shipUid = ship.getStateMinor(ID.M.ShipUID);
 		int existingSlot = findTeamSlotByUID(capa, teamId, shipUid);
 
@@ -585,9 +582,7 @@ public class C2SGUIInputPacket {
 		}
 
 		CapaTeitoku capa = player.getCapability(CapaTeitokuProvider.CAPABILITY).orElse(null);
-		if (capa == null)
-			return;
-		int teamId = capa.getSelectTeam();
+        int teamId = capa.getSelectTeam();
 		for (int i = 0; i < CapaTeitoku.SLOT_NUM; i++) {
 			BasicEntityShip ship = resolveTeamShip(level, capa, teamId, i);
 			if (ship != null) {
@@ -613,9 +608,7 @@ public class C2SGUIInputPacket {
 		if (target == null)
 			return;
 		CapaTeitoku capa = player.getCapability(CapaTeitokuProvider.CAPABILITY).orElse(null);
-		if (capa == null)
-			return;
-		int teamId = capa.getSelectTeam();
+        int teamId = capa.getSelectTeam();
 		for (int i = 0; i < CapaTeitoku.SLOT_NUM; i++) {
 			BasicEntityShip ship = resolveTeamShip(level, capa, teamId, i);
 			if (ship != null) {
@@ -632,9 +625,7 @@ public class C2SGUIInputPacket {
 	 */
 	private void handleClearTeam(ServerPlayer player) {
 		CapaTeitoku capa = player.getCapability(CapaTeitokuProvider.CAPABILITY).orElse(null);
-		if (capa == null)
-			return;
-		int teamId = capa.getSelectTeam();
+        int teamId = capa.getSelectTeam();
 		for (int i = 0; i < CapaTeitoku.SLOT_NUM; i++) {
 			int sid = capa.getTeamSID(teamId, i);
 			if (sid > 0) {
@@ -673,9 +664,7 @@ public class C2SGUIInputPacket {
 		if (values.length < 7)
 			return;
 		CapaTeitoku capa = player.getCapability(CapaTeitokuProvider.CAPABILITY).orElse(null);
-		if (capa == null)
-			return;
-		ServerLevel level = player.serverLevel();
+        ServerLevel level = player.serverLevel();
 		int teamId = capa.getSelectTeam();
 		int gx = values[4];
 		int gy = values[5];
@@ -699,9 +688,7 @@ public class C2SGUIInputPacket {
 		if (values.length < 3)
 			return;
 		CapaTeitoku capa = player.getCapability(CapaTeitokuProvider.CAPABILITY).orElse(null);
-		if (capa == null)
-			return;
-		capa.setSelectTeam(values[2]);
+        capa.setSelectTeam(values[2]);
 		ModNetworking.sendToPlayer(S2CGUISyncPacket.syncShipsInTeam(capa, values[2]), player);
 	}
 
@@ -713,9 +700,7 @@ public class C2SGUIInputPacket {
 		if (values.length < 3)
 			return;
 		CapaTeitoku capa = player.getCapability(CapaTeitokuProvider.CAPABILITY).orElse(null);
-		if (capa == null)
-			return;
-		int teamId = values[1];
+        int teamId = values[1];
 		capa.setFormatID(teamId, values[2]);
 		// Update all ships in team
 		for (int i = 0; i < CapaTeitoku.SLOT_NUM; i++) {
@@ -736,9 +721,7 @@ public class C2SGUIInputPacket {
 	 */
 	private void handleSetTarClass(ServerPlayer player) {
 		CapaTeitoku capa = player.getCapability(CapaTeitokuProvider.CAPABILITY).orElse(null);
-		if (capa == null)
-			return;
-		int pid = capa.getPlayerUID();
+        int pid = capa.getPlayerUID();
 		if (stringData != null && !stringData.isEmpty()) {
 			ServerDataManager.setPlayerTargetClass(pid, stringData);
 		}
@@ -752,9 +735,7 @@ public class C2SGUIInputPacket {
 		if (values.length < 4)
 			return;
 		CapaTeitoku capa = player.getCapability(CapaTeitokuProvider.CAPABILITY).orElse(null);
-		if (capa == null)
-			return;
-		int teamId = capa.getSelectTeam();
+        int teamId = capa.getSelectTeam();
 		int slot1 = values[2];
 		int slot2 = values[3];
 		if (slot1 >= 0 && slot1 < CapaTeitoku.SLOT_NUM && slot2 >= 0 && slot2 < CapaTeitoku.SLOT_NUM) {
@@ -777,9 +758,7 @@ public class C2SGUIInputPacket {
 		if (values.length < 3 || stringData == null)
 			return;
 		CapaTeitoku capa = player.getCapability(CapaTeitokuProvider.CAPABILITY).orElse(null);
-		if (capa == null)
-			return;
-		int teamId = values[2];
+        int teamId = values[2];
 		if (teamId >= 0 && teamId < CapaTeitoku.TEAM_NUM) {
 			capa.setUnitName(teamId, stringData);
 			ModNetworking.sendToPlayer(S2CGUISyncPacket.syncUnitNames(capa), player);
@@ -794,18 +773,14 @@ public class C2SGUIInputPacket {
 		if (values.length < 3)
 			return;
 
-		switch (values[2]) {
-			case 0:
-				// [PORT] 1.10.2 -> 1.20.1: OpenItemGUI is the pointer formation GUI entry
-				// point.
-				NetworkHooks.openScreen(player, new SimpleMenuProvider(
-						(containerId, playerInv, p) -> new ContainerFormation(containerId, playerInv),
-						Component.translatable("gui.shincolle.formation.formation")));
-				break;
-			default:
-				LogHelper.debug("C2SGUIInputPacket: unknown OpenItemGUI type=" + values[2]);
-				break;
-		}
+        if (values[2] == 0) {// [PORT] 1.10.2 -> 1.20.1: OpenItemGUI is the pointer formation GUI entry
+            // point.
+            NetworkHooks.openScreen(player, new SimpleMenuProvider(
+                    (containerId, playerInv, p) -> new ContainerFormation(containerId, playerInv),
+                    Component.translatable("gui.shincolle.formation.formation")));
+        } else {
+            LogHelper.debug("C2SGUIInputPacket: unknown OpenItemGUI type=" + values[2]);
+        }
 	}
 
 	/**
@@ -854,11 +829,9 @@ public class C2SGUIInputPacket {
 			return;
 		ServerDataManager.teamCreate(player, stringData);
 		CapaTeitoku capa = player.getCapability(CapaTeitokuProvider.CAPABILITY).orElse(null);
-		if (capa != null) {
-			ModNetworking.sendToPlayer(S2CGUISyncPacket.syncPlayerMisc(capa), player);
-			syncDeskTeamData(player, capa);
-		}
-	}
+        ModNetworking.sendToPlayer(S2CGUISyncPacket.syncPlayerMisc(capa), player);
+        syncDeskTeamData(player, capa);
+    }
 
 	/**
 	 * Rename the player's own team.
@@ -868,9 +841,7 @@ public class C2SGUIInputPacket {
 		if (stringData == null || stringData.isEmpty())
 			return;
 		CapaTeitoku capa = player.getCapability(CapaTeitokuProvider.CAPABILITY).orElse(null);
-		if (capa == null)
-			return;
-		ServerDataManager.teamRename(capa.getPlayerUID(), stringData);
+        ServerDataManager.teamRename(capa.getPlayerUID(), stringData);
 		syncDeskTeamData(player, capa);
 	}
 
@@ -880,9 +851,7 @@ public class C2SGUIInputPacket {
 	 */
 	private void handleDeskAlly(ServerPlayer player) {
 		CapaTeitoku capa = player.getCapability(CapaTeitokuProvider.CAPABILITY).orElse(null);
-		if (capa == null)
-			return;
-		int myTid = capa.getPlayerUID();
+        int myTid = capa.getPlayerUID();
 		int otherTid = resolveDeskTargetTeamId();
 		if (otherTid > 0) {
 			ServerDataManager.teamAddAlly(myTid, otherTid);
@@ -896,9 +865,7 @@ public class C2SGUIInputPacket {
 	 */
 	private void handleDeskBreak(ServerPlayer player) {
 		CapaTeitoku capa = player.getCapability(CapaTeitokuProvider.CAPABILITY).orElse(null);
-		if (capa == null)
-			return;
-		int myTid = capa.getPlayerUID();
+        int myTid = capa.getPlayerUID();
 		int otherTid = resolveDeskTargetTeamId();
 		if (otherTid > 0) {
 			ServerDataManager.teamRemoveAlly(myTid, otherTid);
@@ -912,9 +879,7 @@ public class C2SGUIInputPacket {
 	 */
 	private void handleDeskBan(ServerPlayer player) {
 		CapaTeitoku capa = player.getCapability(CapaTeitokuProvider.CAPABILITY).orElse(null);
-		if (capa == null)
-			return;
-		int myTid = capa.getPlayerUID();
+        int myTid = capa.getPlayerUID();
 		int otherTid = resolveDeskTargetTeamId();
 		if (otherTid > 0) {
 			ServerDataManager.teamAddBan(myTid, otherTid);
@@ -928,9 +893,7 @@ public class C2SGUIInputPacket {
 	 */
 	private void handleDeskUnban(ServerPlayer player) {
 		CapaTeitoku capa = player.getCapability(CapaTeitokuProvider.CAPABILITY).orElse(null);
-		if (capa == null)
-			return;
-		int myTid = capa.getPlayerUID();
+        int myTid = capa.getPlayerUID();
 		int otherTid = resolveDeskTargetTeamId();
 		if (otherTid > 0) {
 			ServerDataManager.teamRemoveBan(myTid, otherTid);
@@ -954,22 +917,18 @@ public class C2SGUIInputPacket {
 	private void handleDeskDisband(ServerPlayer player) {
 		ServerDataManager.teamDisband(player);
 		CapaTeitoku capa = player.getCapability(CapaTeitokuProvider.CAPABILITY).orElse(null);
-		if (capa != null) {
-			ModNetworking.sendToPlayer(S2CGUISyncPacket.syncPlayerMisc(capa), player);
-			syncDeskTeamData(player, capa);
-		}
-	}
+        ModNetworking.sendToPlayer(S2CGUISyncPacket.syncPlayerMisc(capa), player);
+        syncDeskTeamData(player, capa);
+    }
 
 	/**
 	 * Full player data sync requested from desk GUI.
 	 */
 	private void handleDeskFuncSync(ServerPlayer player) {
 		CapaTeitoku capa = player.getCapability(CapaTeitokuProvider.CAPABILITY).orElse(null);
-		if (capa != null) {
-			ModNetworking.sendToPlayer(S2CGUISyncPacket.syncPlayerFull(capa), player);
-			syncDeskTeamData(player, capa);
-		}
-	}
+        ModNetworking.sendToPlayer(S2CGUISyncPacket.syncPlayerFull(capa), player);
+        syncDeskTeamData(player, capa);
+    }
 
 	private static void syncDeskTeamData(ServerPlayer player, CapaTeitoku capa) {
 		if (player == null || capa == null) {

@@ -74,8 +74,4 @@ public class EntityBBHarunaMob extends BasicEntityShipHostile {
 		return EntityDimensions.fixed(this.entityWidth, this.entityHeight);
 	}
 
-	@Override
-	public int getEquipType() {
-		return 1;
-	}
 }

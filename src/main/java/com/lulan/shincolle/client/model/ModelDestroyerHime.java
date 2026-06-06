@@ -801,10 +801,10 @@ public class ModelDestroyerHime extends ShipModelBaseAdv<Entity> {
                 float angleX3 = Mth.cos(f2 * 0.08F + 0.9F + f * 0.5F);
                 float angleAdd1 = Mth.cos(f * 0.7F) * f1;
                 float angleAdd2 = Mth.cos(f * 0.7F + 3.1415927F) * f1;
-                float addk1 = 0;
-                float addk2 = 0;
+                float addk1;
+                float addk2;
                 float headX = 0F;
-                float headZ = 0F;
+                float headZ;
                 float t2 = ent.getTickExisted() & 511;
                 int state = ent.getStateEmotion(ID.S.State);
                 boolean showCannon = EmotionHelper.checkModelState(0, state);
@@ -1121,10 +1121,6 @@ public class ModelDestroyerHime extends ShipModelBaseAdv<Entity> {
                                         // this.LegRight02.offsetX = 0F;
                                         // this.LegRight02.offsetZ = 0F;
                                         // hair
-                                        this.Hair03.xRot -= 0.1F;
-                                        this.Hair04.xRot -= 0.3F;
-                                        this.Hair05.xRot -= 0.5F;
-                                        this.Hair06.xRot -= 0.6F;
                                 } else {
                                         // body
                                         this.Head.xRot -= 0.7F;
@@ -1165,11 +1161,11 @@ public class ModelDestroyerHime extends ShipModelBaseAdv<Entity> {
                                         this.EquipBaseL.xRot = -1.34F;
                                         this.EquipBaseR.xRot = -1.34F;
                                         // hair
-                                        this.Hair03.xRot -= 0.1F;
-                                        this.Hair04.xRot -= 0.3F;
-                                        this.Hair05.xRot -= 0.5F;
-                                        this.Hair06.xRot -= 0.6F;
                                 }
+                            this.Hair03.xRot -= 0.1F;
+                            this.Hair04.xRot -= 0.3F;
+                            this.Hair05.xRot -= 0.5F;
+                            this.Hair06.xRot -= 0.6F;
                         }
                 } // end if sitting
 

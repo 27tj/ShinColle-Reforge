@@ -2,6 +2,7 @@ package com.lulan.shincolle.entity;
 
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.Objects;
 
 import javax.annotation.Nullable;
 
@@ -91,10 +92,10 @@ public abstract class BasicEntityMount extends TamableAnimal
 		this.shipAttrs = AttrsAdv.copyAttrsAdv((AttrsAdv) this.host.getAttrs());
 
 		if (this.getAttribute(Attributes.MAX_HEALTH) != null) {
-			this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(this.host.getMaxHealth() * 0.5D);
+			Objects.requireNonNull(this.getAttribute(Attributes.MAX_HEALTH)).setBaseValue(this.host.getMaxHealth() * 0.5D);
 		}
 		if (this.getAttribute(Attributes.MOVEMENT_SPEED) != null) {
-			this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(
+			Objects.requireNonNull(this.getAttribute(Attributes.MOVEMENT_SPEED)).setBaseValue(
 					host.getAttrs() != null ? host.getAttrs().getMoveSpeed() : 0.3D);
 		}
 	}

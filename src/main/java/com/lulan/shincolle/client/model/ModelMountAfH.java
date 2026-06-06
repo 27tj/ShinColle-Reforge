@@ -290,9 +290,7 @@ public class ModelMountAfH extends ShipModelBaseAdv<Entity> {
                 IShipEmotion ent = (IShipEmotion) entity;
 
                 if (netHeadYaw <= -180F) {
-                        netHeadYaw += 360F;
                 } else if (netHeadYaw >= 180F) {
-                        netHeadYaw -= 360F;
                 }
 
                 float angleX = Mth.cos(ageInTicks * 0.08F);

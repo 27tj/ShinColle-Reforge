@@ -37,7 +37,7 @@ public class ShipPathNavigate {
 	private long timeoutTimer = 0L;
 	private long lastTimeoutCheck = 0L;
 	private double timeoutLimit;
-	private float maxDistanceToWaypoint = 0.5F;
+	private float maxDistanceToWaypoint;
     private final int hostCeilWidth;
     private final int hostCeilHeight;
 	private BlockPos targetPos;
@@ -157,7 +157,8 @@ public class ShipPathNavigate {
 				}
 
 				if (!this.noPath()) {
-					Vec3 vec3 = this.currentPath.getPosition(this.host);
+                    assert this.currentPath != null;
+                    Vec3 vec3 = this.currentPath.getPosition(this.host);
 
 					if (vec3 != null) {
 						BlockPos blockPos = BlockPos.containing(vec3).below();
@@ -178,7 +179,8 @@ public class ShipPathNavigate {
 	/** Follow path: advance waypoint index and check for shortcuts */
 	private void pathFollow() {
 		Vec3 hostPos = this.getEntityPosition();
-		int i = this.currentPath.getCurrentPathLength();
+        assert this.currentPath != null;
+        int i = this.currentPath.getCurrentPathLength();
 
 		for (int j = this.currentPath.getCurrentPathIndex(); j < this.currentPath.getCurrentPathLength(); ++j) {
 			if ((double) this.currentPath.getPathPointFromIndex(j).yCoord != Math.floor(hostPos.y)) {
@@ -218,7 +220,8 @@ public class ShipPathNavigate {
 			if (dist < 1D) {
 				isStuck = true;
 
-				if (!currentPath.isFinished()) {
+                assert currentPath != null;
+                if (!currentPath.isFinished()) {
 					Vec3 targetVec = currentPath.getVectorFromIndex(
 							this.host, currentPath.getCurrentPathIndex());
 					float dx = (float) (targetVec.x - host.getX());

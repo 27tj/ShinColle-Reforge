@@ -53,21 +53,19 @@ public class ParticleCube extends Particle {
 		this.vt2 = new double[8][3];
 		this.hasPhysics = false;
 
-		switch (type) {
-			case 1: // yamato beam head
-				this.lifetime = 30;
-				this.rCol = 1F;
-				this.gCol = 0.8F;
-				this.bCol = 0.9F;
-				break;
-			default: // yamato cannon charging
-				this.particleScale = (float) par1; // par1 as new scale
-				this.lifetime = 40;
-				this.rCol = 1F;
-				this.gCol = 0.8F;
-				this.bCol = 0.9F;
-				break;
-		}
+        // yamato cannon charging
+        if (type == 1) { // yamato beam head
+            this.lifetime = 30;
+            this.rCol = 1F;
+            this.gCol = 0.8F;
+            this.bCol = 0.9F;
+        } else {
+            this.particleScale = (float) par1; // par1 as new scale
+            this.lifetime = 40;
+            this.rCol = 1F;
+            this.gCol = 0.8F;
+            this.bCol = 0.9F;
+        }
 	}
 
 	@Override
@@ -255,74 +253,71 @@ public class ParticleCube extends Particle {
 			float[] lookDeg;
 			float[] posOffset;
 
-			switch (this.particleType) {
-				case 1: // yamato beam head
-					// particle position
-					lookDeg = CalcHelper.getLookDegree(this.par1, this.par2, this.par3, false);
-					posOffset = CalcHelper.rotateXYZByYawPitch(0F, 0F, host.getBbWidth() * 2F, lookDeg[0], lookDeg[1],
-							1F);
+            // yamato cannon charging
+            if (this.particleType == 1) { // yamato beam head
+                // particle position
+                lookDeg = CalcHelper.getLookDegree(this.par1, this.par2, this.par3, false);
+                posOffset = CalcHelper.rotateXYZByYawPitch(0F, 0F, host.getBbWidth() * 2F, lookDeg[0], lookDeg[1],
+                        1F);
 
-					this.x = this.host.getX() + posOffset[0];
-					this.y = this.host.getY() + host.getBbHeight() * 0.6D;
-					this.z = this.host.getZ() + posOffset[2];
-					this.shotYaw = lookDeg[0];
-					this.shotPitch = lookDeg[1];
+                this.x = this.host.getX() + posOffset[0];
+                this.y = this.host.getY() + host.getBbHeight() * 0.6D;
+                this.z = this.host.getZ() + posOffset[2];
+                this.shotYaw = lookDeg[0];
+                this.shotPitch = lookDeg[1];
 
-					// change alpha
-					if (this.age > 20) {
-						this.alphaIn = 1F + (20 - age) * 0.1F;
-					} else if (this.age < 4) {
-						this.alphaIn = 0.2F + age * 0.2F;
-					} else {
-						this.alphaIn = 0.95F;
-					}
-					this.alphaOut = 0F;
+                // change alpha
+                if (this.age > 20) {
+                    this.alphaIn = 1F + (20 - age) * 0.1F;
+                } else if (this.age < 4) {
+                    this.alphaIn = 0.2F + age * 0.2F;
+                } else {
+                    this.alphaIn = 0.95F;
+                }
+                this.alphaOut = 0F;
 
-					// change scale
-					if (this.age > 20) {
-						this.scaleOut = this.particleScale * (1F + (age - 20));
-						this.scaleIn = this.particleScale * 0.4F * (1F - (age - 20) * 0.1F);
-					} else if (this.age < 8) {
-						this.scaleOut = this.particleScale * 0.3F * (age * 0.3F);
-						this.scaleIn = this.particleScale * 0.4F * (age * 0.125F);
-					} else {
-                        this.scaleOut = this.particleScale;
-						this.scaleIn = this.particleScale * 0.4F;
-					}
+                // change scale
+                if (this.age > 20) {
+                    this.scaleOut = this.particleScale * (1F + (age - 20));
+                    this.scaleIn = this.particleScale * 0.4F * (1F - (age - 20) * 0.1F);
+                } else if (this.age < 8) {
+                    this.scaleOut = this.particleScale * 0.3F * (age * 0.3F);
+                    this.scaleIn = this.particleScale * 0.4F * (age * 0.125F);
+                } else {
+                    this.scaleOut = this.particleScale;
+                    this.scaleIn = this.particleScale * 0.4F;
+                }
 
-					// random scale effect
-					this.scaleOut += this.random.nextFloat() * 0.04F - 0.01F;
-					this.scaleIn += this.random.nextFloat() * 0.04F - 0.005F;
-					break;
-				default: // yamato cannon charging
-					// particle position
-					posOffset = CalcHelper.rotateXZByAxis(host.getBbWidth() * 2F, 0F,
-							(host.yBodyRot % 360) * Values.N.DIV_PI_180, 1F);
+                // random scale effect
+                this.scaleOut += this.random.nextFloat() * 0.04F - 0.01F;
+                this.scaleIn += this.random.nextFloat() * 0.04F - 0.005F;
+            } else {// particle position
+                posOffset = CalcHelper.rotateXZByAxis(host.getBbWidth() * 2F, 0F,
+                        (host.yBodyRot % 360) * Values.N.DIV_PI_180, 1F);
 
-					this.x = this.host.getX() + posOffset[1];
-					this.y = this.host.getY() + host.getBbHeight() * 0.6D;
-					this.z = this.host.getZ() + posOffset[0];
-					this.shotYaw = (host.yBodyRot % 360) * Values.N.DIV_PI_180;
-					this.shotPitch = (host.getXRot() % 360) * Values.N.DIV_PI_180;
+                this.x = this.host.getX() + posOffset[1];
+                this.y = this.host.getY() + host.getBbHeight() * 0.6D;
+                this.z = this.host.getZ() + posOffset[0];
+                this.shotYaw = (host.yBodyRot % 360) * Values.N.DIV_PI_180;
+                this.shotPitch = (host.getXRot() % 360) * Values.N.DIV_PI_180;
 
-					// change alpha
-					if (this.age < 32) {
-						this.alphaIn = this.random.nextFloat() * 0.5F + 0.75F;
-					} else {
-						this.alphaIn = (this.lifetime - this.age) * 0.1F + 0.2F;
-					}
-					this.alphaOut = this.alphaIn * 0.25F;
+                // change alpha
+                if (this.age < 32) {
+                    this.alphaIn = this.random.nextFloat() * 0.5F + 0.75F;
+                } else {
+                    this.alphaIn = (this.lifetime - this.age) * 0.1F + 0.2F;
+                }
+                this.alphaOut = this.alphaIn * 0.25F;
 
-					// change scale
-					this.scaleOut = this.particleScale * this.age * ((Mth.cos(this.age) + 1F) * 0.005F + 0.015F);
-					this.scaleIn = this.scaleOut * 0.75F;
+                // change scale
+                this.scaleOut = this.particleScale * this.age * ((Mth.cos(this.age) + 1F) * 0.005F + 0.015F);
+                this.scaleIn = this.scaleOut * 0.75F;
 
-					// random scale effect
-					this.scaleOut += this.random.nextFloat() * 0.04F - 0.01F;
-					this.scaleIn += this.random.nextFloat() * 0.04F - 0.005F;
-					break;
-			}// end switch
-		}
+                // random scale effect
+                this.scaleOut += this.random.nextFloat() * 0.04F - 0.01F;
+                this.scaleIn += this.random.nextFloat() * 0.04F - 0.005F;
+            }// end switch
+        }
 
 		if (this.age++ > this.lifetime) {
 			this.remove();

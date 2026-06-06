@@ -443,8 +443,8 @@ public class ModelSubmRo500 extends ShipModelBaseAdv<Entity> {
                 float angleX2 = Mth.cos(f2 * 0.25F);
                 float angleAdd1 = Mth.cos(f * 0.7F) * f1;
                 float angleAdd2 = Mth.cos(f * 0.7F + 3.1415927F) * f1;
-                float addk1 = 0;
-                float addk2 = 0;
+                float addk1;
+                float addk2;
 
                 // 水上漂浮
                 if (ent.getShipDepth(0) > 0D) {
@@ -543,12 +543,10 @@ public class ModelSubmRo500 extends ShipModelBaseAdv<Entity> {
 
                 if (ent.getIsSitting() || ent.getIsRiding()) { // 騎乘動作
                         if (ent.getStateEmotion(ID.S.Emotion) == ID.Emotion.BORED) {
-                                if (((IShipFloating) ent).getShipDepth() > 0) {
-                                } else {
-                                }
-                                // body
+                            ((IShipFloating) ent).getShipDepth();
+                            // body
                                 // [PORT] Restored from 1.10.2 GlStateManager.translate
-                                this.offsetY += -0.21F;
+                            this.offsetY -= 0.21F;
                                 this.Head.xRot += 0.35F;
                                 this.BodyMain.xRot = -0.7F;
                                 // arm
@@ -568,12 +566,10 @@ public class ModelSubmRo500 extends ShipModelBaseAdv<Entity> {
                                 this.EquipBase2.visible = true;
                                 this.EquipBase2.xRot = 0.7F;
                         } else {
-                                if (((IShipFloating) ent).getShipDepth() > 0) {
-                                } else {
-                                }
-                                // body
+                            ((IShipFloating) ent).getShipDepth();
+                            // body
                                 // [PORT] Restored from 1.10.2 GlStateManager.translate
-                                this.offsetY += -0.22F;
+                            this.offsetY -= 0.22F;
                                 this.Head.xRot += 0.2F;
                                 this.BodyMain.xRot = -0.7F;
                                 // arm

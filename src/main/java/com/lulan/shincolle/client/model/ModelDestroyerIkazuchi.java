@@ -626,8 +626,8 @@ public class ModelDestroyerIkazuchi extends ShipModelBaseAdv<Entity> {
                 float angleX = Mth.cos(f2 * 0.08F + f * 0.25F);
                 float angleAdd1 = Mth.cos(f * 0.7F) * f1;
                 float angleAdd2 = Mth.cos(f * 0.7F + 3.1415927F) * f1;
-                float addk1 = 0;
-                float addk2 = 0;
+                float addk1;
+                float addk2;
 
                 // 水上漂浮
                 if (ent.getShipDepth(0) > 0D || ent.getShipDepth(1) > 0D) {

@@ -110,7 +110,7 @@ public class ParticleGradient extends Particle {
 
 		for (float[] grad : this.gradPos) {
 			// too far away or too transparent, skip
-			if (grad[0] > 6F && grad[0] <= 0F || grad[5] < 0.05F)
+			if (grad[5] < 0.05F)
 				continue;
 
 			float rad = grad[1] + (grad[0] - grad[1]) * partialTick;

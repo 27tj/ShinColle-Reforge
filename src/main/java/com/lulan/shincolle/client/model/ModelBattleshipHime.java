@@ -336,18 +336,15 @@ public class ModelBattleshipHime extends ShipModelBaseAdv<Entity> {
 		this.GlowHead.xRot = this.Head.xRot;
 		this.GlowHead.yRot = this.Head.yRot;
 		this.GlowHead.zRot = this.Head.zRot;
-		this.Head.yRot = this.Head.yRot;
-		this.Head.yRot = this.Head.yRot;
-		this.Head.yRot = this.Head.yRot;
-	}
+    }
 
 	@Override
 	public void applyDeadPose(float f, float f1, float f2, float f3, float f4, IShipEmotion ent) {
 
-		float addk1 = 0F;
-		float addk2 = 0F;
-		float headX = 0F;
-		float headZ = 0F;
+		float addk1;
+		float addk2;
+		float headX;
+		float headZ;
   // [PORT] Restored from 1.10.2 GlStateManager.translate
   this.offsetY += 1.05F;
 		this.setFaceHungry(ent);
@@ -438,10 +435,10 @@ public class ModelBattleshipHime extends ShipModelBaseAdv<Entity> {
 		float angleX2 = Mth.cos(f2 * 0.08F + 0.6F + f * 0.5F);
 		float angleAdd1 = Mth.cos(f * 0.7F) * f1 * 0.7F;
 		float angleAdd2 = Mth.cos(f * 0.7F + 3.1415927F) * f1 * 0.7F;
-		float addk1 = 0F;
-		float addk2 = 0F;
-		float headX = 0F;
-		float headZ = 0F;
+		float addk1;
+		float addk2;
+		float headX;
+		float headZ;
 
 		// 水上漂浮
 		if (ent.getShipDepth(0) > 0D || ent.getShipDepth(1) > 0D) {
@@ -510,11 +507,9 @@ public class ModelBattleshipHime extends ShipModelBaseAdv<Entity> {
 		this.LegRight02.xRot = 0F;
 
 		// 奔跑動作
-		if (ent.getIsSprinting() || f1 > 0.9F) {
-			// 沒有特殊跑步動作
-		}
+        ent.getIsSprinting();// 沒有特殊跑步動作
 
-		// head tilt angle
+        // head tilt angle
 		this.Head.zRot = EmotionHelper.getHeadTiltAngle(ent, f2);
 
 		// 潛行, 蹲下動作

@@ -86,7 +86,8 @@ public class PointerItem extends BasicItem {
 	/** Get pointer mode from NBT */
 	public static int getMode(ItemStack stack) {
 		if (stack.hasTag()) {
-			return stack.getTag().getByte("Mode");
+            assert stack.getTag() != null;
+            return stack.getTag().getByte("Mode");
 		}
 		return MODE_SINGLE;
 	}
@@ -164,7 +165,7 @@ public class PointerItem extends BasicItem {
 		// Ray trace for entities at 64 blocks
 		EntityHitResult entityHit = rayTraceEntities(player, 64.0);
 
-		if (entityHit != null && entityHit.getEntity() != null) {
+		if (entityHit != null) {
 			Entity hitEntity = entityHit.getEntity();
 
 			// Ship or mount
@@ -172,7 +173,7 @@ public class PointerItem extends BasicItem {
 
 			if (ship != null) {
 				// Is owner
-				if (TeamHelper.checkSameOwner(player, ship) && capa != null) {
+				if (TeamHelper.checkSameOwner(player, ship)) {
 					int teamSlot = findShipInTeam(capa, ship.getStateMinor(ID.M.ShipUID));
 
 					if (isSneaking) {
@@ -238,8 +239,7 @@ public class PointerItem extends BasicItem {
 				ModNetworking.sendToServer(new C2SGUIInputPacket(
 						C2SGUIInputPacket.ClearTeam,
 						new int[] { player.getId(), 0 }));
-				return true;
-			} else {
+            } else {
 				// Sneak only: cycle pointer mode
 				switch (mode) {
 					case MODE_SINGLE:
@@ -256,9 +256,9 @@ public class PointerItem extends BasicItem {
 				ModNetworking.sendToServer(new C2SGUIInputPacket(
 						C2SGUIInputPacket.SyncPlayerItem,
 						new int[] { player.getId(), 0, mode }));
-				return true;
-			}
-		}
+            }
+            return true;
+        }
 
 		// Sprint in formation mode: queue formation change
 		if (isSprinting && mode == MODE_FORMATION) {
@@ -277,12 +277,12 @@ public class PointerItem extends BasicItem {
 		boolean isSneaking = player.isShiftKeyDown();
 		boolean isSprinting = player.isSprinting();
 		CapaTeitoku capa = player.getCapability(CapaTeitokuProvider.CAPABILITY).orElse(null);
-		int markerTeamId = capa != null ? capa.getSelectTeam() : 0;
+		int markerTeamId = capa.getSelectTeam();
 
 		// Ray trace for entities at 64 blocks
 		EntityHitResult entityHit = rayTraceEntities(player, 64.0);
 
-		if (entityHit != null && entityHit.getEntity() != null) {
+		if (entityHit != null) {
 			Entity hitEntity = entityHit.getEntity();
 
 			// Sprint + right click on entity: guard entity (move only)
@@ -404,22 +404,20 @@ public class PointerItem extends BasicItem {
 	private void sendFormationChange(Player player) {
 		CapaTeitoku capa = player.getCapability(CapaTeitokuProvider.CAPABILITY).orElse(null);
 
-		if (capa != null) {
-			int teamId = capa.getSelectTeam();
-			int fid = (capa.getFormatID(teamId) + PointerItem.formatAddID) % 6;
+        int teamId = capa.getSelectTeam();
+        int fid = (capa.getFormatID(teamId) + PointerItem.formatAddID) % 6;
 
-			player.sendSystemMessage(Component.literal(
-					Component.translatable("chat.shincolle.pointer.changeformation").getString() + " " +
-							Component.translatable("gui.shincolle.formation.format" + fid).getString()));
+        player.sendSystemMessage(Component.literal(
+                Component.translatable("chat.shincolle.pointer.changeformation").getString() + " " +
+                        Component.translatable("gui.shincolle.formation.format" + fid).getString()));
 
-			ModNetworking.sendToServer(new C2SGUIInputPacket(
-					C2SGUIInputPacket.SetFormation,
-					// [PORT] 1.10.2 -> 1.20.1: use selected team ID so pointer formation change
-					// applies to active team.
-					new int[] { player.getId(), teamId, fid }));
-		}
+        ModNetworking.sendToServer(new C2SGUIInputPacket(
+                C2SGUIInputPacket.SetFormation,
+                // [PORT] 1.10.2 -> 1.20.1: use selected team ID so pointer formation change
+                // applies to active team.
+                new int[] { player.getId(), teamId, fid }));
 
-		PointerItem.formatCD = 0;
+        PointerItem.formatCD = 0;
 		PointerItem.formatAddID = 0;
 		PointerItem.formatFlag = false;
 	}
@@ -485,10 +483,8 @@ public class PointerItem extends BasicItem {
 			return;
 
 		CapaTeitoku capa = player.getCapability(CapaTeitokuProvider.CAPABILITY).orElse(null);
-		if (capa == null)
-			return;
 
-		int mode = getMode(stack);
+        int mode = getMode(stack);
 		int teamId = capa.getSelectTeam();
 		int fid = capa.getFormatID(teamId);
 

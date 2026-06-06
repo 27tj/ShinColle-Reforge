@@ -439,7 +439,7 @@ public class ShipGuardingGoal extends Goal {
 			float fMax = host.getStateMinor(ID.M.FollowMax) + hostEntity.getBbWidth() * 0.75F;
 
 			if (host.getStateFlag(ID.F.PickItem))
-				fMax += 5D;
+				fMax += 5F;
 
 			this.minDistSq = fMin * fMin;
 			this.maxDistSq = fMax * fMax;

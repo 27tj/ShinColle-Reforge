@@ -109,7 +109,7 @@ public class CombatHelper {
 	 * Caps at 50% before nausea effect.
 	 */
 	public static float calcMissRate(IShipAttackBase host, float distance) {
-		float miss = 0F;
+		float miss;
 		float attackRange = host.getAttrs().getAttackRange();
 		int level = host.getLevel();
 
@@ -189,7 +189,7 @@ public class CombatHelper {
 
 		// calculate light coefficient
 		float lightCoef = 1F;
-		if (attacker instanceof LivingEntity living && living.level() != null) {
+		if (attacker instanceof LivingEntity living) {
 			long time = living.level().getDayTime() % 24000;
 			// smooth transition: 0 = night, 1 = day
 			if (time >= 12500 && time <= 23500) {
@@ -497,26 +497,22 @@ public class CombatHelper {
 			return;
 		}
 
-		switch (type) {
-			case 5:
-				if (!(host instanceof Entity hostEntity) || hostEntity.level().isClientSide()) {
-					return;
-				}
+        if (type == 5) {
+            if (!(host instanceof Entity hostEntity) || hostEntity.level().isClientSide()) {
+                return;
+            }
 
-				EntityProjectileStatic effect = new EntityProjectileStatic(ModEntities.PROJECTILE_STATIC.get(),
-						hostEntity.level());
-				effect.setPos(data[0], data[1], data[2]);
+            EntityProjectileStatic effect = new EntityProjectileStatic(ModEntities.PROJECTILE_STATIC.get(),
+                    hostEntity.level());
+            effect.setPos(data[0], data[1], data[2]);
 
-				int life = Mth.floor((float) (20D + host.getLevel() * 0.125D));
-				float pullForce = (float) (0.12D + host.getLevel() * 0.00075D);
-				float range = (float) (4D + host.getLevel() * 0.035D);
-				effect.initEffect(host, 5, pullForce, range, life);
+            int life = Mth.floor((float) (20D + host.getLevel() * 0.125D));
+            float pullForce = (float) (0.12D + host.getLevel() * 0.00075D);
+            float range = (float) (4D + host.getLevel() * 0.035D);
+            effect.initEffect(host, 5, pullForce, range, life);
 
-				// 2026/04/07：GitHub Copilotによって確認済み
-				hostEntity.level().addFreshEntity(effect);
-				break;
-			default:
-				break;
-		}
+            // 2026/04/07：GitHub Copilotによって確認済み
+            hostEntity.level().addFreshEntity(effect);
+        }
 	}
 }

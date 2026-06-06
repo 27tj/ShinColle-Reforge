@@ -30,13 +30,4 @@ public class EntityAirplane extends BasicEntityAirplane {
 		}
 	}
 
-	@Override
-	public boolean useAmmoLight() {
-		return true;
-	}
-
-	@Override
-	public boolean useAmmoHeavy() {
-		return false;
-	}
 }

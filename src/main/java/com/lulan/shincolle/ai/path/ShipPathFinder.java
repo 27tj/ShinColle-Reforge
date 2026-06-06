@@ -280,7 +280,7 @@ public class ShipPathFinder {
 						// Doors
 						else if (block instanceof DoorBlock) {
 							doorCount++;
-							if (block == Blocks.IRON_DOOR || doorCount > 4) {
+							if (block == Blocks.IRON_DOOR) {
 								return EnumPathType.BLOCKED;
 							}
 							return EnumPathType.OPENABLE;
