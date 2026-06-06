@@ -43,12 +43,8 @@ public class ParticleDebugPlane extends Particle {
 		this.hasPhysics = false;
 
 		switch (type) {
-			/**
-			 * type 0: caress position, a plane indicator to show the caressed position
-			 */
-			case 0:
-				if (this.host != null)
-					this.hostWidth = this.host.getBbWidth() * 0.5F;
+            case 0:
+                this.hostWidth = this.host.getBbWidth() * 0.5F;
 				this.lifetime = 2;
 				this.red2 = 0F;
 				this.green2 = 1F;
@@ -58,79 +54,73 @@ public class ParticleDebugPlane extends Particle {
 				this.yBottom = this.parms[0];
 				this.setPos(entity.getX(), entity.getY(), entity.getZ());
 				break;
-			/**
-			 * type 1: body cube position, a cube indicator
-			 * type 2: hit sensitive body cube
-			 */
-			case 1:
+            case 1:
 			case 2: {
-				if (this.host != null) {
-					this.hostWidth = this.host.getBbWidth() * 0.5F;
+                this.hostWidth = this.host.getBbWidth() * 0.5F;
 
-					// set top and bottom color
-					if (this.host instanceof BasicEntityShip) {
-						// hit sensitive
-						if (this.particleType == 2) {
-							this.red2 = 1F;
-							this.green2 = 0.6F;
-							this.blue2 = 1F;
-							this.alpha2 = 0.6F;
-						} else {
-							this.red2 = 1F;
-							this.green2 = 1F;
-							this.blue2 = 1F;
-							this.alpha2 = 0.15F;
-						}
+                // set top and bottom color
+                if (this.host instanceof BasicEntityShip) {
+                    // hit sensitive
+                    if (this.particleType == 2) {
+                        this.red2 = 1F;
+                        this.green2 = 0.6F;
+                        this.blue2 = 1F;
+                        this.alpha2 = 0.6F;
+                    } else {
+                        this.red2 = 1F;
+                        this.green2 = 1F;
+                        this.blue2 = 1F;
+                        this.alpha2 = 0.15F;
+                    }
 
-						// set side color by body part
-						switch ((int) this.parms[2]) {
-							case 0: // top
-								this.rCol = 1F;
-								this.gCol = 1F;
-								this.bCol = 0F;
-								this.alpha = 0.15F;
-								break;
-							case 1: // head
-								this.rCol = 0F;
-								this.gCol = 1F;
-								this.bCol = 0F;
-								this.alpha = 0.15F;
-								break;
-							case 2: // neck
-								this.rCol = 1F;
-								this.gCol = 0F;
-								this.bCol = 1F;
-								this.alpha = 0.15F;
-								break;
-							case 3: // chest
-								this.rCol = 1F;
-								this.gCol = 1F;
-								this.bCol = 1F;
-								this.alpha = 0.15F;
-								break;
-							case 4: // belly
-								this.rCol = 0F;
-								this.gCol = 1F;
-								this.bCol = 1F;
-								this.alpha = 0.15F;
-								break;
-							case 5: // ubelly
-								this.rCol = 1F;
-								this.gCol = 0F;
-								this.bCol = 0F;
-								this.alpha = 0.15F;
-								break;
-							default: // leg
-								this.rCol = 0F;
-								this.gCol = 0F;
-								this.bCol = 1F;
-								this.alpha = 0.15F;
-								break;
-						}
-					}
-				}
+                    // set side color by body part
+                    switch ((int) this.parms[2]) {
+                        case 0: // top
+                            this.rCol = 1F;
+                            this.gCol = 1F;
+                            this.bCol = 0F;
+                            this.alpha = 0.15F;
+                            break;
+                        case 1: // head
+                            this.rCol = 0F;
+                            this.gCol = 1F;
+                            this.bCol = 0F;
+                            this.alpha = 0.15F;
+                            break;
+                        case 2: // neck
+                            this.rCol = 1F;
+                            this.gCol = 0F;
+                            this.bCol = 1F;
+                            this.alpha = 0.15F;
+                            break;
+                        case 3: // chest
+                            this.rCol = 1F;
+                            this.gCol = 1F;
+                            this.bCol = 1F;
+                            this.alpha = 0.15F;
+                            break;
+                        case 4: // belly
+                            this.rCol = 0F;
+                            this.gCol = 1F;
+                            this.bCol = 1F;
+                            this.alpha = 0.15F;
+                            break;
+                        case 5: // ubelly
+                            this.rCol = 1F;
+                            this.gCol = 0F;
+                            this.bCol = 0F;
+                            this.alpha = 0.15F;
+                            break;
+                        default: // leg
+                            this.rCol = 0F;
+                            this.gCol = 0F;
+                            this.bCol = 1F;
+                            this.alpha = 0.15F;
+                            break;
+                    }
+                }
 
-				this.lifetime = 2;
+                this.lifetime = 2;
 				this.yTop = this.parms[0];
 				this.yBottom = this.parms[1];
 				this.setPos(entity.getX(), entity.getY(), entity.getZ());
@@ -268,11 +258,9 @@ public class ParticleDebugPlane extends Particle {
 		this.zo = this.z;
 
 		// update beam
-		switch (this.particleType) {
-			case 0: // type 0: caress indicator
-				this.setPos(this.host.getX(), this.host.getY(), this.host.getZ());
-				break;
-		}
+        if (this.particleType == 0) { // type 0: caress indicator
+            this.setPos(this.host.getX(), this.host.getY(), this.host.getZ());
+        }
 	}
 
 }

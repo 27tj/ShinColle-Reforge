@@ -46,30 +46,24 @@ public class ParticleLightning extends Particle {
         this.particleType = type;
         this.hasPhysics = false; // can clip = false
 
-        switch (type) {
-            default:
-                this.rCol = 1F;
-                this.gCol = 0.4F + this.random.nextFloat() * 0.3F;
-                this.bCol = 0.4F + this.random.nextFloat() * 0.3F;
-                this.alpha = 1F;
-                this.lifetime = 20;
-                this.numStem = 4;
-                this.scaleXZ = 0.01F;
-                this.scaleY = 0.12F;
-                this.y = host.getY() + 1.5D;
+        this.rCol = 1F;
+        this.gCol = 0.4F + this.random.nextFloat() * 0.3F;
+        this.bCol = 0.4F + this.random.nextFloat() * 0.3F;
+        this.alpha = 1F;
+        this.lifetime = 20;
+        this.numStem = 4;
+        this.scaleXZ = 0.01F;
+        this.scaleY = 0.12F;
+        this.y = host.getY() + 1.5D;
 
-                // calc particle position for MountHbH
-                float randx = random.nextFloat() + 0.1F;
-                float[] newPos = CalcHelper.rotateXZByAxis(0.8F + random.nextFloat() * 0.2F, randx,
-                        ((LivingEntity) host).yBodyRot * -0.01745F, 1F);
+        // calc particle position for MountHbH
+        float randx = random.nextFloat() + 0.1F;
+        float[] newPos = CalcHelper.rotateXZByAxis(0.8F + random.nextFloat() * 0.2F, randx,
+                ((LivingEntity) host).yBodyRot * -0.01745F, 1F);
 
-                if (this.host != null) {
-                    this.x = this.host.getX() + newPos[0];
-                    this.y = this.host.getY() + 1.53D + randx * 0.25D;
-                    this.z = this.host.getZ() + newPos[1];
-                }
-                break;
-        }
+        this.x = this.host.getX() + newPos[0];
+        this.y = this.host.getY() + 1.53D + randx * 0.25D;
+        this.z = this.host.getZ() + newPos[1];
 
         this.xo = this.x;
         this.yo = this.y;
@@ -97,22 +91,21 @@ public class ParticleLightning extends Particle {
         float cosPitch = Mth.cos(pitch);
 
         // create lightning shape
-        float offx = 0F;
-        float offz = 0F;
+        float offx;
+        float offz;
         float offy = 0F;
 
         for (int i = 0; i < numStem; i++) {
             offx = (random.nextFloat() - 0.5F) * 0.1F * (i + 1);
             offz = (random.nextFloat() - 0.5F) * 0.1F * (i + 1);
-            offy = random.nextFloat() * 0.2F + 0.5F;
+            random.nextFloat();
 
             if (i == 0) {
                 prevShape[i][1] = py + cosPitch * scaleY;
-                prevShape[i][4] = prevShape[i][1];
             } else {
                 prevShape[i][1] = py + cosPitch * scaleY - i * scaleY;
-                prevShape[i][4] = prevShape[i][1];
             }
+            prevShape[i][4] = prevShape[i][1];
 
             prevShape[i][0] = px + offx + cosYaw * scaleXZ;
             prevShape[i][2] = pz + offz + sinYaw * scaleXZ;
@@ -169,11 +162,9 @@ public class ParticleLightning extends Particle {
             float[] newPos = CalcHelper.rotateXZByAxis(0.8F + random.nextFloat() * 0.2F, randx,
                     ((LivingEntity) host).yBodyRot * -0.01745F, 1F);
 
-            if (this.host != null) {
-                this.x = this.host.getX() + newPos[0];
-                this.y = this.host.getY() + 1.76D + randx * 0.25D;
-                this.z = this.host.getZ() + newPos[1];
-            }
+            this.x = this.host.getX() + newPos[0];
+            this.y = this.host.getY() + 1.76D + randx * 0.25D;
+            this.z = this.host.getZ() + newPos[1];
 
             if (((IShipFloating) host).getShipDepth() > 0D) {
                 this.y -= 0.08D;

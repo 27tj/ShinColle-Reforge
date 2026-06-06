@@ -108,7 +108,7 @@ public class GuiFormation extends AbstractContainerScreen<ContainerFormation> {
 
         // Try to find the entity in the client world using runtime entity ID
         Player player = Minecraft.getInstance().player;
-        if (player != null && player.level() != null) {
+        if (player != null) {
             int entityId = capa.getTeamSID(team, slot);
             if (entityId > 0) {
                 Entity entity = player.level().getEntity(entityId);

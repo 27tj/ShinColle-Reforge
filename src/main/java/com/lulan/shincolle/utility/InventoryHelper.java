@@ -133,10 +133,8 @@ public class InventoryHelper {
 
 			if (opt.isPresent()) {
 				IFluidHandlerItem fh = opt.orElse(null);
-				if (fh == null)
-					return true;
 
-				int tanks = fh.getTanks();
+                int tanks = fh.getTanks();
 				for (int i = 0; i < tanks; i++) {
 					FluidStack fstack = fh.getFluidInTank(i);
 					int capacity = fh.getTankCapacity(i);
@@ -474,8 +472,7 @@ public class InventoryHelper {
 		int maxSlots = handler.getSlots();
 
 		if (slots != null) {
-			startId = 0;
-			maxSlots = slots.length;
+            maxSlots = slots.length;
 		}
 
 		// try to merge with existing stacks first (if stackable)
@@ -571,20 +568,18 @@ public class InventoryHelper {
 
 				if (opt.isPresent()) {
 					IFluidHandlerItem fluid = opt.orElse(null);
-					if (fluid != null) {
-						int filled = fluid.fill(fs, IFluidHandler.FluidAction.EXECUTE);
-						if (filled > 0) {
-							totalFilled += filled;
-							fs.shrink(filled);
+                    int filled = fluid.fill(fs, IFluidHandler.FluidAction.EXECUTE);
+                    if (filled > 0) {
+                        totalFilled += filled;
+                        fs.shrink(filled);
 
-							// update the container in inventory
-							inv.setStackInSlot(i, fluid.getContainer());
+                        // update the container in inventory
+                        inv.setStackInSlot(i, fluid.getContainer());
 
-							if (fs.isEmpty())
-								break;
-						}
-					}
-				}
+                        if (fs.isEmpty())
+                            break;
+                    }
+                }
 			}
 		}
 

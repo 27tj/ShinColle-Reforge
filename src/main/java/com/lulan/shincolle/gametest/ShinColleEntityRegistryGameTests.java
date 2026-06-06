@@ -123,7 +123,8 @@ public final class ShinColleEntityRegistryGameTests {
 
 		for (RegistryObject<Item> itemObject : ModItems.ITEMS.getEntries()) {
 			Item item = itemObject.get();
-			assertItemTooltipSafe(level, item, itemObject.getId().toString(), tooltipFlag);
+            assert itemObject.getId() != null;
+            assertItemTooltipSafe(level, item, itemObject.getId().toString(), tooltipFlag);
 		}
 
 		helper.succeed();
@@ -136,7 +137,8 @@ public final class ShinColleEntityRegistryGameTests {
 
 		for (RegistryObject<EntityType<?>> typeObject : ModEntities.ENTITIES.getEntries()) {
 			EntityType<?> type = typeObject.get();
-			assertCanCreate(level, type, typeObject.getId().toString());
+            assert typeObject.getId() != null;
+            assertCanCreate(level, type, typeObject.getId().toString());
 		}
 
 		helper.succeed();
@@ -229,11 +231,8 @@ public final class ShinColleEntityRegistryGameTests {
 				"shincolle_set_unit_name");
 
 		CapaTeitoku capa = player.getCapability(CapaTeitokuProvider.CAPABILITY).orElse(null);
-		if (capa == null) {
-			throw new AssertionError("Player CapaTeitoku is null in formation set-unit-name test.");
-		}
 
-		int teamId = 2;
+        int teamId = 2;
 		String expectedName = "Unit-Alpha";
 		C2SGUIInputPacket packet = new C2SGUIInputPacket(
 				C2SGUIInputPacket.SetUnitName,
@@ -259,11 +258,8 @@ public final class ShinColleEntityRegistryGameTests {
 				"shincolle_swap_ship");
 
 		CapaTeitoku capa = player.getCapability(CapaTeitokuProvider.CAPABILITY).orElse(null);
-		if (capa == null) {
-			throw new AssertionError("Player CapaTeitoku is null in swap-ship packet test.");
-		}
 
-		int teamId = 3;
+        int teamId = 3;
 		capa.setSelectTeam(teamId);
 
 		int slotA = 1;
@@ -301,11 +297,8 @@ public final class ShinColleEntityRegistryGameTests {
 				"shincolle_desk_break_by_id");
 
 		CapaTeitoku capa = player.getCapability(CapaTeitokuProvider.CAPABILITY).orElse(null);
-		if (capa == null) {
-			throw new AssertionError("Player CapaTeitoku is null in desk break packet test.");
-		}
 
-		int myTid = 8001;
+        int myTid = 8001;
 		int allyTid = 8002;
 		capa.setPlayerUID(myTid);
 
@@ -339,11 +332,8 @@ public final class ShinColleEntityRegistryGameTests {
 				"shincolle_desk_unban_by_id");
 
 		CapaTeitoku capa = player.getCapability(CapaTeitokuProvider.CAPABILITY).orElse(null);
-		if (capa == null) {
-			throw new AssertionError("Player CapaTeitoku is null in desk unban packet test.");
-		}
 
-		int myTid = 8101;
+        int myTid = 8101;
 		int bannedTid = 8102;
 		capa.setPlayerUID(myTid);
 
@@ -1274,7 +1264,7 @@ public final class ShinColleEntityRegistryGameTests {
 
 		rangeGoal.start();
 		Entity selected = hostile.getEntityTarget();
-		if (!(selected instanceof BasicEntityShip) || selected instanceof BasicEntityShipHostile) {
+		if (!(selected instanceof BasicEntityShip)) {
 			throw new AssertionError("Hostile acquired unexpected target type. expected=friendly ship actual="
 					+ (selected == null ? "null" : selected.getType().toShortString()));
 		}

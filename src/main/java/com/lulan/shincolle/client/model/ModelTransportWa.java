@@ -744,8 +744,8 @@ public class ModelTransportWa extends ShipModelBaseAdv<Entity> {
                 float angleX = Mth.cos(f2 * 0.08F + f * 0.25F);
                 float angleAdd1 = Mth.cos(f * 0.7F) * f1;
                 float angleAdd2 = Mth.cos(f * 0.7F + 3.1415927F) * f1;
-                float addk1 = 0;
-                float addk2 = 0;
+                float addk1;
+                float addk2;
 
                 // 水上漂浮
                 if (ent.getShipDepth(0) > 0D) {
@@ -810,7 +810,7 @@ public class ModelTransportWa extends ShipModelBaseAdv<Entity> {
 
                 if (ent.getIsSprinting() || f1 > 0.9F) { // 奔跑動作
                                                          // head
-                        this.Head.xRot -= 0.2;
+                        this.Head.xRot -= 0.2F;
                         // body
                         this.BodyMain.xRot = 0.35F;
                         this.Cloth04.xRot -= 0.4F;
@@ -874,7 +874,7 @@ public class ModelTransportWa extends ShipModelBaseAdv<Entity> {
                                         this.LegRight01.zRot = -0.03F;
                                 } else {
                                         // [PORT] Restored from 1.10.2 GlStateManager.translate
-                                        this.offsetY += -0.17F;
+                                    this.offsetY -= 0.17F;
                                         setFace(1);
 
                                         // body

@@ -83,7 +83,7 @@ public class ShinWorldData extends SavedData {
         LogHelper.info("load unattackable target list: count: " + unatkTag.size());
         for (int i = 0; i < unatkTag.size(); i++) {
             String str = unatkTag.getString(i);
-            if (str != null && str.length() > 1) {
+            if (str.length() > 1) {
                 data.unattackableTargetClass.put(str.hashCode(), str);
             }
         }
@@ -99,7 +99,7 @@ public class ShinWorldData extends SavedData {
             HashMap<Integer, String> strList = new HashMap<>();
             for (int j = 0; j < strListTag.size(); j++) {
                 String str = strListTag.getString(j);
-                if (str != null && str.length() > 1) {
+                if (str.length() > 1) {
                     strList.put(str.hashCode(), str);
                 }
             }

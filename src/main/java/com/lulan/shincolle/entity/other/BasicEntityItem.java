@@ -177,7 +177,7 @@ public class BasicEntityItem extends Entity {
 						String pid2 = player.getName().getString();
 
 						// check player UID
-						if (pid1 == null || pid1.length() <= 1) {
+						if (pid1.length() <= 1) {
 							// no owner name, check UUID
 							String uuid1 = nbt.getString("owner");
 							String uuid2 = player.getUUID().toString();

@@ -645,8 +645,8 @@ public class ModelCruiserTatsuta extends ShipModelBaseAdv<Entity> {
 		float angleX1 = Mth.cos(f2 * 0.1F + 0.3F + f * 0.5F);
 		float angleAdd1 = Mth.cos(f * 0.7F) * f1;
 		float angleAdd2 = Mth.cos(f * 0.7F + 3.1415927F) * f1;
-		float addk1 = 0;
-		float addk2 = 0;
+		float addk1;
+		float addk2;
 		float headX = 0F;
 		float headZ = 0F;
 		float t2 = ent.getTickExisted() & 511;

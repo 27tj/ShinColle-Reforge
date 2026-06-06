@@ -60,22 +60,7 @@ public class ParticleSparkle extends Particle {
 		int particleSetting = Minecraft.getInstance().options.particles().get().getId();
 
 		switch (type) {
-			/**
-			 * light quad sparkle around point
-			 * 0: red random
-			 * 2: green random
-			 * 3: blue random
-			 * 4: RG random
-			 * 5: RB random
-			 * 6: GB random
-			 * 7: RGB random
-			 * 8: R only
-			 * 9: G only
-			 * 10: B only
-			 * parms: 0:scale, 1:radius, 2:beam speed, 3:beam thickness, 4~6:motionXYZ,
-			 * 7:alpha, 8:height
-			 */
-			case 0:
+            case 0:
 			case 2:
 			case 3:
 			case 4:
@@ -113,11 +98,7 @@ public class ParticleSparkle extends Particle {
 				this.beamPos = new float[NumBeam][8];
 				this.setPos(entity.getX(), entity.getY() + this.beamHeight, entity.getZ());
 				break;
-			/**
-			 * type 1: blue eye fire particle
-			 * parms: 0:height, 1:eye x, 2:eye z, 3~6:RGBA
-			 */
-			case 1:
+            case 1:
 				this.particleScale = 0.018F;
 				this.beamHeight = parms[0];
 				this.beamFad = parms[1];
@@ -227,10 +208,7 @@ public class ParticleSparkle extends Particle {
 
 		// update beam
 		switch (this.particleType) {
-			/**
-			 * light quad sparkle around point
-			 */
-			case 0: // light sparkle around point
+            case 0: // light sparkle around point
 			case 2:
 			case 3:
 			case 4:

@@ -449,10 +449,10 @@ public class ModelAirfieldHime extends ShipModelBaseAdv<Entity> {
 	@Override
 	public void applyDeadPose(float f, float f1, float f2, float f3, float f4, IShipEmotion ent) {
 
-		float addk1 = 0F;
-		float addk2 = 0F;
-		float headX = 0F;
-		float headZ = 0F;
+		float addk1;
+		float addk2;
+		float headX;
+		float headZ;
   // [PORT] Restored from 1.10.2 GlStateManager.translate
   this.offsetY += 0.55F;
 		this.setFaceHungry(ent);
@@ -543,10 +543,10 @@ public class ModelAirfieldHime extends ShipModelBaseAdv<Entity> {
 		float angleX2 = Mth.cos(f2 * 0.08F + 0.6F + f * 0.5F);
 		float angleAdd1 = Mth.cos(f * 0.7F) * f1 * 0.7F;
 		float angleAdd2 = Mth.cos(f * 0.7F + 3.1415927F) * f1 * 0.7F;
-		float addk1 = 0F;
-		float addk2 = 0F;
-		float headX = 0F;
-		float headZ = 0F;
+		float addk1;
+		float addk2;
+		float headX;
+		float headZ;
 
 		// 水上漂浮
 		if (ent.getShipDepth(0) > 0D || ent.getShipDepth(1) > 0D) {
@@ -604,11 +604,10 @@ public class ModelAirfieldHime extends ShipModelBaseAdv<Entity> {
 		if (this.EquipRdR01 != null)
 			this.EquipRdR01.visible = false;
 
-		if (ent.getIsSprinting() || f1 > 0.9F) { // 奔跑動作
-													// 沒有特殊跑步動作
-		}
+        ent.getIsSprinting();// 奔跑動作
+// 沒有特殊跑步動作
 
-		// head tilt angle
+        // head tilt angle
 		this.Head.zRot = EmotionHelper.getHeadTiltAngle(ent, f2);
 
 		// 移動頭髮避免穿過身體

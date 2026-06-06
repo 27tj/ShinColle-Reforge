@@ -940,10 +940,10 @@ public class ModelDestroyerHibiki extends ShipModelBaseAdv<Entity> {
                 float angleX2 = Mth.cos(f2 * 0.08F + 0.6F + f * 0.5F);
                 float angleAdd1 = Mth.cos(f * 0.7F) * f1;
                 float angleAdd2 = Mth.cos(f * 0.7F + 3.1415927F) * f1;
-                float addk1 = 0;
-                float addk2 = 0;
-                float headX = 0F;
-                float headZ = 0F;
+                float addk1;
+                float addk2;
+                float headX;
+                float headZ;
 
                 // 水上漂浮
                 if (ent.getShipDepth(0) > 0D || ent.getShipDepth(1) > 0D) {
@@ -987,11 +987,11 @@ public class ModelDestroyerHibiki extends ShipModelBaseAdv<Entity> {
                 this.Hair02c2.xRot = -angleX2 * 0.13F - 0.35F;
                 this.Hair02d2.zRot = -angleX2 * 0.07F - 0.52F;
                 this.Hair02e2.zRot = angleX2 * 0.07F + 0.87F;
-                this.HairL01.xRot = angleX * 0.04F + -0.2618F;
+                this.HairL01.xRot = angleX * 0.04F - 0.2618F;
                 this.HairL01.zRot = 0.087F;
                 this.HairL02.xRot = -angleX1 * 0.1F + 0.3142F;
                 this.HairL02.zRot = 0.0873F;
-                this.HairR01.xRot = angleX * 0.04F + -0.2618F;
+                this.HairR01.xRot = angleX * 0.04F - 0.2618F;
                 this.HairR01.zRot = -0.0873F;
                 this.HairR02.xRot = -angleX1 * 0.1F + 0.21F;
                 this.HairR02.zRot = -0.0873F;

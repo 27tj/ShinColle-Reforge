@@ -102,8 +102,4 @@ public class EntitySubmU511Mob extends BasicEntityShipHostile implements IShipIn
 		}
 	}
 
-	@Override
-	public int getEquipType() {
-		return 1;
-	}
 }

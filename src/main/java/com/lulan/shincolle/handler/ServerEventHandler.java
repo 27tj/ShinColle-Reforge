@@ -86,9 +86,6 @@ public class ServerEventHandler {
         }
 
         CapaTeitoku capa = player.getCapability(CapaTeitokuProvider.CAPABILITY).orElse(null);
-        if (capa == null) {
-            return;
-        }
 
         // [PORT] 1.10.2 -> 1.20.1: keep ring possession tracking used by ring-gated
         // systems (spawn, movement buffs).
@@ -225,6 +222,7 @@ public class ServerEventHandler {
         capa.setHasRing(hasRing);
 
         if (!ring.isEmpty() && ring.hasTag()) {
+            assert ring.getTag() != null;
             capa.setRingActive(ring.getTag().getBoolean("isActive"));
         }
     }

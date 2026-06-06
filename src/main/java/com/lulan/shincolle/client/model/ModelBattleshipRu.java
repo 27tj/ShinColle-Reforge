@@ -853,10 +853,10 @@ public class ModelBattleshipRu extends ShipModelBaseAdv<Entity> {
                 float angleX1 = Mth.cos(f2 * 0.1F + 0.3F + f * 0.5F);
                 float angleAdd1 = Mth.cos(f * 0.7F) * f1;
                 float angleAdd2 = Mth.cos(f * 0.7F + 3.1415927F) * f1;
-                float addk1 = 0;
-                float addk2 = 0;
+                float addk1;
+                float addk2;
                 float headX = 0F;
-                float headZ = 0F;
+                float headZ;
                 float t2 = ent.getTickExisted() & 511;
                 boolean spStand = false;
                 boolean showWeapon = EmotionHelper.checkModelState(0, ent.getStateEmotion(ID.S.State));
@@ -879,7 +879,7 @@ public class ModelBattleshipRu extends ShipModelBaseAdv<Entity> {
                 // body
                 this.Ahoke.zRot = angleX * 0.03F + 0.3F;
                 // [PORT] Restored from 1.10.2 GlStateManager.translate
-                this.offsetY += -0.12F;
+            this.offsetY -= 0.12F;
                 this.BodyMain.xRot = -0.1047F;
                 this.BodyMain.yRot = 0F;
                 this.BodyMain.zRot = 0F;
@@ -981,7 +981,7 @@ public class ModelBattleshipRu extends ShipModelBaseAdv<Entity> {
 
                                 // body
                                 // [PORT] Restored from 1.10.2 GlStateManager.translate
-                                this.offsetY += -0.12F;
+                            this.offsetY -= 0.12F;
                                 this.BodyMain.xRot = -0.1F;
                         this.BodyMain.yRot = 0F;
                         this.BodyMain.zRot = 0F;
@@ -1027,7 +1027,7 @@ public class ModelBattleshipRu extends ShipModelBaseAdv<Entity> {
 
                                 // Body
                                 // [PORT] Restored from 1.10.2 GlStateManager.translate
-                                this.offsetY += -0.12F;
+                            this.offsetY -= 0.12F;
                                 this.Head.xRot -= 0.6283F;
                         this.BodyMain.xRot = 0.8727F;
                         // arm
@@ -1067,7 +1067,7 @@ public class ModelBattleshipRu extends ShipModelBaseAdv<Entity> {
                         if (spStand)
 
                                 // [PORT] Restored from 1.10.2 GlStateManager.translate
-                                this.offsetY += -0.12F;
+                            this.offsetY -= 0.12F;
                                 if (ent.getStateEmotion(ID.S.Emotion) == ID.Emotion.BORED) {
                                         // body
                                         // [PORT] Restored from 1.10.2 GlStateManager.translate

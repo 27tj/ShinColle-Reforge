@@ -476,8 +476,8 @@ public class ModelHeavyCruiserRi extends ShipModelBaseAdv<Entity> {
         public void applyNormalPose(float f, float f1, float f2, float f3, float f4, IShipEmotion ent) {
 
                 float angleZ = Mth.cos(f2 * 0.08F);
-                float addk1 = 0;
-                float addk2 = 0;
+                float addk1;
+                float addk2;
 
                 // 水上漂浮
                 if (ent.getShipDepth(0) > 0D) {

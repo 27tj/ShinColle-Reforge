@@ -41,16 +41,14 @@ public class ParticleChi extends Particle {
 		this.particleType = type;
 		this.hasPhysics = false;
 
-		switch (type) {
-			case 1: // nagato
-				this.rCol = 1F;
-				this.gCol = 1F;
-				this.bCol = 1F;
-				this.alpha = 1F;
-				this.lifetime = 40;
-				this.radChi = scale * 12F;
-				break;
-		}
+        if (type == 1) { // nagato
+            this.rCol = 1F;
+            this.gCol = 1F;
+            this.bCol = 1F;
+            this.alpha = 1F;
+            this.lifetime = 40;
+            this.radChi = scale * 12F;
+        }
 	}
 
 	@Override
@@ -163,7 +161,8 @@ public class ParticleChi extends Particle {
 			this.setPos(this.host.getX() + newPos[0], this.y, this.host.getZ() + newPos[1]);
 		}
 
-		int phase = ((IShipEmotion) host).getStateEmotion(ID.S.Phase);
+        assert host != null;
+        int phase = ((IShipEmotion) host).getStateEmotion(ID.S.Phase);
 
 		if (this.age++ > this.lifetime) {
 			this.remove();

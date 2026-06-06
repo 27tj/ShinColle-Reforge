@@ -198,7 +198,7 @@ public class EntityProjectileStatic extends Entity implements IShipOwner, IShipC
 
 			Vec3 delta = ent.position().subtract(this.position());
 			double dist = delta.length();
-			if (dist <= 1D || dist > this.effectRadius || dist < 1.0E-6D)
+			if (dist <= 1D || dist > this.effectRadius)
 				continue;
 
 			Vec3 pull = delta.normalize().scale(-this.effectDamage);

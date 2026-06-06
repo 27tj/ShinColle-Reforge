@@ -725,8 +725,8 @@ public class ModelBattleshipRe extends ShipModelBaseAdv<Entity> {
 	public void applyNormalPose(float f, float f1, float f2, float f3, float f4, IShipEmotion ent) {
 
 		float angleX = Mth.cos(f2 * 0.08F);
-		float addk1 = 0;
-		float addk2 = 0;
+		float addk1;
+		float addk2;
 
 		// [PORT] 1.10.2 -> 1.20.1: restore base standing height offset.
 		this.offsetY += 2.18F; // Was 0.63F in 1.10.2 but this caused her to float above ground

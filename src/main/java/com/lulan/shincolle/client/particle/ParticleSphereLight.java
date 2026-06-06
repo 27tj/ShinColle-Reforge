@@ -59,18 +59,7 @@ public class ParticleSphereLight extends Particle {
 		NumBeam = (3 - particleSetting) * 25;
 
 		switch (type) {
-			/**
-			 * type 0: light beam radiate IN
-			 * type 1: light beam radiate OUT
-			 * type 2: light beam radiate UP
-			 * type 3: light beam radiate DOWN
-			 * type 4: light beam STEADY
-			 * parms: 0:scale, 1:radius, 2:beam speed, 3:beam thickness, 4~7:RGBA, 8:height
-			 *
-			 * type 5: light beam radiate IN custom
-			 * parms: 0:life, 1:scale
-			 */
-			case 0:
+            case 0:
 			case 1:
 			case 2:
 			case 3:

@@ -91,17 +91,15 @@ public class ServerDataManager {
         DimensionDataStorage storage = overworld.getDataStorage();
         worldData = storage.computeIfAbsent(ShinWorldData::load, ShinWorldData::new, ShinWorldData.SAVE_ID);
 
-        if (worldData != null) {
-            nextPlayerID = worldData.nextPlayerID;
-            nextShipID = worldData.nextShipID;
-            mapTeamID = worldData.teamMap;
-            mapShipID = worldData.shipMap;
-            customTargetClass = worldData.customTargetClass;
-            unattackableTargetClass = worldData.unattackableTargetClass;
+        nextPlayerID = worldData.nextPlayerID;
+        nextShipID = worldData.nextShipID;
+        mapTeamID = worldData.teamMap;
+        mapShipID = worldData.shipMap;
+        customTargetClass = worldData.customTargetClass;
+        unattackableTargetClass = worldData.unattackableTargetClass;
 
-            LogHelper.info("loaded world data: " + mapTeamID.size() + " teams, "
-                    + mapShipID.size() + " ships, nextPID=" + nextPlayerID + " nextSID=" + nextShipID);
-        }
+        LogHelper.info("loaded world data: " + mapTeamID.size() + " teams, "
+                + mapShipID.size() + " ships, nextPID=" + nextPlayerID + " nextSID=" + nextShipID);
 
         initialized = true;
     }
@@ -235,8 +233,6 @@ public class ServerDataManager {
         if (player == null)
             return;
         CapaTeitoku capa = getTeitokuCapability(player);
-        if (capa == null)
-            return;
 
         int pUID = capa.getPlayerUID();
         if (mapTeamID != null && mapTeamID.containsKey(pUID)) {
@@ -357,10 +353,6 @@ public class ServerDataManager {
                 + " uuid=" + player.getUUID() + " eid=" + player.getId());
 
         CapaTeitoku capa = getTeitokuCapability(player);
-        if (capa == null) {
-            LogHelper.info("update player fail: capability is null");
-            return;
-        }
 
         int pid = capa.getPlayerUID();
 
@@ -506,11 +498,9 @@ public class ServerDataManager {
 
         if (owner instanceof Player player) {
             CapaTeitoku capa = getTeitokuCapability(player);
-            if (capa != null) {
-                int pid = capa.getPlayerUID();
-                LogHelper.debug("update ship: set owner id: " + pid + " on " + ship);
-                ship.setPlayerUID(pid);
-            }
+            int pid = capa.getPlayerUID();
+            LogHelper.debug("update ship: set owner id: " + pid + " on " + ship);
+            ship.setPlayerUID(pid);
         } else {
             LogHelper.debug("update ship: get owner id fail, owner offline or no data: " + ship);
         }

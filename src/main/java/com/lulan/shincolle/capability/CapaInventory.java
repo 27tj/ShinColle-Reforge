@@ -21,7 +21,7 @@ public class CapaInventory<T> extends ItemStackHandler {
 	public static final String InvName = "CpInv";
 
 	// host type: -1:error 0:ship entity 1:tile 2:other entity 3:item 4:null host
-	protected int hostType = -1;
+	protected int hostType;
 	protected T host;
 	protected WorldlyContainer hostInv;
 

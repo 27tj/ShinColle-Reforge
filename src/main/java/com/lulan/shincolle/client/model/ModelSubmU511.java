@@ -416,8 +416,8 @@ public class ModelSubmU511 extends ShipModelBaseAdv<Entity> {
                 float angleX = Mth.cos(f2 * 0.08F);
                 float angleAdd1 = Mth.cos(f * 0.7F) * f1 * 0.5F;
                 float angleAdd2 = Mth.cos(f * 0.7F + 3.1415927F) * f1 * 0.5F;
-                float addk1 = 0;
-                float addk2 = 0;
+                float addk1;
+                float addk2;
 
                 // 水上漂浮
                 if (ent.getShipDepth(0) > 0D) {
@@ -473,11 +473,10 @@ public class ModelSubmU511 extends ShipModelBaseAdv<Entity> {
                 // skirt
                 this.Skirt.xRot = 0.35F;
 
-                if (ent.getIsSprinting() || f1 > 0.9F) { // 奔跑動作
-                                                         // 無特殊奔跑動作
-                }
+            ent.getIsSprinting();// 奔跑動作
+// 無特殊奔跑動作
 
-                // head tilt angle
+            // head tilt angle
                 this.Head.zRot = EmotionHelper.getHeadTiltAngle(ent, f2);
 
                 if (ent.getIsSneaking()) { // 潛行, 蹲下動作

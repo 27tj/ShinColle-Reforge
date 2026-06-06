@@ -32,18 +32,16 @@ public class EquipSearchlight extends BasicEquip {
 
 	@Override
 	public int[] getResourceValue(int meta) {
-		switch (this.getEquipTypeIDFromMeta(meta)) {
-			case ID.EquipType.SEARCHLIGHT_LO: // 80
-				return new int[] {
-						itemRand.nextInt(4) + 4,
-						itemRand.nextInt(3) + 3,
-						itemRand.nextInt(2) + 2,
-						itemRand.nextInt(2) + 2
-				};
-			default:
-				return new int[] { 0, 0, 0, 0 };
-		}
-	}
+        if (this.getEquipTypeIDFromMeta(meta) == ID.EquipType.SEARCHLIGHT_LO) { // 80
+            return new int[]{
+                    itemRand.nextInt(4) + 4,
+                    itemRand.nextInt(3) + 3,
+                    itemRand.nextInt(2) + 2,
+                    itemRand.nextInt(2) + 2
+            };
+        }
+        return new int[]{0, 0, 0, 0};
+    }
 
 	@Override
 	public void appendHoverText(ItemStack stack, Level level, List<Component> tooltip, TooltipFlag flag) {

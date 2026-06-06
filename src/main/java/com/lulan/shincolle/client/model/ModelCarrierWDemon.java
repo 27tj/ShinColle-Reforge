@@ -639,10 +639,10 @@ public class ModelCarrierWDemon extends ShipModelBaseAdv<Entity> {
 		float angleX2 = Mth.cos(f2 * 0.08F + 0.6F + f * 0.5F);
 		float angleAdd1 = Mth.cos(f * 0.7F) * f1 * 0.7F;
 		float angleAdd2 = Mth.cos(f * 0.7F + 3.1415927F) * f1 * 0.7F;
-		float addk1 = 0F;
-		float addk2 = 0F;
-		float headX = 0F;
-		float headZ = 0F;
+		float addk1;
+		float addk2;
+		float headX;
+		float headZ;
 
 		// 水上漂浮
 		if (ent.getShipDepth(0) > 0D || ent.getShipDepth(1) > 0D) {

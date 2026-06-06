@@ -165,17 +165,15 @@ public class ParticleTextsCustom extends Particle {
             return;
         }
 
-        switch (this.particleType) {
-            case 1:
-                if (this.host == null || !this.host.isAlive()) {
-                    this.remove();
-                    return;
-                }
+        if (this.particleType == 1) {
+            if (this.host == null || !this.host.isAlive()) {
+                this.remove();
+                return;
+            }
 
-                this.setPos(this.host.getX() + this.parms[0],
-                        this.host.getY() + this.parms[1],
-                        this.host.getZ() + this.parms[2]);
-                break;
+            this.setPos(this.host.getX() + this.parms[0],
+                    this.host.getY() + this.parms[1],
+                    this.host.getZ() + this.parms[2]);
         }
     }
 

@@ -161,7 +161,7 @@ public class GuiHelper {
 	// ship bonus point to text color: white -> yellow -> orange -> red
 	public static int getBonusPointColor(int level) {
 		int max = ConfigHandler.modernLimit;
-		int color = 0;
+		int color;
 		float flv = (float) level / (float) max - 0.5F;
 
 		if (flv >= 0.5F) {

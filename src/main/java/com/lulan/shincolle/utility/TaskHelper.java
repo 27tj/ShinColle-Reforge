@@ -151,7 +151,8 @@ public class TaskHelper {
 
 		if (paper.hasTag()) {
 			CompoundTag nbt = paper.getTag();
-			ListTag tagList = nbt.getList("Recipe", Tag.TAG_COMPOUND);
+            assert nbt != null;
+            ListTag tagList = nbt.getList("Recipe", Tag.TAG_COMPOUND);
 
 			for (int i = 0; i < 9; i++) {
 				CompoundTag itemTags = tagList.getCompound(i);
@@ -188,10 +189,8 @@ public class TaskHelper {
 			maxtimes--;
 			if (maxtimes < 0)
 				break;
-			if (maxCraft < 0)
-				break;
 
-			// move materials from chest to ship's inventory slot 12~20
+            // move materials from chest to ship's inventory slot 12~20
 			for (int i = 0; i < 9; i++) {
 				if (!invShip.getStackInSlot(i + 12).isEmpty()) {
 					recipeTemp.setItem(i, invShip.getStackInSlot(i + 12));

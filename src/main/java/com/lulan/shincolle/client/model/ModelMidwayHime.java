@@ -757,9 +757,7 @@ public class ModelMidwayHime extends ShipModelBaseAdv<Entity> {
 		this.GlowHead.xRot = this.Head.xRot;
 		this.GlowHead.yRot = this.Head.yRot;
 		this.GlowHead.zRot = this.Head.zRot;
-		this.Hair01.xRot = this.Hair01.xRot;
-		this.Hair02.xRot = this.Hair02.xRot;
-		this.GlowBodyMain2a.xRot = this.ArmLeft01.xRot;
+        this.GlowBodyMain2a.xRot = this.ArmLeft01.xRot;
 	}
 
 	@Override
@@ -852,10 +850,10 @@ public class ModelMidwayHime extends ShipModelBaseAdv<Entity> {
 		float angleX2 = Mth.cos(f2 * 0.08F + 0.6F + f * 0.5F);
 		float angleAdd1 = Mth.cos(f * 0.7F) * f1 * 0.5F;
 		float angleAdd2 = Mth.cos(f * 0.7F + 3.1415927F) * f1 * 0.5F;
-		float addk1 = 0F;
-		float addk2 = 0F;
-		float headX = 0F;
-		float headZ = 0F;
+		float addk1;
+		float addk2;
+		float headX;
+		float headZ;
 
 		// 水上漂浮
 		// [RENDER?] 目視検証必須: 水面時の上下揺れが1.10.2相当の小振幅(0.025)で再現されること。

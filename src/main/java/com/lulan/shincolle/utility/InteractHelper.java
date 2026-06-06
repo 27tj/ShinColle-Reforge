@@ -119,11 +119,9 @@ public class InteractHelper {
 
 		// player marriage num +1
 		CapaTeitoku capa = ServerDataManager.getTeitokuCapability(player);
-		if (capa != null) {
-			capa.setMarriageNum(capa.getMarriageNum() + 1);
-		}
+        capa.setMarriageNum(capa.getMarriageNum() + 1);
 
-		// play hearts effect
+        // play hearts effect
 		ModNetworking.sendToAllTracking(
 				new S2CSpawnParticlePacket((byte) 3, ship.getId(), new byte[0]), ship);
 
@@ -156,17 +154,15 @@ public class InteractHelper {
 			// set item amount
 			ItemStack[] items = ShipCalc.getKaitaiItems(ship.getShipClass());
 
-			if (items != null) {
-				for (ItemStack item : items) {
-					if (item != null && !item.isEmpty()) {
-						ItemEntity entityItem = new ItemEntity(ship.level(),
-								ship.getX(), ship.getY() + 0.8D, ship.getZ(), item);
-						ship.level().addFreshEntity(entityItem);
-					}
-				}
-			}
+            for (ItemStack item : items) {
+                if (item != null && !item.isEmpty()) {
+                    ItemEntity entityItem = new ItemEntity(ship.level(),
+                            ship.getX(), ship.getY() + 0.8D, ship.getZ(), item);
+                    ship.level().addFreshEntity(entityItem);
+                }
+            }
 
-			// drop inventory item
+            // drop inventory item
 			for (int i = 0; i < ship.getCapaShipInventory().getSlots(); i++) {
 				ItemStack invitem = ship.getCapaShipInventory().getStackInSlot(i);
 
@@ -215,7 +211,7 @@ public class InteractHelper {
 		if (nbt != null) {
 			int ida = nbt.getInt(OwnerPaper.SignIDA);
 			int idb = nbt.getInt(OwnerPaper.SignIDB);
-			int idtarget = -1; // target player uid
+			int idtarget; // target player uid
 
 			// 1. check 2 signs
 			if (ida > 0 && idb > 0) {
@@ -234,7 +230,7 @@ public class InteractHelper {
 				Player target = ServerDataManager.getPlayerByUID(idtarget);
 				CapaTeitoku capa = target != null ? ServerDataManager.getTeitokuCapability(target) : null;
 
-				if (capa != null && target != null) {
+				if (capa != null) {
 					// 4. change ship's player UID
 					ship.setPlayerUID(idtarget);
 

@@ -211,18 +211,14 @@ public class TeamHelper {
         }
         if (entity instanceof Player player) {
             CapaTeitoku capa = ServerDataManager.getTeitokuCapability(player);
-            if (capa != null) {
-                return capa.getPlayerUID();
-            }
+            return capa.getPlayerUID();
         }
         // Check vanilla tameable
         if (entity instanceof OwnableEntity ownable) {
             Entity owner = ownable.getOwner();
             if (owner instanceof Player player) {
                 CapaTeitoku capa = ServerDataManager.getTeitokuCapability(player);
-                if (capa != null) {
-                    return capa.getPlayerUID();
-                }
+                return capa.getPlayerUID();
             }
         }
         return 0;

@@ -889,10 +889,10 @@ public class ModelNorthernHime extends ShipModelBaseAdv<Entity> {
                 float angleX = Mth.cos(f2 * 0.08F);
                 float angleAdd1 = Mth.cos(f * 0.7F) * f1;
                 float angleAdd2 = Mth.cos(f * 0.7F + 3.1415927F) * f1;
-                float addk1 = 0;
-                float addk2 = 0;
-                float headX = 0F;
-                float headZ = 0F;
+                float addk1;
+                float addk2;
+                float headX;
+                float headZ;
                 int state = ent.getStateEmotion(ID.S.State);
                 boolean showCannon = EmotionHelper.checkModelState(0, state);
                 boolean showUmbrella = EmotionHelper.checkModelState(2, state);

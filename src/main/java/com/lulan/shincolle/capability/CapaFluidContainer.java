@@ -64,7 +64,8 @@ public class CapaFluidContainer implements IFluidHandlerItem {
 
 		CompoundTag fluidTag = new CompoundTag();
 		fluid.writeToNBT(fluidTag);
-		stack.getTag().put(FLUID_NBT_KEY, fluidTag);
+        assert stack.getTag() != null;
+        stack.getTag().put(FLUID_NBT_KEY, fluidTag);
 	}
 
 	// IFluidHandler implementation
@@ -181,7 +182,8 @@ public class CapaFluidContainer implements IFluidHandlerItem {
 
 	protected void setContainerToEmpty() {
 		if (stack.hasTag()) {
-			stack.getTag().remove(FLUID_NBT_KEY);
+            assert stack.getTag() != null;
+            stack.getTag().remove(FLUID_NBT_KEY);
 		}
 	}
 }

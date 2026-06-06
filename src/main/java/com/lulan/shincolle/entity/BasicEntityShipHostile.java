@@ -1,6 +1,7 @@
 package com.lulan.shincolle.entity;
 
 import java.util.HashMap;
+import java.util.Objects;
 
 import javax.annotation.Nullable;
 
@@ -512,18 +513,18 @@ public abstract class BasicEntityShipHostile extends Mob
 
 		// set MC entity attributes
 		if (this.getAttribute(Attributes.MAX_HEALTH) != null) {
-			this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(
+			Objects.requireNonNull(this.getAttribute(Attributes.MAX_HEALTH)).setBaseValue(
 					this.shipAttrs.getAttrsBuffed(ID.Attrs.HP));
 		}
 		if (this.getAttribute(Attributes.MOVEMENT_SPEED) != null) {
-			this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(
+			Objects.requireNonNull(this.getAttribute(Attributes.MOVEMENT_SPEED)).setBaseValue(
 					this.shipAttrs.getAttrsBuffed(ID.Attrs.MOV));
 		}
 		if (this.getAttribute(Attributes.FOLLOW_RANGE) != null) {
-			this.getAttribute(Attributes.FOLLOW_RANGE).setBaseValue(64);
+			Objects.requireNonNull(this.getAttribute(Attributes.FOLLOW_RANGE)).setBaseValue(64);
 		}
 		if (this.getAttribute(Attributes.KNOCKBACK_RESISTANCE) != null) {
-			this.getAttribute(Attributes.KNOCKBACK_RESISTANCE).setBaseValue(
+			Objects.requireNonNull(this.getAttribute(Attributes.KNOCKBACK_RESISTANCE)).setBaseValue(
 					this.shipAttrs.getAttrsBuffed(ID.Attrs.KB));
 		}
 	}
@@ -734,31 +735,25 @@ public abstract class BasicEntityShipHostile extends Mob
 				this.setStateEmotion(ID.S.Emotion, ID.Emotion.T_T, false);
 			}
 		} else {
-			switch (this.getStateEmotion(ID.S.Emotion)) {
-				case ID.Emotion.NORMAL:
-					if (this.random.nextInt(4) == 0) {
-						this.setStateEmotion(ID.S.Emotion, ID.Emotion.BORED, false);
-					}
-					break;
-				default:
-					if (this.random.nextInt(2) == 0) {
-						this.setStateEmotion(ID.S.Emotion, ID.Emotion.NORMAL, false);
-					}
-					break;
-			}
+            if (this.getStateEmotion(ID.S.Emotion) == ID.Emotion.NORMAL) {
+                if (this.random.nextInt(4) == 0) {
+                    this.setStateEmotion(ID.S.Emotion, ID.Emotion.BORED, false);
+                }
+            } else {
+                if (this.random.nextInt(2) == 0) {
+                    this.setStateEmotion(ID.S.Emotion, ID.Emotion.NORMAL, false);
+                }
+            }
 
-			switch (this.getStateEmotion(ID.S.Emotion4)) {
-				case ID.Emotion.NORMAL:
-					if (this.random.nextInt(3) == 0) {
-						this.setStateEmotion(ID.S.Emotion4, ID.Emotion.BORED, false);
-					}
-					break;
-				default:
-					if (this.random.nextInt(2) == 0) {
-						this.setStateEmotion(ID.S.Emotion4, ID.Emotion.NORMAL, false);
-					}
-					break;
-			}
+            if (this.getStateEmotion(ID.S.Emotion4) == ID.Emotion.NORMAL) {
+                if (this.random.nextInt(3) == 0) {
+                    this.setStateEmotion(ID.S.Emotion4, ID.Emotion.BORED, false);
+                }
+            } else {
+                if (this.random.nextInt(2) == 0) {
+                    this.setStateEmotion(ID.S.Emotion4, ID.Emotion.NORMAL, false);
+                }
+            }
 		}
 
 		if (!this.level().isClientSide()) {

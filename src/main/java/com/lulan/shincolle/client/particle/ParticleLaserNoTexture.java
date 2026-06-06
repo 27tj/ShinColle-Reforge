@@ -178,21 +178,19 @@ public class ParticleLaserNoTexture extends Particle {
 
 		float[] lookDeg;
 
-		switch (type) {
-			case 3: // guard indicator line: block type
-				lookDeg = CalcHelper.getLookDegree(tarX - x, tarY - y, tarZ - z, false);
-				this.shotYaw = lookDeg[0];
-				this.shotPitch = lookDeg[1];
-				this.lifetime = 8;
-				this.rCol = 1F;
-				this.gCol = 1F;
-				this.bCol = 1F;
-				this.scaleOut = this.particleScale * 0.5F;
-				this.scaleIn = this.particleScale * 0.125F;
-				this.alphaOut = 0.1F;
-				this.alphaIn = 0.2F;
-				break;
-		}
+        if (type == 3) { // guard indicator line: block type
+            lookDeg = CalcHelper.getLookDegree(tarX - x, tarY - y, tarZ - z, false);
+            this.shotYaw = lookDeg[0];
+            this.shotPitch = lookDeg[1];
+            this.lifetime = 8;
+            this.rCol = 1F;
+            this.gCol = 1F;
+            this.bCol = 1F;
+            this.scaleOut = this.particleScale * 0.5F;
+            this.scaleIn = this.particleScale * 0.125F;
+            this.alphaOut = 0.1F;
+            this.alphaIn = 0.2F;
+        }
 	}
 
 	@Override
@@ -427,12 +425,11 @@ public class ParticleLaserNoTexture extends Particle {
 
 				if (this.age > 4) {
 					this.alphaIn = 1.0F + (4 - age) * 0.2F;
-					this.alphaOut = this.alphaIn * 0.5F;
-				} else {
+                } else {
 					this.alphaIn = 0.2F + age * 0.2F;
-					this.alphaOut = this.alphaIn * 0.5F;
-				}
-				break;
+                }
+                this.alphaOut = this.alphaIn * 0.5F;
+                break;
 			case 4: // supply indicator line
 				this.tarX = target.getX();
 				this.tarY = target.getY() + target.getBbHeight() * 0.5D;
@@ -445,12 +442,11 @@ public class ParticleLaserNoTexture extends Particle {
 
 				if (this.age > 4) {
 					this.alphaIn = 1.0F + (4 - age) * 0.2F;
-					this.alphaOut = this.alphaIn * 0.5F;
-				} else {
+                } else {
 					this.alphaIn = 0.2F + age * 0.2F;
-					this.alphaOut = this.alphaIn * 0.5F;
-				}
-				break;
+                }
+                this.alphaOut = this.alphaIn * 0.5F;
+                break;
 			case 5: // position indicator line
 				this.tarX = target.getX();
 				this.tarY = target.getY() + 0.2D;
@@ -504,12 +500,11 @@ public class ParticleLaserNoTexture extends Particle {
 
 				if (this.age > 4) {
 					this.alphaIn = 1.0F + (4 - age) * 0.2F;
-					this.alphaOut = this.alphaIn * 0.5F;
-				} else {
+                } else {
 					this.alphaIn = 0.2F + age * 0.2F;
-					this.alphaOut = this.alphaIn * 0.5F;
-				}
-				break;
+                }
+                this.alphaOut = this.alphaIn * 0.5F;
+                break;
 		}
 
 		if (this.age++ > this.lifetime) {

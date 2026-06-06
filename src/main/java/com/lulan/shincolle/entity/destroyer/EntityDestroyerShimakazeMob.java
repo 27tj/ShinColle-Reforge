@@ -92,9 +92,4 @@ public class EntityDestroyerShimakazeMob extends BasicEntityShipHostile {
 		}
 	}
 
-	@Override
-	public int getEquipType() {
-		return 1;
-	}
-
 }

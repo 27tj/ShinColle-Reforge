@@ -23,6 +23,7 @@ import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * GUI screen for the ship entity inventory.
@@ -262,8 +263,6 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
             if (nameIcon[0] == 4) {
                 offY = -10;
             }
-        } else if (nameIcon[0] == 6) {
-            offY = -10;
         } else {
             offY = 10;
         }
@@ -450,7 +449,7 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
         }
 
         // Ship Name
-        String shipName = ship.hasCustomName() ? ship.getCustomName().getString() : ship.getName().getString();
+        String shipName = ship.hasCustomName() ? Objects.requireNonNull(ship.getCustomName()).getString() : ship.getName().getString();
         graphics.drawString(this.font, shipName, 8, 6, 0x000000, false);
 
         // Level (right-aligned, gold for 150+)
@@ -780,19 +779,15 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
             // AI page tab clicks - left column (x=239-245, pages 1-6)
             if (relX >= 239 && relX <= 245 && relY >= 131 && relY <= 208) {
                 int tabIdx = (relY - 131) / 13;
-                if (tabIdx >= 0 && tabIdx < 6) {
-                    showPageAI = tabIdx + 1;
-                    return true;
-                }
+                showPageAI = tabIdx + 1;
+                return true;
             }
 
             // AI page tab clicks - right column (x=246-253, pages 7-12)
             if (relX >= 246 && relX <= 253 && relY >= 131 && relY <= 208) {
                 int tabIdx = (relY - 131) / 13;
-                if (tabIdx >= 0 && tabIdx < 6) {
-                    showPageAI = tabIdx + 7;
-                    return true;
-                }
+                showPageAI = tabIdx + 7;
+                return true;
             }
 
             // AI page content clicks
@@ -925,7 +920,7 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
         if (relX >= 176 && relX <= 240 && relY >= 157 && relY <= 208) {
             int col = (relX - 176) / 16;
             int row = (relY - 157) / 13;
-            if (col >= 0 && col < 4 && row >= 0 && row < 4) {
+            if (col < 4) {
                 int stateIdx = row * 4 + col;
                 int numStates = ship.getStateMinor(ID.M.NumState);
                 if (stateIdx < numStates) {
@@ -945,13 +940,11 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
         // Task buttons (x=174-237, y=136-149)
         if (relX >= 174 && relX <= 237 && relY >= 136 && relY <= 149) {
             int taskIdx = (relX - 174) / 16;
-            if (taskIdx >= 0 && taskIdx < 4) {
-                int currentTask = ship.getStateMinor(ID.M.Task);
-                int newTask = (currentTask == taskIdx + 1) ? 0 : taskIdx + 1;
-                ship.setStateMinor(ID.M.Task, newTask);
-                sendShipButton(ship, ID.B.ShipInv_Task, newTask);
-                return true;
-            }
+            int currentTask = ship.getStateMinor(ID.M.Task);
+            int newTask = (currentTask == taskIdx + 1) ? 0 : taskIdx + 1;
+            ship.setStateMinor(ID.M.Task, newTask);
+            sendShipButton(ship, ID.B.ShipInv_Task, newTask);
+            return true;
         }
 
         // Task setting checkboxes (x=177-187, y=157/170/183)
@@ -979,14 +972,12 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
         for (int row = 0; row < 3; row++) {
             if (relY >= rowYs[row] && relY <= rowYs[row] + 11) {
                 int col = (relX - 173) / 11;
-                if (col >= 0 && col < 6) {
-                    int bit = row * 6 + col;
-                    int taskSide = ship.getStateMinor(ID.M.TaskSide);
-                    int newTaskSide = taskSide ^ (1 << bit);
-                    ship.setStateMinor(ID.M.TaskSide, newTaskSide);
-                    sendShipButton(ship, ID.B.ShipInv_TaskSide, newTaskSide);
-                    return true;
-                }
+                int bit = row * 6 + col;
+                int taskSide = ship.getStateMinor(ID.M.TaskSide);
+                int newTaskSide = taskSide ^ (1 << bit);
+                ship.setStateMinor(ID.M.TaskSide, newTaskSide);
+                sendShipButton(ship, ID.B.ShipInv_TaskSide, newTaskSide);
+                return true;
             }
         }
         return false;

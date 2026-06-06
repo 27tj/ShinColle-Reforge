@@ -94,9 +94,4 @@ public class EntityDestroyerInazumaMob extends BasicEntityShipHostile implements
 	public void setRiderType(int type) {
 	}
 
-	@Override
-	public int getEquipType() {
-		return 1;
-	}
-
 }

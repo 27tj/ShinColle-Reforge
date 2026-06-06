@@ -66,11 +66,7 @@ public class ShipCmdGetShip {
                 }
 
                 CapaTeitoku capa = ServerDataManager.getTeitokuCapability(player);
-                if (capa == null) {
-                        source.sendFailure(Component.literal("[ShinColle] Player data not found."));
-                        return 0;
-                }
-                int uid = capa.getPlayerUID();
+            int uid = capa.getPlayerUID();
 
                 ServerLevel level = source.getLevel();
                 List<BasicEntityShip> ships = level.getEntitiesOfClass(

@@ -97,8 +97,7 @@ public class ShipSpawnEgg extends BasicItem {
 
 				int maxLegacyMeta = ID.ShipClass.NorthlandHime + 2;
 				int maxLegacyMobMeta = MOB_OFFSET + maxLegacyMeta;
-				boolean isLegacyMeta = (legacyType >= 2 && legacyType <= maxLegacyMeta)
-						|| (legacyType >= MOB_OFFSET + 2 && legacyType <= maxLegacyMobMeta);
+				boolean isLegacyMeta = legacyType <= maxLegacyMeta || legacyType >= MOB_OFFSET + 2 && legacyType <= maxLegacyMobMeta;
 
 				if (isLegacyMeta) {
 					return legacyType - 2;
@@ -180,7 +179,8 @@ public class ShipSpawnEgg extends BasicItem {
 		Direction direction = context.getClickedFace();
 
 		// check block editability
-		if (!level.mayInteract(player, blockPos)) {
+        assert player != null;
+        if (!level.mayInteract(player, blockPos)) {
 			return InteractionResult.FAIL;
 		}
 
@@ -192,7 +192,7 @@ public class ShipSpawnEgg extends BasicItem {
 
 		CompoundTag nbt = stack.getTag();
 
-		int shipClass = -1;
+		int shipClass;
         if (hasSpecificShipClassTag(nbt)) {
 			shipClass = getShipClass(stack);
 		} else {
@@ -222,7 +222,7 @@ public class ShipSpawnEgg extends BasicItem {
 			return InteractionResult.FAIL;
 		}
 
-		entity.moveTo(x, y, z, player != null ? player.getYRot() : 0F, 0F);
+		entity.moveTo(x, y, z, player.getYRot(), 0F);
 
 		if (entity instanceof BasicEntityShip ship) {
 			// init ship from egg data
@@ -252,7 +252,7 @@ public class ShipSpawnEgg extends BasicItem {
 		}
 
 		// consume item in non-creative
-		if (player != null && !player.getAbilities().instabuild) {
+		if (!player.getAbilities().instabuild) {
 			stack.shrink(1);
 		}
 
@@ -660,7 +660,8 @@ public class ShipSpawnEgg extends BasicItem {
 		if (stack.hasTag()) {
 			CompoundTag nbt = stack.getTag();
 
-			if (nbt.contains("StateMinor")) {
+            assert nbt != null;
+            if (nbt.contains("StateMinor")) {
 				// Saved ship egg: show level, name, owner
 				int[] stateMinor = nbt.getIntArray("StateMinor");
 				if (stateMinor.length > 0) {

@@ -27,9 +27,7 @@ public final class DebugProfiler {
         }
 
         ProfilerFiller profiler = level.getProfiler();
-        if (profiler != null) {
-            profiler.push(section);
-        }
+        profiler.push(section);
         return profiler;
     }
 

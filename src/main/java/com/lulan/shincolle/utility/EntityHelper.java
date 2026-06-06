@@ -555,16 +555,14 @@ public class EntityHelper {
 						rng);
 			}
 
-			if (level.getServer() != null) {
-				Component text = Component.translatable(
-						rng.nextBoolean() ? "chat.shincolle.bossspawn1" : "chat.shincolle.bossspawn2")
-						.withStyle(ChatFormatting.YELLOW)
-						.append(Component.literal(" " + spawnX + " " + spawnY + " " + spawnZ)
-								.withStyle(ChatFormatting.AQUA));
-				level.getServer().getPlayerList().broadcastSystemMessage(text, false);
-			}
+            Component text = Component.translatable(
+                            rng.nextBoolean() ? "chat.shincolle.bossspawn1" : "chat.shincolle.bossspawn2")
+                    .withStyle(ChatFormatting.YELLOW)
+                    .append(Component.literal(" " + spawnX + " " + spawnY + " " + spawnZ)
+                            .withStyle(ChatFormatting.AQUA));
+            level.getServer().getPlayerList().broadcastSystemMessage(text, false);
 
-			break;
+            break;
 		}
 	}
 
@@ -677,13 +675,11 @@ public class EntityHelper {
 							return ModEntities.CA_TAKAO_MOB.get();
 					}
 				default:
-					switch (rng.nextInt(2)) {
-						case 1:
-							return ModEntities.CV_KAGA_MOB.get();
-						default:
-							return ModEntities.CV_AKAGI_MOB.get();
-					}
-			}
+                    if (rng.nextInt(2) == 1) {
+                        return ModEntities.CV_KAGA_MOB.get();
+                    }
+                    return ModEntities.CV_AKAGI_MOB.get();
+            }
 		}
 
 		switch (rng.nextInt(7)) {

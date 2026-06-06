@@ -199,7 +199,7 @@ public class ParticleHelper {
     }
 
     public static void spawnTeamCircleAtPlayer(net.minecraft.server.level.ServerPlayer player, double x, double y, double z, int teamId) {
-        if (player == null || player.connection == null) return;
+        if (player == null) return;
         io.netty.buffer.ByteBuf rawBuf = io.netty.buffer.Unpooled.buffer(48);
         net.minecraft.network.FriendlyByteBuf buf = new net.minecraft.network.FriendlyByteBuf(rawBuf);
         try {

@@ -93,9 +93,4 @@ public class EntityDestroyerHibikiMob extends BasicEntityShipHostile implements 
 	public void setRiderType(int type) {
 	}
 
-	@Override
-	public int getEquipType() {
-		return 1;
-	}
-
 }
