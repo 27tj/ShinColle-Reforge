@@ -169,46 +169,21 @@ public class ShipCalc {
 
 	/** Check if ship class is a large ship type */
 	private static boolean isLargeShip(int shipClass) {
-		switch (shipClass) {
+		return switch (shipClass) {
 			// Abyssal small ships (destroyers, light cruisers, cruisers, light carrier,
 			// transport, subs)
-			case ID.ShipClass.DDI:
-			case ID.ShipClass.DDRO:
-			case ID.ShipClass.DDHA:
-			case ID.ShipClass.DDNI:
-			case ID.ShipClass.CLHO:
-			case ID.ShipClass.CLHE:
-			case ID.ShipClass.CLTO:
-			case ID.ShipClass.CLTSU:
-			case ID.ShipClass.CLTCHI:
-			case ID.ShipClass.CARI:
-			case ID.ShipClass.CANE:
-			case ID.ShipClass.CVLNU:
-			case ID.ShipClass.APWA:
-			case ID.ShipClass.SSKA:
-			case ID.ShipClass.SSYO:
-			case ID.ShipClass.SSSO:
-				// Friendly small ships (DD, SS)
-			case ID.ShipClass.DDShimakaze:
-			case ID.ShipClass.DDAkatsuki:
-			case ID.ShipClass.DDHibiki:
-			case ID.ShipClass.DDIkazuchi:
-			case ID.ShipClass.DDInazuma:
-			case ID.ShipClass.SSU511:
-			case ID.ShipClass.SSRo500:
-			case ID.ShipClass.Raiden:
-				// Friendly light/heavy cruisers (in small construction table)
-			case ID.ShipClass.CLTenryuu:
-			case ID.ShipClass.CLTatsuta:
-			case ID.ShipClass.CAAtago:
-			case ID.ShipClass.CATakao:
-				// Abyssal destroyers (later additions)
-			case ID.ShipClass.DDNA:
-			case ID.ShipClass.DDAH:
-				return false;
+			// Friendly small ships (DD, SS)
+			// Friendly light/heavy cruisers (in small construction table)
+			// Abyssal destroyers (later additions)
+			case ID.ShipClass.DDI, ID.ShipClass.DDRO, ID.ShipClass.DDHA, ID.ShipClass.DDNI, ID.ShipClass.CLHO,
+			     ID.ShipClass.CLHE, ID.ShipClass.CLTO, ID.ShipClass.CLTSU, ID.ShipClass.CLTCHI, ID.ShipClass.CARI,
+			     ID.ShipClass.CANE, ID.ShipClass.CVLNU, ID.ShipClass.APWA, ID.ShipClass.SSKA, ID.ShipClass.SSYO,
+			     ID.ShipClass.SSSO, ID.ShipClass.DDShimakaze, ID.ShipClass.DDAkatsuki, ID.ShipClass.DDHibiki,
+			     ID.ShipClass.DDIkazuchi, ID.ShipClass.DDInazuma, ID.ShipClass.SSU511, ID.ShipClass.SSRo500,
+			     ID.ShipClass.Raiden, ID.ShipClass.CLTenryuu, ID.ShipClass.CLTatsuta, ID.ShipClass.CAAtago,
+			     ID.ShipClass.CATakao, ID.ShipClass.DDNA, ID.ShipClass.DDAH -> false;
 			// Everything else is large: BB, CV, CL, CA (friendly), all himes/bosses/demons
-			default:
-				return true;
-		}
+			default -> true;
+		};
 	}
 }

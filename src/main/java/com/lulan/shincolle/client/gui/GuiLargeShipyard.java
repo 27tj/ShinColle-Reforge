@@ -29,7 +29,8 @@ public class GuiLargeShipyard extends AbstractContainerScreen<ContainerLargeShip
     private static final ResourceLocation TEXTURE = new ResourceLocation("shincolle",
             "textures/gui/guilargeshipyard.png");
 
-    private String errorMsg1, errorMsg2;
+    private final String errorMsg1;
+    private final String errorMsg2;
     private float tickGUI;
 
     public GuiLargeShipyard(ContainerLargeShipyard menu, Inventory playerInv, Component title) {

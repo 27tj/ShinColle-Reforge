@@ -1,9 +1,5 @@
 package com.lulan.shincolle.entity;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-
 import com.lulan.shincolle.ai.ShipAircraftAttackGoal;
 import com.lulan.shincolle.ai.path.ShipMoveHelper;
 import com.lulan.shincolle.ai.path.ShipPathNavigate;
@@ -11,7 +7,6 @@ import com.lulan.shincolle.reference.ID;
 import com.lulan.shincolle.reference.unitclass.Attrs;
 import com.lulan.shincolle.reference.unitclass.MissileData;
 import com.lulan.shincolle.utility.CombatHelper;
-
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
@@ -23,6 +18,10 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Base class for airplane (carrier aircraft) entities.
@@ -258,10 +257,10 @@ public abstract class BasicEntityAirplane extends BasicEntitySummon
 			AABB searchBox = this.getBoundingBox().inflate(32D, 32D, 32D);
 			List<BasicEntityAirplane> airTargets = this.level().getEntitiesOfClass(
 					BasicEntityAirplane.class, searchBox,
-					e -> isValidTarget(e));
+					this::isValidTarget);
 
-			if (airTargets != null && !airTargets.isEmpty()) {
-				airTargets.sort(Comparator.comparingDouble(e -> this.distanceToSqr(e)));
+			if (!airTargets.isEmpty()) {
+				airTargets.sort(Comparator.comparingDouble(this::distanceToSqr));
 				return airTargets.get(0);
 			}
 		}
@@ -270,10 +269,10 @@ public abstract class BasicEntityAirplane extends BasicEntitySummon
 		AABB searchBox = this.getBoundingBox().inflate(range, range, range);
 		List<LivingEntity> targets = this.level().getEntitiesOfClass(
 				LivingEntity.class, searchBox,
-				e -> isValidTarget(e));
+				this::isValidTarget);
 
-		if (targets != null && !targets.isEmpty()) {
-			targets.sort(Comparator.comparingDouble(e -> this.distanceToSqr(e)));
+		if (!targets.isEmpty()) {
+			targets.sort(Comparator.comparingDouble(this::distanceToSqr));
 			return targets.get(0);
 		}
 
@@ -824,9 +823,7 @@ public abstract class BasicEntityAirplane extends BasicEntitySummon
 	@Override
 	public boolean getStateFlag(int flag) {
 		// for attack AI check
-		if (flag == ID.F.OnSightChase)
-			return false;
-		return true;
+		return flag != ID.F.OnSightChase;
 	}
 
 	@Override

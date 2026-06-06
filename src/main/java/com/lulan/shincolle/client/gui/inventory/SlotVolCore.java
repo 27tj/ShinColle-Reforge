@@ -44,9 +44,6 @@ public class SlotVolCore extends SlotItemHandler {
             return true;
         if (stack.is(Items.CHARCOAL))
             return true;
-        if (stack.is(Items.LAVA_BUCKET))
-            return true;
-
-        return false;
+        return stack.is(Items.LAVA_BUCKET);
     }
 }

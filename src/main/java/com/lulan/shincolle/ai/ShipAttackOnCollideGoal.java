@@ -1,15 +1,13 @@
 package com.lulan.shincolle.ai;
 
-import java.util.EnumSet;
-
 import com.lulan.shincolle.entity.IShipAttackBase;
-import com.lulan.shincolle.reference.ID;
 import com.lulan.shincolle.utility.CombatHelper;
-
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
+
+import java.util.EnumSet;
 
 /**
  * Melee attack on collide goal.
@@ -44,10 +42,7 @@ public class ShipAttackOnCollideGoal extends Goal {
 			return false;
 
 		this.target = this.host.getEntityTarget();
-		if (this.target == null || !this.target.isAlive())
-			return false;
-
-		return true;
+        return this.target != null && this.target.isAlive();
 	}
 
 	@Override

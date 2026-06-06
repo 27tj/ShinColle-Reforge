@@ -1,12 +1,7 @@
 package com.lulan.shincolle.client.particle;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.blaze3d.vertex.VertexFormat;
-
+import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
@@ -30,8 +25,8 @@ public class ParticleTexts extends Particle {
 
     private static final ResourceLocation TEXTURE = new ResourceLocation("shincolle",
             "textures/particles/particletexts.png");
-    private int particleType; // 0:miss 1:critical 2:double hit 3:triple hit 4:dodge
-    private float pScale;
+    private final int particleType; // 0:miss 1:critical 2:double hit 3:triple hit 4:dodge
+    private final float pScale;
 
     public ParticleTexts(ClientLevel level, double posX, double posY, double posZ, float scale, int type) {
         super(level, posX, posY, posZ);

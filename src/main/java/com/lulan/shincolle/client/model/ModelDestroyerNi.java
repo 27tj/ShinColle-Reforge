@@ -32,14 +32,14 @@ public class ModelDestroyerNi extends ShipModelBaseAdv<Entity> {
         private final ModelPart EquipBase;
         private final ModelPart ArmLeft;
         private final ModelPart ArmRight;
-        private ModelPart k00;
+    private final ModelPart k00;
         private final ModelPart Face00;
         private final ModelPart Face01;
         private final ModelPart Face02;
         private final ModelPart ToothU;
-        private ModelPart k01;
-        private ModelPart k02;
-        private ModelPart k03;
+    private final ModelPart k01;
+    private final ModelPart k02;
+    private final ModelPart k03;
         private final ModelPart Equip01;
         private final ModelPart Equip02;
         private final ModelPart Equip03;

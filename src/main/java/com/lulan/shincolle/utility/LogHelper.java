@@ -1,9 +1,8 @@
 package com.lulan.shincolle.utility;
 
+import com.lulan.shincolle.reference.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.lulan.shincolle.reference.Reference;
 
 public class LogHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger(Reference.MOD_NAME);
@@ -25,7 +24,7 @@ public class LogHelper {
     }
 
     public static void fatal(Object object) {
-        LOGGER.error("[FATAL] " + String.valueOf(object));
+        LOGGER.error("[FATAL] " + object);
     }
 
     public static void trace(Object object) {

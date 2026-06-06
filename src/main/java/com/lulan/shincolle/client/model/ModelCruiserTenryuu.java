@@ -909,8 +909,8 @@ public class ModelCruiserTenryuu extends ShipModelBaseAdv<Entity> {
 				this.ArmRight02.zRot = -1.1F;
 			}
 			// leg
-			addk1 = angleAdd1 * 1F - 0.28F; // LegLeft01
-			addk2 = angleAdd2 * 1F - 0.21F; // LegRight01
+            addk1 = angleAdd1 - 0.28F; // LegLeft01
+            addk2 = angleAdd2 - 0.21F; // LegRight01
 			// equip
 			this.EquipSR01.xRot = 0.7F;
 		}

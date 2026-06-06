@@ -3,12 +3,7 @@ package com.lulan.shincolle.client.particle;
 import com.lulan.shincolle.reference.Values;
 import com.lulan.shincolle.utility.CalcHelper;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.blaze3d.vertex.VertexFormat;
-
+import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -35,8 +30,19 @@ public class ParticleEmotion extends Particle {
 	public static final int EMO_NUMBER = 30;
 
 	private Entity host = null;
-	private int particleType, playTimes, fadeTick, fadeState, stayTick, stayTickCount, frameSize;
-	private float playSpeed, playSpeedCount, particleIconX, particleIconY, addHeight, entType;
+    private final int particleType;
+    private final float particleIconX;
+    private final float particleIconY;
+    private final float addHeight;
+    private final float entType;
+    private int playTimes;
+    private int fadeTick;
+    private int fadeState;
+    private int stayTick;
+    private int stayTickCount;
+    private int frameSize;
+    private float playSpeed;
+    private float playSpeedCount;
 	private float particleScale;
 	private double px, py, pz, addx, addy, addz;
 

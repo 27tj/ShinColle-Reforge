@@ -1,12 +1,12 @@
 package com.lulan.shincolle.capability;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraftforge.common.util.INBTSerializable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Player capability for ShinColle ("Admiral" / "Teitoku" data).
@@ -40,13 +40,13 @@ public class CapaTeitoku implements INBTSerializable<CompoundTag> {
 
     // ========== Team data ==========
     /** teamList[team][slot] = ship entity ID (-1 = empty) */
-    private int[][] teamList;
+    private final int[][] teamList;
     /** sidList[team][slot] = ship UID (-1 = empty) */
-    private int[][] sidList;
+    private final int[][] sidList;
     /** formatID[team] = formation type */
-    private int[] formatID;
+    private final int[] formatID;
     /** unitNames[team] = team name */
-    private String[] unitNames;
+    private final String[] unitNames;
 
     // ========== Player identification ==========
     private int playerUID;
@@ -175,12 +175,8 @@ public class CapaTeitoku implements INBTSerializable<CompoundTag> {
                 int[] eids = team.getIntArray("EIDs");
                 int[] sids = team.getIntArray("SIDs");
 
-                for (int j = 0; j < Math.min(eids.length, SLOT_NUM); j++) {
-                    teamList[i][j] = eids[j];
-                }
-                for (int j = 0; j < Math.min(sids.length, SLOT_NUM); j++) {
-                    sidList[i][j] = sids[j];
-                }
+                System.arraycopy(eids, 0, teamList[i], 0, Math.min(eids.length, SLOT_NUM));
+                System.arraycopy(sids, 0, sidList[i], 0, Math.min(sids.length, SLOT_NUM));
 
                 formatID[i] = team.getInt("Format");
                 unitNames[i] = team.getString("Name");

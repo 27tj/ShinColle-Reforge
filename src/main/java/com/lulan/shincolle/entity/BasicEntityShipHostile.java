@@ -675,18 +675,14 @@ public abstract class BasicEntityShipHostile extends Mob
 	public float getAttackBaseDamage(int type, Entity target) {
 		if (this.shipAttrs == null)
 			return 1F;
-		switch (type) {
-			case 1: // light cannon: apply AA/ASM bonus
-				return CombatHelper.modDamageByAdditionAttrs(this, target, this.shipAttrs.getAttackDamage(), 0);
-			case 2:
-				return this.shipAttrs.getAttackDamageHeavy();
-			case 3:
-				return this.shipAttrs.getAttackDamageAir();
-			case 4:
-				return this.shipAttrs.getAttackDamageAirHeavy();
-			default:
-				return this.shipAttrs.getAttackDamage() * 0.125F;
-		}
+		return switch (type) {
+			case 1 -> // light cannon: apply AA/ASM bonus
+					CombatHelper.modDamageByAdditionAttrs(this, target, this.shipAttrs.getAttackDamage(), 0);
+			case 2 -> this.shipAttrs.getAttackDamageHeavy();
+			case 3 -> this.shipAttrs.getAttackDamageAir();
+			case 4 -> this.shipAttrs.getAttackDamageAirHeavy();
+			default -> this.shipAttrs.getAttackDamage() * 0.125F;
+		};
 	}
 
 	public boolean decrAmmoNum(int type, int amount) {

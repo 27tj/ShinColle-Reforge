@@ -1,9 +1,6 @@
 package com.lulan.shincolle.ai;
 
-import java.util.EnumSet;
-
 import com.lulan.shincolle.ai.path.ShipPathNavigate;
-import com.lulan.shincolle.entity.BasicEntityShip;
 import com.lulan.shincolle.entity.IShipAttackBase;
 import com.lulan.shincolle.handler.ConfigHandler;
 import com.lulan.shincolle.reference.ID;
@@ -11,15 +8,14 @@ import com.lulan.shincolle.server.ServerDataManager;
 import com.lulan.shincolle.utility.DebugProfiler;
 import com.lulan.shincolle.utility.FormationHelper;
 import com.lulan.shincolle.utility.LogHelper;
-
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.item.ItemStack;
-import com.lulan.shincolle.item.PointerItem;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.goal.Goal;
+
+import java.util.EnumSet;
 
 /**
  * Follow owner goal with formation support.
@@ -43,7 +39,7 @@ public class ShipFollowOwnerGoal extends Goal {
 	private double minDistSq;
 	private double distSq;
 	private double[] pos; // target position
-	private double[] ownerPosOld; // last recorded owner position
+    private final double[] ownerPosOld; // last recorded owner position
 
 	public ShipFollowOwnerGoal(IShipAttackBase entity) {
 		this.host = entity;
@@ -297,11 +293,7 @@ public class ShipFollowOwnerGoal extends Goal {
 			return true;
 		}
 
-		if (this.host.getStateMinor(ID.M.NumGrudge) <= 0) {
-			return true;
-		}
-
-		return false;
+        return this.host.getStateMinor(ID.M.NumGrudge) <= 0;
 	}
 
 	/**

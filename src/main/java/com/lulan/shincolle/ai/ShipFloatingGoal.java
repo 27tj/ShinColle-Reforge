@@ -1,18 +1,15 @@
 package com.lulan.shincolle.ai;
 
-import java.util.EnumSet;
-
 import com.lulan.shincolle.entity.BasicEntityMount;
 import com.lulan.shincolle.entity.BasicEntityShip;
 import com.lulan.shincolle.entity.IShipFloating;
 import com.lulan.shincolle.entity.IShipGuardian;
 import com.lulan.shincolle.reference.ID;
-import com.lulan.shincolle.utility.DebugProfiler;
-
-import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
+
+import java.util.EnumSet;
 
 /**
  * Floating goal - makes ships rise toward water surface.
@@ -153,8 +150,7 @@ public void tick() {
 			// guarding entity
 			if (host.getGuardedEntity() != null) {
 				double distSq = ent.distanceToSqr(host.getGuardedEntity());
-				if (distSq < fMinSq)
-					return true;
+                return distSq < fMinSq;
 			}
 			// guarding position
 			else if (host.getStateMinor(ID.M.GuardY) > 0) {
@@ -162,8 +158,7 @@ public void tick() {
 				double dy = ent.getY() - host.getStateMinor(ID.M.GuardY);
 				double dz = ent.getZ() - host.getStateMinor(ID.M.GuardZ);
 				double distSq = dx * dx + dy * dy + dz * dz;
-				if (distSq < fMinSq && ent.getY() >= host.getStateMinor(ID.M.GuardY))
-					return true;
+                return distSq < fMinSq && ent.getY() >= host.getStateMinor(ID.M.GuardY);
 			}
 		}
 		// follow mode (CanFollow = true)
@@ -174,8 +169,7 @@ public void tick() {
 			Entity hostEntity = host.getHostEntity();
 			if (hostEntity != null) {
 				double distSq = hostEntity.distanceToSqr(ent);
-				if (distSq <= fMaxSq)
-					return true;
+                return distSq <= fMaxSq;
 			}
 		}
 

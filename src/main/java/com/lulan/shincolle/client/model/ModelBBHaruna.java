@@ -1391,7 +1391,7 @@ public class ModelBBHaruna extends ShipModelBaseAdv<Entity> {
                 this.EquipCL1a1_7.xRot = this.Head.xRot * 0.88F - 0.19F;
                 this.EquipD03c1.zRot = -0.35F + this.Head.xRot * 0.5F;
                 this.EquipD03c2.zRot = -0.26F + this.Head.xRot * 0.5F;
-                this.EquipD03c3.zRot = 0.61F - this.Head.xRot * 1F;
+            this.EquipD03c3.zRot = 0.61F - this.Head.xRot;
                 this.EquipD03d1.zRot = -this.EquipD03c1.zRot;
                 this.EquipD03c2_1.zRot = this.EquipD03c2.zRot;
                 this.EquipD03c3_1.zRot = this.EquipD03c3.zRot;

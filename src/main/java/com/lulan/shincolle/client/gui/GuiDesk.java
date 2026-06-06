@@ -1,9 +1,5 @@
 package com.lulan.shincolle.client.gui;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import com.lulan.shincolle.capability.CapaTeitoku;
 import com.lulan.shincolle.capability.CapaTeitokuProvider;
 import com.lulan.shincolle.client.gui.inventory.ContainerDesk;
@@ -16,7 +12,6 @@ import com.lulan.shincolle.reference.ID;
 import com.lulan.shincolle.reference.Values;
 import com.lulan.shincolle.tileentity.TileEntityDesk;
 import com.lulan.shincolle.utility.GuiHelper;
-
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -32,6 +27,10 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * GUI screen for the admiral's desk block.
@@ -80,7 +79,7 @@ public class GuiDesk extends AbstractContainerScreen<ContainerDesk> {
 
     // Player data
     private final Player player;
-    private CapaTeitoku capa;
+    private final CapaTeitoku capa;
 
     // List scrolling: 0=radar 1=team 2=target 3=ally 4=ban
     private final int[] listNum = { 0, 0, 0, 0, 0 };
@@ -88,7 +87,7 @@ public class GuiDesk extends AbstractContainerScreen<ContainerDesk> {
 
     // Radar
     private int radarZoomLv;
-    private List<RadarShip> shipList = new ArrayList<>();
+    private final List<RadarShip> shipList = new ArrayList<>();
 
     // Book
     private int bookChapNum;
@@ -107,12 +106,28 @@ public class GuiDesk extends AbstractContainerScreen<ContainerDesk> {
     private EditBox textField;
 
     // Target
-    private List<String> tarList = new ArrayList<>();
+    private final List<String> tarList = new ArrayList<>();
 
     // Localized strings (cached)
-    private String strPos, strHeight, strTeamID, strBreak, strAlly, strOK, strUnban,
-            strBan, strCancel, strAllyList, strBanList, strRename, strDisband, strCreate,
-            strNeutral, strBelong, strAllied, strHostile, strRemove;
+    private final String strPos;
+    private final String strHeight;
+    private final String strTeamID;
+    private final String strBreak;
+    private final String strAlly;
+    private final String strOK;
+    private final String strUnban;
+    private final String strBan;
+    private final String strCancel;
+    private final String strAllyList;
+    private final String strBanList;
+    private final String strRename;
+    private final String strDisband;
+    private final String strCreate;
+    private final String strNeutral;
+    private final String strBelong;
+    private final String strAllied;
+    private final String strHostile;
+    private final String strRemove;
 
     /** Radar entry: ship entity + display data */
     private static class RadarShip {

@@ -61,8 +61,7 @@ public class TeamHelper {
             // Friendly fire enabled
             if (ida > 0 || ida < -1) {
                 // Same owner → no damage
-                if (ida == idb)
-                    return false;
+                return ida != idb;
             }
         } else {
             // Friendly fire disabled
@@ -77,9 +76,7 @@ public class TeamHelper {
             }
 
             // No damage to ally
-            if (checkIsAlly(ida, idb)) {
-                return false;
-            }
+            return !checkIsAlly(ida, idb);
         }
 
         // Default: can damage

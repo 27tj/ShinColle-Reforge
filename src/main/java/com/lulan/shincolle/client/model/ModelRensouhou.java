@@ -1,12 +1,10 @@
 package com.lulan.shincolle.client.model;
 
-import net.minecraft.world.entity.Entity;
 import com.lulan.shincolle.entity.IShipEmotion;
 import com.lulan.shincolle.reference.Reference;
 import com.lulan.shincolle.utility.EmotionHelper;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -16,6 +14,7 @@ import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
 
 /**
  * ModelRensouhou - PinkaLulan 2015/3/27
@@ -30,9 +29,9 @@ public class ModelRensouhou extends ShipModelBaseAdv<Entity> {
         private final ModelPart Head;
         private final ModelPart ArmLeft;
         private final ModelPart ArmRight;
-        private ModelPart LegLeft;
-        private ModelPart LegRight;
-        private ModelPart Propeller;
+    private final ModelPart LegLeft;
+    private final ModelPart LegRight;
+    private final ModelPart Propeller;
         private final ModelPart CannonL01;
         private final ModelPart CannonR01;
         private final ModelPart RFace0;

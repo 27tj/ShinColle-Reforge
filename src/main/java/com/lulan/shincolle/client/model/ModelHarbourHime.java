@@ -462,8 +462,7 @@ public class ModelHarbourHime extends ShipModelBaseAdv<Entity> {
 	public void applyNormalPose(float f, float f1, float f2, float f3, float f4, IShipEmotion ent) {
 
 		// apply leg motion while riding
-		if (((net.minecraft.world.entity.Entity) ent).getVehicle() instanceof BasicEntityMount) {
-			BasicEntityMount mount = (BasicEntityMount) ((net.minecraft.world.entity.Entity) ent).getVehicle();
+        if (((Entity) ent).getVehicle() instanceof BasicEntityMount mount) {
 			f1 = mount.walkAnimation.speed(f2 - (int) f2);
 			f = mount.walkAnimation.position(f2 - (int) f2);
 

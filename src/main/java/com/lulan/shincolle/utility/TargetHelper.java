@@ -1,25 +1,10 @@
 package com.lulan.shincolle.utility;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.function.Predicate;
-
-import com.lulan.shincolle.entity.BasicEntityAirplane;
-import com.lulan.shincolle.entity.BasicEntityMount;
-import com.lulan.shincolle.entity.BasicEntityShip;
-import com.lulan.shincolle.entity.BasicEntityShipHostile;
-import com.lulan.shincolle.entity.IShipAttackBase;
-import com.lulan.shincolle.entity.IShipInvisible;
-import com.lulan.shincolle.entity.IShipOwner;
+import com.lulan.shincolle.entity.*;
 import com.lulan.shincolle.handler.ConfigHandler;
 import com.lulan.shincolle.reference.ID;
 import com.lulan.shincolle.server.ServerDataManager;
-
-import net.minecraft.world.entity.AreaEffectCloud;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.OwnableEntity;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.decoration.HangingEntity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.Slime;
@@ -28,6 +13,10 @@ import net.minecraft.world.entity.projectile.FireworkRocketEntity;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.phys.AABB;
+
+import java.util.Comparator;
+import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * Target selection helper.
@@ -166,11 +155,7 @@ public class TargetHelper {
 			}
 
 			// custom target classes configured by player
-			if (checkAttackTargetList(host, target)) {
-				return true;
-			}
-
-			return false;
+            return checkAttackTargetList(host, target);
 		}
 	}
 
@@ -286,9 +271,7 @@ public class TargetHelper {
 			}
 
 			if (target instanceof Player player) {
-				if (player.getAbilities().invulnerable)
-					return false;
-				return true;
+                return !player.getAbilities().invulnerable;
 			}
 
 			if (isEntityInvulnerable(target))

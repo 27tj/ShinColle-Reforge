@@ -1,102 +1,18 @@
 package com.lulan.shincolle;
 
-import com.lulan.shincolle.client.gui.GuiCrane;
-import com.lulan.shincolle.client.gui.GuiDesk;
-import com.lulan.shincolle.client.gui.GuiFormation;
-import com.lulan.shincolle.client.gui.GuiLargeShipyard;
-import com.lulan.shincolle.client.gui.GuiRecipePaper;
-import com.lulan.shincolle.client.gui.GuiShipInventory;
-import com.lulan.shincolle.client.gui.GuiSmallShipyard;
-import com.lulan.shincolle.client.gui.GuiVolCore;
-import com.lulan.shincolle.client.model.ModelAbyssMissile;
-import com.lulan.shincolle.client.model.ModelAirfieldHime;
-import com.lulan.shincolle.client.model.ModelAirplane;
-import com.lulan.shincolle.client.model.ModelAirplaneT;
-import com.lulan.shincolle.client.model.ModelAirplaneZero;
-import com.lulan.shincolle.client.model.ModelBBHaruna;
-import com.lulan.shincolle.client.model.ModelBBHiei;
-import com.lulan.shincolle.client.model.ModelBBKirishima;
-import com.lulan.shincolle.client.model.ModelBBKongou;
-import com.lulan.shincolle.client.model.ModelBasicEntityItem;
-import com.lulan.shincolle.client.model.ModelBattleshipHime;
-import com.lulan.shincolle.client.model.ModelBattleshipNagato;
-import com.lulan.shincolle.client.model.ModelBattleshipRe;
-import com.lulan.shincolle.client.model.ModelBattleshipRu;
-import com.lulan.shincolle.client.model.ModelBattleshipTa;
-import com.lulan.shincolle.client.model.ModelBattleshipYamato;
-import com.lulan.shincolle.client.model.ModelBlockDesk;
-import com.lulan.shincolle.client.model.ModelCAHime;
-import com.lulan.shincolle.client.model.ModelCarrierAkagi;
-import com.lulan.shincolle.client.model.ModelCarrierHime;
-import com.lulan.shincolle.client.model.ModelCarrierKaga;
-import com.lulan.shincolle.client.model.ModelCarrierWDemon;
-import com.lulan.shincolle.client.model.ModelCarrierWo;
-import com.lulan.shincolle.client.model.ModelCruiserAtago;
-import com.lulan.shincolle.client.model.ModelCruiserTakao;
-import com.lulan.shincolle.client.model.ModelCruiserTatsuta;
-import com.lulan.shincolle.client.model.ModelCruiserTenryuu;
-import com.lulan.shincolle.client.model.ModelDestroyerAkatsuki;
-import com.lulan.shincolle.client.model.ModelDestroyerHa;
-import com.lulan.shincolle.client.model.ModelDestroyerHibiki;
-import com.lulan.shincolle.client.model.ModelDestroyerHime;
-import com.lulan.shincolle.client.model.ModelDestroyerI;
-import com.lulan.shincolle.client.model.ModelDestroyerIkazuchi;
-import com.lulan.shincolle.client.model.ModelDestroyerInazuma;
-import com.lulan.shincolle.client.model.ModelDestroyerNi;
-import com.lulan.shincolle.client.model.ModelDestroyerRo;
-import com.lulan.shincolle.client.model.ModelDestroyerShimakaze;
-import com.lulan.shincolle.client.model.ModelFloatingFort;
-import com.lulan.shincolle.client.model.ModelHarbourHime;
-import com.lulan.shincolle.client.model.ModelHeavyCruiserNe;
-import com.lulan.shincolle.client.model.ModelHeavyCruiserRi;
-import com.lulan.shincolle.client.model.ModelIsolatedHime;
-import com.lulan.shincolle.client.model.ModelLargeShipyard;
-import com.lulan.shincolle.client.model.ModelMidwayHime;
-import com.lulan.shincolle.client.model.ModelMountAfH;
-import com.lulan.shincolle.client.model.ModelMountBaH;
-import com.lulan.shincolle.client.model.ModelMountCaH;
-import com.lulan.shincolle.client.model.ModelMountCaWD;
-import com.lulan.shincolle.client.model.ModelMountHbH;
-import com.lulan.shincolle.client.model.ModelMountIsH;
-import com.lulan.shincolle.client.model.ModelMountMiH;
-import com.lulan.shincolle.client.model.ModelMountSuH;
-import com.lulan.shincolle.client.model.ModelNorthernHime;
-import com.lulan.shincolle.client.model.ModelRensouhou;
-import com.lulan.shincolle.client.model.ModelRensouhouS;
-import com.lulan.shincolle.client.model.ModelSSNH;
-import com.lulan.shincolle.client.model.ModelSmallShipyard;
-import com.lulan.shincolle.client.model.ModelSubmHime;
-import com.lulan.shincolle.client.model.ModelSubmKa;
-import com.lulan.shincolle.client.model.ModelSubmRo500;
-import com.lulan.shincolle.client.model.ModelSubmSo;
-import com.lulan.shincolle.client.model.ModelSubmU511;
-import com.lulan.shincolle.client.model.ModelSubmYo;
-import com.lulan.shincolle.client.model.ModelTakoyaki;
-import com.lulan.shincolle.client.model.ModelTransportWa;
-import com.lulan.shincolle.client.model.ModelVortex;
-import com.lulan.shincolle.client.model.PlaceholderMobModel;
-import com.lulan.shincolle.client.model.ShipEntityModel;
+import com.lulan.shincolle.client.gui.*;
+import com.lulan.shincolle.client.model.*;
 import com.lulan.shincolle.client.particle.ParticleSmoke;
 import com.lulan.shincolle.client.particle.ParticleSpray;
-import com.lulan.shincolle.client.render.NoopEntityRenderer;
-import com.lulan.shincolle.client.render.PlaceholderMobRenderer;
-import com.lulan.shincolle.client.render.RenderAbyssMissile;
-import com.lulan.shincolle.client.render.RenderBasicEntityItem;
-import com.lulan.shincolle.client.render.RenderShipFishing;
-import com.lulan.shincolle.client.render.ShipEntityRenderer;
+import com.lulan.shincolle.client.render.*;
 import com.lulan.shincolle.client.render.block.RenderDesk;
 import com.lulan.shincolle.client.render.block.RenderLargeShipyard;
 import com.lulan.shincolle.client.render.block.RenderSmallShipyard;
-import com.lulan.shincolle.init.ModBlockEntities;
-import com.lulan.shincolle.init.ModEntities;
-import com.lulan.shincolle.init.ModItems;
-import com.lulan.shincolle.init.ModMenuTypes;
-import com.lulan.shincolle.init.ModParticles;
+import com.lulan.shincolle.init.*;
 import com.lulan.shincolle.item.BasicEquip;
 import com.lulan.shincolle.item.PointerItem;
 import com.lulan.shincolle.item.ShipSpawnEgg;
 import com.lulan.shincolle.reference.Reference;
-
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
@@ -578,9 +494,7 @@ public class ClientSetup {
 			// Register spawn egg variant texture property
 			ItemProperties.register(ModItems.SHIP_SPAWN_EGG.get(),
 					new ResourceLocation(Reference.MOD_ID, "egg_icon"),
-					(stack, level, entity, seed) -> {
-						return (float) ShipSpawnEgg.getEggIcon(stack);
-					});
+					(stack, level, entity, seed) -> (float) ShipSpawnEgg.getEggIcon(stack));
 		});
 	}
 
@@ -663,18 +577,13 @@ public class ClientSetup {
 	 * level.addParticle(). This provider exists to satisfy Forge's requirement that
 	 * all registered particle types have a provider.
 	 */
-	private static class PlaceholderParticleProvider
+	private record PlaceholderParticleProvider(SpriteSet sprites)
 			implements ParticleProvider<SimpleParticleType> {
-		private final SpriteSet sprites;
-
-		public PlaceholderParticleProvider(SpriteSet sprites) {
-			this.sprites = sprites;
-		}
 
 		@Override
 		public Particle createParticle(SimpleParticleType type,
-				ClientLevel level, double x, double y, double z,
-				double xSpeed, double ySpeed, double zSpeed) {
+		                               ClientLevel level, double x, double y, double z,
+		                               double xSpeed, double ySpeed, double zSpeed) {
 			TextureSheetParticle particle = new PlaceholderParticle(level, x, y, z, xSpeed, ySpeed, zSpeed);
 			particle.pickSprite(this.sprites);
 			return particle;

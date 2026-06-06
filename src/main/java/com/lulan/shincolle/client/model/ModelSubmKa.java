@@ -58,8 +58,8 @@ public class ModelSubmKa extends ShipModelBaseAdv<Entity> {
         private final ModelPart EquipHead04;
         private final ModelPart EquipHead05;
         private final ModelPart ArmLeft02;
-        private ModelPart EquipT01a;
-        private ModelPart EquipT01b;
+    private final ModelPart EquipT01a;
+    private final ModelPart EquipT01b;
         private final ModelPart ArmRight02;
         private final ModelPart EquipC01;
         private final ModelPart EquipC02;

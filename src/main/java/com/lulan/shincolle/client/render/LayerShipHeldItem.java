@@ -2,11 +2,9 @@ package com.lulan.shincolle.client.render;
 
 import com.lulan.shincolle.client.model.ShipModelBaseAdv;
 import com.lulan.shincolle.entity.BasicEntityShip;
-import com.lulan.shincolle.entity.IShipEmotion;
 import com.lulan.shincolle.handler.ConfigHandler;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
@@ -15,11 +13,7 @@ import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.world.entity.HumanoidArm;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.DiggerItem;
-import net.minecraft.world.item.ItemDisplayContext;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.SwordItem;
+import net.minecraft.world.item.*;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -73,8 +67,8 @@ public class LayerShipHeldItem<T extends BasicEntityShip> extends RenderLayer<T,
         if (model instanceof ShipModelBaseAdv<?> advModel) {
             boolean isBlock = stack.getItem() instanceof BlockItem;
             ModelPart[] hand = advModel.getArmForSide(arm);
-            float[] offset = advModel.getHeldItemOffset((IShipEmotion) entity, arm, isBlock ? 1 : 0);
-            float[] rotate = advModel.getHeldItemRotate((IShipEmotion) entity, arm, isBlock ? 1 : 0);
+            float[] offset = advModel.getHeldItemOffset(entity, arm, isBlock ? 1 : 0);
+            float[] rotate = advModel.getHeldItemRotate(entity, arm, isBlock ? 1 : 0);
             float modelScale = advModel.getScale();
 
             if (hand != null) {

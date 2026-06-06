@@ -1,16 +1,14 @@
 package com.lulan.shincolle.init;
 
-import java.util.HashMap;
-
-import javax.annotation.Nullable;
-
 import com.lulan.shincolle.reference.Reference;
-
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
+
+import javax.annotation.Nullable;
+import java.util.HashMap;
 
 /**
  * Sound registration for ShinColle mod (1.20.1 port).
@@ -140,20 +138,20 @@ public class ModSounds {
 
     static {
         // Ship class 54
-        CUSTOM_SOUNDS.put(54 * 100 + 0, SHIP_IDLE_54); // idle
+        CUSTOM_SOUNDS.put(54 * 100, SHIP_IDLE_54); // idle
         CUSTOM_SOUNDS.put(54 * 100 + 2, SHIP_HURT_54); // hurt
         CUSTOM_SOUNDS.put(54 * 100 + 4, SHIP_MARRY_54); // marry
         CUSTOM_SOUNDS.put(54 * 100 + 6, SHIP_ITEM_54); // item
 
         // Ship class 56
-        CUSTOM_SOUNDS.put(56 * 100 + 0, SHIP_IDLE_56); // idle
+        CUSTOM_SOUNDS.put(56 * 100, SHIP_IDLE_56); // idle
         CUSTOM_SOUNDS.put(56 * 100 + 1, SHIP_HIT_56); // hit
         CUSTOM_SOUNDS.put(56 * 100 + 2, SHIP_HURT_56); // hurt
         CUSTOM_SOUNDS.put(56 * 100 + 3, SHIP_DEATH_56); // death
         CUSTOM_SOUNDS.put(56 * 100 + 6, SHIP_ITEM_56); // item
 
         // Ship class 60
-        CUSTOM_SOUNDS.put(60 * 100 + 0, SHIP_IDLE_60); // idle
+        CUSTOM_SOUNDS.put(60 * 100, SHIP_IDLE_60); // idle
         CUSTOM_SOUNDS.put(60 * 100 + 1, SHIP_HIT_60); // hit
 
         // Ship class 62

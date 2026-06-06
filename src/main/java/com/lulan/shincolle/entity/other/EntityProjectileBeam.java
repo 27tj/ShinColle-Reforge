@@ -1,26 +1,21 @@
 package com.lulan.shincolle.entity.other;
 
-import java.util.List;
-
 import com.lulan.shincolle.entity.IShipAttackBase;
 import com.lulan.shincolle.entity.IShipCustomTexture;
 import com.lulan.shincolle.entity.IShipOwner;
 import com.lulan.shincolle.entity.IShipProjectile;
 import com.lulan.shincolle.utility.CombatHelper;
 import com.lulan.shincolle.utility.ParticleHelper;
-
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityDimensions;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+
+import java.util.List;
 
 /**
  * Beam projectile entity (laser, energy beam, etc.).
@@ -60,7 +55,7 @@ public class EntityProjectileBeam extends Entity implements IShipOwner, IShipCus
 	private int beamLifetime = 20;
 
 	/** Damage interval in ticks */
-	private int damageInterval = 5;
+    private final int damageInterval = 5;
 
 	public EntityProjectileBeam(EntityType<? extends EntityProjectileBeam> type, Level level) {
 		super(type, level);

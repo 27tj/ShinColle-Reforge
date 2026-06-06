@@ -1,17 +1,16 @@
 package com.lulan.shincolle.utility;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
-
 import com.lulan.shincolle.reference.ID;
 import com.lulan.shincolle.reference.unitclass.Attrs;
-
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
 
 /**
  * enchant helper for equip enchantment
@@ -19,7 +18,7 @@ import net.minecraft.world.item.enchantment.Enchantments;
 public class EnchantHelper {
 
 	// enchant table
-	private static ArrayList<Enchantment[]> EnchantTable = new ArrayList<>();
+	private static final ArrayList<Enchantment[]> EnchantTable = new ArrayList<>();
 
 	// init roll table
 	static {

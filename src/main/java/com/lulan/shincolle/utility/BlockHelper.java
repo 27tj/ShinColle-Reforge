@@ -1,15 +1,11 @@
 package com.lulan.shincolle.utility;
 
-import java.util.HashSet;
-import java.util.Random;
-
 import com.lulan.shincolle.entity.BasicEntityMount;
 import com.lulan.shincolle.entity.IShipOwner;
 import com.lulan.shincolle.init.ModBlocks;
 import com.lulan.shincolle.reference.Values;
 import com.lulan.shincolle.server.ServerDataManager;
 import com.lulan.shincolle.tileentity.TileEntityLightBlock;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
@@ -27,6 +23,9 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+
+import java.util.HashSet;
+import java.util.Random;
 
 /**
  * Block utility helper for safe block finding, liquid checking,
@@ -131,20 +130,15 @@ public class BlockHelper {
 
 	/** Check block is safe (not solid block), NO passable checking. */
 	public static boolean checkBlockSafe(BlockState state) {
-		if (state == null || state.isAir() || checkBlockIsLiquid(state)
-				|| state.getBlock() == ModBlocks.WAYPOINT.get()) {
-			return true;
-		}
-		return false;
+        return state == null || state.isAir() || checkBlockIsLiquid(state)
+                || state.getBlock() == ModBlocks.WAYPOINT.get();
 	}
 
 	/** Check block is liquid (not air or solid block). */
 	public static boolean checkBlockIsLiquid(BlockState state) {
 		if (state != null) {
 			FluidState fluid = state.getFluidState();
-			if (!fluid.isEmpty()) {
-				return true;
-			}
+            return !fluid.isEmpty();
 		}
 		return false;
 	}
@@ -204,9 +198,7 @@ public class BlockHelper {
 	public static boolean checkBlockCanStandAt(BlockState state) {
 		if (state != null) {
 			if (!state.isAir() && !state.is(Blocks.FIRE)) {
-				if (checkBlockIsLiquid(state) || state.blocksMotion()) {
-					return true;
-				}
+                return checkBlockIsLiquid(state) || state.blocksMotion();
 			}
 		}
 		return false;
@@ -522,9 +514,7 @@ public class BlockHelper {
 				return true;
 			}
 
-			if (state.is(BlockTags.WOODEN_DOORS)) {
-				return true;
-			}
+            return state.is(BlockTags.WOODEN_DOORS);
 		}
 		return false;
 	}

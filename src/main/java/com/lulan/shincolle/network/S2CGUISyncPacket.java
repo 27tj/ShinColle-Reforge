@@ -264,9 +264,7 @@ public class S2CGUISyncPacket {
 
 	/** Sync an int list (ship list, collection lists) */
 	public static S2CGUISyncPacket syncIntList(byte listType, List<Integer> list) {
-		byte[] data = toBytes(buf -> {
-			PacketHelper.writeIntList(buf, list);
-		});
+		byte[] data = toBytes(buf -> PacketHelper.writeIntList(buf, list));
 		return new S2CGUISyncPacket(listType, data);
 	}
 

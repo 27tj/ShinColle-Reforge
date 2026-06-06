@@ -1,11 +1,8 @@
 package com.lulan.shincolle.crafting;
 
-import java.util.List;
-
 import com.google.gson.JsonObject;
 import com.lulan.shincolle.init.ModItems;
 import com.lulan.shincolle.init.ModRecipes;
-
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
@@ -22,6 +19,8 @@ import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
+
+import java.util.List;
 
 /**
  * Custom crafting recipe: Enchant Shell
@@ -62,7 +61,7 @@ public class RecipeEnchantShell implements CraftingRecipe {
         }
 
         // Center slot (1, 1) must be equip_ammo
-        ItemStack center = container.getItem(1 * container.getWidth() + 1);
+        ItemStack center = container.getItem(container.getWidth() + 1);
         if (center.isEmpty() || center.getItem() != ModItems.EQUIP_AMMO.get()) {
             return false;
         }
@@ -112,7 +111,7 @@ public class RecipeEnchantShell implements CraftingRecipe {
     @Override
     public ItemStack assemble(CraftingContainer container, RegistryAccess registryAccess) {
         // Get center equip_ammo and copy it
-        ItemStack center = container.getItem(1 * container.getWidth() + 1);
+        ItemStack center = container.getItem(container.getWidth() + 1);
         ItemStack result = center.copy();
 
         // Get potion effect from one of the surrounding potions

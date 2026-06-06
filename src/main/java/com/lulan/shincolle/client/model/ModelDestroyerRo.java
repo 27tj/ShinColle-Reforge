@@ -41,14 +41,14 @@ public class ModelDestroyerRo extends ShipModelBaseAdv<Entity> {
         private final ModelPart FaceR00;
         private final ModelPart FaceR01;
         private final ModelPart FaceR02;
-        private ModelPart k00;
+    private final ModelPart k00;
         private final ModelPart HeadD04;
         private final ModelPart UpperTooth;
         private final ModelPart HeadU02;
         private final ModelPart LowerTooth;
-        private ModelPart k01;
-        private ModelPart k02;
-        private ModelPart k03;
+    private final ModelPart k01;
+    private final ModelPart k02;
+    private final ModelPart k03;
         private final ModelPart tube01;
         private final ModelPart tube02;
         private final ModelPart tube03;

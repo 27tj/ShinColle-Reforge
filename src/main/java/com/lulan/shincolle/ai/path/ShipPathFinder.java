@@ -240,13 +240,8 @@ public class ShipPathFinder {
 
 	private ShipPathPoint openPoint(int x, int y, int z) {
 		int hash = ShipPathPoint.makeHash(x, y, z);
-		ShipPathPoint pathpoint = this.pointMap.get(hash);
 
-		if (pathpoint == null) {
-			pathpoint = new ShipPathPoint(x, y, z);
-			this.pointMap.put(hash, pathpoint);
-		}
-		return pathpoint;
+		return this.pointMap.computeIfAbsent(hash, k -> new ShipPathPoint(x, y, z));
 	}
 
 	/** Determine the path type at position (x,y,z) considering entity size */

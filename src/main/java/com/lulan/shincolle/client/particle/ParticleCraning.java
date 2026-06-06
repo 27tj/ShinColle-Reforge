@@ -1,12 +1,7 @@
 package com.lulan.shincolle.client.particle;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.blaze3d.vertex.VertexFormat;
-
+import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
@@ -24,10 +19,13 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public class ParticleCraning extends Particle {
 
-    private int particleType;
-    private float par1, lenMax, len;
-    private float pScale;
-    private double[][] vt1, vt2; // cube vertex
+    private final int particleType;
+    private final float par1;
+    private final float lenMax;
+    private final float pScale;
+    private final double[][] vt1;
+    private final double[][] vt2; // cube vertex
+    private float len;
 
     public ParticleCraning(ClientLevel level, double x, double y, double z, double lengthMax, double par1, double scale,
             int type) {
@@ -62,7 +60,7 @@ public class ParticleCraning extends Particle {
         RenderSystem.depthMask(true);
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
 
-        float sizeHead = this.pScale * 1F;
+        float sizeHead = this.pScale;
         float sizeChain = this.pScale * 0.25F;
 
         // out
@@ -144,7 +142,7 @@ public class ParticleCraning extends Particle {
         builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 
         // crane chain
-        for (float clen = 0F; clen < len; clen += this.pScale * 1F) {
+        for (float clen = 0F; clen < len; clen += this.pScale) {
             float ny = (float) hy + clen;
 
             // crane chain

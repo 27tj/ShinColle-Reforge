@@ -1,34 +1,25 @@
 package com.lulan.shincolle.entity.other;
 
-import java.util.HashMap;
-import java.util.List;
-
-import com.lulan.shincolle.entity.IShipAttackBase;
-import com.lulan.shincolle.entity.IShipAttrs;
-import com.lulan.shincolle.entity.IShipCustomTexture;
-import com.lulan.shincolle.entity.IShipOwner;
-import com.lulan.shincolle.entity.IShipProjectile;
+import com.lulan.shincolle.entity.*;
 import com.lulan.shincolle.reference.ID;
 import com.lulan.shincolle.reference.unitclass.Attrs;
 import com.lulan.shincolle.utility.CombatHelper;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityDimensions;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Abyss missile projectile entity.
@@ -413,9 +404,7 @@ public class EntityAbyssMissile extends Entity implements IShipOwner, IShipAttrs
 	private boolean isNotHost(Entity ent) {
 		if (ent == this)
 			return false;
-		if (this.hostEntity != null && ent == this.hostEntity)
-			return false;
-		return true;
+        return this.hostEntity == null || ent != this.hostEntity;
 	}
 
 	/** Check if entity has same owner as this missile */

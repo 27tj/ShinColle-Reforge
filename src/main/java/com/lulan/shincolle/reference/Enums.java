@@ -6,7 +6,7 @@ public class Enums
 	/**
 	 * body ID
 	 */
-	public static enum BodyHeight
+    public enum BodyHeight
 	{
 		TOP,
 		HEAD,
@@ -20,7 +20,7 @@ public class Enums
 	/**
 	 * body side
 	 */
-	public static enum BodySide
+    public enum BodySide
 	{
 		LEFT,
 		FRONT,
@@ -31,7 +31,7 @@ public class Enums
 	/**
 	 * color enum for gui
 	 */
-	public static enum EnumColors
+    public enum EnumColors
 	{
 		//color value
 		WHITE(16777215),
@@ -61,7 +61,7 @@ public class Enums
 		private final int colorValue;
 
 
-		private EnumColors(int value)
+        EnumColors(int value)
 		{
 			this.colorValue = value;
 		}
@@ -76,7 +76,7 @@ public class Enums
 	/**
 	 * path type for path finding
 	 */
-	public static enum EnumPathType
+    public enum EnumPathType
 	{
 	    BLOCKED,
 	    OPEN,
@@ -89,7 +89,7 @@ public class Enums
 	/**
 	 * equip special effect for BasicEquip.getSpecialEffect
 	 */
-	public static enum EnumEquipEffectSP
+    public enum EnumEquipEffectSP
 	{
 		NONE,
 		DRUM,

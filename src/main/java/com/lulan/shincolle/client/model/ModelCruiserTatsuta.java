@@ -785,8 +785,8 @@ public class ModelCruiserTatsuta extends ShipModelBaseAdv<Entity> {
 			this.ArmRight01.zRot = 1F;
 			this.ArmRight02.zRot = 0F;
 			// leg
-			addk1 = angleAdd1 * 1F - 0.28F; // LegLeft01
-			addk2 = angleAdd2 * 1F - 0.21F; // LegRight01
+            addk1 = angleAdd1 - 0.28F; // LegLeft01
+            addk2 = angleAdd2 - 0.21F; // LegRight01
 			// equip
 			this.EquipSL00.xRot = -1.5F;
 			this.EquipSL00.yRot = 0.2F;
@@ -1030,8 +1030,8 @@ public class ModelCruiserTatsuta extends ShipModelBaseAdv<Entity> {
 				// this.ArmRight02.offsetX = 0F;
 				// this.ArmRight02.offsetZ = 0F;
 				// leg
-				addk1 = angleAdd1 * 1F - 0.28F; // LegLeft01
-				addk2 = angleAdd2 * 1F - 0.21F; // LegRight01
+                addk1 = angleAdd1 - 0.28F; // LegLeft01
+                addk2 = angleAdd2 - 0.21F; // LegRight01
 				this.LegLeft01.yRot = 0F;
 				this.LegLeft01.zRot = 0F;
 				this.LegLeft02.xRot = 0F;

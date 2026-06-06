@@ -234,14 +234,7 @@ public class GuiBook {
 
 		// Set picture texture
 		ResourceLocation tex;
-		switch (picID) {
-			case 0:
-				tex = BOOK_PIC_01;
-				break;
-			default:
-				tex = BOOK_PIC_01;
-				break;
-		}
+		tex = BOOK_PIC_01;
 
 		// Draw picture using GuiGraphics blit
 		currentGraphics.blit(tex, picX, picY, picU, picV, sizeX, sizeY);

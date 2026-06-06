@@ -1,12 +1,7 @@
 package com.lulan.shincolle.client.particle;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.blaze3d.vertex.VertexFormat;
-
+import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
@@ -38,11 +33,11 @@ public class ParticleTeam extends Particle {
 
 	private static final ResourceLocation TEXTURE = new ResourceLocation("shincolle",
 			"textures/particles/particleteam.png");
-	private int particleType; // 0:green 1:cyan 2:red 3:yellow
-	private double height;
+    private final int particleType; // 0:green 1:cyan 2:red 3:yellow
+    private final double height;
 	private float particleAlphaA, particleAlphaC; // arrow alpha, circle alpha
 	private Entity host;
-	private float pScale;
+    private final float pScale;
 
 	// mark at entity
 	public ParticleTeam(ClientLevel level, Entity host, float scale, int type) {
@@ -64,12 +59,6 @@ public class ParticleTeam extends Particle {
 		this.hasPhysics = false; // can clip = false
 
 		switch (type) {
-			default: // green, normal mode
-				this.rCol = 0F;
-				this.gCol = 1F;
-				this.bCol = 0F;
-				this.lifetime = 30;
-				break;
 			case 1: // cyan, single mode
 				this.rCol = 0F;
 				this.gCol = 1F;
@@ -117,6 +106,12 @@ public class ParticleTeam extends Particle {
 				this.yo = host.getY() - 0.04D;
 				this.zo = host.getZ();
 				this.setPos(host.getX(), host.getY() - 0.04D, host.getZ());
+                break;
+            default: // green, normal mode
+                this.rCol = 0F;
+                this.gCol = 1F;
+                this.bCol = 0F;
+                this.lifetime = 30;
 				break;
 		}// end switch
 	}

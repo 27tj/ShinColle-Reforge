@@ -26,7 +26,7 @@ public class ShipMoveHelper {
 	private double posY;
 	private double posZ;
 	private double speed;
-	private float rotateLimit;
+    private final float rotateLimit;
 	private Action action = Action.WAIT;
 
 	public ShipMoveHelper(Mob entity, float rotLimit) {
@@ -163,8 +163,8 @@ public class ShipMoveHelper {
 		return (float) ship.getAttributeValue(Attributes.MOVEMENT_SPEED) * movBuff;
 	}
 
-	public static enum Action {
+    public enum Action {
 		WAIT,
-		MOVE_TO;
+        MOVE_TO
 	}
 }

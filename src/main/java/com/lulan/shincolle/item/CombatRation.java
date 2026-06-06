@@ -64,22 +64,13 @@ public class CombatRation extends BasicItem implements IShipCombatRation {
 
 	@Override
 	public float getFoodValue(int meta) {
-		switch (this.type) {
-			case 0:
-				return 900.0F;
-			case 1:
-				return 3600.0F;
-			case 2:
-				return 1200.0F;
-			case 3:
-				return 3900.0F;
-			case 4:
-				return 100.0F;
-			case 5:
-				return 900.0F;
-			default:
-				return 900.0F;
-		}
+		return switch (this.type) {
+			case 1 -> 3600.0F;
+			case 2 -> 1200.0F;
+			case 3 -> 3900.0F;
+			case 4 -> 100.0F;
+			default -> 900.0F;
+		};
 	}
 
 	@Override
@@ -94,22 +85,14 @@ public class CombatRation extends BasicItem implements IShipCombatRation {
 
 	@Override
 	public int getMoraleValue(int meta) {
-		switch (this.type) {
-			case 0:
-				return 1400;
-			case 1:
-				return 1800;
-			case 2:
-				return 1600;
-			case 3:
-				return 2000;
-			case 4:
-				return 3000;
-			case 5:
-				return 4000;
-			default:
-				return 1400;
-		}
+		return switch (this.type) {
+			case 1 -> 1800;
+			case 2 -> 1600;
+			case 3 -> 2000;
+			case 4 -> 3000;
+			case 5 -> 4000;
+			default -> 1400;
+		};
 	}
 
 	/**

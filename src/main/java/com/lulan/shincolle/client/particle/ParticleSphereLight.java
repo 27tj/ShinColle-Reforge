@@ -3,14 +3,8 @@ package com.lulan.shincolle.client.particle;
 import com.lulan.shincolle.reference.Values;
 import com.lulan.shincolle.utility.CalcHelper;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Axis;
-
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -42,9 +36,10 @@ public class ParticleSphereLight extends Particle {
 	private static final ResourceLocation TEXTURE1 = new ResourceLocation("shincolle",
 			"textures/particles/particlegradientline.png");
 	private static int NumBeam = 30;
-	private int particleType, beamCurrent;
+    private final int particleType;
+    private final Entity host;
 	private float particleScale;
-	private Entity host;
+    private int beamCurrent;
 	private float[][] beamPos; // beam position: 0~1: xy, 2~5:RGBA
 	private float beamRad, beamSpd, beamThick, beamHeight;
 

@@ -112,8 +112,8 @@ public class ShipPickItemGoal extends Goal {
 		AABB box = this.ship.getBoundingBox().inflate(this.pickRange, this.pickRange * 0.5F + 1.0F, this.pickRange);
 		List<ItemEntity> items = this.ship.level().getEntitiesOfClass(ItemEntity.class, box);
 
-		if (items != null && !items.isEmpty()) {
-			items.sort(Comparator.comparingDouble(e -> this.ship.distanceToSqr(e)));
+		if (!items.isEmpty()) {
+			items.sort(Comparator.comparingDouble(this.ship::distanceToSqr));
 			return items.get(0);
 		}
 		return null;

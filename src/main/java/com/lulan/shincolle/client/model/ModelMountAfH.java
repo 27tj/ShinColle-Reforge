@@ -26,13 +26,13 @@ public class ModelMountAfH extends ShipModelBaseAdv<Entity> {
                         new ResourceLocation(Reference.MOD_ID, "mount_afh"), "main");
 
         private final ModelPart BodyMain;
-        private ModelPart Jaw;
-        private ModelPart EquipCannon01;
-        private ModelPart EquipCannon02;
-        private ModelPart EquipCannon01_1;
-        private ModelPart EquipCannon02_1;
+    private final ModelPart Jaw;
+    private final ModelPart EquipCannon01;
+    private final ModelPart EquipCannon02;
+    private final ModelPart EquipCannon01_1;
+    private final ModelPart EquipCannon02_1;
         private final ModelPart GlowBodyMain;
-        private ModelPart GlowJaw;
+    private final ModelPart GlowJaw;
 
         public ModelMountAfH(ModelPart root) {
                 super();

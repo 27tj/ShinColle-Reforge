@@ -1,12 +1,7 @@
 package com.lulan.shincolle.client.particle;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.blaze3d.vertex.VertexFormat;
-
+import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
@@ -27,8 +22,8 @@ public class ParticleLine extends Particle {
 
 	private static final ResourceLocation TEXTURE = new ResourceLocation("shincolle",
 			"textures/particles/particlegradientline.png");
-	private int particleType;
-	private float[] parms;
+    private final int particleType;
+    private final float[] parms;
 
 	/**
 	 * @param level client level

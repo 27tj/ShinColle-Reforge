@@ -1774,7 +1774,7 @@ public class ModelBattleshipYamato extends ShipModelBaseAdv<Entity> {
                 this.Hair02.xRot += headX * 0.5F;
                 this.Hair03.xRot += headX * 0.2F;
                 this.Hair04.xRot += headX * 0.2F;
-                this.Hair01.zRot += angleAdd1 * 0.04F + headZ * 1.0F;
+            this.Hair01.zRot += angleAdd1 * 0.04F + headZ;
                 this.Hair02.zRot += angleAdd2 * 0.06F + headZ * 0.8F;
                 this.Hair03.zRot += angleAdd2 * 0.08F + headZ * 0.4F;
                 this.Hair04.zRot += angleAdd2 * 0.10F + headZ * 0.4F;

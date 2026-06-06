@@ -1,9 +1,5 @@
 package com.lulan.shincolle.item;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.lulan.shincolle.capability.CapaShipSavedValues;
 import com.lulan.shincolle.capability.CapaTeitoku;
 import com.lulan.shincolle.capability.CapaTeitokuProvider;
@@ -13,7 +9,6 @@ import com.lulan.shincolle.init.ModEntities;
 import com.lulan.shincolle.reference.ID;
 import com.lulan.shincolle.reference.Values;
 import com.lulan.shincolle.utility.LogHelper;
-
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -29,6 +24,10 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.registries.RegistryObject;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Ship Spawn Egg - used to spawn ship entities.
@@ -194,7 +193,7 @@ public class ShipSpawnEgg extends BasicItem {
 		CompoundTag nbt = stack.getTag();
 
 		int shipClass = -1;
-		if (nbt != null && hasSpecificShipClassTag(nbt)) {
+        if (hasSpecificShipClassTag(nbt)) {
 			shipClass = getShipClass(stack);
 		} else {
 			// [PORT] 1.10.2 -> 1.20.1: Random ship rolls happen dynamically if no ship class is present.

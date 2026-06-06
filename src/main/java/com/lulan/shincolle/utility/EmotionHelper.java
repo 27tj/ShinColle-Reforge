@@ -113,11 +113,7 @@ public class EmotionHelper {
         if (cd > 70 + ent.getRand().nextInt(5)) {
             ent.setHeadTiltTick(ent.getTickExisted());
             partTick = f2 - (int) f2;
-            if (ent.getRand().nextInt(10) > 4) {
-                ent.setStateFlag(ID.F.HeadTilt, true);
-            } else {
-                ent.setStateFlag(ID.F.HeadTilt, false);
-            }
+            ent.setStateFlag(ID.F.HeadTilt, ent.getRand().nextInt(10) > 4);
         }
 
         if (ent.getStateFlag(ID.F.HeadTilt)) {

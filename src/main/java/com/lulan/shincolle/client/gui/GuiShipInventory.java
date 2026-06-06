@@ -1,8 +1,5 @@
 package com.lulan.shincolle.client.gui;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.lulan.shincolle.client.gui.inventory.ContainerShipInventory;
 import com.lulan.shincolle.entity.BasicEntityShip;
 import com.lulan.shincolle.entity.BasicEntityShipCV;
@@ -14,7 +11,6 @@ import com.lulan.shincolle.reference.unitclass.Attrs;
 import com.lulan.shincolle.reference.unitclass.AttrsAdv;
 import com.lulan.shincolle.utility.BuffHelper;
 import com.lulan.shincolle.utility.GuiHelper;
-
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
@@ -24,6 +20,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * GUI screen for the ship entity inventory.
@@ -403,15 +402,15 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
         // Task side toggle: metadata, ore dict, NBT tag checkboxes
         int taskSide = ship.getStateMinor(ID.M.TaskSide);
         graphics.blit(TEXTURE, this.leftPos + 177, this.topPos + 157,
-                (taskSide & (1 << 18)) != 0 ? 0 : 0,
+                0,
                 (taskSide & (1 << 18)) != 0 ? 236 : 225,
                 11, 11);
         graphics.blit(TEXTURE, this.leftPos + 177, this.topPos + 170,
-                (taskSide & (1 << 19)) != 0 ? 11 : 11,
+                11,
                 (taskSide & (1 << 19)) != 0 ? 236 : 225,
                 11, 11);
         graphics.blit(TEXTURE, this.leftPos + 177, this.topPos + 183,
-                (taskSide & (1 << 20)) != 0 ? 22 : 22,
+                22,
                 (taskSide & (1 << 20)) != 0 ? 236 : 225,
                 11, 11);
     }
@@ -713,7 +712,7 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
     private void renderPage6Labels(GuiGraphics graphics, BasicEntityShip ship) {
         boolean showHeld = ship.getStateFlag(ID.F.ShowHeldItem);
         graphics.drawString(this.font, tr("gui.shincolle.showhelditem", "Show Held Item"), 187, 133,
-                showHeld ? 0x000000 : 0x000000, false);
+                0x000000, false);
         graphics.drawString(this.font, tr("gui.shincolle.appearance", "Appearance"), 177, 146, 0x000000, false);
     }
 
@@ -853,26 +852,17 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
 
     /** Handle click within the AI page content area. Returns true if handled. */
     private boolean handleAIPageClick(BasicEntityShip ship, int relX, int relY) {
-        switch (showPageAI) {
-            case 1:
-                return handleToggleClick(ship, relX, relY, PAGE1_TOGGLES);
-            case 2:
-                return handleSliderClick(relX, relY, new int[] { 0, 1, 2 });
-            case 3:
-                return handleToggleClick(ship, relX, relY, PAGE3_TOGGLES);
-            case 4:
-                return handleToggleClick(ship, relX, relY, PAGE4_TOGGLES);
-            case 5:
-                return handleSliderClick(relX, relY, new int[] { 3, 4 });
-            case 6:
-                return handlePage6Click(ship, relX, relY);
-            case 7:
-                return handlePage7Click(ship, relX, relY);
-            case 8:
-                return handlePage8Click(ship, relX, relY);
-            default:
-                return false;
-        }
+        return switch (showPageAI) {
+            case 1 -> handleToggleClick(ship, relX, relY, PAGE1_TOGGLES);
+            case 2 -> handleSliderClick(relX, relY, new int[]{0, 1, 2});
+            case 3 -> handleToggleClick(ship, relX, relY, PAGE3_TOGGLES);
+            case 4 -> handleToggleClick(ship, relX, relY, PAGE4_TOGGLES);
+            case 5 -> handleSliderClick(relX, relY, new int[]{3, 4});
+            case 6 -> handlePage6Click(ship, relX, relY);
+            case 7 -> handlePage7Click(ship, relX, relY);
+            case 8 -> handlePage8Click(ship, relX, relY);
+            default -> false;
+        };
     }
 
     /**

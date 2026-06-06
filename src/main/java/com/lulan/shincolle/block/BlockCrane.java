@@ -2,6 +2,7 @@ package com.lulan.shincolle.block;
 
 import javax.annotation.Nullable;
 
+import com.lulan.shincolle.capability.CapaTeitoku;
 import com.lulan.shincolle.capability.CapaTeitokuProvider;
 import com.lulan.shincolle.init.ModBlockEntities;
 import com.lulan.shincolle.tileentity.TileEntityCrane;
@@ -68,7 +69,7 @@ public class BlockCrane extends BasicBlockContainer {
         BlockEntity be = level.getBlockEntity(pos);
         if (be instanceof TileEntityCrane tile && tile.getPlayerUID() > 0) {
             int playerUID = player.getCapability(CapaTeitokuProvider.CAPABILITY)
-                    .map(capa -> capa.getPlayerUID()).orElse(-1);
+                    .map(CapaTeitoku::getPlayerUID).orElse(-1);
             if (playerUID != tile.getPlayerUID()) {
                 return false; // not owner, prevent destruction
             }

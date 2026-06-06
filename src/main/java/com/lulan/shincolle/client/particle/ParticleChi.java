@@ -4,12 +4,7 @@ import com.lulan.shincolle.entity.IShipEmotion;
 import com.lulan.shincolle.reference.ID;
 import com.lulan.shincolle.utility.CalcHelper;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.blaze3d.vertex.VertexFormat;
-
+import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
@@ -30,10 +25,10 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public class ParticleChi extends Particle {
 
-	private Entity host;
-	private int particleType;
+    private final Entity host;
+    private final int particleType;
 	private float radChi;
-	private float particleScale;
+    private final float particleScale;
 
 	public ParticleChi(ClientLevel level, Entity host, float scale, int type) {
 		super(level, host.getX(), host.getY() + host.getBbHeight() * 0.55D, host.getZ());

@@ -5,12 +5,7 @@ import com.lulan.shincolle.reference.ID;
 import com.lulan.shincolle.reference.Values;
 import com.lulan.shincolle.utility.CalcHelper;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.blaze3d.vertex.VertexFormat;
-
+import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -19,7 +14,6 @@ import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -45,9 +39,10 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public class ParticleSparkle extends Particle {
 
 	private static int NumBeam = 30;
-	private int particleType, beamCurrent;
+    private final int particleType;
+    private final Entity host;
 	private float particleScale;
-	private Entity host;
+    private int beamCurrent;
 	private float[][] beamPos; // beam position: 0~2: xyz, 3~6:RGBA, 7:age
 	private float beamFad, beamSpd, beamThick, beamHeight;
 
@@ -162,18 +157,18 @@ public class ParticleSparkle extends Particle {
 		float cosYawsinPitch = cosYaw * sinPitch;
 
 		Vec3[] avec3d = new Vec3[] {
-				new Vec3((double) (-cosYaw * this.particleScale - sinYawsinPitch * this.particleScale),
-						(double) (-cosPitch * this.particleScale),
-						(double) (-sinYaw * this.particleScale - cosYawsinPitch * this.particleScale)),
-				new Vec3((double) (-cosYaw * this.particleScale + sinYawsinPitch * this.particleScale),
-						(double) (cosPitch * this.particleScale),
-						(double) (-sinYaw * this.particleScale + cosYawsinPitch * this.particleScale)),
-				new Vec3((double) (cosYaw * this.particleScale + sinYawsinPitch * this.particleScale),
-						(double) (cosPitch * this.particleScale),
-						(double) (sinYaw * this.particleScale + cosYawsinPitch * this.particleScale)),
-				new Vec3((double) (cosYaw * this.particleScale - sinYawsinPitch * this.particleScale),
-						(double) (-cosPitch * this.particleScale),
-						(double) (sinYaw * this.particleScale - cosYawsinPitch * this.particleScale)) };
+                new Vec3(-cosYaw * this.particleScale - sinYawsinPitch * this.particleScale,
+                        -cosPitch * this.particleScale,
+                        -sinYaw * this.particleScale - cosYawsinPitch * this.particleScale),
+                new Vec3(-cosYaw * this.particleScale + sinYawsinPitch * this.particleScale,
+                        cosPitch * this.particleScale,
+                        -sinYaw * this.particleScale + cosYawsinPitch * this.particleScale),
+                new Vec3(cosYaw * this.particleScale + sinYawsinPitch * this.particleScale,
+                        cosPitch * this.particleScale,
+                        sinYaw * this.particleScale + cosYawsinPitch * this.particleScale),
+                new Vec3(cosYaw * this.particleScale - sinYawsinPitch * this.particleScale,
+                        -cosPitch * this.particleScale,
+                        sinYaw * this.particleScale - cosYawsinPitch * this.particleScale)};
 
 		RenderSystem.setShader(GameRenderer::getPositionColorShader);
 		RenderSystem.enableBlend();
@@ -337,10 +332,10 @@ public class ParticleSparkle extends Particle {
 						: this.beamFad;
 				float eyeh = ((IShipEmotion) this.host).getStateFlag(ID.F.HeadTilt) ? 0.02F : 0F;
 				float[] headpos = CalcHelper.rotateXYZByYawPitch(eyex, 0.19F + eyeh, this.beamSpd,
-						((LivingEntity) this.host).getYHeadRot() * Values.N.DIV_PI_180,
+                        this.host.getYHeadRot() * Values.N.DIV_PI_180,
 						this.host.getXRot() * Values.N.DIV_PI_180, 1F);
 				float[] headmov = CalcHelper.rotateXZByAxis(1F, 1F,
-						((LivingEntity) this.host).getYHeadRot() * Values.N.DIV_PI_180, 0.025F);
+                        this.host.getYHeadRot() * Values.N.DIV_PI_180, 0.025F);
 
 				for (int i = 0; i < (4 - particleSetting); i++) {
 					// create new beam

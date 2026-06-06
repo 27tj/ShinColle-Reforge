@@ -1,23 +1,8 @@
 package com.lulan.shincolle.utility;
 
-import com.lulan.shincolle.client.particle.ParticleChi;
-import com.lulan.shincolle.client.particle.ParticleCraning;
-import com.lulan.shincolle.client.particle.ParticleCube;
-import com.lulan.shincolle.client.particle.ParticleEmotion;
-import com.lulan.shincolle.client.particle.ParticleGradient;
-import com.lulan.shincolle.client.particle.ParticleLaser;
-import com.lulan.shincolle.client.particle.ParticleLightning;
-import com.lulan.shincolle.client.particle.ParticleLine;
-import com.lulan.shincolle.client.particle.ParticleSparkle;
-import com.lulan.shincolle.client.particle.ParticleSphereLight;
-import com.lulan.shincolle.client.particle.ParticleSpray;
-import com.lulan.shincolle.client.particle.ParticleStickyLightning;
-import com.lulan.shincolle.client.particle.ParticleSweep;
-import com.lulan.shincolle.client.particle.ParticleTeam;
-import com.lulan.shincolle.client.particle.ParticleTexts;
+import com.lulan.shincolle.client.particle.*;
 import com.lulan.shincolle.network.ModNetworking;
 import com.lulan.shincolle.network.S2CSpawnParticlePacket;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.particles.ParticleTypes;
@@ -222,7 +207,7 @@ public class ParticleHelper {
             buf.writeDouble(y);
             buf.writeDouble(z);
             buf.writeDouble(0.3); // scale (lookX)
-            buf.writeDouble((double) teamId); // team indicator type (lookY)
+            buf.writeDouble(teamId); // team indicator type (lookY)
             buf.writeDouble(0.0); // unused (lookZ)
             byte[] payload = new byte[48];
             buf.getBytes(0, payload);

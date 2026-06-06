@@ -30,7 +30,7 @@ public class ModelDestroyerHa extends ShipModelBaseAdv<Entity> {
         private final ModelPart Head;
         private final ModelPart NeckBody;
         private final ModelPart HeadD01;
-        private ModelPart k00;
+    private final ModelPart k00;
         private final ModelPart Face00;
         private final ModelPart Face01;
         private final ModelPart Face02;
@@ -38,9 +38,9 @@ public class ModelDestroyerHa extends ShipModelBaseAdv<Entity> {
         private final ModelPart HeadD02;
         private final ModelPart ToothL;
         private final ModelPart HeadD03;
-        private ModelPart k01;
-        private ModelPart k02;
-        private ModelPart k03;
+    private final ModelPart k01;
+    private final ModelPart k02;
+    private final ModelPart k03;
         private final ModelPart LegLeftFront;
         private final ModelPart LegRightFront;
         private final ModelPart LegLeftEnd;

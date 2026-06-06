@@ -265,21 +265,12 @@ public abstract class BasicEquip extends BasicItem implements IShipResourceItem 
 			}
 
 			// Material info
-			String matname;
-			switch (misc[ID.EquipMisc.DEVELOP_MAT]) {
-				case 1:
-					matname = Component.translatable("item.shincolle.abyss_metal").getString();
-					break;
-				case 2:
-					matname = Component.translatable("item.shincolle.ammo").getString();
-					break;
-				case 3:
-					matname = Component.translatable("item.shincolle.abyss_metal_1").getString();
-					break;
-				default:
-					matname = Component.translatable("item.shincolle.grudge").getString();
-					break;
-			}
+			String matname = switch (misc[ID.EquipMisc.DEVELOP_MAT]) {
+				case 1 -> Component.translatable("item.shincolle.abyss_metal").getString();
+				case 2 -> Component.translatable("item.shincolle.ammo").getString();
+				case 3 -> Component.translatable("item.shincolle.abyss_metal_1").getString();
+				default -> Component.translatable("item.shincolle.grudge").getString();
+			};
 
 			drawstr = ChatFormatting.DARK_PURPLE + Component.translatable("gui.shincolle.equip.matstype").getString() +
 					ChatFormatting.GRAY + " (" + matname + ") " +

@@ -11,7 +11,7 @@ public class ShipPath {
 
 	private final ShipPathPoint[] points;
 	private int currentPathIndex;
-	private int pathLength;
+    private final int pathLength;
 
 	public ShipPath(ShipPathPoint[] pathpoints) {
 		this.points = pathpoints;

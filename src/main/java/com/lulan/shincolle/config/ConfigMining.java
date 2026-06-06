@@ -1,20 +1,13 @@
 package com.lulan.shincolle.config;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import com.lulan.shincolle.utility.LogHelper;
+
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.lulan.shincolle.utility.LogHelper;
 
 /**
  * Mining loot table configuration loaded from a CSV file (mining.cfg).
@@ -40,22 +33,14 @@ import com.lulan.shincolle.utility.LogHelper;
  */
 public class ConfigMining {
 
-	/** Loot entry data */
-	public static class ItemEntry {
-		public final String itemName;
-		public final int weight, min, max, lvShip, lvHeight, lvTool;
-		public final float enchant;
-
+	/**
+	 * Loot entry data
+	 */
+	public record ItemEntry(String itemName, int weight, int min, int max, int lvShip, int lvHeight, int lvTool,
+	                        float enchant) {
 		public ItemEntry(String itemName, int weight, int min, int max,
-				int lvShip, int lvHeight, int lvTool, int enchant) {
-			this.itemName = itemName;
-			this.weight = weight;
-			this.min = min;
-			this.max = max;
-			this.lvShip = lvShip;
-			this.lvHeight = lvHeight;
-			this.lvTool = lvTool;
-			this.enchant = enchant * 0.01F;
+		                 int lvShip, int lvHeight, int lvTool, int enchant) {
+			this(itemName, weight, min, max, lvShip, lvHeight, lvTool, enchant * 0.01F);
 		}
 	}
 

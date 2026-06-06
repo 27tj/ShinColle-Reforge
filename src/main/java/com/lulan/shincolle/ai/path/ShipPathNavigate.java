@@ -1,10 +1,7 @@
 package com.lulan.shincolle.ai.path;
 
-import javax.annotation.Nullable;
-
 import com.lulan.shincolle.entity.IShipAttackBase;
 import com.lulan.shincolle.entity.IShipNavigator;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -14,6 +11,8 @@ import net.minecraft.world.level.PathNavigationRegion;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+
+import javax.annotation.Nullable;
 
 /**
  * Custom path navigator for ship and airplane entities.
@@ -39,7 +38,8 @@ public class ShipPathNavigate {
 	private long lastTimeoutCheck = 0L;
 	private double timeoutLimit;
 	private float maxDistanceToWaypoint = 0.5F;
-	private int hostCeilWidth, hostCeilHeight;
+    private final int hostCeilWidth;
+    private final int hostCeilHeight;
 	private BlockPos targetPos;
 
 	public ShipPathNavigate(Mob entity) {

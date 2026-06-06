@@ -1,99 +1,16 @@
 package com.lulan.shincolle.init;
 
-import com.lulan.shincolle.entity.BasicEntityAirplane;
-import com.lulan.shincolle.entity.BasicEntityMount;
-import com.lulan.shincolle.entity.BasicEntityShip;
-import com.lulan.shincolle.entity.BasicEntityShipHostile;
-import com.lulan.shincolle.entity.BasicEntitySummon;
-import com.lulan.shincolle.entity.battleship.EntityBBHaruna;
-import com.lulan.shincolle.entity.battleship.EntityBBHarunaMob;
-import com.lulan.shincolle.entity.battleship.EntityBBHiei;
-import com.lulan.shincolle.entity.battleship.EntityBBHieiMob;
-import com.lulan.shincolle.entity.battleship.EntityBBKirishima;
-import com.lulan.shincolle.entity.battleship.EntityBBKirishimaMob;
-import com.lulan.shincolle.entity.battleship.EntityBBKongou;
-import com.lulan.shincolle.entity.battleship.EntityBBKongouMob;
-import com.lulan.shincolle.entity.battleship.EntityBattleshipNagato;
-import com.lulan.shincolle.entity.battleship.EntityBattleshipNagatoMob;
-import com.lulan.shincolle.entity.battleship.EntityBattleshipRe;
-import com.lulan.shincolle.entity.battleship.EntityBattleshipRu;
-import com.lulan.shincolle.entity.battleship.EntityBattleshipTa;
-import com.lulan.shincolle.entity.battleship.EntityBattleshipYamato;
-import com.lulan.shincolle.entity.battleship.EntityBattleshipYamatoMob;
-import com.lulan.shincolle.entity.carrier.EntityCarrierAkagi;
-import com.lulan.shincolle.entity.carrier.EntityCarrierAkagiMob;
-import com.lulan.shincolle.entity.carrier.EntityCarrierKaga;
-import com.lulan.shincolle.entity.carrier.EntityCarrierKagaMob;
-import com.lulan.shincolle.entity.carrier.EntityCarrierWo;
-import com.lulan.shincolle.entity.cruiser.EntityCAAtago;
-import com.lulan.shincolle.entity.cruiser.EntityCAAtagoMob;
-import com.lulan.shincolle.entity.cruiser.EntityCANe;
-import com.lulan.shincolle.entity.cruiser.EntityCARi;
-import com.lulan.shincolle.entity.cruiser.EntityCATakao;
-import com.lulan.shincolle.entity.cruiser.EntityCATakaoMob;
-import com.lulan.shincolle.entity.cruiser.EntityCLTatsuta;
-import com.lulan.shincolle.entity.cruiser.EntityCLTatsutaMob;
-import com.lulan.shincolle.entity.cruiser.EntityCLTenryuu;
-import com.lulan.shincolle.entity.cruiser.EntityCLTenryuuMob;
-import com.lulan.shincolle.entity.destroyer.EntityDestroyerAkatsuki;
-import com.lulan.shincolle.entity.destroyer.EntityDestroyerAkatsukiMob;
-import com.lulan.shincolle.entity.destroyer.EntityDestroyerHa;
-import com.lulan.shincolle.entity.destroyer.EntityDestroyerHibiki;
-import com.lulan.shincolle.entity.destroyer.EntityDestroyerHibikiMob;
-import com.lulan.shincolle.entity.destroyer.EntityDestroyerI;
-import com.lulan.shincolle.entity.destroyer.EntityDestroyerIkazuchi;
-import com.lulan.shincolle.entity.destroyer.EntityDestroyerIkazuchiMob;
-import com.lulan.shincolle.entity.destroyer.EntityDestroyerInazuma;
-import com.lulan.shincolle.entity.destroyer.EntityDestroyerInazumaMob;
-import com.lulan.shincolle.entity.destroyer.EntityDestroyerNi;
-import com.lulan.shincolle.entity.destroyer.EntityDestroyerRo;
-import com.lulan.shincolle.entity.destroyer.EntityDestroyerShimakaze;
-import com.lulan.shincolle.entity.destroyer.EntityDestroyerShimakazeMob;
-import com.lulan.shincolle.entity.hime.EntityAirfieldHime;
-import com.lulan.shincolle.entity.hime.EntityBattleshipHime;
-import com.lulan.shincolle.entity.hime.EntityCAHime;
-import com.lulan.shincolle.entity.hime.EntityCarrierHime;
-import com.lulan.shincolle.entity.hime.EntityCarrierWD;
-import com.lulan.shincolle.entity.hime.EntityDestroyerHime;
-import com.lulan.shincolle.entity.hime.EntityHarbourHime;
-import com.lulan.shincolle.entity.hime.EntityIsolatedHime;
-import com.lulan.shincolle.entity.hime.EntityMidwayHime;
-import com.lulan.shincolle.entity.hime.EntityNorthernHime;
-import com.lulan.shincolle.entity.hime.EntitySSNH;
-import com.lulan.shincolle.entity.hime.EntitySubmHime;
-import com.lulan.shincolle.entity.mounts.EntityMountAfH;
-import com.lulan.shincolle.entity.mounts.EntityMountBaH;
-import com.lulan.shincolle.entity.mounts.EntityMountCaH;
-import com.lulan.shincolle.entity.mounts.EntityMountCaWD;
-import com.lulan.shincolle.entity.mounts.EntityMountHbH;
-import com.lulan.shincolle.entity.mounts.EntityMountIsH;
-import com.lulan.shincolle.entity.mounts.EntityMountMiH;
-import com.lulan.shincolle.entity.mounts.EntityMountSuH;
-import com.lulan.shincolle.entity.other.BasicEntityItem;
-import com.lulan.shincolle.entity.other.EntityAbyssMissile;
-import com.lulan.shincolle.entity.other.EntityAirplane;
-import com.lulan.shincolle.entity.other.EntityAirplaneT;
-import com.lulan.shincolle.entity.other.EntityAirplaneTMob;
-import com.lulan.shincolle.entity.other.EntityAirplaneTakoyaki;
-import com.lulan.shincolle.entity.other.EntityAirplaneZero;
-import com.lulan.shincolle.entity.other.EntityAirplaneZeroMob;
-import com.lulan.shincolle.entity.other.EntityFloatingFort;
-import com.lulan.shincolle.entity.other.EntityProjectileBeam;
-import com.lulan.shincolle.entity.other.EntityProjectileStatic;
-import com.lulan.shincolle.entity.other.EntityRensouhou;
-import com.lulan.shincolle.entity.other.EntityRensouhouMob;
-import com.lulan.shincolle.entity.other.EntityRensouhouS;
-import com.lulan.shincolle.entity.other.EntityShipFishingHook;
-import com.lulan.shincolle.entity.submarine.EntitySubmKa;
-import com.lulan.shincolle.entity.submarine.EntitySubmRo500;
-import com.lulan.shincolle.entity.submarine.EntitySubmRo500Mob;
-import com.lulan.shincolle.entity.submarine.EntitySubmSo;
-import com.lulan.shincolle.entity.submarine.EntitySubmU511;
-import com.lulan.shincolle.entity.submarine.EntitySubmU511Mob;
-import com.lulan.shincolle.entity.submarine.EntitySubmYo;
+import com.lulan.shincolle.entity.*;
+import com.lulan.shincolle.entity.battleship.*;
+import com.lulan.shincolle.entity.carrier.*;
+import com.lulan.shincolle.entity.cruiser.*;
+import com.lulan.shincolle.entity.destroyer.*;
+import com.lulan.shincolle.entity.hime.*;
+import com.lulan.shincolle.entity.mounts.*;
+import com.lulan.shincolle.entity.other.*;
+import com.lulan.shincolle.entity.submarine.*;
 import com.lulan.shincolle.entity.transport.EntityTransportWa;
 import com.lulan.shincolle.reference.Reference;
-
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
@@ -751,7 +668,7 @@ public class ModEntities {
 
         public static final RegistryObject<EntityType<EntityAbyssMissile>> ABYSS_MISSILE = ENTITIES.register(
                         "abyss_missile",
-                        () -> EntityType.Builder.<EntityAbyssMissile>of(EntityAbyssMissile::new, MobCategory.MISC)
+                () -> EntityType.Builder.of(EntityAbyssMissile::new, MobCategory.MISC)
                                         .sized(0.5F, 0.5F)
                                         .clientTrackingRange(64)
                                         .updateInterval(1)
@@ -759,7 +676,7 @@ public class ModEntities {
 
         public static final RegistryObject<EntityType<EntityProjectileBeam>> PROJECTILE_BEAM = ENTITIES.register(
                         "projectile_beam",
-                        () -> EntityType.Builder.<EntityProjectileBeam>of(EntityProjectileBeam::new, MobCategory.MISC)
+                () -> EntityType.Builder.of(EntityProjectileBeam::new, MobCategory.MISC)
                                         .sized(0.5F, 0.5F)
                                         .clientTrackingRange(64)
                                         .updateInterval(1)
@@ -768,7 +685,7 @@ public class ModEntities {
         public static final RegistryObject<EntityType<EntityProjectileStatic>> PROJECTILE_STATIC = ENTITIES.register(
                         "projectile_static",
                         () -> EntityType.Builder
-                                        .<EntityProjectileStatic>of(EntityProjectileStatic::new, MobCategory.MISC)
+                                .of(EntityProjectileStatic::new, MobCategory.MISC)
                                         .sized(0.5F, 0.5F)
                                         .clientTrackingRange(64)
                                         .updateInterval(1)
@@ -776,7 +693,7 @@ public class ModEntities {
 
         public static final RegistryObject<EntityType<EntityShipFishingHook>> FISHING_HOOK = ENTITIES.register(
                         "fishing_hook",
-                        () -> EntityType.Builder.<EntityShipFishingHook>of(EntityShipFishingHook::new, MobCategory.MISC)
+                () -> EntityType.Builder.of(EntityShipFishingHook::new, MobCategory.MISC)
                                         .sized(0.25F, 0.25F)
                                         .clientTrackingRange(64)
                                         .updateInterval(1)

@@ -1,14 +1,8 @@
 package com.lulan.shincolle.client.particle;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Axis;
-
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -35,14 +29,14 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public class ParticleTextsCustom extends Particle {
 
-    private int particleType;
+    private final int particleType;
     private int textWidth;
     private int textHeight;
     private double[] parms;
-    private Font font;
+    private final Font font;
     private String text;
-    private Entity host;
-    private float pScale;
+    private final Entity host;
+    private final float pScale;
 
     public ParticleTextsCustom(Entity host, ClientLevel level, double posX, double posY, double posZ,
             float scale, int type, String text, int... parms) {

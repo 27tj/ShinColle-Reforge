@@ -1,28 +1,22 @@
 package com.lulan.shincolle.ai;
 
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.List;
-
 import com.lulan.shincolle.ai.path.ShipPathNavigate;
-import com.lulan.shincolle.entity.BasicEntityMount;
-import com.lulan.shincolle.entity.BasicEntityShip;
 import com.lulan.shincolle.entity.IShipAircraftAttack;
 import com.lulan.shincolle.entity.IShipCannonAttack;
 import com.lulan.shincolle.entity.IShipGuardian;
 import com.lulan.shincolle.handler.ConfigHandler;
 import com.lulan.shincolle.reference.ID;
-import com.lulan.shincolle.utility.EntityHelper;
 import com.lulan.shincolle.utility.FormationHelper;
 import com.lulan.shincolle.utility.LogHelper;
 import com.lulan.shincolle.utility.TargetHelper;
-
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
+
+import java.util.EnumSet;
+import java.util.List;
 
 /**
  * Ship guarding AI - guard a position or entity.
@@ -52,14 +46,14 @@ public class ShipGuardingGoal extends Goal {
 	private double maxDistSq, minDistSq;
 	private double distSq;                     // distance to guard target squared
 	private double[] pos;                      // guard position: x, y, z
-	private double[] guardPosOld;              // last known guarded entity position
+	private final double[] guardPosOld;              // last known guarded entity position
 
 	// attack-while-moving parameters (for BasicEntityShip only)
 	private IShipCannonAttack ship;            // host can use cannon
 	private IShipAircraftAttack ship2;         // host can use aircraft
 	private LivingEntity attackTarget;         // current attack target
-	private int[] delayTime;                   // attack delay: 0=light 1=heavy 2=aircraft
-	private int[] maxDelayTime;                // max delay per type
+	private final int[] delayTime;                   // attack delay: 0=light 1=heavy 2=aircraft
+	private final int[] maxDelayTime;                // max delay per type
 	private int onSightTime;                   // target on-sight accumulator
 	private int aimTime;                       // ticks before can fire
 	private float range, rangeSq;              // attack range
@@ -304,7 +298,7 @@ public class ShipGuardingGoal extends Goal {
 				LivingEntity.class, searchBox, this.targetSelector);
 
 		// sort by distance (nearest first)
-		Collections.sort(list, this.targetSorter);
+		list.sort(this.targetSorter);
 
 		// pick target: random from top 3 if available, else nearest
 		if (list.size() > 2) {

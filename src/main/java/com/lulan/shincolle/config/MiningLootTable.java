@@ -1,13 +1,13 @@
 package com.lulan.shincolle.config;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.registries.ForgeRegistries;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Mining loot table for ship mining AI.
@@ -25,35 +25,24 @@ import net.minecraftforge.registries.ForgeRegistries;
  */
 public class MiningLootTable {
 
-    /** A single mining loot entry */
-    public static class MiningEntry {
-        public final String itemId;
-        public final int weight;
-        public final int minCount;
-        public final int maxCount;
-        public final int minShipLevel;
-        public final int maxYLevel;
-        public final int minToolLevel;
-        public final float enchantScale; // fortune multiplier (0.0 = no bonus)
+    /**
+     * A single mining loot entry
+     *
+     * @param enchantScale fortune multiplier (0.0 = no bonus)
+     */
+    public record MiningEntry(String itemId, int weight, int minCount, int maxCount, int minShipLevel, int maxYLevel,
+                              int minToolLevel, float enchantScale) {
 
-        public MiningEntry(String itemId, int weight, int minCount, int maxCount,
-                int minShipLevel, int maxYLevel, int minToolLevel, float enchantScale) {
-            this.itemId = itemId;
-            this.weight = weight;
-            this.minCount = minCount;
-            this.maxCount = maxCount;
-            this.minShipLevel = minShipLevel;
-            this.maxYLevel = maxYLevel;
-            this.minToolLevel = minToolLevel;
-            this.enchantScale = enchantScale;
-        }
-
-        /** Check if this entry is available given the current conditions */
+        /**
+         * Check if this entry is available given the current conditions
+         */
         public boolean isAvailable(int shipLevel, int yLevel, int toolLevel) {
             return shipLevel >= minShipLevel && yLevel <= maxYLevel && toolLevel >= minToolLevel;
         }
 
-        /** Get the actual stack size accounting for fortune */
+        /**
+         * Get the actual stack size accounting for fortune
+         */
         public int rollCount(RandomSource random, int fortuneLevel) {
             int base = minCount + (maxCount > minCount ? random.nextInt(maxCount - minCount + 1) : 0);
             if (fortuneLevel > 0 && enchantScale > 0F) {
@@ -62,7 +51,9 @@ public class MiningLootTable {
             return Math.max(1, base);
         }
 
-        /** Create the ItemStack result */
+        /**
+         * Create the ItemStack result
+         */
         public ItemStack createStack(RandomSource random, int fortuneLevel) {
             ResourceLocation loc = new ResourceLocation(itemId);
             var item = ForgeRegistries.ITEMS.getValue(loc);

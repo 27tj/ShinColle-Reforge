@@ -4,12 +4,7 @@ import com.lulan.shincolle.entity.IShipEmotion;
 import com.lulan.shincolle.entity.IShipFloating;
 import com.lulan.shincolle.utility.CalcHelper;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.blaze3d.vertex.VertexFormat;
-
+import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
@@ -32,12 +27,13 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public class ParticleLightning extends Particle {
 
-    private int particleType; // 0:red white lightning
-    private Entity host;
-    private int numStem; // lightning length
-    private double[][] prevShape; // prev lightning shape
-    private float scaleXZ, scaleY;
-    private float pScale;
+    private final int particleType; // 0:red white lightning
+    private final Entity host;
+    private final int numStem; // lightning length
+    private final double[][] prevShape; // prev lightning shape
+    private final float scaleXZ;
+    private final float scaleY;
+    private final float pScale;
 
     public ParticleLightning(ClientLevel level, Entity entity, float scale, int type) {
         super(level, 0D, 0D, 0D);

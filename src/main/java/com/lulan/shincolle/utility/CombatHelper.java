@@ -1,20 +1,12 @@
 package com.lulan.shincolle.utility;
 
-import com.lulan.shincolle.entity.BasicEntityMount;
-import com.lulan.shincolle.entity.BasicEntityShip;
-import com.lulan.shincolle.entity.BasicEntityShipHostile;
-import com.lulan.shincolle.entity.BasicEntitySummon;
-import com.lulan.shincolle.entity.IShipAttackBase;
-import com.lulan.shincolle.entity.IShipAttrs;
-import com.lulan.shincolle.entity.IShipInvisible;
-import com.lulan.shincolle.entity.IShipOwner;
+import com.lulan.shincolle.entity.*;
 import com.lulan.shincolle.entity.other.EntityProjectileStatic;
 import com.lulan.shincolle.handler.ConfigHandler;
 import com.lulan.shincolle.init.ModEntities;
 import com.lulan.shincolle.reference.ID;
 import com.lulan.shincolle.reference.Values;
 import com.lulan.shincolle.reference.unitclass.Attrs;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -348,9 +340,7 @@ public class CombatHelper {
 		// friendly ship should not hurt its owner
 		if (attacker instanceof BasicEntityShip atkShip
 				&& target instanceof net.minecraft.world.entity.player.Player player) {
-			if (atkShip.getOwner() != null && atkShip.getOwner().equals(player)) {
-				return true;
-			}
+            return atkShip.getOwner() != null && atkShip.getOwner().equals(player);
 		}
 
 		return false;

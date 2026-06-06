@@ -1,12 +1,11 @@
 package com.lulan.shincolle.capability;
 
+import com.lulan.shincolle.entity.BasicEntityShip;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
-
-import com.lulan.shincolle.entity.BasicEntityShip;
 
 /**
  * Ship inventory capability.
@@ -19,8 +18,8 @@ public class CapaShipInventory {
 	public static final int SlotMax = 60; // 6 equip + 18*3 inventory
 	public static final String InvName = "ShipInventory";
 
-	private ItemStack[] stacks;
-	private Entity owner;
+	private final ItemStack[] stacks;
+	private final Entity owner;
 	private int inventoryPage;
 
 	public CapaShipInventory(int size, Entity owner) {
@@ -99,13 +98,13 @@ public class CapaShipInventory {
 			return false;
 
 		// try to merge with existing stacks first
-		for (int i = 0; i < stacks.length; i++) {
-			if (!stacks[i].isEmpty() && ItemStack.isSameItemSameTags(stacks[i], stack)) {
-				int maxSize = stacks[i].getMaxStackSize();
-				int canAdd = maxSize - stacks[i].getCount();
+		for (ItemStack itemStack : stacks) {
+			if (!itemStack.isEmpty() && ItemStack.isSameItemSameTags(itemStack, stack)) {
+				int maxSize = itemStack.getMaxStackSize();
+				int canAdd = maxSize - itemStack.getCount();
 				if (canAdd > 0) {
 					int toAdd = Math.min(canAdd, stack.getCount());
-					stacks[i].grow(toAdd);
+					itemStack.grow(toAdd);
 					stack.shrink(toAdd);
 					if (stack.isEmpty())
 						return true;

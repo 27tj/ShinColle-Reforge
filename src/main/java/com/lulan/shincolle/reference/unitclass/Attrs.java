@@ -1,11 +1,11 @@
 package com.lulan.shincolle.reference.unitclass;
 
-import java.util.Arrays;
-import java.util.Random;
-
 import com.lulan.shincolle.handler.ConfigHandler;
 import com.lulan.shincolle.reference.ID;
 import com.lulan.shincolle.reference.Values;
+
+import java.util.Arrays;
+import java.util.Random;
 
 /**
  * ship basic attributes + equip and potion buffs
@@ -103,15 +103,11 @@ public class Attrs {
 	}
 
 	public void copyRaw2Buffed() {
-		for (int i = 0; i < AttrsLength; i++) {
-			this.AttrsBuffed[i] = this.AttrsRaw[i];
-		}
+        System.arraycopy(this.AttrsRaw, 0, this.AttrsBuffed, 0, AttrsLength);
 	}
 
 	public void copyBuffed2Raw() {
-		for (int i = 0; i < AttrsLength; i++) {
-			this.AttrsRaw[i] = this.AttrsBuffed[i];
-		}
+        System.arraycopy(this.AttrsBuffed, 0, this.AttrsRaw, 0, AttrsLength);
 	}
 
 	public static float[] getResetRawValue() {

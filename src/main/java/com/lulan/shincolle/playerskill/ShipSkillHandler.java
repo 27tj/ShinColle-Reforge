@@ -52,13 +52,11 @@ public class ShipSkillHandler {
 			if (ship != null) {
 				castPlayerSkill(ship, player, data);
 			}
-			return;
 		}
 		// If ship is riding player
 		else if (!player.getPassengers().isEmpty() &&
 				player.getPassengers().get(0) instanceof BasicEntityShip passengerShip) {
 			castPlayerSkill(passengerShip, player, data);
-			return;
 		}
 	}
 

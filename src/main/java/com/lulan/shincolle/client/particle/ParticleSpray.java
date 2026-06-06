@@ -31,7 +31,7 @@ public class ParticleSpray extends TextureSheetParticle {
         sharedSprites = s;
     }
 
-    private int ptype;
+    private final int ptype;
     private float pScale;
     private double speedLimit;
 

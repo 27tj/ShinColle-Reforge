@@ -2,12 +2,7 @@ package com.lulan.shincolle.client.particle;
 
 import com.lulan.shincolle.entity.BasicEntityShip;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.blaze3d.vertex.VertexFormat;
-
+import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
@@ -31,9 +26,9 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public class ParticleDebugPlane extends Particle {
 
-	private int particleType;
-	private Entity host;
-	private float[] parms;
+    private final int particleType;
+    private final Entity host;
+    private final float[] parms;
 	private float hostWidth, yTop, yBottom, red2, green2, blue2, alpha2;
 
 	public ParticleDebugPlane(Entity entity, int type, float... parms) {

@@ -3,12 +3,7 @@ package com.lulan.shincolle.client.particle;
 import com.lulan.shincolle.reference.Values;
 import com.lulan.shincolle.utility.CalcHelper;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.blaze3d.vertex.VertexFormat;
-
+import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
@@ -30,8 +25,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public class ParticleSweep extends Particle {
 
 	private static final ResourceLocation TEXTURE1 = new ResourceLocation("textures/entity/sweep.png");
-	private int particleType;
-	private Entity host;
+    private final int particleType;
+    private final Entity host;
 	private float swpFad, swpSpd, swpScale1, swpScale2, swpScale3, swpAngle;
 
 	/**

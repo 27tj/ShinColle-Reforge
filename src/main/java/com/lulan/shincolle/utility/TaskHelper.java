@@ -1,9 +1,5 @@
 package com.lulan.shincolle.utility;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
 import com.lulan.shincolle.capability.CapaShipInventory;
 import com.lulan.shincolle.config.ConfigMining;
 import com.lulan.shincolle.crafting.InventoryCraftingFake;
@@ -18,7 +14,6 @@ import com.lulan.shincolle.reference.Values;
 import com.lulan.shincolle.reference.unitclass.Dist4d;
 import com.lulan.shincolle.server.ServerDataManager;
 import com.lulan.shincolle.tileentity.TileEntityWaypoint;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
@@ -53,9 +48,13 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.items.IItemHandler;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.registries.ForgeRegistries;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Helper for ship tasks: cooking, mining, fishing, crafting, pumping.
@@ -245,8 +244,7 @@ public class TaskHelper {
 				// move remaining items (bucket, bottle...)
 				net.minecraft.core.NonNullList<ItemStack> remainStacks = resultOpt.get()
 						.getRemainingItems(recipeTemp);
-				for (int i = 0; i < remainStacks.size(); i++) {
-					ItemStack remain = remainStacks.get(i);
+				for (ItemStack remain : remainStacks) {
 					if (!remain.isEmpty()) {
 						moveItemToHandler(chest, remain);
 						if (!remain.isEmpty()) {
@@ -738,7 +736,7 @@ public class TaskHelper {
 		// filter entries by ship level, Y position, and tool tier
 		List<ConfigMining.ItemEntry> filtered = new ArrayList<>();
 		for (ConfigMining.ItemEntry entry : entries) {
-			if (shipLevel >= entry.lvShip && yPos <= entry.lvHeight && toolLevel >= entry.lvTool) {
+			if (shipLevel >= entry.lvShip() && yPos <= entry.lvHeight() && toolLevel >= entry.lvTool()) {
 				filtered.add(entry);
 			}
 		}
@@ -748,9 +746,9 @@ public class TaskHelper {
 
 		// build cumulative weight list for weighted random selection
 		List<Integer> cumulativeWeights = new ArrayList<>();
-		cumulativeWeights.add(filtered.get(0).weight);
+		cumulativeWeights.add(filtered.get(0).weight());
 		for (int i = 1; i < filtered.size(); i++) {
-			cumulativeWeights.add(cumulativeWeights.get(i - 1) + filtered.get(i).weight);
+			cumulativeWeights.add(cumulativeWeights.get(i - 1) + filtered.get(i).weight());
 		}
 
 		// roll weighted random
@@ -769,19 +767,19 @@ public class TaskHelper {
 
 		// look up item by resource location
 		net.minecraft.world.item.Item item = ForgeRegistries.ITEMS.getValue(
-				ResourceLocation.tryParse(selected.itemName));
+				ResourceLocation.tryParse(selected.itemName()));
 		if (item == null || item == Items.AIR)
 			return;
 
 		// calculate stack size
-		int stackSize = selected.min;
-		if (selected.max > selected.min) {
-			stackSize = selected.min + ship.getRandom().nextInt(selected.max - selected.min + 1);
+		int stackSize = selected.min();
+		if (selected.max() > selected.min()) {
+			stackSize = selected.min() + ship.getRandom().nextInt(selected.max() - selected.min() + 1);
 		}
 
 		// apply fortune enchantment bonus
-		if (selected.enchant > 0F && fortuneLevel > 0) {
-			stackSize = (int) (stackSize * (1F + fortuneLevel * selected.enchant));
+		if (selected.enchant() > 0F && fortuneLevel > 0) {
+			stackSize = (int) (stackSize * (1F + fortuneLevel * selected.enchant()));
 		}
 
 		if (stackSize < 1)

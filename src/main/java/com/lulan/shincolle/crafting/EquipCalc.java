@@ -337,17 +337,12 @@ public class EquipCalc {
 		int enchNum = 0;
 		int ranNum = rand.nextInt(10);
 
-		switch (enchLv) {
-			case 1:
-				enchNum = ranNum > 5 ? 1 : 0;
-				break;
-			case 2:
-				enchNum = ranNum > 6 ? 2 : ranNum > 3 ? 1 : 0;
-				break;
-			case 3:
-				enchNum = ranNum > 7 ? 3 : ranNum > 4 ? 2 : ranNum > 1 ? 1 : 0;
-				break;
-		}
+		enchNum = switch (enchLv) {
+			case 1 -> ranNum > 5 ? 1 : 0;
+			case 2 -> ranNum > 6 ? 2 : ranNum > 3 ? 1 : 0;
+			case 3 -> ranNum > 7 ? 3 : ranNum > 4 ? 2 : ranNum > 1 ? 1 : 0;
+			default -> enchNum;
+		};
 
 		if (enchNum <= 0)
 			return;

@@ -1,30 +1,12 @@
 package com.lulan.shincolle.entity;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
-import javax.annotation.Nullable;
-
-import com.lulan.shincolle.ai.ShipAttackOnCollideGoal;
-import com.lulan.shincolle.ai.ShipFleeGoal;
-import com.lulan.shincolle.ai.ShipFloatingGoal;
-import com.lulan.shincolle.ai.ShipFollowOwnerGoal;
-import com.lulan.shincolle.ai.ShipGuardingGoal;
-import com.lulan.shincolle.ai.ShipLookIdleGoal;
-import com.lulan.shincolle.ai.ShipOpenDoorGoal;
-import com.lulan.shincolle.ai.ShipRangeAttackGoal;
-import com.lulan.shincolle.ai.ShipRangeTargetGoal;
-import com.lulan.shincolle.ai.ShipRevengeTargetGoal;
-import com.lulan.shincolle.ai.ShipSitGoal;
-import com.lulan.shincolle.ai.ShipSkillAttackGoal;
-import com.lulan.shincolle.ai.ShipWanderGoal;
-import com.lulan.shincolle.ai.ShipWatchClosestGoal;
+import com.lulan.shincolle.ai.*;
 import com.lulan.shincolle.ai.path.ShipMoveHelper;
 import com.lulan.shincolle.ai.path.ShipPathNavigate;
-import com.lulan.shincolle.capability.CapaTeitoku;
-import com.lulan.shincolle.capability.CapaTeitokuProvider;
 import com.lulan.shincolle.capability.CapaShipInventory;
 import com.lulan.shincolle.capability.CapaShipSavedValues;
+import com.lulan.shincolle.capability.CapaTeitoku;
+import com.lulan.shincolle.capability.CapaTeitokuProvider;
 import com.lulan.shincolle.client.gui.inventory.ContainerShipInventory;
 import com.lulan.shincolle.crafting.EquipCalc;
 import com.lulan.shincolle.entity.other.BasicEntityItem;
@@ -37,11 +19,7 @@ import com.lulan.shincolle.init.ModSounds;
 import com.lulan.shincolle.item.BasicEquip;
 import com.lulan.shincolle.item.IShipEffectItem;
 import com.lulan.shincolle.item.PointerItem;
-import com.lulan.shincolle.network.C2SInputPacket;
-import com.lulan.shincolle.network.ModNetworking;
-import com.lulan.shincolle.network.S2CEntitySyncPacket;
-import com.lulan.shincolle.network.S2CReactPacket;
-import com.lulan.shincolle.network.S2CSpawnParticlePacket;
+import com.lulan.shincolle.network.*;
 import com.lulan.shincolle.reference.Enums.EnumEquipEffectSP;
 import com.lulan.shincolle.reference.ID;
 import com.lulan.shincolle.reference.Values;
@@ -49,19 +27,7 @@ import com.lulan.shincolle.reference.unitclass.Attrs;
 import com.lulan.shincolle.reference.unitclass.AttrsAdv;
 import com.lulan.shincolle.reference.unitclass.MissileData;
 import com.lulan.shincolle.server.ServerDataManager;
-import com.lulan.shincolle.utility.BlockHelper;
-import com.lulan.shincolle.utility.BuffHelper;
-import com.lulan.shincolle.utility.ClientRuntimeHelper;
-import com.lulan.shincolle.utility.CombatHelper;
-import com.lulan.shincolle.utility.EnchantHelper;
-import com.lulan.shincolle.utility.EntityHelper;
-import com.lulan.shincolle.utility.InteractHelper;
-import com.lulan.shincolle.utility.LogHelper;
-import com.lulan.shincolle.utility.ParticleHelper;
-import com.lulan.shincolle.utility.TargetHelper;
-import com.lulan.shincolle.utility.TaskHelper;
-import com.lulan.shincolle.utility.TeamHelper;
-
+import com.lulan.shincolle.utility.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -77,13 +43,7 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.AgeableMob;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityDimensions;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Pose;
-import net.minecraft.world.entity.TamableAnimal;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Inventory;
@@ -93,6 +53,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * SHIP DATA
@@ -543,17 +507,11 @@ public abstract class BasicEntityShip extends TamableAnimal
 
 		int circleType;
 		if (isSelected) {
-			switch (mode) {
-				case PointerItem.MODE_GROUP:
-					circleType = 2;
-					break;
-				case PointerItem.MODE_FORMATION:
-					circleType = 3;
-					break;
-				default:
-					circleType = 1;
-					break;
-			}
+			circleType = switch (mode) {
+				case PointerItem.MODE_GROUP -> 2;
+				case PointerItem.MODE_FORMATION -> 3;
+				default -> 1;
+			};
 		} else {
 			circleType = mode == PointerItem.MODE_FORMATION ? 3 : 0;
 		}
@@ -894,10 +852,9 @@ public abstract class BasicEntityShip extends TamableAnimal
 
 		for (int i = 0; i < ContainerShipInventory.EQUIP_SLOTS; i++) {
 			ItemStack stack = inv.getStackInSlot(i);
-			if (stack.isEmpty() || !(stack.getItem() instanceof BasicEquip))
+			if (stack.isEmpty() || !(stack.getItem() instanceof BasicEquip equipItem))
 				continue;
 
-			BasicEquip equipItem = (BasicEquip) stack.getItem();
 			int meta = BasicEquip.getEquipMeta(stack);
 			int equipID = equipItem.getEquipID(meta);
 
@@ -953,8 +910,7 @@ public abstract class BasicEntityShip extends TamableAnimal
 			}
 
 			// apply IShipEffectItem effects (missile type, move type, speed)
-			if (stack.getItem() instanceof IShipEffectItem) {
-				IShipEffectItem eitem = (IShipEffectItem) stack.getItem();
+			if (stack.getItem() instanceof IShipEffectItem eitem) {
 
 				// apply missile type
 				int mtype = eitem.getMissileType(meta);
@@ -1311,18 +1267,18 @@ public abstract class BasicEntityShip extends TamableAnimal
 		if (this.shipAttrs == null)
 			return 1F;
 
-		switch (type) {
-			case 1: // light cannon: apply AA/ASM bonus
-				return CombatHelper.modDamageByAdditionAttrs(this, target, this.shipAttrs.getAttackDamage(), 0);
-			case 2: // heavy cannon
-				return this.shipAttrs.getAttackDamageHeavy();
-			case 3: // light aircraft
-				return this.shipAttrs.getAttackDamageAir();
-			case 4: // heavy aircraft
-				return this.shipAttrs.getAttackDamageAirHeavy();
-			default: // melee
-				return this.shipAttrs.getAttackDamage() * 0.125F;
-		}
+		return switch (type) {
+			case 1 -> // light cannon: apply AA/ASM bonus
+					CombatHelper.modDamageByAdditionAttrs(this, target, this.shipAttrs.getAttackDamage(), 0);
+			case 2 -> // heavy cannon
+					this.shipAttrs.getAttackDamageHeavy();
+			case 3 -> // light aircraft
+					this.shipAttrs.getAttackDamageAir();
+			case 4 -> // heavy aircraft
+					this.shipAttrs.getAttackDamageAirHeavy();
+			default -> // melee
+					this.shipAttrs.getAttackDamage() * 0.125F;
+		};
 	}
 
 	/**
@@ -1511,15 +1467,12 @@ public abstract class BasicEntityShip extends TamableAnimal
 
 		// respect inventory page size boundaries
 		int pageSize = getInventoryPageSize();
-		switch (pageSize) {
-			case 0:
-				maxSlot = Math.min(maxSlot, startSlot + 18);
-				break;
-			case 1:
-				maxSlot = Math.min(maxSlot, startSlot + 36);
-				break;
-			// page 2 = all slots
-		}
+		// page 2 = all slots
+		maxSlot = switch (pageSize) {
+			case 0 -> Math.min(maxSlot, startSlot + 18);
+			case 1 -> Math.min(maxSlot, startSlot + 36);
+			default -> maxSlot;
+		};
 
 		for (int i = startSlot; i < maxSlot; i++) {
 			ItemStack stack = this.itemHandler.getStackInSlot(i);
@@ -2442,20 +2395,14 @@ public abstract class BasicEntityShip extends TamableAnimal
 
 	@Override
 	public int getGuardedPos(int vec) {
-		switch (vec) {
-			case 0:
-				return getStateMinor(ID.M.GuardX);
-			case 1:
-				return getStateMinor(ID.M.GuardY);
-			case 2:
-				return getStateMinor(ID.M.GuardZ);
-			case 3:
-				return getStateMinor(ID.M.GuardDim);
-			case 4:
-				return getStateMinor(ID.M.GuardType);
-			default:
-				return 0;
-		}
+		return switch (vec) {
+			case 0 -> getStateMinor(ID.M.GuardX);
+			case 1 -> getStateMinor(ID.M.GuardY);
+			case 2 -> getStateMinor(ID.M.GuardZ);
+			case 3 -> getStateMinor(ID.M.GuardDim);
+			case 4 -> getStateMinor(ID.M.GuardType);
+			default -> 0;
+		};
 	}
 
 	@Override
@@ -2687,80 +2634,44 @@ public abstract class BasicEntityShip extends TamableAnimal
 	}
 
 	public int getField(int id) {
-		switch (id) {
-			case 0:
-				return this.StateMinor[ID.M.ExpCurrent];
-			case 1:
-				return this.StateMinor[ID.M.NumAmmoLight];
-			case 2:
-				return this.StateMinor[ID.M.NumAmmoHeavy];
-			case 3:
-				return this.StateMinor[ID.M.NumAirLight];
-			case 4:
-				return this.StateMinor[ID.M.NumAirHeavy];
-			case 5:
-				return this.getStateFlagI(ID.F.UseMelee);
-			case 6:
-				return this.getStateFlagI(ID.F.UseAmmoLight);
-			case 7:
-				return this.getStateFlagI(ID.F.UseAmmoHeavy);
-			case 8:
-				return this.getStateFlagI(ID.F.UseAirLight);
-			case 9:
-				return this.getStateFlagI(ID.F.UseAirHeavy);
-			case 10:
-				return this.getStateFlagI(ID.F.IsMarried);
-			case 11:
-				return this.StateMinor[ID.M.FollowMin];
-			case 12:
-				return this.StateMinor[ID.M.FollowMax];
-			case 13:
-				return this.StateMinor[ID.M.FleeHP];
-			case 14:
-				return this.getStateFlagI(ID.F.PassiveAI);
-			case 15:
-				return this.getStateFlagI(ID.F.UseRingEffect);
-			case 16:
-				return this.getStateFlagI(ID.F.OnSightChase);
-			case 17:
-				return this.getStateFlagI(ID.F.PVPFirst);
-			case 18:
-				return this.getStateFlagI(ID.F.AntiAir);
-			case 19:
-				return this.getStateFlagI(ID.F.AntiSS);
-			case 20:
-				return this.getStateFlagI(ID.F.TimeKeeper);
-			case 21:
-				return this.getMorale();
-			case 22:
-				return this.StateMinor[ID.M.DrumState];
-			case 23:
-				return this.getStateFlagI(ID.F.PickItem);
-			case 24:
-				return this.StateMinor[ID.M.WpStay];
-			case 25:
-				return this.StateMinor[ID.M.Kills];
-			case 26:
-				return this.StateMinor[ID.M.NumGrudge];
-			case 27:
-				return this.itemHandler.getInventoryPage();
-			case 28:
-				return this.getStateFlagI(ID.F.ShowHeldItem);
-			case 29:
-				return this.StateMinor[ID.M.UseCombatRation];
-			case 30:
-				return this.getStateFlagI(ID.F.AutoPump);
-			case 31:
-				return this.getStateEmotion(ID.S.State);
-			case 32:
-				return this.StateMinor[ID.M.Task];
-			case 33:
-				return this.StateMinor[ID.M.TaskSide];
-			case 34:
-				return this.getStateFlagI(ID.F.NoFuel);
-			default:
-				return 0;
-		}
+		return switch (id) {
+			case 0 -> this.StateMinor[ID.M.ExpCurrent];
+			case 1 -> this.StateMinor[ID.M.NumAmmoLight];
+			case 2 -> this.StateMinor[ID.M.NumAmmoHeavy];
+			case 3 -> this.StateMinor[ID.M.NumAirLight];
+			case 4 -> this.StateMinor[ID.M.NumAirHeavy];
+			case 5 -> this.getStateFlagI(ID.F.UseMelee);
+			case 6 -> this.getStateFlagI(ID.F.UseAmmoLight);
+			case 7 -> this.getStateFlagI(ID.F.UseAmmoHeavy);
+			case 8 -> this.getStateFlagI(ID.F.UseAirLight);
+			case 9 -> this.getStateFlagI(ID.F.UseAirHeavy);
+			case 10 -> this.getStateFlagI(ID.F.IsMarried);
+			case 11 -> this.StateMinor[ID.M.FollowMin];
+			case 12 -> this.StateMinor[ID.M.FollowMax];
+			case 13 -> this.StateMinor[ID.M.FleeHP];
+			case 14 -> this.getStateFlagI(ID.F.PassiveAI);
+			case 15 -> this.getStateFlagI(ID.F.UseRingEffect);
+			case 16 -> this.getStateFlagI(ID.F.OnSightChase);
+			case 17 -> this.getStateFlagI(ID.F.PVPFirst);
+			case 18 -> this.getStateFlagI(ID.F.AntiAir);
+			case 19 -> this.getStateFlagI(ID.F.AntiSS);
+			case 20 -> this.getStateFlagI(ID.F.TimeKeeper);
+			case 21 -> this.getMorale();
+			case 22 -> this.StateMinor[ID.M.DrumState];
+			case 23 -> this.getStateFlagI(ID.F.PickItem);
+			case 24 -> this.StateMinor[ID.M.WpStay];
+			case 25 -> this.StateMinor[ID.M.Kills];
+			case 26 -> this.StateMinor[ID.M.NumGrudge];
+			case 27 -> this.itemHandler.getInventoryPage();
+			case 28 -> this.getStateFlagI(ID.F.ShowHeldItem);
+			case 29 -> this.StateMinor[ID.M.UseCombatRation];
+			case 30 -> this.getStateFlagI(ID.F.AutoPump);
+			case 31 -> this.getStateEmotion(ID.S.State);
+			case 32 -> this.StateMinor[ID.M.Task];
+			case 33 -> this.StateMinor[ID.M.TaskSide];
+			case 34 -> this.getStateFlagI(ID.F.NoFuel);
+			default -> 0;
+		};
 	}
 
 	public void setField(int id, int value) {

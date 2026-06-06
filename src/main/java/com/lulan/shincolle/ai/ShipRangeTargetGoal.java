@@ -1,19 +1,9 @@
 package com.lulan.shincolle.ai;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.EnumSet;
-import java.util.List;
-
-import com.lulan.shincolle.entity.BasicEntityShip;
-import com.lulan.shincolle.entity.BasicEntityShipHostile;
-import com.lulan.shincolle.entity.IShipAttackBase;
-import com.lulan.shincolle.entity.IShipFlyable;
-import com.lulan.shincolle.entity.IShipInvisible;
+import com.lulan.shincolle.entity.*;
 import com.lulan.shincolle.reference.ID;
 import com.lulan.shincolle.utility.DebugProfiler;
 import com.lulan.shincolle.utility.TargetHelper;
-
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.FlyingMob;
@@ -22,6 +12,11 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.EnumSet;
+import java.util.List;
 
 /**
  * Range target acquisition goal.
@@ -109,9 +104,9 @@ public class ShipRangeTargetGoal extends Goal {
 						this::isValidTarget);
 			}
 
-			if (targets != null && !targets.isEmpty()) {
+			if (!targets.isEmpty()) {
 				// sort by distance
-				targets.sort(Comparator.comparingDouble(e -> this.entity.distanceToSqr(e)));
+				targets.sort(Comparator.comparingDouble(this.entity::distanceToSqr));
 
 				// pick nearest, or random from top 3
 				if (targets.size() > 2) {
@@ -191,11 +186,7 @@ public class ShipRangeTargetGoal extends Goal {
 		}
 
 		// don't attack invincible players
-		if (target instanceof Player player && player.getAbilities().invulnerable) {
-			return false;
-		}
-
-		return true;
+		return !(target instanceof Player player) || !player.getAbilities().invulnerable;
 	}
 
 	/**

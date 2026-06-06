@@ -22,21 +22,17 @@ public class AbyssMetal extends BasicItem implements IShipResourceItem, IShipFoo
 
 	@Override
 	public int getSpecialEffect(int meta) {
-		switch (meta) {
-			case 1:
-				return 4;
-			default:
-				return 2;
+		if (meta == 1) {
+			return 4;
 		}
+		return 2;
 	}
 
 	@Override
 	public int[] getResourceValue(int meta) {
-		switch (meta) {
-			case 1:
-				return new int[] { 0, 0, 0, 1 };
-			default:
-				return new int[] { 0, 1, 0, 0 };
+		if (meta == 1) {
+			return new int[]{0, 0, 0, 1};
 		}
+		return new int[]{0, 1, 0, 0};
 	}
 }

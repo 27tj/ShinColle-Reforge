@@ -1,12 +1,7 @@
 package com.lulan.shincolle.client.particle;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.blaze3d.vertex.VertexFormat;
-
+import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
@@ -31,8 +26,10 @@ public class ParticleGradient extends Particle {
 
 	private static final ResourceLocation TEXTURE = new ResourceLocation("shincolle",
 			"textures/particles/particlegradient.png");
-	private int particleType, gradCurrent, gradSpace;
-	private Entity host;
+    private final int particleType;
+    private final Entity host;
+    private int gradCurrent;
+    private int gradSpace;
 	private float[][] gradPos; // grad position: 0: rad, 1: prev rad, 2~5:RGBA, 6:age
 	private float gradRad, gradSpd, gradFad, gradHFad, gradSlope;
 	private float pScale;

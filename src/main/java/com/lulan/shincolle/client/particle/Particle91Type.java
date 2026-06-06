@@ -1,12 +1,7 @@
 package com.lulan.shincolle.client.particle;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.blaze3d.vertex.VertexFormat;
-
+import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
@@ -37,12 +32,12 @@ public class Particle91Type extends Particle {
     private static final ResourceLocation TEXTURE = new ResourceLocation("shincolle",
             "textures/particles/particle91type.png");
     private int partAge;
-    private int fadeTime = 16;
-    private int middTime = 60;
-    private int totalTime = 2 * fadeTime + middTime;
+    private final int fadeTime = 16;
+    private final int middTime = 60;
+    private final int totalTime = 2 * fadeTime + middTime;
     private float minu, maxu, cx, cy, cz, charScale, charAlpha;
-    private float fadeCoef = 1F / fadeTime;
-    private float pScale;
+    private final float fadeCoef = 1F / fadeTime;
+    private final float pScale;
 
     public Particle91Type(ClientLevel level, double posX, double posY, double posZ, float scale) {
         super(level, 0D, 0D, 0D);

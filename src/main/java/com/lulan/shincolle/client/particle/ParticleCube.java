@@ -3,12 +3,7 @@ package com.lulan.shincolle.client.particle;
 import com.lulan.shincolle.reference.Values;
 import com.lulan.shincolle.utility.CalcHelper;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.blaze3d.vertex.VertexFormat;
-
+import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
@@ -31,12 +26,15 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public class ParticleCube extends Particle {
 
-	private int particleType;
+    private final int particleType;
 	private float shotYaw, shotPitch, scaleOut, scaleIn, alphaOut, alphaIn;
 	private float particleScale;
-	private double par1, par2, par3;
-	private double[][] vt, vt2; // cube vertex
-	private LivingEntity host;
+    private final double par1;
+    private final double par2;
+    private final double par3;
+    private final double[][] vt;
+    private final double[][] vt2; // cube vertex
+    private final LivingEntity host;
 
 	public ParticleCube(ClientLevel level, LivingEntity host, double par1, double par2, double par3, float scale,
 			int type) {
@@ -288,7 +286,7 @@ public class ParticleCube extends Particle {
 						this.scaleOut = this.particleScale * 0.3F * (age * 0.3F);
 						this.scaleIn = this.particleScale * 0.4F * (age * 0.125F);
 					} else {
-						this.scaleOut = this.particleScale * 1F;
+                        this.scaleOut = this.particleScale;
 						this.scaleIn = this.particleScale * 0.4F;
 					}
 
