@@ -17,7 +17,7 @@ public class SlotSmallShipyard extends SlotItemHandler {
     private final TileEntitySmallShipyard tile;
 
     public SlotSmallShipyard(IItemHandler itemHandler, int index, int x, int y, boolean isOutputSlot,
-            TileEntitySmallShipyard tile) {
+                             TileEntitySmallShipyard tile) {
         super(itemHandler, index, x, y);
         this.isOutputSlot = isOutputSlot;
         this.tile = tile;

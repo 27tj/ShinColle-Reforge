@@ -9,7 +9,7 @@ import net.minecraft.world.level.Level;
  */
 public abstract class BasicEntityShipSmall extends BasicEntityShip {
 
-	protected BasicEntityShipSmall(EntityType<? extends BasicEntityShipSmall> type, Level level) {
-		super(type, level);
-	}
+    protected BasicEntityShipSmall(EntityType<? extends BasicEntityShipSmall> type, Level level) {
+        super(type, level);
+    }
 }

@@ -24,64 +24,62 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public class ShipBlockItemRenderer extends BlockEntityWithoutLevelRenderer {
 
-	private static ShipBlockItemRenderer instance;
+    private static final ResourceLocation TEX_DESK = new ResourceLocation(
+            Reference.MOD_ID, "textures/blocks/blockdesk.png");
+    private static final ResourceLocation TEX_SHIPYARD_OFF = new ResourceLocation(
+            Reference.MOD_ID, "textures/blocks/blocksmallshipyardoff.png");
+    private static ShipBlockItemRenderer instance;
+    private ModelBlockDesk modelDesk;
+    private ModelSmallShipyard modelShipyard;
+    private boolean initialized = false;
 
-	private static final ResourceLocation TEX_DESK = new ResourceLocation(
-			Reference.MOD_ID, "textures/blocks/blockdesk.png");
-	private static final ResourceLocation TEX_SHIPYARD_OFF = new ResourceLocation(
-			Reference.MOD_ID, "textures/blocks/blocksmallshipyardoff.png");
+    public ShipBlockItemRenderer() {
+        super(null, null);
+    }
 
-	private ModelBlockDesk modelDesk;
-	private ModelSmallShipyard modelShipyard;
-	private boolean initialized = false;
+    public static ShipBlockItemRenderer getInstance() {
+        if (instance == null) {
+            instance = new ShipBlockItemRenderer();
+        }
+        return instance;
+    }
 
-	public ShipBlockItemRenderer() {
-		super(null, null);
-	}
+    private void ensureInitialized() {
+        if (!initialized) {
+            EntityModelSet modelSet = Minecraft.getInstance().getEntityModels();
+            this.modelDesk = new ModelBlockDesk(modelSet.bakeLayer(ModelBlockDesk.LAYER_LOCATION));
+            this.modelShipyard = new ModelSmallShipyard(modelSet.bakeLayer(ModelSmallShipyard.LAYER_LOCATION));
+            this.initialized = true;
+        }
+    }
 
-	private void ensureInitialized() {
-		if (!initialized) {
-			EntityModelSet modelSet = Minecraft.getInstance().getEntityModels();
-			this.modelDesk = new ModelBlockDesk(modelSet.bakeLayer(ModelBlockDesk.LAYER_LOCATION));
-			this.modelShipyard = new ModelSmallShipyard(modelSet.bakeLayer(ModelSmallShipyard.LAYER_LOCATION));
-			this.initialized = true;
-		}
-	}
+    @Override
+    public void renderByItem(ItemStack stack, ItemDisplayContext displayContext, PoseStack poseStack,
+                             MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
+        ensureInitialized();
 
-	public static ShipBlockItemRenderer getInstance() {
-		if (instance == null) {
-			instance = new ShipBlockItemRenderer();
-		}
-		return instance;
-	}
+        if (!(stack.getItem() instanceof BlockItem blockItem))
+            return;
 
-	@Override
-	public void renderByItem(ItemStack stack, ItemDisplayContext displayContext, PoseStack poseStack,
-			MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
-		ensureInitialized();
+        Block block = blockItem.getBlock();
 
-		if (!(stack.getItem() instanceof BlockItem blockItem))
-			return;
+        if (block == ModBlocks.DESK.get()) {
+            renderModel(poseStack, bufferSource, packedLight, packedOverlay, modelDesk, TEX_DESK);
+        } else if (block == ModBlocks.SMALL_SHIPYARD.get()) {
+            renderModel(poseStack, bufferSource, packedLight, packedOverlay, modelShipyard, TEX_SHIPYARD_OFF);
+        }
+    }
 
-		Block block = blockItem.getBlock();
+    private void renderModel(PoseStack poseStack, MultiBufferSource bufferSource,
+                             int packedLight, int packedOverlay,
+                             net.minecraft.client.model.Model model, ResourceLocation texture) {
+        poseStack.pushPose();
+        poseStack.translate(0.5F, 1.5F, 0.5F);
+        poseStack.mulPose(Axis.ZP.rotationDegrees(180F));
 
-		if (block == ModBlocks.DESK.get()) {
-			renderModel(poseStack, bufferSource, packedLight, packedOverlay, modelDesk, TEX_DESK);
-		} else if (block == ModBlocks.SMALL_SHIPYARD.get()) {
-			renderModel(poseStack, bufferSource, packedLight, packedOverlay, modelShipyard, TEX_SHIPYARD_OFF);
-		}
-	}
+        VertexConsumer consumer = bufferSource.getBuffer(RenderType.entitySolid(texture));
+        model.renderToBuffer(poseStack, consumer, packedLight, packedOverlay, 1F, 1F, 1F, 1F);
 
-	private void renderModel(PoseStack poseStack, MultiBufferSource bufferSource,
-			int packedLight, int packedOverlay,
-			net.minecraft.client.model.Model model, ResourceLocation texture) {
-		poseStack.pushPose();
-		poseStack.translate(0.5F, 1.5F, 0.5F);
-		poseStack.mulPose(Axis.ZP.rotationDegrees(180F));
-
-		VertexConsumer consumer = bufferSource.getBuffer(RenderType.entitySolid(texture));
-		model.renderToBuffer(poseStack, consumer, packedLight, packedOverlay, 1F, 1F, 1F, 1F);
-
-		poseStack.popPose();
-	}
+        poseStack.popPose();
+    }
 }

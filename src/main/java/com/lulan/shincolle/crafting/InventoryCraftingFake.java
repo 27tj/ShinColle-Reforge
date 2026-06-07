@@ -10,18 +10,18 @@ import net.minecraft.world.inventory.TransientCraftingContainer;
  */
 public class InventoryCraftingFake extends TransientCraftingContainer {
 
-	public InventoryCraftingFake(int width, int height) {
-		super(new AbstractContainerMenu(null, -1) {
-			@Override
-			public net.minecraft.world.item.ItemStack quickMoveStack(net.minecraft.world.entity.player.Player player,
-					int index) {
-				return net.minecraft.world.item.ItemStack.EMPTY;
-			}
+    public InventoryCraftingFake(int width, int height) {
+        super(new AbstractContainerMenu(null, -1) {
+            @Override
+            public net.minecraft.world.item.ItemStack quickMoveStack(net.minecraft.world.entity.player.Player player,
+                                                                     int index) {
+                return net.minecraft.world.item.ItemStack.EMPTY;
+            }
 
-			@Override
-			public boolean stillValid(net.minecraft.world.entity.player.Player player) {
-				return false;
-			}
-		}, width, height);
-	}
+            @Override
+            public boolean stillValid(net.minecraft.world.entity.player.Player player) {
+                return false;
+            }
+        }, width, height);
+    }
 }

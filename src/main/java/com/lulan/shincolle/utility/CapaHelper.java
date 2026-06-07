@@ -13,63 +13,63 @@ import net.minecraftforge.items.IItemHandler;
  */
 public class CapaHelper {
 
-	/**
-	 * get item handler
-	 * side: -1:check all side, 0~5:DUNSWE
-	 */
-	public static IItemHandler getCapaInventory(ICapabilityProvider host, int side) {
-		return getCapaHandler(host, ForgeCapabilities.ITEM_HANDLER, side);
-	}
+    /**
+     * get item handler
+     * side: -1:check all side, 0~5:DUNSWE
+     */
+    public static IItemHandler getCapaInventory(ICapabilityProvider host, int side) {
+        return getCapaHandler(host, ForgeCapabilities.ITEM_HANDLER, side);
+    }
 
-	/**
-	 * check item handler
-	 * side: -1:check all side, 0~5:DUNSWE
-	 */
-	public static boolean hasCapaInventory(ICapabilityProvider host, int side) {
-		return getCapaHandler(host, ForgeCapabilities.ITEM_HANDLER, side) != null;
-	}
+    /**
+     * check item handler
+     * side: -1:check all side, 0~5:DUNSWE
+     */
+    public static boolean hasCapaInventory(ICapabilityProvider host, int side) {
+        return getCapaHandler(host, ForgeCapabilities.ITEM_HANDLER, side) != null;
+    }
 
-	/**
-	 * get fluid handler
-	 * side: -1:check all side, 0~5:DUNSWE
-	 */
-	public static IFluidHandler getCapaFluid(ICapabilityProvider host, int side) {
-		return getCapaHandler(host, ForgeCapabilities.FLUID_HANDLER, side);
-	}
+    /**
+     * get fluid handler
+     * side: -1:check all side, 0~5:DUNSWE
+     */
+    public static IFluidHandler getCapaFluid(ICapabilityProvider host, int side) {
+        return getCapaHandler(host, ForgeCapabilities.FLUID_HANDLER, side);
+    }
 
-	/**
-	 * check fluid handler
-	 * side: -1:check all side, 0~5:DUNSWE
-	 */
-	public static boolean hasCapaFluid(ICapabilityProvider host, int side) {
-		return getCapaHandler(host, ForgeCapabilities.FLUID_HANDLER, side) != null;
-	}
+    /**
+     * check fluid handler
+     * side: -1:check all side, 0~5:DUNSWE
+     */
+    public static boolean hasCapaFluid(ICapabilityProvider host, int side) {
+        return getCapaHandler(host, ForgeCapabilities.FLUID_HANDLER, side) != null;
+    }
 
-	/**
-	 * get capability handler
-	 * side: -1:check all side, 0~5:DUNSWE
-	 */
-	@SuppressWarnings("unchecked")
-	public static <T> T getCapaHandler(ICapabilityProvider host, Capability<T> capa, int side) {
-		if (host != null) {
-			// check all sides
-			if (side < 0) {
-				for (Direction dir : Direction.values()) {
-					LazyOptional<T> opt = host.getCapability(capa, dir);
-					if (opt.isPresent()) {
-						return opt.orElse(null);
-					}
-				}
-			}
-			// check specific side
-			else if (side < 6) {
-				Direction dir = Direction.from3DDataValue(side);
-				LazyOptional<T> opt = host.getCapability(capa, dir);
-				return opt.orElse(null);
-			}
-		}
+    /**
+     * get capability handler
+     * side: -1:check all side, 0~5:DUNSWE
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T getCapaHandler(ICapabilityProvider host, Capability<T> capa, int side) {
+        if (host != null) {
+            // check all sides
+            if (side < 0) {
+                for (Direction dir : Direction.values()) {
+                    LazyOptional<T> opt = host.getCapability(capa, dir);
+                    if (opt.isPresent()) {
+                        return opt.orElse(null);
+                    }
+                }
+            }
+            // check specific side
+            else if (side < 6) {
+                Direction dir = Direction.from3DDataValue(side);
+                LazyOptional<T> opt = host.getCapability(capa, dir);
+                return opt.orElse(null);
+            }
+        }
 
-		return null;
-	}
+        return null;
+    }
 
 }

@@ -18,7 +18,7 @@ public interface IShipGuardian extends IShipAttackBase {
 
     int getWpStayTime();
 
-    int getWpStayTimeMax();
-
     void setWpStayTime(int time);
+
+    int getWpStayTimeMax();
 }

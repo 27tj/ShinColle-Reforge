@@ -16,7 +16,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 /**
  * MISS / CRITICAL / DOUBLE HIT / TRIPLE HIT / DODGE text particle.
  * Type 0: miss, 1: critical, 2: double hit, 3: triple hit, 4: dodge
- *
+ * <p>
  * Ported from 1.10.2. Uses custom texture billboard rendering (CUSTOM render
  * type).
  */

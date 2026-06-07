@@ -27,7 +27,7 @@ import net.minecraftforge.fml.common.Mod;
 
 /**
  * Server-side event handler for ShinColle.
- *
+ * <p>
  * Manages the ServerDataManager lifecycle:
  * - Initializes when overworld loads
  * - Saves and resets on server stop

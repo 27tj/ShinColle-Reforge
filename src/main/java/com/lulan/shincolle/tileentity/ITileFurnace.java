@@ -5,26 +5,36 @@ package com.lulan.shincolle.tileentity;
  */
 public interface ITileFurnace {
 
-	/** Power consumed in current processing cycle */
-	int getPowerConsumed();
+    /**
+     * Power consumed in current processing cycle
+     */
+    int getPowerConsumed();
 
-	void setPowerConsumed(int par1);
+    void setPowerConsumed(int par1);
 
-	/** Power goal for current processing cycle */
-	int getPowerGoal();
+    /**
+     * Power goal for current processing cycle
+     */
+    int getPowerGoal();
 
-	void setPowerGoal(int par1);
+    void setPowerGoal(int par1);
 
-	/** Remaining fuel power */
-	int getPowerRemained();
+    /**
+     * Remaining fuel power
+     */
+    int getPowerRemained();
 
-	void setPowerRemained(int par1);
+    void setPowerRemained(int par1);
 
-	/** Maximum fuel power capacity */
-	int getPowerMax();
+    /**
+     * Maximum fuel power capacity
+     */
+    int getPowerMax();
 
-	void setPowerMax(int par1);
+    void setPowerMax(int par1);
 
-	/** Fuel magnification from config */
-	float getFuelMagni();
+    /**
+     * Fuel magnification from config
+     */
+    float getFuelMagni();
 }

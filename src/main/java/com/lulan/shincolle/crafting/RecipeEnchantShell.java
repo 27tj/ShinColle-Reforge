@@ -26,20 +26,20 @@ import java.util.Objects;
 
 /**
  * Custom crafting recipe: Enchant Shell
- *
+ * <p>
  * Pattern (3x3):
  * P P P
  * P A P
  * P P P
- *
+ * <p>
  * Where A = equip_ammo (center), P = identical potion items (all 8 surrounding
  * slots).
- *
+ * <p>
  * The potion effect is applied/stacked onto the ammo item's NBT:
  * - Same potion ID and amplifier as existing: duration += 20 ticks, chance +=
  * 10% (cap 100%)
  * - Different potion or amplifier: reset to duration=100, chance=20%
- *
+ * <p>
  * NBT keys on the result ammo:
  * "PID" - potion effect registry ID (String)
  * "PLEVEL" - amplifier (int)

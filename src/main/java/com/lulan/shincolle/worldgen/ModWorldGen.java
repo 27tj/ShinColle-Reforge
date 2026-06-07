@@ -4,7 +4,7 @@ import com.lulan.shincolle.ShinColle;
 
 /**
  * World generation placeholder for ShinColle.
- *
+ * <p>
  * In Minecraft 1.20.1 with Forge, world generation is fully data-driven via
  * JSON files.
  * The actual ore and feature generation is defined by the following data pack
@@ -29,7 +29,7 @@ import com.lulan.shincolle.ShinColle;
  * <li>BiomeModifier:
  * {@code data/shincolle/forge/biome_modifier/add_polymetal_gravel.json}</li>
  * </ul>
- *
+ * <p>
  * No programmatic registration is required; Forge automatically loads the JSON
  * biome modifiers.
  * This class exists as a code-level entry point for documentation and logging

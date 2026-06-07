@@ -15,15 +15,15 @@ import net.minecraft.world.entity.Mob;
  */
 public class PlaceholderMobModel<T extends Mob> extends HumanoidModel<T> {
 
-	public static final ModelLayerLocation LAYER_LOCATION =
-			new ModelLayerLocation(new ResourceLocation("shincolle", "placeholder_mob"), "main");
+    public static final ModelLayerLocation LAYER_LOCATION =
+            new ModelLayerLocation(new ResourceLocation("shincolle", "placeholder_mob"), "main");
 
-	public PlaceholderMobModel(ModelPart root) {
-		super(root);
-	}
+    public PlaceholderMobModel(ModelPart root) {
+        super(root);
+    }
 
-	public static LayerDefinition createBodyLayer() {
-		MeshDefinition mesh = HumanoidModel.createMesh(CubeDeformation.NONE, 0.0F);
-		return LayerDefinition.create(mesh, 64, 64);
-	}
+    public static LayerDefinition createBodyLayer() {
+        MeshDefinition mesh = HumanoidModel.createMesh(CubeDeformation.NONE, 0.0F);
+        return LayerDefinition.create(mesh, 64, 64);
+    }
 }

@@ -17,7 +17,9 @@ public class EmotionHelper {
     public EmotionHelper() {
     }
 
-    /** roll basic emotion */
+    /**
+     * roll basic emotion
+     */
     public static void rollEmotion(IModelEmotion model, IShipEmotion ent) {
         switch (ent.getStateEmotion(ID.S.Emotion)) {
             case 6:
@@ -55,7 +57,9 @@ public class EmotionHelper {
         }
     }
 
-    /** roll advanced emotion */
+    /**
+     * roll advanced emotion
+     */
     @SuppressWarnings("fallthrough")
     public static void rollEmotionAdv(IModelEmotionAdv model, IShipEmotion ent) {
         switch (ent.getStateEmotion(ID.S.Emotion)) {
@@ -104,7 +108,9 @@ public class EmotionHelper {
         }
     }
 
-    /** Head tilt angle calculation */
+    /**
+     * Head tilt angle calculation
+     */
     public static float getHeadTiltAngle(IShipEmotion ent, float f2) {
         int cd = ent.getTickExisted() - ent.getHeadTiltTick();
         float maxAngle = -0.27F;
@@ -141,7 +147,9 @@ public class EmotionHelper {
         }
     }
 
-    /** Basic blink animation */
+    /**
+     * Basic blink animation
+     */
     public static void applyEmotionBlink(IModelEmotion model, IShipEmotion ent) {
         if (ent.getStateEmotion(ID.S.Emotion) == ID.Emotion.NORMAL) {
             ent.setFaceTick(ent.getTickExisted());
@@ -164,7 +172,9 @@ public class EmotionHelper {
         }
     }
 
-    /** Advanced blink animation */
+    /**
+     * Advanced blink animation
+     */
     public static void applyEmotionBlinkAdv(IModelEmotionAdv model, IShipEmotion ent) {
         if (ent.getStateEmotion(ID.S.Emotion) == ID.Emotion.NORMAL) {
             ent.setFaceTick(ent.getTickExisted());
@@ -187,7 +197,9 @@ public class EmotionHelper {
         }
     }
 
-    /** Apply basic emotion with time limit */
+    /**
+     * Apply basic emotion with time limit
+     */
     public static void applyEmotion(IModelEmotion model, IShipEmotion ent, int type, int maxTime) {
         if (ent.getFaceTick() <= 0) {
             ent.setFaceTick(ent.getTickExisted());
@@ -204,7 +216,9 @@ public class EmotionHelper {
         }
     }
 
-    /** Apply advanced emotion with time limit */
+    /**
+     * Apply advanced emotion with time limit
+     */
     public static void applyEmotionAdv(IModelEmotionAdv model, IShipEmotion ent, int type, int maxTime) {
         if (ent.getFaceTick() <= 0) {
             ent.setFaceTick(ent.getTickExisted());

@@ -137,8 +137,8 @@ public class GuiSmallShipyard extends AbstractContainerScreen<ContainerSmallShip
                     BlockPos pos = tile.getBlockPos();
                     ModNetworking.sendToServer(new C2SGUIInputPacket(
                             C2SGUIInputPacket.TileBtn,
-                            new int[] { 0, pos.getX(), pos.getY(), pos.getZ(),
-                                    ID.B.Shipyard_Type, newType }));
+                            new int[]{0, pos.getX(), pos.getY(), pos.getZ(),
+                                    ID.B.Shipyard_Type, newType}));
                 }
                 return true;
             }

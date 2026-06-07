@@ -1,37 +1,36 @@
 package com.lulan.shincolle.item;
 
-import java.util.List;
-
 import com.lulan.shincolle.reference.Enums.EnumEquipEffectSP;
 import com.lulan.shincolle.reference.ID;
-
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 
+import java.util.List;
+
 /**
  * Equipment Flare - star shell/flare equipment with 1 variant.
  */
 public class EquipFlare extends BasicEquip {
 
-	public EquipFlare() {
-		super(1);
-	}
+    public EquipFlare() {
+        super(1);
+    }
 
-	@Override
-	public EnumEquipEffectSP getSpecialEffect(ItemStack stack) {
-		return EnumEquipEffectSP.FLARE;
-	}
+    @Override
+    public EnumEquipEffectSP getSpecialEffect(ItemStack stack) {
+        return EnumEquipEffectSP.FLARE;
+    }
 
-	@Override
-	public int getEquipTypeIDFromMeta(int meta) {
-		return ID.EquipType.FLARE_LO;
-	}
+    @Override
+    public int getEquipTypeIDFromMeta(int meta) {
+        return ID.EquipType.FLARE_LO;
+    }
 
-	@Override
-	public int[] getResourceValue(int meta) {
+    @Override
+    public int[] getResourceValue(int meta) {
         if (this.getEquipTypeIDFromMeta(meta) == ID.EquipType.FLARE_LO) { // 80
             return new int[]{
                     itemRand.nextInt(2) + 2,
@@ -43,9 +42,9 @@ public class EquipFlare extends BasicEquip {
         return new int[]{0, 0, 0, 0};
     }
 
-	@Override
-	public void appendHoverText(ItemStack stack, Level level, List<Component> tooltip, TooltipFlag flag) {
-		tooltip.add(Component.translatable("gui.shincolle.flare").withStyle(ChatFormatting.GRAY));
-		super.appendHoverText(stack, level, tooltip, flag);
-	}
+    @Override
+    public void appendHoverText(ItemStack stack, Level level, List<Component> tooltip, TooltipFlag flag) {
+        tooltip.add(Component.translatable("gui.shincolle.flare").withStyle(ChatFormatting.GRAY));
+        super.appendHoverText(stack, level, tooltip, flag);
+    }
 }

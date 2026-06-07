@@ -26,7 +26,7 @@ public class EntityCarrierHime extends BasicEntityShipCV implements IShipRiderTy
         this.setStateMinor(ID.M.NumState, 3);
         this.setGrudgeConsumption(1);
         this.setAmmoConsumption(1);
-        this.ModelPos = new float[] { 0F, 25F, 0F, 45F };
+        this.ModelPos = new float[]{0F, 25F, 0F, 45F};
 
         // aircraft only: disable cannon attacks
         this.StateFlag[ID.F.AtkType_Light] = false;

@@ -5,7 +5,7 @@ package com.lulan.shincolle.item;
  */
 public class InstantConMat extends BasicItem {
 
-	public InstantConMat() {
-		super(new Properties());
-	}
+    public InstantConMat() {
+        super(new Properties());
+    }
 }

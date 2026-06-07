@@ -1,10 +1,9 @@
 package com.lulan.shincolle.entity;
 
-import java.util.HashMap;
-
+import com.lulan.shincolle.reference.unitclass.MissileData;
 import net.minecraft.world.entity.Entity;
 
-import com.lulan.shincolle.reference.unitclass.MissileData;
+import java.util.HashMap;
 
 public interface IShipAttackBase extends IShipNavigator, IShipEmotion, IShipOwner, IShipAttrs {
     Entity getEntityTarget();
@@ -25,9 +24,9 @@ public interface IShipAttackBase extends IShipNavigator, IShipEmotion, IShipOwne
 
     int getAmmoLight();
 
-    int getAmmoHeavy();
-
     void setAmmoLight(int num);
+
+    int getAmmoHeavy();
 
     void setAmmoHeavy(int num);
 

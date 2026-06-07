@@ -12,13 +12,13 @@ import net.minecraftforge.network.simple.SimpleChannel;
 
 /**
  * Central network channel registration for ShinColle.
- *
+ * <p>
  * In 1.20.1 Forge, all packets are registered on a single SimpleChannel.
  * This class handles:
  * - Channel creation with protocol versioning
  * - Registration of all 6 packet types
  * - Helper methods for sending packets in various distribution patterns
- *
+ * <p>
  * Packet directions:
  * S2C (Server to Client): S2CEntitySyncPacket, S2CSpawnParticlePacket,
  * S2CGUISyncPacket, S2CReactPacket

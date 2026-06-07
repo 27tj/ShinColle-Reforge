@@ -21,7 +21,7 @@ import net.minecraftforge.items.ItemStackHandler;
  * Container/Menu for Small Shipyard block.
  * 4 material slots + 1 fuel slot + 1 output slot = 6 shipyard slots + player
  * inventory.
- *
+ * <p>
  * ContainerData layout (synced server->client as scaled values):
  * 0: fuelPercent (0-1000, representing 0%-100.0% fuel)
  * 1: buildPercent (0-1000, representing 0%-100.0% progress)
@@ -60,7 +60,7 @@ public class ContainerSmallShipyard extends AbstractContainerMenu {
     }
 
     private ContainerSmallShipyard(int containerId, Inventory playerInv, TileEntitySmallShipyard tile,
-            ContainerData data) {
+                                   ContainerData data) {
         super(ModMenuTypes.SMALL_SHIPYARD.get(), containerId);
         this.tile = tile;
         this.data = data;

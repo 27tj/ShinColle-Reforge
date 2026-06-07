@@ -21,16 +21,22 @@ import net.minecraft.world.level.block.entity.BlockEntity;
  */
 public class ContainerDesk extends AbstractContainerMenu {
 
-    /** GUI type: 0=block, 1=radar item, 2=book item */
+    /**
+     * GUI type: 0=block, 1=radar item, 2=book item
+     */
     private final int guiType;
     private final TileEntityDesk tile;
 
-    /** Client-side constructor (from network) */
+    /**
+     * Client-side constructor (from network)
+     */
     public ContainerDesk(int containerId, Inventory playerInv, FriendlyByteBuf buf) {
         this(containerId, playerInv, buf.readInt(), getDeskTileFromBuf(playerInv.player, buf));
     }
 
-    /** Server-side constructor */
+    /**
+     * Server-side constructor
+     */
     public ContainerDesk(int containerId, Inventory playerInv, int guiType, TileEntityDesk tile) {
         super(ModMenuTypes.DESK.get(), containerId);
         this.guiType = guiType;

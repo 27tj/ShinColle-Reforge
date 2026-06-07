@@ -6,9 +6,13 @@ package com.lulan.shincolle.tileentity;
  */
 public interface ITileLiquidFurnace extends ITileFurnace {
 
-	/** Get current fluid fuel amount */
-	int getFluidFuelAmount();
+    /**
+     * Get current fluid fuel amount
+     */
+    int getFluidFuelAmount();
 
-	/** Consume fluid fuel, return amount actually consumed */
-	int consumeFluidFuel(int amount);
+    /**
+     * Consume fluid fuel, return amount actually consumed
+     */
+    int consumeFluidFuel(int amount);
 }

@@ -22,42 +22,42 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public class RenderDesk implements BlockEntityRenderer<TileEntityDesk> {
 
-	private static final ResourceLocation TEXTURE = new ResourceLocation(
-			Reference.MOD_ID, "textures/blocks/blockdesk.png");
+    private static final ResourceLocation TEXTURE = new ResourceLocation(
+            Reference.MOD_ID, "textures/blocks/blockdesk.png");
 
-	private final ModelBlockDesk model;
+    private final ModelBlockDesk model;
 
-	public RenderDesk(BlockEntityRendererProvider.Context context) {
-		ModelPart root = context.bakeLayer(ModelBlockDesk.LAYER_LOCATION);
-		this.model = new ModelBlockDesk(root);
-	}
+    public RenderDesk(BlockEntityRendererProvider.Context context) {
+        ModelPart root = context.bakeLayer(ModelBlockDesk.LAYER_LOCATION);
+        this.model = new ModelBlockDesk(root);
+    }
 
-	@Override
-	public void render(TileEntityDesk tile, float partialTick, PoseStack poseStack,
-			MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
-		BlockState state = tile.getBlockState();
-		float angle = getFacingAngle(state);
+    private static float getFacingAngle(BlockState state) {
+        if (!state.hasProperty(BasicBlockFacingContainer.FACING))
+            return 0F;
+        Direction facing = state.getValue(BasicBlockFacingContainer.FACING);
+        return switch (facing) {
+            case EAST -> 90F;
+            case SOUTH -> 180F;
+            case WEST -> -90F;
+            default -> 0F; // NORTH
+        };
+    }
 
-		poseStack.pushPose();
-		poseStack.translate(0.5F, 1.5F, 0.5F);
-		poseStack.mulPose(Axis.ZP.rotationDegrees(180F));
-		poseStack.mulPose(Axis.YP.rotationDegrees(angle));
+    @Override
+    public void render(TileEntityDesk tile, float partialTick, PoseStack poseStack,
+                       MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
+        BlockState state = tile.getBlockState();
+        float angle = getFacingAngle(state);
 
-		VertexConsumer consumer = bufferSource.getBuffer(RenderType.entitySolid(TEXTURE));
-		model.renderToBuffer(poseStack, consumer, packedLight, packedOverlay, 1F, 1F, 1F, 1F);
+        poseStack.pushPose();
+        poseStack.translate(0.5F, 1.5F, 0.5F);
+        poseStack.mulPose(Axis.ZP.rotationDegrees(180F));
+        poseStack.mulPose(Axis.YP.rotationDegrees(angle));
 
-		poseStack.popPose();
-	}
+        VertexConsumer consumer = bufferSource.getBuffer(RenderType.entitySolid(TEXTURE));
+        model.renderToBuffer(poseStack, consumer, packedLight, packedOverlay, 1F, 1F, 1F, 1F);
 
-	private static float getFacingAngle(BlockState state) {
-		if (!state.hasProperty(BasicBlockFacingContainer.FACING))
-			return 0F;
-		Direction facing = state.getValue(BasicBlockFacingContainer.FACING);
-		return switch (facing) {
-			case EAST -> 90F;
-			case SOUTH -> 180F;
-			case WEST -> -90F;
-			default -> 0F; // NORTH
-		};
-	}
+        poseStack.popPose();
+    }
 }

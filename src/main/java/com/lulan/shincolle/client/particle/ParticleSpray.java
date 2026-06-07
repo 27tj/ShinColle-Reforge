@@ -15,31 +15,21 @@ import net.minecraftforge.api.distmarker.OnlyIn;
  * SPRAY PARTICLE
  * Modified from cloud particle, used for liquid movement effects.
  * Supports multiple color/behavior types.
- *
+ * <p>
  * Ported from 1.10.2 to 1.20.1.
  */
 @OnlyIn(Dist.CLIENT)
 public class ParticleSpray extends TextureSheetParticle {
 
     private static SpriteSet sharedSprites;
-
-    /**
-     * Set the shared SpriteSet used by all ParticleSpray instances.
-     * Should be called during particle provider registration.
-     */
-    public static void setSharedSprites(SpriteSet s) {
-        sharedSprites = s;
-    }
-
     private final int ptype;
     private float pScale;
     private double speedLimit;
-
     /**
      * Constructor with explicit position and motion.
      */
     public ParticleSpray(ClientLevel level, double posX, double posY, double posZ,
-            double motionX, double motionY, double motionZ, int type) {
+                         double motionX, double motionY, double motionZ, int type) {
         super(level, posX, posY, posZ);
 
         this.ptype = type;
@@ -257,7 +247,7 @@ public class ParticleSpray extends TextureSheetParticle {
      * Type:
      * 1: transparent cyan missile trail
      * 2: transparent red missile trail
-     *
+     * <p>
      * Data: [0] = velocity magnitude, [1] = trail index
      */
     public ParticleSpray(Entity host, int type, double[] data) {
@@ -294,7 +284,7 @@ public class ParticleSpray extends TextureSheetParticle {
                 this.pScale = this.quadSize;
                 this.lifetime = 40;
             }
-                break;
+            break;
             case 2: // transparent red
             {
                 this.x = host.getX() + hostDx * 2D - hostDx * 1.5D * data[1];
@@ -319,7 +309,7 @@ public class ParticleSpray extends TextureSheetParticle {
                 this.pScale = this.quadSize;
                 this.lifetime = 40;
             }
-                break;
+            break;
         }
 
         // Speed limit
@@ -341,6 +331,14 @@ public class ParticleSpray extends TextureSheetParticle {
         if (sharedSprites != null) {
             this.pickSprite(sharedSprites);
         }
+    }
+
+    /**
+     * Set the shared SpriteSet used by all ParticleSpray instances.
+     * Should be called during particle provider registration.
+     */
+    public static void setSharedSprites(SpriteSet s) {
+        sharedSprites = s;
     }
 
     @Override
@@ -400,7 +398,7 @@ public class ParticleSpray extends TextureSheetParticle {
                 this.y += this.yd;
                 this.z += this.zd;
             }
-                break;
+            break;
             default: {
                 // Animate sprite (standard animation: 8 frames over lifetime)
                 if (sharedSprites != null) {
@@ -423,7 +421,7 @@ public class ParticleSpray extends TextureSheetParticle {
 
                 this.move(this.xd, this.yd, this.zd);
             }
-                break;
+            break;
         }
     }
 

@@ -13,9 +13,9 @@ import net.minecraftforge.registries.RegistryObject;
  */
 public class ModRecipes {
 
-        public static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister
-                        .create(ForgeRegistries.RECIPE_SERIALIZERS, Reference.MOD_ID);
+    public static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister
+            .create(ForgeRegistries.RECIPE_SERIALIZERS, Reference.MOD_ID);
 
-        public static final RegistryObject<RecipeSerializer<RecipeEnchantShell>> ENCHANT_SHELL = RECIPE_SERIALIZERS
-                        .register("enchant_shell", RecipeEnchantShell.Serializer::new);
+    public static final RegistryObject<RecipeSerializer<RecipeEnchantShell>> ENCHANT_SHELL = RECIPE_SERIALIZERS
+            .register("enchant_shell", RecipeEnchantShell.Serializer::new);
 }

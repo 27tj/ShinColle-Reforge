@@ -15,12 +15,16 @@ import net.minecraft.world.item.ItemStack;
  */
 public class ContainerFormation extends AbstractContainerMenu {
 
-    /** Client-side constructor (from network) */
+    /**
+     * Client-side constructor (from network)
+     */
     public ContainerFormation(int containerId, Inventory playerInv, FriendlyByteBuf buf) {
         this(containerId, playerInv);
     }
 
-    /** Server-side constructor */
+    /**
+     * Server-side constructor
+     */
     public ContainerFormation(int containerId, Inventory playerInv) {
         super(ModMenuTypes.FORMATION.get(), containerId);
     }

@@ -10,7 +10,7 @@ import net.minecraft.world.level.Level;
  */
 public class EntityAirplaneT extends EntityAirplaneTakoyaki {
 
-	public EntityAirplaneT(EntityType<? extends EntityAirplaneT> type, Level level) {
-		super(type, level);
-	}
+    public EntityAirplaneT(EntityType<? extends EntityAirplaneT> type, Level level) {
+        super(type, level);
+    }
 }

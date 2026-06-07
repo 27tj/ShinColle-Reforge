@@ -36,7 +36,7 @@ import java.util.Objects;
 /**
  * GUI screen for the admiral's desk block.
  * Supports 4 functional tabs: Radar, Book, Team, Target.
- *
+ * <p>
  * Type: 0=block, 1=radar item, 2=book item
  * Functions: 0=none, 1=radar, 2=book, 3=team, 4=target
  */
@@ -74,41 +74,15 @@ public class GuiDesk extends AbstractContainerScreen<ContainerDesk> {
     // GUI state
     private final TileEntityDesk tile;
     private final int type;
-    private int guiFunc;
-    private int tickGUI;
-    private int tempCD;
-
     // Player data
     private final Player player;
     private final CapaTeitoku capa;
-
     // List scrolling: 0=radar 1=team 2=target 3=ally 4=ban
-    private final int[] listNum = { 0, 0, 0, 0, 0 };
-    private final int[] listClicked = { -1, -1, -1, -1, -1 };
-
-    // Radar
-    private int radarZoomLv;
+    private final int[] listNum = {0, 0, 0, 0, 0};
+    private final int[] listClicked = {-1, -1, -1, -1, -1};
     private final List<RadarShip> shipList = new ArrayList<>();
-
-    // Book
-    private int bookChapNum;
-    private int bookPageNum;
-
-    // Entity gallery (book chapters 4-5)
-    private net.minecraft.world.entity.LivingEntity galleryEntity;
-    private int galleryShipClass = -1;
-    private float mRotateX = 0F;
-    private float mRotateY = 0F;
-    private int mScale = 50;
-
-    // Team
-    private int teamState = TEAMSTATE_MAIN;
-    private int listFocus = LISTCLICK_TEAM;
-    private EditBox textField;
-
     // Target
     private final List<String> tarList = new ArrayList<>();
-
     // Localized strings (cached)
     private final String strPos;
     private final String strHeight;
@@ -129,16 +103,24 @@ public class GuiDesk extends AbstractContainerScreen<ContainerDesk> {
     private final String strAllied;
     private final String strHostile;
     private final String strRemove;
-
-    /** Radar entry: ship entity + display data */
-    private static class RadarShip {
-        Entity ship;
-        String name;
-        double pixelX, pixelZ;
-        float healthPercent;
-        int level;
-        int posX, posY, posZ;
-    }
+    private int guiFunc;
+    private int tickGUI;
+    private int tempCD;
+    // Radar
+    private int radarZoomLv;
+    // Book
+    private int bookChapNum;
+    private int bookPageNum;
+    // Entity gallery (book chapters 4-5)
+    private net.minecraft.world.entity.LivingEntity galleryEntity;
+    private int galleryShipClass = -1;
+    private float mRotateX = 0F;
+    private float mRotateY = 0F;
+    private int mScale = 50;
+    // Team
+    private int teamState = TEAMSTATE_MAIN;
+    private int listFocus = LISTCLICK_TEAM;
+    private EditBox textField;
 
     public GuiDesk(ContainerDesk menu, Inventory playerInv, Component title) {
         super(menu, playerInv, title);
@@ -216,8 +198,6 @@ public class GuiDesk extends AbstractContainerScreen<ContainerDesk> {
             this.textField.tick();
     }
 
-    // ==================== Background Rendering ====================
-
     @Override
     protected void renderBg(GuiGraphics g, float partialTick, int mouseX, int mouseY) {
         // Draw main background (only for tile entity GUI)
@@ -284,7 +264,7 @@ public class GuiDesk extends AbstractContainerScreen<ContainerDesk> {
         }
     }
 
-    // ==================== Foreground Rendering ====================
+    // ==================== Background Rendering ====================
 
     @Override
     protected void renderLabels(GuiGraphics g, int mouseX, int mouseY) {
@@ -353,6 +333,8 @@ public class GuiDesk extends AbstractContainerScreen<ContainerDesk> {
         }
     }
 
+    // ==================== Foreground Rendering ====================
+
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
         this.renderBackground(g);
@@ -406,8 +388,6 @@ public class GuiDesk extends AbstractContainerScreen<ContainerDesk> {
             }
         }
     }
-
-    // ==================== Radar Drawing ====================
 
     private void drawRadarIcons(GuiGraphics g) {
         if (this.capa == null)
@@ -491,6 +471,8 @@ public class GuiDesk extends AbstractContainerScreen<ContainerDesk> {
         }
     }
 
+    // ==================== Radar Drawing ====================
+
     private void drawRadarText(GuiGraphics g) {
         int texty = 27;
 
@@ -550,8 +532,6 @@ public class GuiDesk extends AbstractContainerScreen<ContainerDesk> {
         }
     }
 
-    // ==================== Book Drawing ====================
-
     private void drawBookText(GuiGraphics g) {
         // Draw chapter/page indicator
         String str = Component.translatable("gui.shincolle.book.chap" + bookChapNum + ".title").getString();
@@ -566,7 +546,11 @@ public class GuiDesk extends AbstractContainerScreen<ContainerDesk> {
         }
     }
 
-    /** Set up the gallery entity for the current chapter/page. */
+    // ==================== Book Drawing ====================
+
+    /**
+     * Set up the gallery entity for the current chapter/page.
+     */
     private void updateGalleryEntity() {
         int shipClass = -1;
 
@@ -609,7 +593,9 @@ public class GuiDesk extends AbstractContainerScreen<ContainerDesk> {
         }
     }
 
-    /** Draw the entity gallery for chapters 4/5. */
+    /**
+     * Draw the entity gallery for chapters 4/5.
+     */
     private void drawEntityGallery(GuiGraphics g) {
         updateGalleryEntity();
 
@@ -651,7 +637,9 @@ public class GuiDesk extends AbstractContainerScreen<ContainerDesk> {
         }
     }
 
-    /** Draw ship name icon from the icon sprite sheets. */
+    /**
+     * Draw ship name icon from the icon sprite sheets.
+     */
     private void drawShipNameIcon(GuiGraphics g) {
         if (galleryShipClass < 0)
             return;
@@ -683,7 +671,9 @@ public class GuiDesk extends AbstractContainerScreen<ContainerDesk> {
         drawShipTypeIcon(g);
     }
 
-    /** Draw ship type icon (DD, CL, CA, etc.). */
+    /**
+     * Draw ship type icon (DD, CL, CA, etc.).
+     */
     private void drawShipTypeIcon(GuiGraphics g) {
         // Look up ship type from class
         Byte shipType = Values.ShipTypeMap.get(galleryShipClass);
@@ -696,8 +686,6 @@ public class GuiDesk extends AbstractContainerScreen<ContainerDesk> {
 
         g.blit(TEX_ICON0, 96, 36, typeIcon[0], typeIcon[1], 11, 29);
     }
-
-    // ==================== Team Drawing ====================
 
     private void drawTeamPic(GuiGraphics g) {
         // Team selection highlight
@@ -717,6 +705,8 @@ public class GuiDesk extends AbstractContainerScreen<ContainerDesk> {
         }
     }
 
+    // ==================== Team Drawing ====================
+
     private void drawTeamText(GuiGraphics g) {
         if (this.capa == null)
             return;
@@ -725,7 +715,7 @@ public class GuiDesk extends AbstractContainerScreen<ContainerDesk> {
         boolean hasTeam = this.capa.getPlayerUID() > 0 && !this.capa.getTeamName().isEmpty();
         if (hasTeam) {
             g.drawString(this.font, ChatFormatting.GRAY + strTeamID + ":  " +
-                    ChatFormatting.YELLOW + this.capa.getPlayerUID(),
+                            ChatFormatting.YELLOW + this.capa.getPlayerUID(),
                     9, 27, 0, false);
             g.drawString(this.font, ChatFormatting.WHITE + this.capa.getTeamName(),
                     9, 37, 0, false);
@@ -759,7 +749,7 @@ public class GuiDesk extends AbstractContainerScreen<ContainerDesk> {
                 break;
             case TEAMSTATE_CREATE:
                 g.drawString(this.font, ChatFormatting.WHITE + strTeamID + "  " +
-                        ChatFormatting.YELLOW + this.capa.getPlayerUID(),
+                                ChatFormatting.YELLOW + this.capa.getPlayerUID(),
                         10, 43, 0, false);
                 strLB = strOK;
                 strLT = strCancel;
@@ -850,8 +840,6 @@ public class GuiDesk extends AbstractContainerScreen<ContainerDesk> {
         }
     }
 
-    // ==================== Target Drawing ====================
-
     private void drawTargetText(GuiGraphics g) {
         // Draw "Remove" button text
         int w = this.font.width(strRemove) / 2;
@@ -871,6 +859,8 @@ public class GuiDesk extends AbstractContainerScreen<ContainerDesk> {
         }
     }
 
+    // ==================== Target Drawing ====================
+
     private void updateTargetClassList() {
         this.tarList.clear();
         if (this.capa != null) {
@@ -882,8 +872,6 @@ public class GuiDesk extends AbstractContainerScreen<ContainerDesk> {
             }
         }
     }
-
-    // ==================== Mouse Input ====================
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
@@ -929,6 +917,8 @@ public class GuiDesk extends AbstractContainerScreen<ContainerDesk> {
         return super.mouseClicked(mouseX, mouseY, button);
     }
 
+    // ==================== Mouse Input ====================
+
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
         handleWheelMove(delta > 0);
@@ -969,8 +959,6 @@ public class GuiDesk extends AbstractContainerScreen<ContainerDesk> {
         return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
     }
 
-    // ==================== Click Handlers ====================
-
     private void setDeskFunction(int button) {
         if (button >= 0) {
             int newFunc = button + 1;
@@ -978,6 +966,8 @@ public class GuiDesk extends AbstractContainerScreen<ContainerDesk> {
             syncTileEntityC2S();
         }
     }
+
+    // ==================== Click Handlers ====================
 
     private void syncTileEntityC2S() {
         if (this.type == 0 && this.tile != null) {
@@ -1195,7 +1185,7 @@ public class GuiDesk extends AbstractContainerScreen<ContainerDesk> {
         if (targetTid > 0 && targetTid != capa.getPlayerUID()) {
             boolean alreadyAlly = capa.getAllyList() != null && capa.getAllyList().contains(targetTid);
             byte packetType = alreadyAlly ? C2SGUIInputPacket.Desk_Break : C2SGUIInputPacket.Desk_Ally;
-            ModNetworking.sendToServer(new C2SGUIInputPacket(packetType, new int[] { targetTid }));
+            ModNetworking.sendToServer(new C2SGUIInputPacket(packetType, new int[]{targetTid}));
             this.tempCD = CLICKCD;
             return;
         }
@@ -1218,7 +1208,7 @@ public class GuiDesk extends AbstractContainerScreen<ContainerDesk> {
         if (targetTid > 0 && targetTid != capa.getPlayerUID()) {
             boolean alreadyBanned = capa.getBanList() != null && capa.getBanList().contains(targetTid);
             byte packetType = alreadyBanned ? C2SGUIInputPacket.Desk_Unban : C2SGUIInputPacket.Desk_Ban;
-            ModNetworking.sendToServer(new C2SGUIInputPacket(packetType, new int[] { targetTid }));
+            ModNetworking.sendToServer(new C2SGUIInputPacket(packetType, new int[]{targetTid}));
             this.tempCD = CLICKCD;
             return;
         }
@@ -1368,8 +1358,6 @@ public class GuiDesk extends AbstractContainerScreen<ContainerDesk> {
         }
     }
 
-    // ==================== Scroll Handler ====================
-
     private void handleWheelMove(boolean isWheelUp) {
         int listSize = 0;
         int maxVisible = 5;
@@ -1427,7 +1415,7 @@ public class GuiDesk extends AbstractContainerScreen<ContainerDesk> {
         }
     }
 
-    // ==================== Ship GUI ====================
+    // ==================== Scroll Handler ====================
 
     private void openShipGUI() {
         int idx = listNum[LISTCLICK_RADAR] + listClicked[LISTCLICK_RADAR];
@@ -1436,12 +1424,12 @@ public class GuiDesk extends AbstractContainerScreen<ContainerDesk> {
             if (rs != null && rs.ship != null) {
                 ModNetworking.sendToServer(new C2SGUIInputPacket(
                         C2SGUIInputPacket.OpenShipGUI,
-                        new int[] { player.getId(), 0, rs.ship.getId() }));
+                        new int[]{player.getId(), 0, rs.ship.getId()}));
             }
         }
     }
 
-    // ==================== Text Field Helpers ====================
+    // ==================== Ship GUI ====================
 
     private void showTextField(String text) {
         if (this.textField != null) {
@@ -1451,10 +1439,24 @@ public class GuiDesk extends AbstractContainerScreen<ContainerDesk> {
         }
     }
 
+    // ==================== Text Field Helpers ====================
+
     private void hideTextField() {
         if (this.textField != null) {
             this.textField.setVisible(false);
             this.textField.setFocused(false);
         }
+    }
+
+    /**
+     * Radar entry: ship entity + display data
+     */
+    private static class RadarShip {
+        Entity ship;
+        String name;
+        double pixelX, pixelZ;
+        float healthPercent;
+        int level;
+        int posX, posY, posZ;
     }
 }

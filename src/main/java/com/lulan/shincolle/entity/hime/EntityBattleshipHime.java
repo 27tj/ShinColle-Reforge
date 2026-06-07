@@ -26,7 +26,7 @@ public class EntityBattleshipHime extends BasicEntityShipSmall implements IShipR
         this.setStateMinor(ID.M.NumState, 1);
         this.setGrudgeConsumption(1);
         this.setAmmoConsumption(1);
-        this.ModelPos = new float[] { 0F, 25F, 0F, 45F };
+        this.ModelPos = new float[]{0F, 25F, 0F, 45F};
 
         // cannon only
         this.StateFlag[ID.F.AtkType_AirLight] = false;

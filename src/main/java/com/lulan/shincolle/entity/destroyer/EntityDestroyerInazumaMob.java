@@ -16,82 +16,82 @@ import net.minecraft.world.level.Level;
  */
 public class EntityDestroyerInazumaMob extends BasicEntityShipHostile implements IShipRiderType {
 
-	public boolean isRaiden;
-	private float entityWidth = 0.5F;
-	private float entityHeight = 1.5F;
+    public boolean isRaiden;
+    private float entityWidth = 0.5F;
+    private float entityHeight = 1.5F;
 
-	public EntityDestroyerInazumaMob(EntityType<? extends EntityDestroyerInazumaMob> type, Level level) {
-		super(type, level);
+    public EntityDestroyerInazumaMob(EntityType<? extends EntityDestroyerInazumaMob> type, Level level) {
+        super(type, level);
 
-		// init values
-		this.setStateMinor(ID.M.ShipClass, ID.ShipClass.DDInazuma);
-		this.setStateMinor(ID.M.ShipType, ID.ShipType.DESTROYER);
-		this.setStateMinor(ID.M.DamageType, ID.ShipDmgType.DESTROYER);
-		this.setStateMinor(ID.M.NumState, 1);
-		this.isRaiden = false;
+        // init values
+        this.setStateMinor(ID.M.ShipClass, ID.ShipClass.DDInazuma);
+        this.setStateMinor(ID.M.ShipType, ID.ShipType.DESTROYER);
+        this.setStateMinor(ID.M.DamageType, ID.ShipDmgType.DESTROYER);
+        this.setStateMinor(ID.M.NumState, 1);
+        this.isRaiden = false;
 
-		// hostile flags: no air attacks
-		this.StateFlag[ID.F.AtkType_AirLight] = false;
-		this.StateFlag[ID.F.AtkType_AirHeavy] = false;
+        // hostile flags: no air attacks
+        this.StateFlag[ID.F.AtkType_AirLight] = false;
+        this.StateFlag[ID.F.AtkType_AirHeavy] = false;
 
-		// unlimited ammo/grudge for hostile entity
-		this.StateMinor[ID.M.NumAmmoLight] = 999;
-		this.StateMinor[ID.M.NumAmmoHeavy] = 999;
-		this.StateMinor[ID.M.NumGrudge] = 999;
-		this.setAmmoConsumption(1);
+        // unlimited ammo/grudge for hostile entity
+        this.StateMinor[ID.M.NumAmmoLight] = 999;
+        this.StateMinor[ID.M.NumAmmoHeavy] = 999;
+        this.StateMinor[ID.M.NumGrudge] = 999;
+        this.setAmmoConsumption(1);
 
-		// boss bar color
-		this.bossBarColor = BossEvent.BossBarColor.PINK;
+        // boss bar color
+        this.bossBarColor = BossEvent.BossBarColor.PINK;
 
-		// model display
-		this.setStateEmotion(ID.S.State, this.random.nextInt(2), false);
+        // model display
+        this.setStateEmotion(ID.S.State, this.random.nextInt(2), false);
 
-		this.postInit();
-	}
+        this.postInit();
+    }
 
-	@Override
-	public void setSizeWithScaleLevel() {
-		switch (this.getScaleLevel()) {
-			case 3:
-				this.entityWidth = 1.7F;
-				this.entityHeight = 6F;
-				this.smokeX = -1.65F;
-				this.smokeY = 5.3F;
-				break;
-			case 2:
-				this.entityWidth = 1.3F;
-				this.entityHeight = 4.5F;
-				this.smokeX = -1.2F;
-				this.smokeY = 4.1F;
-				break;
-			case 1:
-				this.entityWidth = 0.9F;
-				this.entityHeight = 3F;
-				this.smokeX = -0.8F;
-				this.smokeY = 2.7F;
-				break;
-			default:
-				this.entityWidth = 0.5F;
-				this.entityHeight = 1.5F;
-				this.smokeX = -0.42F;
-				this.smokeY = 1.4F;
-				break;
-		}
-		this.refreshDimensions();
-	}
+    @Override
+    public void setSizeWithScaleLevel() {
+        switch (this.getScaleLevel()) {
+            case 3:
+                this.entityWidth = 1.7F;
+                this.entityHeight = 6F;
+                this.smokeX = -1.65F;
+                this.smokeY = 5.3F;
+                break;
+            case 2:
+                this.entityWidth = 1.3F;
+                this.entityHeight = 4.5F;
+                this.smokeX = -1.2F;
+                this.smokeY = 4.1F;
+                break;
+            case 1:
+                this.entityWidth = 0.9F;
+                this.entityHeight = 3F;
+                this.smokeX = -0.8F;
+                this.smokeY = 2.7F;
+                break;
+            default:
+                this.entityWidth = 0.5F;
+                this.entityHeight = 1.5F;
+                this.smokeX = -0.42F;
+                this.smokeY = 1.4F;
+                break;
+        }
+        this.refreshDimensions();
+    }
 
-	@Override
-	public EntityDimensions getDimensions(Pose pose) {
-		return EntityDimensions.fixed(this.entityWidth, this.entityHeight);
-	}
+    @Override
+    public EntityDimensions getDimensions(Pose pose) {
+        return EntityDimensions.fixed(this.entityWidth, this.entityHeight);
+    }
 
-	@Override
-	public int getRiderType() {
-		return 0;
-	}
+    @Override
+    public int getRiderType() {
+        return 0;
+    }
 
-	@Override
-	public void setRiderType(int type) {
-	}
+    @Override
+    public void setRiderType(int type) {
+    }
 
 }

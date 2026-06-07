@@ -9,11 +9,11 @@ import net.minecraft.world.item.Item;
  */
 public class BasicItem extends Item {
 
-	public BasicItem(Properties properties) {
-		super(properties);
-	}
+    public BasicItem(Properties properties) {
+        super(properties);
+    }
 
-	public BasicItem() {
-		super(new Properties());
-	}
+    public BasicItem() {
+        super(new Properties());
+    }
 }

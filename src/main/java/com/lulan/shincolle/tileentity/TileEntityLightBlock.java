@@ -25,22 +25,22 @@ public class TileEntityLightBlock extends BasicTileEntity {
         super(type, pos, state);
     }
 
-    public int getTicksRemaining() {
-        return ticksRemaining;
-    }
-
-    public void setTicksRemaining(int ticks) {
-        this.ticksRemaining = ticks;
-        setChanged();
-    }
-
-    // ==================== Tick Logic ====================
-
     public static void serverTick(Level level, BlockPos pos, BlockState state, TileEntityLightBlock tile) {
         tile.ticksRemaining--;
         if (tile.ticksRemaining <= 0) {
             level.removeBlock(pos, false);
         }
+    }
+
+    public int getTicksRemaining() {
+        return ticksRemaining;
+    }
+
+    // ==================== Tick Logic ====================
+
+    public void setTicksRemaining(int ticks) {
+        this.ticksRemaining = ticks;
+        setChanged();
     }
 
     // ==================== NBT ====================

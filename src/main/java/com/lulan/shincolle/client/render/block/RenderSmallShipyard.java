@@ -23,50 +23,50 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public class RenderSmallShipyard implements BlockEntityRenderer<TileEntitySmallShipyard> {
 
-	private static final ResourceLocation TEXTURE_ON = new ResourceLocation(
-			Reference.MOD_ID, "textures/blocks/blocksmallshipyardon.png");
-	private static final ResourceLocation TEXTURE_OFF = new ResourceLocation(
-			Reference.MOD_ID, "textures/blocks/blocksmallshipyardoff.png");
+    private static final ResourceLocation TEXTURE_ON = new ResourceLocation(
+            Reference.MOD_ID, "textures/blocks/blocksmallshipyardon.png");
+    private static final ResourceLocation TEXTURE_OFF = new ResourceLocation(
+            Reference.MOD_ID, "textures/blocks/blocksmallshipyardoff.png");
 
-	private final ModelSmallShipyard model;
+    private final ModelSmallShipyard model;
 
-	public RenderSmallShipyard(BlockEntityRendererProvider.Context context) {
-		ModelPart root = context.bakeLayer(ModelSmallShipyard.LAYER_LOCATION);
-		this.model = new ModelSmallShipyard(root);
-	}
+    public RenderSmallShipyard(BlockEntityRendererProvider.Context context) {
+        ModelPart root = context.bakeLayer(ModelSmallShipyard.LAYER_LOCATION);
+        this.model = new ModelSmallShipyard(root);
+    }
 
-	@Override
-	public void render(TileEntitySmallShipyard tile, float partialTick, PoseStack poseStack,
-			MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
-		BlockState state = tile.getBlockState();
+    private static float getFacingAngle(BlockState state) {
+        if (!state.hasProperty(BasicBlockFacingContainer.FACING))
+            return 0F;
+        Direction facing = state.getValue(BasicBlockFacingContainer.FACING);
+        return switch (facing) {
+            case EAST -> 90F;
+            case SOUTH -> 180F;
+            case WEST -> -90F;
+            default -> 0F; // NORTH
+        };
+    }
 
-		// Determine texture based on active state
-		boolean active = state.hasProperty(BlockSmallShipyard.ACTIVE) && state.getValue(BlockSmallShipyard.ACTIVE);
-		ResourceLocation texture = active ? TEXTURE_ON : TEXTURE_OFF;
+    @Override
+    public void render(TileEntitySmallShipyard tile, float partialTick, PoseStack poseStack,
+                       MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
+        BlockState state = tile.getBlockState();
 
-		// Determine facing angle
-		float angle = getFacingAngle(state);
+        // Determine texture based on active state
+        boolean active = state.hasProperty(BlockSmallShipyard.ACTIVE) && state.getValue(BlockSmallShipyard.ACTIVE);
+        ResourceLocation texture = active ? TEXTURE_ON : TEXTURE_OFF;
 
-		poseStack.pushPose();
-		poseStack.translate(0.5F, 1.5F, 0.5F);
-		poseStack.mulPose(Axis.ZP.rotationDegrees(180F));
-		poseStack.mulPose(Axis.YP.rotationDegrees(angle));
+        // Determine facing angle
+        float angle = getFacingAngle(state);
 
-		VertexConsumer consumer = bufferSource.getBuffer(RenderType.entitySolid(texture));
-		model.renderToBuffer(poseStack, consumer, packedLight, packedOverlay, 1F, 1F, 1F, 1F);
+        poseStack.pushPose();
+        poseStack.translate(0.5F, 1.5F, 0.5F);
+        poseStack.mulPose(Axis.ZP.rotationDegrees(180F));
+        poseStack.mulPose(Axis.YP.rotationDegrees(angle));
 
-		poseStack.popPose();
-	}
+        VertexConsumer consumer = bufferSource.getBuffer(RenderType.entitySolid(texture));
+        model.renderToBuffer(poseStack, consumer, packedLight, packedOverlay, 1F, 1F, 1F, 1F);
 
-	private static float getFacingAngle(BlockState state) {
-		if (!state.hasProperty(BasicBlockFacingContainer.FACING))
-			return 0F;
-		Direction facing = state.getValue(BasicBlockFacingContainer.FACING);
-		return switch (facing) {
-			case EAST -> 90F;
-			case SOUTH -> 180F;
-			case WEST -> -90F;
-			default -> 0F; // NORTH
-		};
-	}
+        poseStack.popPose();
+    }
 }

@@ -10,23 +10,31 @@ import net.minecraft.core.BlockPos;
  */
 public interface ITileWaypoint extends IShipOwner, ITileGuardPoint {
 
-	/** Last waypoint position */
-	void setLastWaypoint(BlockPos pos);
+    BlockPos getLastWaypoint();
 
-	BlockPos getLastWaypoint();
+    /**
+     * Last waypoint position
+     */
+    void setLastWaypoint(BlockPos pos);
 
-	/** Next waypoint position */
-	void setNextWaypoint(BlockPos pos);
+    BlockPos getNextWaypoint();
 
-	BlockPos getNextWaypoint();
+    /**
+     * Next waypoint position
+     */
+    void setNextWaypoint(BlockPos pos);
 
-	/** Waypoint stay time */
-	void setWpStayTime(int time);
+    int getWpStayTime();
 
-	int getWpStayTime();
+    /**
+     * Waypoint stay time
+     */
+    void setWpStayTime(int time);
 
-	/** Paired chest position */
-	void setPairedChest(BlockPos pos);
+    BlockPos getPairedChest();
 
-	BlockPos getPairedChest();
+    /**
+     * Paired chest position
+     */
+    void setPairedChest(BlockPos pos);
 }

@@ -28,7 +28,7 @@ public class ParticleCraning extends Particle {
     private float len;
 
     public ParticleCraning(ClientLevel level, double x, double y, double z, double lengthMax, double par1, double scale,
-            int type) {
+                           int type) {
         super(level, x, y, z);
         this.setBoundingBox(this.getBoundingBox().inflate(0));
         this.xd = 0D;
@@ -61,15 +61,15 @@ public class ParticleCraning extends Particle {
         float sizeChain = this.pScale * 0.25F;
 
         // out
-        float[] v1 = new float[] { sizeHead * 0.75F, -sizeHead, -sizeHead };
-        float[] v2 = new float[] { sizeHead * 0.75F, sizeHead, -sizeHead };
-        float[] v3 = new float[] { -sizeHead * 0.75F, sizeHead, -sizeHead };
-        float[] v4 = new float[] { -sizeHead * 0.75F, -sizeHead, -sizeHead };
+        float[] v1 = new float[]{sizeHead * 0.75F, -sizeHead, -sizeHead};
+        float[] v2 = new float[]{sizeHead * 0.75F, sizeHead, -sizeHead};
+        float[] v3 = new float[]{-sizeHead * 0.75F, sizeHead, -sizeHead};
+        float[] v4 = new float[]{-sizeHead * 0.75F, -sizeHead, -sizeHead};
         // in
-        float[] v5 = new float[] { sizeChain, -sizeChain * 1.5F, -sizeChain };
-        float[] v6 = new float[] { sizeChain, sizeChain * 1.5F, -sizeChain };
-        float[] v7 = new float[] { -sizeChain, sizeChain * 1.5F, -sizeChain };
-        float[] v8 = new float[] { -sizeChain, -sizeChain * 1.5F, -sizeChain };
+        float[] v5 = new float[]{sizeChain, -sizeChain * 1.5F, -sizeChain};
+        float[] v6 = new float[]{sizeChain, sizeChain * 1.5F, -sizeChain};
+        float[] v7 = new float[]{-sizeChain, sizeChain * 1.5F, -sizeChain};
+        float[] v8 = new float[]{-sizeChain, -sizeChain * 1.5F, -sizeChain};
 
         Vec3 camPos = camera.getPosition();
         double hx = Mth.lerp(partialTick, this.xo, this.x) - camPos.x();

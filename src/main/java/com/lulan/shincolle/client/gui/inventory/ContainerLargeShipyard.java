@@ -20,7 +20,7 @@ import net.minecraftforge.items.ItemStackHandler;
 /**
  * Container/Menu for Large Shipyard (Grudge Heavy multiblock).
  * 1 output slot + 9 material slots = 10 slots + player inventory.
- *
+ * <p>
  * ContainerData layout:
  * 0: fuelPercent (0-1000)
  * 1: buildPercent (0-1000)
@@ -51,18 +51,22 @@ public class ContainerLargeShipyard extends AbstractContainerMenu {
     private final TileMultiGrudgeHeavy tile;
     private final ContainerData data;
 
-    /** Client-side constructor */
+    /**
+     * Client-side constructor
+     */
     public ContainerLargeShipyard(int containerId, Inventory playerInv, FriendlyByteBuf buf) {
         this(containerId, playerInv, getTileFromBuf(playerInv.player, buf), new SimpleContainerData(DATA_COUNT));
     }
 
-    /** Server-side constructor */
+    /**
+     * Server-side constructor
+     */
     public ContainerLargeShipyard(int containerId, Inventory playerInv, TileMultiGrudgeHeavy tile) {
         this(containerId, playerInv, tile, createTileData(tile));
     }
 
     private ContainerLargeShipyard(int containerId, Inventory playerInv, TileMultiGrudgeHeavy tile,
-            ContainerData data) {
+                                   ContainerData data) {
         super(ModMenuTypes.LARGE_SHIPYARD.get(), containerId);
         this.tile = tile;
         this.data = data;
@@ -116,9 +120,9 @@ public class ContainerLargeShipyard extends AbstractContainerMenu {
                         yield Math.max(0, (goal - consumed) / buildSpeed / 20);
                     }
                     case DATA_STOCK_BASE, DATA_STOCK_BASE + 1, DATA_STOCK_BASE + 2, DATA_STOCK_BASE + 3 ->
-                        Math.min(tile.getMatStock(index - DATA_STOCK_BASE), 32767);
+                            Math.min(tile.getMatStock(index - DATA_STOCK_BASE), 32767);
                     case DATA_BUILD_BASE, DATA_BUILD_BASE + 1, DATA_BUILD_BASE + 2, DATA_BUILD_BASE + 3 ->
-                        Math.min(tile.getMatBuild(index - DATA_BUILD_BASE), 32767);
+                            Math.min(tile.getMatBuild(index - DATA_BUILD_BASE), 32767);
                     case DATA_INV_MODE -> tile.getInvMode();
                     case DATA_SELECT_MAT -> tile.getSelectMat();
                     default -> 0;

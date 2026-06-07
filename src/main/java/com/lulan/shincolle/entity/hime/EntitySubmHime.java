@@ -81,8 +81,8 @@ public class EntitySubmHime extends BasicEntityShipSmall implements IShipRiderTy
                 java.util.UUID ownerUUID = this.getOwnerUUID();
                 Player player = ownerUUID != null ? this.level().getPlayerByUUID(ownerUUID) : null;
                 if (player != null && getStateFlag(ID.F.IsMarried) && getStateFlag(ID.F.UseRingEffect) &&
-                    getStateMinor(ID.M.NumGrudge) > 0 &&
-                    this.distanceToSqr(player) < 256.0D) {
+                        getStateMinor(ID.M.NumGrudge) > 0 &&
+                        this.distanceToSqr(player) < 256.0D) {
                     int level = getStateMinor(ID.M.ShipLevel) / 35 + 1;
                     int duration = 80 + getStateMinor(ID.M.ShipLevel);
                     player.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, duration, level, false, false));

@@ -20,26 +20,40 @@ import net.minecraft.world.item.ItemStack;
  */
 public class ContainerShipInventory extends AbstractContainerMenu {
 
-    /** Number of equipment slots */
+    /**
+     * Number of equipment slots
+     */
     public static final int EQUIP_SLOTS = 6;
-    /** Number of inventory slots per page */
+    /**
+     * Number of inventory slots per page
+     */
     public static final int INV_SLOTS_PER_PAGE = 18;
-    /** Number of inventory pages */
+    /**
+     * Number of inventory pages
+     */
     public static final int INV_PAGES = 3;
-    /** Total ship slots matches CapaShipInventory.SlotMax */
+    /**
+     * Total ship slots matches CapaShipInventory.SlotMax
+     */
     public static final int TOTAL_SHIP_SLOTS = CapaShipInventory.SlotMax;
-    /** Number of visible ship slots (equip + one page) */
+    /**
+     * Number of visible ship slots (equip + one page)
+     */
     public static final int VISIBLE_SHIP_SLOTS = EQUIP_SLOTS + INV_SLOTS_PER_PAGE;
 
     private final BasicEntityShip ship;
     private final PagedShipContainerWrapper shipInv;
 
-    /** Client-side constructor (from network) */
+    /**
+     * Client-side constructor (from network)
+     */
     public ContainerShipInventory(int containerId, Inventory playerInv, FriendlyByteBuf buf) {
         this(containerId, playerInv, getShipFromBuf(playerInv.player, buf));
     }
 
-    /** Server-side constructor */
+    /**
+     * Server-side constructor
+     */
     public ContainerShipInventory(int containerId, Inventory playerInv, BasicEntityShip ship) {
         super(ModMenuTypes.SHIP_INVENTORY.get(), containerId);
         this.ship = ship;
@@ -144,16 +158,18 @@ public class ContainerShipInventory extends AbstractContainerMenu {
         return result;
     }
 
-    /** Set the inventory page and force resync all slots */
+    public int getInventoryPage() {
+        return this.shipInv.getPage();
+    }
+
+    /**
+     * Set the inventory page and force resync all slots
+     */
     public void setInventoryPage(int page) {
         if (page < 0 || page >= INV_PAGES) return;
         this.shipInv.setPage(page);
         // force resync all inventory slots
         this.broadcastFullState();
-    }
-
-    public int getInventoryPage() {
-        return this.shipInv.getPage();
     }
 
     public BasicEntityShip getShip() {
@@ -178,10 +194,17 @@ public class ContainerShipInventory extends AbstractContainerMenu {
             this.inv = inv;
         }
 
-        public int getPage() { return page; }
-        public void setPage(int page) { this.page = page; }
+        public int getPage() {
+            return page;
+        }
 
-        /** Map container slot index to actual CapaShipInventory slot index */
+        public void setPage(int page) {
+            this.page = page;
+        }
+
+        /**
+         * Map container slot index to actual CapaShipInventory slot index
+         */
         private int mapSlot(int slot) {
             if (slot < CapaShipInventory.EquipSlots) {
                 return slot; // equip slots: direct

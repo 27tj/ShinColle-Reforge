@@ -8,46 +8,64 @@ import net.minecraft.world.item.ItemStack;
 
 /**
  * Machine crafting logic for the Small Shipyard block entity.
- *
+ * <p>
  * This is NOT a vanilla recipe system -- it is custom logic used by the
  * Small Shipyard tile entity to determine build results from material inputs.
- *
+ * <p>
  * Input slots: 4 material types
  * - grudge (min 16, max 64)
  * - abyssium (min 16, max 64)
  * - ammo (min 16, max 64)
  * - polymetal (min 16, max 64)
- *
+ * <p>
  * totalMats = grudge + abyssium + ammo + polymetal (range 64..256)
- *
+ * <p>
  * Fuel cost: 57600 + 2100 * (totalMats - 64)
  * Build time: scales from 1200 ticks (1 min) to 9600 ticks (8 min)
- *
+ * <p>
  * Output categories:
  * - If totalMats < 128, higher probability of ammo output
  * - Otherwise, roll from 12 small-build equipment types
  */
 public class SmallRecipes {
 
-    /** Minimum per-slot material count */
+    /**
+     * Minimum per-slot material count
+     */
     public static final int MIN_MATERIAL = 16;
-    /** Maximum per-slot material count */
+    /**
+     * Maximum per-slot material count
+     */
     public static final int MAX_MATERIAL = 64;
-    /** Minimum total materials (4 slots * 16) */
+    /**
+     * Minimum total materials (4 slots * 16)
+     */
     public static final int MIN_TOTAL = 64;
-    /** Maximum total materials (4 slots * 64) */
+    /**
+     * Maximum total materials (4 slots * 64)
+     */
     public static final int MAX_TOTAL = 256;
 
-    /** Base fuel cost at minimum material level */
+    /**
+     * Base fuel cost at minimum material level
+     */
     private static final int BASE_FUEL = 57600;
-    /** Additional fuel per material unit above minimum */
+    /**
+     * Additional fuel per material unit above minimum
+     */
     private static final int FUEL_PER_UNIT = 2100;
 
-    /** Minimum build time in ticks (1 minute) */
+    /**
+     * Minimum build time in ticks (1 minute)
+     */
     private static final int MIN_BUILD_TIME = 1200;
-    /** Maximum build time in ticks (8 minutes) */
+    /**
+     * Maximum build time in ticks (8 minutes)
+     */
     private static final int MAX_BUILD_TIME = 9600;
-    /** Ticks per total material unit */
+    /**
+     * Ticks per total material unit
+     */
     private static final int TICKS_PER_MAT = 30;
 
     /**

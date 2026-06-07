@@ -1,14 +1,11 @@
 package com.lulan.shincolle.command;
 
-import java.util.List;
-
 import com.lulan.shincolle.capability.CapaTeitoku;
 import com.lulan.shincolle.entity.BasicEntityShip;
 import com.lulan.shincolle.reference.ID;
 import com.lulan.shincolle.server.ServerDataManager;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
@@ -17,9 +14,11 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.AABB;
 
+import java.util.List;
+
 /**
  * Command: /shipupdateowneruid [player]
- *
+ * <p>
  * Updates the owner UID for all ships owned by the specified player (or self if
  * no player given).
  * Permission level 0 for self, level 2 required when specifying another player.

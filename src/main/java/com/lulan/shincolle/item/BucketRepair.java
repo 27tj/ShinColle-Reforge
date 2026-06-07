@@ -5,7 +5,7 @@ package com.lulan.shincolle.item;
  */
 public class BucketRepair extends BasicItem {
 
-	public BucketRepair() {
-		super(new Properties().stacksTo(16));
-	}
+    public BucketRepair() {
+        super(new Properties().stacksTo(16));
+    }
 }

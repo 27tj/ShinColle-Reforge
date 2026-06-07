@@ -14,13 +14,15 @@ import net.minecraft.world.entity.player.Player;
 
 /**
  * Helper for owner / team / ally / friendly / hostile checking.
- *
+ * <p>
  * Ported from 1.10.2 TeamHelper. All methods are SERVER SIDE ONLY
  * unless otherwise noted.
  */
 public class TeamHelper {
 
-    /** Get team data by player UID. SERVER SIDE ONLY. */
+    /**
+     * Get team data by player UID. SERVER SIDE ONLY.
+     */
     public static TeamData getTeamDataByUID(int uid) {
         if (uid > 0) {
             return ServerDataManager.getTeamData(uid);
@@ -28,7 +30,9 @@ public class TeamHelper {
         return null;
     }
 
-    /** Check if host's owner is a player (for mod interaction) */
+    /**
+     * Check if host's owner is a player (for mod interaction)
+     */
     public static boolean checkOwnerIsPlayer(Entity ent) {
         if (ent == null)
             return false;
@@ -83,7 +87,9 @@ public class TeamHelper {
         return true;
     }
 
-    /** Check if target entity is host's ally. SERVER SIDE ONLY. */
+    /**
+     * Check if target entity is host's ally. SERVER SIDE ONLY.
+     */
     public static boolean checkIsAlly(Entity host, Entity target) {
         if (host != null && target != null) {
             int hostID = getPlayerUID(host);
@@ -93,7 +99,9 @@ public class TeamHelper {
         return false;
     }
 
-    /** Check if two player UIDs are allied. SERVER SIDE ONLY. */
+    /**
+     * Check if two player UIDs are allied. SERVER SIDE ONLY.
+     */
     public static boolean checkIsAlly(int hostPID, int tarPID) {
         // Mob vs mob
         if (hostPID < -1 && tarPID < -1) {
@@ -123,7 +131,9 @@ public class TeamHelper {
         return false;
     }
 
-    /** Check if target entity is in host's banned list. SERVER SIDE ONLY. */
+    /**
+     * Check if target entity is in host's banned list. SERVER SIDE ONLY.
+     */
     public static boolean checkIsBanned(Entity host, Entity target) {
         if (host != null && target != null) {
             int hostID = getPlayerUID(host);
@@ -133,7 +143,9 @@ public class TeamHelper {
         return false;
     }
 
-    /** Check if two player UIDs are banned (hostile). SERVER SIDE ONLY. */
+    /**
+     * Check if two player UIDs are banned (hostile). SERVER SIDE ONLY.
+     */
     public static boolean checkIsBanned(int hostPID, int tarPID) {
         // Mob vs mob
         if (hostPID < -1 && tarPID < -1) {
@@ -158,7 +170,9 @@ public class TeamHelper {
         return false;
     }
 
-    /** Check if two entities have the same owner UID */
+    /**
+     * Check if two entities have the same owner UID
+     */
     public static boolean checkSameOwner(Entity enta, Entity entb) {
         int ida = getPlayerUID(enta);
         int idb = getPlayerUID(entb);
@@ -204,7 +218,9 @@ public class TeamHelper {
         }
     }
 
-    /** Get the player UID associated with an entity */
+    /**
+     * Get the player UID associated with an entity
+     */
     public static int getPlayerUID(Entity entity) {
         if (entity instanceof IShipOwner owner) {
             return owner.getPlayerUID();

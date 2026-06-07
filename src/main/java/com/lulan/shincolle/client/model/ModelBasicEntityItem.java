@@ -42,7 +42,7 @@ public class ModelBasicEntityItem extends ShipModelBaseAdv<Entity> {
 
     @Override
     public void setupAnim(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
-            float headPitch) {
+                          float headPitch) {
         float rot = limbSwing * 0.1F;
         this.shape1.xRot = rot;
         this.shape1.yRot = rot;
@@ -50,7 +50,7 @@ public class ModelBasicEntityItem extends ShipModelBaseAdv<Entity> {
 
     @Override
     public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay,
-            float red, float green, float blue, float alpha) {
+                               float red, float green, float blue, float alpha) {
         poseStack.pushPose();
         poseStack.scale(scale, scale, scale);
         poseStack.translate(offsetX, offsetY, offsetZ);

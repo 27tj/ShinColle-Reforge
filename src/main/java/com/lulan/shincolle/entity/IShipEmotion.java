@@ -13,21 +13,21 @@ public interface IShipEmotion extends IShipFlags {
 
     int getFaceTick();
 
-    int getHeadTiltTick();
-
-    int getAttackTick();
-
-    int getAttackTick2();
-
-    int getDeathTick();
-
     void setFaceTick(int par1);
+
+    int getHeadTiltTick();
 
     void setHeadTiltTick(int par1);
 
+    int getAttackTick();
+
     void setAttackTick(int par1);
 
+    int getAttackTick2();
+
     void setAttackTick2(int par1);
+
+    int getDeathTick();
 
     void setDeathTick(int par1);
 

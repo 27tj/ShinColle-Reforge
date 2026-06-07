@@ -1,25 +1,14 @@
 package com.lulan.shincolle;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.lulan.shincolle.capability.CapabilityHandler;
 import com.lulan.shincolle.command.CommandHandler;
 import com.lulan.shincolle.config.ConfigMining;
 import com.lulan.shincolle.handler.ConfigHandler;
-import com.lulan.shincolle.init.ModBlockEntities;
-import com.lulan.shincolle.init.ModBlocks;
-import com.lulan.shincolle.init.ModCreativeTabs;
-import com.lulan.shincolle.init.ModEntities;
-import com.lulan.shincolle.init.ModItems;
-import com.lulan.shincolle.init.ModMenuTypes;
-import com.lulan.shincolle.init.ModParticles;
-import com.lulan.shincolle.init.ModRecipes;
-import com.lulan.shincolle.init.ModSounds;
+import com.lulan.shincolle.init.*;
+import com.lulan.shincolle.loot.ShinColleLootModifiers;
 import com.lulan.shincolle.network.ModNetworking;
 import com.lulan.shincolle.reference.Reference;
 import com.lulan.shincolle.worldgen.ModWorldGen;
-
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -29,6 +18,8 @@ import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Mod(Reference.MOD_ID)
 public class ShinColle {
@@ -48,6 +39,7 @@ public class ShinColle {
         ModCreativeTabs.CREATIVE_TABS.register(modEventBus);
         ModRecipes.RECIPE_SERIALIZERS.register(modEventBus);
         ModParticles.PARTICLES.register(modEventBus);
+        ShinColleLootModifiers.register(modEventBus);
 
         // Register config
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ConfigHandler.COMMON_SPEC,

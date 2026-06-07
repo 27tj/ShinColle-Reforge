@@ -16,13 +16,15 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+import java.util.Objects;
+
 /**
  * NO TEXTURE LIGHTNING PARTICLE
- *
+ * <p>
  * WITHOUT rotate to player viewing angle
- *
+ * <p>
  * shape: all stem with random wide and random Y length
- *
+ * <p>
  * parms: world, host, scale, type
  */
 @OnlyIn(Dist.CLIENT)
@@ -270,7 +272,7 @@ public class ParticleStickyLightning extends Particle {
             // particle position
             assert host != null;
             float[] partPos2 = CalcHelper.rotateXZByAxis(hostWidth * 2F, 0F,
-                    (((LivingEntity) host).yBodyRot % 360) * Values.N.DIV_PI_180, 1F);
+                    (((LivingEntity) Objects.requireNonNull(host)).yBodyRot % 360) * Values.N.DIV_PI_180, 1F);
 
             this.x = this.host.getX() + partPos2[1];
             this.y = this.host.getY() + hostHeight * 0.6D;

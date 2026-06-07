@@ -10,7 +10,7 @@ import net.minecraft.network.chat.Component;
 /**
  * Command: /shipstopai
  * Alias: /shipstop
- *
+ * <p>
  * Toggles the global AI stop flag for all ship entities.
  * When enabled, all ship entities will stop their AI processing.
  * Requires OP level 2.
@@ -45,7 +45,9 @@ public class ShipCmdStopAI {
         return 1;
     }
 
-    /** Returns the current stopAI state. */
+    /**
+     * Returns the current stopAI state.
+     */
     public static boolean isStopAI() {
         return stopAI;
     }

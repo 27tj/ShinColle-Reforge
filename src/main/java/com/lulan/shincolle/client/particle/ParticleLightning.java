@@ -19,9 +19,9 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 /**
  * NO TEXTURE LIGHTNING PARTICLE
- *
+ * <p>
  * shape: stem with increase wide & same Y length
- *
+ * <p>
  * parms: world, host, scale, type
  */
 @OnlyIn(Dist.CLIENT)

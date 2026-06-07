@@ -12,10 +12,10 @@ import java.util.HashMap;
 
 /**
  * Sound registration for ShinColle mod (1.20.1 port).
- *
+ * <p>
  * All 53 base SoundEvents are registered via DeferredRegister. Custom per-ship
  * sounds are also registered and stored in a HashMap for lookup at runtime.
- *
+ * <p>
  * Custom sound lookup: key = shipClass * 100 + soundType
  * soundType: 0=idle, 1=hit, 2=hurt, 3=dead, 4=marry, 5=knockback, 6=item,
  * 7=feed
@@ -27,15 +27,9 @@ public class ModSounds {
             Reference.MOD_ID);
 
     // ========== Helper ==========
-
-    private static RegistryObject<SoundEvent> registerSound(String name) {
-        return SOUNDS.register(name, () -> SoundEvent.createVariableRangeEvent(
-                new ResourceLocation(Reference.MOD_ID, name)));
-    }
+    public static final RegistryObject<SoundEvent> SHIP_IDLE = registerSound("ship_idle");
 
     // ========== Core Sounds (11) ==========
-
-    public static final RegistryObject<SoundEvent> SHIP_IDLE = registerSound("ship_idle");
     public static final RegistryObject<SoundEvent> SHIP_HURT = registerSound("ship_hurt");
     public static final RegistryObject<SoundEvent> SHIP_DEATH = registerSound("ship_death");
     public static final RegistryObject<SoundEvent> SHIP_FIRELIGHT = registerSound("ship_firelight");
@@ -46,10 +40,9 @@ public class ModSounds {
     public static final RegistryObject<SoundEvent> SHIP_MACHINEGUN = registerSound("ship_machinegun");
     public static final RegistryObject<SoundEvent> SHIP_LASER = registerSound("ship_laser");
     public static final RegistryObject<SoundEvent> SHIP_MARRY = registerSound("ship_marry");
+    public static final RegistryObject<SoundEvent> SHIP_TIME0 = registerSound("ship_time0");
 
     // ========== Time Keeping Sounds (24) ==========
-
-    public static final RegistryObject<SoundEvent> SHIP_TIME0 = registerSound("ship_time0");
     public static final RegistryObject<SoundEvent> SHIP_TIME1 = registerSound("ship_time1");
     public static final RegistryObject<SoundEvent> SHIP_TIME2 = registerSound("ship_time2");
     public static final RegistryObject<SoundEvent> SHIP_TIME3 = registerSound("ship_time3");
@@ -73,24 +66,21 @@ public class ModSounds {
     public static final RegistryObject<SoundEvent> SHIP_TIME21 = registerSound("ship_time21");
     public static final RegistryObject<SoundEvent> SHIP_TIME22 = registerSound("ship_time22");
     public static final RegistryObject<SoundEvent> SHIP_TIME23 = registerSound("ship_time23");
+    public static final RegistryObject<SoundEvent> SHIP_KAITAI = registerSound("ship_kaitai");
 
     // ========== Special/Boss Sounds (4) ==========
-
-    public static final RegistryObject<SoundEvent> SHIP_KAITAI = registerSound("ship_kaitai");
     public static final RegistryObject<SoundEvent> SHIP_AP_P1 = registerSound("ship_ap_phase1");
     public static final RegistryObject<SoundEvent> SHIP_AP_P2 = registerSound("ship_ap_phase2");
     public static final RegistryObject<SoundEvent> SHIP_AP_ATTACK = registerSound("ship_ap_attack");
+    public static final RegistryObject<SoundEvent> SHIP_WAKA_ATTACK = registerSound("ship_waka_attack");
 
     // ========== Wakamoto Entity Sounds (4) ==========
-
-    public static final RegistryObject<SoundEvent> SHIP_WAKA_ATTACK = registerSound("ship_waka_attack");
     public static final RegistryObject<SoundEvent> SHIP_WAKA_HURT = registerSound("ship_waka_hurt");
     public static final RegistryObject<SoundEvent> SHIP_WAKA_IDLE = registerSound("ship_waka_idle");
     public static final RegistryObject<SoundEvent> SHIP_WAKA_DEATH = registerSound("ship_waka_death");
+    public static final RegistryObject<SoundEvent> SHIP_GARURU = registerSound("ship_garuru");
 
     // ========== Additional Sounds (10) ==========
-
-    public static final RegistryObject<SoundEvent> SHIP_GARURU = registerSound("ship_garuru");
     public static final RegistryObject<SoundEvent> SHIP_YAMATO_READY = registerSound("ship_yamato_ready");
     public static final RegistryObject<SoundEvent> SHIP_YAMATO_SHOT = registerSound("ship_yamato_shot");
     public static final RegistryObject<SoundEvent> SHIP_KNOCKBACK = registerSound("ship_knockback");
@@ -100,34 +90,27 @@ public class ModSounds {
     public static final RegistryObject<SoundEvent> SHIP_BELL = registerSound("ship_bell");
     public static final RegistryObject<SoundEvent> SHIP_JET = registerSound("ship_jet");
     public static final RegistryObject<SoundEvent> SHIP_HITMETAL = registerSound("ship_hitmetal");
+    // Ship class 54 custom sounds
+    private static final RegistryObject<SoundEvent> SHIP_IDLE_54 = registerSound("ship_idle_54");
 
     // ========== Custom Per-Ship Sounds ==========
     // These are custom voice sounds for specific ship classes, previously
     // registered dynamically from config. In 1.20.1 they must be registered
     // statically via DeferredRegister.
-
-    // Ship class 54 custom sounds
-    private static final RegistryObject<SoundEvent> SHIP_IDLE_54 = registerSound("ship_idle_54");
     private static final RegistryObject<SoundEvent> SHIP_HURT_54 = registerSound("ship_hurt_54");
     private static final RegistryObject<SoundEvent> SHIP_MARRY_54 = registerSound("ship_marry_54");
     private static final RegistryObject<SoundEvent> SHIP_ITEM_54 = registerSound("ship_item_54");
-
     // Ship class 56 custom sounds
     private static final RegistryObject<SoundEvent> SHIP_IDLE_56 = registerSound("ship_idle_56");
     private static final RegistryObject<SoundEvent> SHIP_HIT_56 = registerSound("ship_hit_56");
     private static final RegistryObject<SoundEvent> SHIP_HURT_56 = registerSound("ship_hurt_56");
     private static final RegistryObject<SoundEvent> SHIP_DEATH_56 = registerSound("ship_death_56");
     private static final RegistryObject<SoundEvent> SHIP_ITEM_56 = registerSound("ship_item_56");
-
     // Ship class 60 custom sounds
     private static final RegistryObject<SoundEvent> SHIP_IDLE_60 = registerSound("ship_idle_60");
     private static final RegistryObject<SoundEvent> SHIP_HIT_60 = registerSound("ship_hit_60");
-
     // Ship class 62 custom sounds
     private static final RegistryObject<SoundEvent> SHIP_HIT_62 = registerSound("ship_hit_62");
-
-    // ========== Custom Sound Lookup ==========
-
     /**
      * Custom sound map: key = shipClass * 100 + soundType
      * soundType: 0=idle, 1=hit, 2=hurt, 3=dead, 4=marry, 5=knockback, 6=item,
@@ -135,6 +118,8 @@ public class ModSounds {
      * soundType 10~33: time keeping sounds (10 + hour)
      */
     private static final HashMap<Integer, RegistryObject<SoundEvent>> CUSTOM_SOUNDS = new HashMap<>();
+
+    // ========== Custom Sound Lookup ==========
 
     static {
         // Ship class 54
@@ -156,6 +141,11 @@ public class ModSounds {
 
         // Ship class 62
         CUSTOM_SOUNDS.put(62 * 100 + 1, SHIP_HIT_62); // hit
+    }
+
+    private static RegistryObject<SoundEvent> registerSound(String name) {
+        return SOUNDS.register(name, () -> SoundEvent.createVariableRangeEvent(
+                new ResourceLocation(Reference.MOD_ID, name)));
     }
 
     /**

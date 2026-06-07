@@ -1,16 +1,11 @@
 package com.lulan.shincolle.server;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
 import com.lulan.shincolle.capability.CapaTeitoku;
 import com.lulan.shincolle.capability.CapaTeitokuProvider;
 import com.lulan.shincolle.entity.BasicEntityShip;
 import com.lulan.shincolle.handler.ConfigHandler;
 import com.lulan.shincolle.team.TeamData;
 import com.lulan.shincolle.utility.LogHelper;
-
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -21,9 +16,13 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.DimensionDataStorage;
 import net.minecraftforge.server.ServerLifecycleHooks;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 /**
  * Server-side data manager for ShinColle.
- *
+ * <p>
  * Replaces the 1.10.2 ServerProxy. This is NOT a proxy — it is a static
  * server-side data manager that handles:
  * - Player UID assignment and caching
@@ -32,39 +31,49 @@ import net.minecraftforge.server.ServerLifecycleHooks;
  * - Custom target class lists per player
  * - Unattackable entity class list
  * - Persistent world data save/load via ShinWorldData (SavedData)
- *
+ * <p>
  * All methods are server-side only (do NOT call from client).
  */
 public class ServerDataManager {
 
     // ========== Data maps ==========
 
-    /** Player custom target class: <player UID, <class name hash, class name>> */
+    /**
+     * Server ticks counter
+     */
+    public static int serverTicks = 0;
+    /**
+     * Player custom target class: <player UID, <class name hash, class name>>
+     */
     private static HashMap<Integer, HashMap<Integer, String>> customTargetClass = null;
-
-    /** Unattackable target class: <class name hash, class name> */
+    /**
+     * Unattackable target class: <class name hash, class name>
+     */
     private static HashMap<Integer, String> unattackableTargetClass = null;
-
-    /** Team data: <team ID (= player UID), TeamData> */
+    /**
+     * Team data: <team ID (= player UID), TeamData>
+     */
     private static HashMap<Integer, TeamData> mapTeamID = null;
-
-    /** Player UID cache (runtime only, not saved): <player UID, CacheDataPlayer> */
+    /**
+     * Player UID cache (runtime only, not saved): <player UID, CacheDataPlayer>
+     */
     private static HashMap<Integer, CacheDataPlayer> mapPlayerID = null;
-
-    /** Ship UID cache (saved): <ship UID, CacheDataShip> */
+    /**
+     * Ship UID cache (saved): <ship UID, CacheDataShip>
+     */
     private static HashMap<Integer, CacheDataShip> mapShipID = null;
-
-    /** Next auto-increment IDs (-1 = not initialized) */
+    /**
+     * Next auto-increment IDs (-1 = not initialized)
+     */
     private static int nextPlayerID = -1;
     private static int nextShipID = -1;
-
-    /** Reference to the SavedData instance */
+    /**
+     * Reference to the SavedData instance
+     */
     private static ShinWorldData worldData = null;
-
-    /** Server ticks counter */
-    public static int serverTicks = 0;
-
-    /** Initialization flag */
+    /**
+     * Initialization flag
+     */
     private static boolean initialized = false;
 
     // ========== Initialization ==========
@@ -104,7 +113,9 @@ public class ServerDataManager {
         initialized = true;
     }
 
-    /** Reset on server stop */
+    /**
+     * Reset on server stop
+     */
     public static void reset() {
         save();
         customTargetClass = null;
@@ -119,7 +130,9 @@ public class ServerDataManager {
         serverTicks = 0;
     }
 
-    /** Save data to disk */
+    /**
+     * Save data to disk
+     */
     public static void save() {
         if (worldData != null) {
             worldData.nextPlayerID = nextPlayerID;
@@ -205,7 +218,9 @@ public class ServerDataManager {
         return mapTeamID;
     }
 
-    /** Create a new team for a player */
+    /**
+     * Create a new team for a player
+     */
     public static void teamCreate(Player player, String tname) {
         CapaTeitoku capa = getTeitokuCapability(player);
         if (capa == null)
@@ -228,7 +243,9 @@ public class ServerDataManager {
         }
     }
 
-    /** Disband a player's team */
+    /**
+     * Disband a player's team
+     */
     public static void teamDisband(Player player) {
         if (player == null)
             return;
@@ -243,7 +260,9 @@ public class ServerDataManager {
         }
     }
 
-    /** Rename a team */
+    /**
+     * Rename a team
+     */
     public static void teamRename(int tid, String tname) {
         if (tid > 0 && tname != null && tname.length() > 1 && mapTeamID != null && mapTeamID.containsKey(tid)) {
             TeamData tdata = getTeamData(tid);
@@ -254,7 +273,9 @@ public class ServerDataManager {
         }
     }
 
-    /** Add ally: team2 as team1's ally (unilateral) */
+    /**
+     * Add ally: team2 as team1's ally (unilateral)
+     */
     public static void teamAddAlly(int tid1, int tid2) {
         if (tid1 > 0 && tid2 > 0 && tid1 != tid2 && mapTeamID != null
                 && mapTeamID.containsKey(tid1) && mapTeamID.containsKey(tid2)) {
@@ -267,7 +288,9 @@ public class ServerDataManager {
         }
     }
 
-    /** Remove ally: bilateral removal */
+    /**
+     * Remove ally: bilateral removal
+     */
     public static void teamRemoveAlly(int tid1, int tid2) {
         if (tid1 > 0 && tid2 > 0 && mapTeamID != null
                 && mapTeamID.containsKey(tid1) && mapTeamID.containsKey(tid2)) {
@@ -282,7 +305,9 @@ public class ServerDataManager {
         }
     }
 
-    /** Ban team: bilateral ban */
+    /**
+     * Ban team: bilateral ban
+     */
     public static void teamAddBan(int tid1, int tid2) {
         if (tid1 > 0 && tid2 > 0 && tid1 != tid2 && mapTeamID != null
                 && mapTeamID.containsKey(tid1) && mapTeamID.containsKey(tid2)) {
@@ -297,7 +322,9 @@ public class ServerDataManager {
         }
     }
 
-    /** Unban team: unilateral unban */
+    /**
+     * Unban team: unilateral unban
+     */
     public static void teamRemoveBan(int tid1, int tid2) {
         if (tid1 > 0 && tid2 > 0 && mapTeamID != null
                 && mapTeamID.containsKey(tid1) && mapTeamID.containsKey(tid2)) {
@@ -309,7 +336,9 @@ public class ServerDataManager {
         }
     }
 
-    /** Remove duplicate teams with the same leader name */
+    /**
+     * Remove duplicate teams with the same leader name
+     */
     private static void cleanTeamData(TeamData tdata) {
         if (tdata == null || mapTeamID == null)
             return;
@@ -347,7 +376,9 @@ public class ServerDataManager {
         return mapPlayerID;
     }
 
-    /** Update or assign player UID on login */
+    /**
+     * Update or assign player UID on login
+     */
     public static void updatePlayerID(Player player) {
         LogHelper.debug("update player: " + player.getGameProfile().getName()
                 + " uuid=" + player.getUUID() + " eid=" + player.getId());
@@ -404,7 +435,9 @@ public class ServerDataManager {
         return mapShipID;
     }
 
-    /** Update or assign ship UID */
+    /**
+     * Update or assign ship UID
+     */
     public static void updateShipID(BasicEntityShip ship) {
         LogHelper.debug("update ship: " + ship);
 
@@ -451,7 +484,9 @@ public class ServerDataManager {
         }
     }
 
-    /** Check for duplicate ships with the same UID — delete the older one */
+    /**
+     * Check for duplicate ships with the same UID — delete the older one
+     */
     public static BasicEntityShip checkShipIsDupe(BasicEntityShip ship, int uid) {
         if (mapShipID == null || !mapShipID.containsKey(uid))
             return ship;
@@ -492,7 +527,9 @@ public class ServerDataManager {
         return ship;
     }
 
-    /** Update ship owner ID from owner's capability */
+    /**
+     * Update ship owner ID from owner's capability
+     */
     public static void updateShipOwnerID(BasicEntityShip ship) {
         Entity owner = ship.getOwner();
 
@@ -514,7 +551,9 @@ public class ServerDataManager {
         return null;
     }
 
-    /** Toggle (add/remove) a target class for a player. Returns true if added. */
+    /**
+     * Toggle (add/remove) a target class for a player. Returns true if added.
+     */
     public static boolean setPlayerTargetClass(int pid, String str) {
         if (str == null || str.length() <= 1 || pid <= 0)
             return true;
@@ -557,7 +596,9 @@ public class ServerDataManager {
         return unattackableTargetClass;
     }
 
-    /** Toggle unattackable target. Returns true if added. */
+    /**
+     * Toggle unattackable target. Returns true if added.
+     */
     public static boolean addUnattackableTargetClass(String target) {
         if (target == null || unattackableTargetClass == null)
             return false;
@@ -576,7 +617,9 @@ public class ServerDataManager {
 
     // ========== Player entity lookup ==========
 
-    /** Find a ServerPlayer by their ShinColle UID */
+    /**
+     * Find a ServerPlayer by their ShinColle UID
+     */
     public static ServerPlayer getPlayerByUID(int uid) {
         if (uid <= 0)
             return null;
@@ -593,7 +636,9 @@ public class ServerDataManager {
         return null;
     }
 
-    /** Find a BasicEntityShip by its ship UID */
+    /**
+     * Find a BasicEntityShip by its ship UID
+     */
     public static BasicEntityShip getShipByUID(int uid) {
         if (uid <= 0 || mapShipID == null)
             return null;
@@ -620,7 +665,9 @@ public class ServerDataManager {
 
     // ========== Server tick ==========
 
-    /** Called every server tick */
+    /**
+     * Called every server tick
+     */
     public static void onServerTick() {
         if (!initialized)
             return;
@@ -637,14 +684,18 @@ public class ServerDataManager {
 
     // ========== Utility ==========
 
-    /** Get CapaTeitoku from player, or null */
+    /**
+     * Get CapaTeitoku from player, or null
+     */
     public static CapaTeitoku getTeitokuCapability(Player player) {
         if (player == null)
             return null;
         return player.getCapability(CapaTeitokuProvider.CAPABILITY).orElse(null);
     }
 
-    /** Check if a player is an operator */
+    /**
+     * Check if a player is an operator
+     */
     public static boolean checkOP(Player player) {
         if (player instanceof ServerPlayer sp) {
             return sp.hasPermissions(2);

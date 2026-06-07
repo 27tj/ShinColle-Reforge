@@ -5,15 +5,15 @@ import net.minecraft.world.entity.Entity;
 public interface IShipAircraftAttack extends IShipAttackBase {
     int getNumAircraftLight();
 
+    void setNumAircraftLight(int par1);
+
     int getNumAircraftHeavy();
+
+    void setNumAircraftHeavy(int par1);
 
     boolean hasAirLight();
 
     boolean hasAirHeavy();
-
-    void setNumAircraftLight(int par1);
-
-    void setNumAircraftHeavy(int par1);
 
     boolean attackEntityWithAircraft(Entity target);
 

@@ -11,7 +11,7 @@ import java.util.List;
 
 /**
  * Mining loot table for ship mining AI.
- *
+ * <p>
  * When a ship entity performs mining, it rolls from this table
  * to determine what items are produced. The roll depends on:
  * - Dimension (overworld, nether, end)
@@ -19,54 +19,15 @@ import java.util.List;
  * - Y-level of the ship
  * - Tool level of equipped pickaxe
  * - Fortune enchantment level
- *
+ * <p>
  * Original system: ConfigMining.java with CSV file-based config
  * 1.20.1 approach: Code-based default table with weighted random selection
  */
 public class MiningLootTable {
 
-    /**
-     * A single mining loot entry
-     *
-     * @param enchantScale fortune multiplier (0.0 = no bonus)
-     */
-    public record MiningEntry(String itemId, int weight, int minCount, int maxCount, int minShipLevel, int maxYLevel,
-                              int minToolLevel, float enchantScale) {
-
-        /**
-         * Check if this entry is available given the current conditions
-         */
-        public boolean isAvailable(int shipLevel, int yLevel, int toolLevel) {
-            return shipLevel >= minShipLevel && yLevel <= maxYLevel && toolLevel >= minToolLevel;
-        }
-
-        /**
-         * Get the actual stack size accounting for fortune
-         */
-        public int rollCount(RandomSource random, int fortuneLevel) {
-            int base = minCount + (maxCount > minCount ? random.nextInt(maxCount - minCount + 1) : 0);
-            if (fortuneLevel > 0 && enchantScale > 0F) {
-                base = (int) (base * (1F + enchantScale * fortuneLevel));
-            }
-            return Math.max(1, base);
-        }
-
-        /**
-         * Create the ItemStack result
-         */
-        public ItemStack createStack(RandomSource random, int fortuneLevel) {
-            ResourceLocation loc = new ResourceLocation(itemId);
-            var item = ForgeRegistries.ITEMS.getValue(loc);
-            if (item == null || item == Items.AIR)
-                return ItemStack.EMPTY;
-            int count = rollCount(random, fortuneLevel);
-            return new ItemStack(item, count);
-        }
-    }
+    private static final List<MiningEntry> OVERWORLD_GENERAL = new ArrayList<>();
 
     // ========== Loot tables by dimension ==========
-
-    private static final List<MiningEntry> OVERWORLD_GENERAL = new ArrayList<>();
     private static final List<MiningEntry> NETHER_GENERAL = new ArrayList<>();
     private static final List<MiningEntry> END_GENERAL = new ArrayList<>();
 
@@ -150,7 +111,7 @@ public class MiningLootTable {
      * @return resulting ItemStack, or ItemStack.EMPTY if no valid entry
      */
     public static ItemStack rollMiningDrop(ResourceLocation dimensionId, int shipLevel,
-            int yLevel, int toolLevel, int fortuneLevel, RandomSource random) {
+                                           int yLevel, int toolLevel, int fortuneLevel, RandomSource random) {
         List<MiningEntry> entries = getEntriesForDimension(dimensionId);
 
         // Filter available entries and calculate total weight
@@ -180,5 +141,44 @@ public class MiningLootTable {
         }
 
         return ItemStack.EMPTY;
+    }
+
+    /**
+     * A single mining loot entry
+     *
+     * @param enchantScale fortune multiplier (0.0 = no bonus)
+     */
+    public record MiningEntry(String itemId, int weight, int minCount, int maxCount, int minShipLevel, int maxYLevel,
+                              int minToolLevel, float enchantScale) {
+
+        /**
+         * Check if this entry is available given the current conditions
+         */
+        public boolean isAvailable(int shipLevel, int yLevel, int toolLevel) {
+            return shipLevel >= minShipLevel && yLevel <= maxYLevel && toolLevel >= minToolLevel;
+        }
+
+        /**
+         * Get the actual stack size accounting for fortune
+         */
+        public int rollCount(RandomSource random, int fortuneLevel) {
+            int base = minCount + (maxCount > minCount ? random.nextInt(maxCount - minCount + 1) : 0);
+            if (fortuneLevel > 0 && enchantScale > 0F) {
+                base = (int) (base * (1F + enchantScale * fortuneLevel));
+            }
+            return Math.max(1, base);
+        }
+
+        /**
+         * Create the ItemStack result
+         */
+        public ItemStack createStack(RandomSource random, int fortuneLevel) {
+            ResourceLocation loc = new ResourceLocation(itemId);
+            var item = ForgeRegistries.ITEMS.getValue(loc);
+            if (item == null || item == Items.AIR)
+                return ItemStack.EMPTY;
+            int count = rollCount(random, fortuneLevel);
+            return new ItemStack(item, count);
+        }
     }
 }

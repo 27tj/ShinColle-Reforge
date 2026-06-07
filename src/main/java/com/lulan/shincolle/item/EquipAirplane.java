@@ -32,12 +32,12 @@ import net.minecraft.world.item.ItemStack;
  */
 public class EquipAirplane extends BasicEquip {
 
-	public EquipAirplane() {
-		super(22);
-	}
+    public EquipAirplane() {
+        super(22);
+    }
 
-	@Override
-	public int getEquipTypeIDFromMeta(int meta) {
+    @Override
+    public int getEquipTypeIDFromMeta(int meta) {
         return switch (meta) {
             case 0, 1, 2 -> ID.EquipType.AIR_T_LO;
             case 3, 15 -> ID.EquipType.AIR_T_HI;
@@ -49,10 +49,10 @@ public class EquipAirplane extends BasicEquip {
             case 14 -> ID.EquipType.AIR_R_HI;
             default -> 0;
         };
-	}
+    }
 
-	@Override
-	public int getIconFromDamage(int meta) {
+    @Override
+    public int getIconFromDamage(int meta) {
         return switch (this.getEquipTypeIDFromMeta(meta)) {
             case ID.EquipType.AIR_T_LO, ID.EquipType.AIR_T_HI -> 0; // torpedo bomber
             case ID.EquipType.AIR_F_LO, ID.EquipType.AIR_F_HI -> 1; // fighter
@@ -60,19 +60,19 @@ public class EquipAirplane extends BasicEquip {
             case ID.EquipType.AIR_R_LO, ID.EquipType.AIR_R_HI -> 3; // recon
             default -> 0;
         };
-	}
+    }
 
-	@Override
-	public int getItemEnchantability(ItemStack stack) {
+    @Override
+    public int getItemEnchantability(ItemStack stack) {
         return switch (this.getEquipTypeIDFromMeta(getEquipMeta(stack))) {
             case ID.EquipType.AIR_T_LO, ID.EquipType.AIR_F_LO, ID.EquipType.AIR_B_LO, ID.EquipType.AIR_R_LO -> 18;
             case ID.EquipType.AIR_T_HI, ID.EquipType.AIR_F_HI, ID.EquipType.AIR_B_HI, ID.EquipType.AIR_R_HI -> 25;
             default -> 9;
         };
-	}
+    }
 
-	@Override
-	public int[] getResourceValue(int meta) {
+    @Override
+    public int[] getResourceValue(int meta) {
         return switch (this.getEquipTypeIDFromMeta(meta)) {
             case ID.EquipType.AIR_T_LO, ID.EquipType.AIR_F_LO, ID.EquipType.AIR_B_LO -> // 2400
                     new int[]{
@@ -104,5 +104,5 @@ public class EquipAirplane extends BasicEquip {
                     };
             default -> new int[]{0, 0, 0, 0};
         };
-	}
+    }
 }

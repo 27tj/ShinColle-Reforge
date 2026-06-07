@@ -1,10 +1,7 @@
 package com.lulan.shincolle.block;
 
-import javax.annotation.Nullable;
-
 import com.lulan.shincolle.init.ModBlockEntities;
 import com.lulan.shincolle.tileentity.TileEntitySmallShipyard;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerPlayer;
@@ -25,6 +22,8 @@ import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.network.NetworkHooks;
 
+import javax.annotation.Nullable;
+
 public class BlockSmallShipyard extends BasicBlockFacingContainer {
 
     public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
@@ -32,6 +31,17 @@ public class BlockSmallShipyard extends BasicBlockFacingContainer {
     public BlockSmallShipyard() {
         super(Properties.of().mapColor(MapColor.METAL).strength(3.0F).noOcclusion().lightLevel(s -> s.getValue(ACTIVE) ? 15 : 4));
         this.registerDefaultState(this.defaultBlockState().setValue(ACTIVE, false));
+    }
+
+    /**
+     * Update the ACTIVE blockstate property to match the tile entity's active status.
+     * Called from TileEntitySmallShipyard when the active state changes.
+     */
+    public static void updateBlockState(boolean active, Level level, BlockPos pos) {
+        BlockState state = level.getBlockState(pos);
+        if (state.getBlock() instanceof BlockSmallShipyard && state.getValue(ACTIVE) != active) {
+            level.setBlock(pos, state.setValue(ACTIVE, active), 3);
+        }
     }
 
     @Override
@@ -48,7 +58,7 @@ public class BlockSmallShipyard extends BasicBlockFacingContainer {
     @SuppressWarnings("deprecation")
     @Override
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
-            InteractionHand hand, BlockHitResult hit) {
+                                 InteractionHand hand, BlockHitResult hit) {
         if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
             BlockEntity be = level.getBlockEntity(pos);
             if (be instanceof TileEntitySmallShipyard tile) {
@@ -66,7 +76,7 @@ public class BlockSmallShipyard extends BasicBlockFacingContainer {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state,
-            BlockEntityType<T> type) {
+                                                                  BlockEntityType<T> type) {
         return level.isClientSide ? null
                 : createTickerHelper(type, ModBlockEntities.SMALL_SHIPYARD.get(), TileEntitySmallShipyard::serverTick);
     }
@@ -86,17 +96,6 @@ public class BlockSmallShipyard extends BasicBlockFacingContainer {
                         z + (random.nextDouble() - 0.5) * 0.3,
                         0.0, 0.03, 0.0);
             }
-        }
-    }
-
-    /**
-     * Update the ACTIVE blockstate property to match the tile entity's active status.
-     * Called from TileEntitySmallShipyard when the active state changes.
-     */
-    public static void updateBlockState(boolean active, Level level, BlockPos pos) {
-        BlockState state = level.getBlockState(pos);
-        if (state.getBlock() instanceof BlockSmallShipyard && state.getValue(ACTIVE) != active) {
-            level.setBlock(pos, state.setValue(ACTIVE, active), 3);
         }
     }
 }

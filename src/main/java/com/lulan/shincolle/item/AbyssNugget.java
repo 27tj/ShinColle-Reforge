@@ -5,7 +5,7 @@ package com.lulan.shincolle.item;
  */
 public class AbyssNugget extends BasicItem {
 
-	public AbyssNugget() {
-		super(new Properties());
-	}
+    public AbyssNugget() {
+        super(new Properties());
+    }
 }

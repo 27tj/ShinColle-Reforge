@@ -1,13 +1,8 @@
 package com.lulan.shincolle.server;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 import com.lulan.shincolle.reference.Reference;
 import com.lulan.shincolle.team.TeamData;
 import com.lulan.shincolle.utility.LogHelper;
-
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -18,13 +13,17 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 /**
  * Server-side persistent world data for ShinColle.
- *
+ * <p>
  * Replaces the 1.10.2 WorldSavedData with 1.20.1 SavedData.
  * Stores team data, ship cache data, player target class lists,
  * and UID counters.
- *
+ * <p>
  * This class acts as the bridge between ServerDataManager's in-memory
  * maps and the on-disk .dat file.
  */
@@ -65,12 +64,16 @@ public class ShinWorldData extends SavedData {
     HashMap<Integer, HashMap<Integer, String>> customTargetClass = new HashMap<>();
     HashMap<Integer, String> unattackableTargetClass = new HashMap<>();
 
-    /** Create empty data */
+    /**
+     * Create empty data
+     */
     public ShinWorldData() {
         super();
     }
 
-    /** Load from NBT */
+    /**
+     * Load from NBT
+     */
     public static ShinWorldData load(CompoundTag nbt) {
         ShinWorldData data = new ShinWorldData();
         LogHelper.info("load world data from disk.");
@@ -155,7 +158,31 @@ public class ShinWorldData extends SavedData {
         return data;
     }
 
-    /** Save to NBT */
+    private static List<Integer> intArrayToList(int[] arr) {
+        List<Integer> list = new ArrayList<>();
+        if (arr != null) {
+            for (int v : arr) {
+                list.add(v);
+            }
+        }
+        return list;
+    }
+
+    // ========== Utility ==========
+
+    private static int[] listToIntArray(List<Integer> list) {
+        if (list == null)
+            return new int[0];
+        int[] arr = new int[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            arr[i] = list.get(i);
+        }
+        return arr;
+    }
+
+    /**
+     * Save to NBT
+     */
     @Override
     public CompoundTag save(CompoundTag nbt) {
         LogHelper.debug("save world data to disk.");
@@ -216,7 +243,7 @@ public class ShinWorldData extends SavedData {
                 tag.putString(TAG_SHIP_DIM, sData.dimension.location().toString());
                 tag.putInt(TAG_SHIP_CID, sData.classID);
                 tag.putBoolean(TAG_SHIP_DEAD, sData.isDead);
-                tag.putIntArray(TAG_SHIP_POS, new int[] { sData.posX, sData.posY, sData.posZ });
+                tag.putIntArray(TAG_SHIP_POS, new int[]{sData.posX, sData.posY, sData.posZ});
                 tag.put(TAG_SHIP_NBT, sData.entityNBT != null ? sData.entityNBT : new CompoundTag());
 
                 shipDataList.add(tag);
@@ -225,27 +252,5 @@ public class ShinWorldData extends SavedData {
         nbt.put(TAG_SHIP_DATA, shipDataList);
 
         return nbt;
-    }
-
-    // ========== Utility ==========
-
-    private static List<Integer> intArrayToList(int[] arr) {
-        List<Integer> list = new ArrayList<>();
-        if (arr != null) {
-            for (int v : arr) {
-                list.add(v);
-            }
-        }
-        return list;
-    }
-
-    private static int[] listToIntArray(List<Integer> list) {
-        if (list == null)
-            return new int[0];
-        int[] arr = new int[list.size()];
-        for (int i = 0; i < list.size(); i++) {
-            arr[i] = list.get(i);
-        }
-        return arr;
     }
 }

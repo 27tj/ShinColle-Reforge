@@ -2,7 +2,7 @@ package com.lulan.shincolle.reference.unitclass;
 
 /**
  * distance vector
- *
+ * <p>
  * (vector x, vector y, vector z, distance d)
  */
 public class Dist4d {

@@ -1,17 +1,17 @@
 package com.lulan.shincolle.team;
 
+import com.lulan.shincolle.utility.LogHelper;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import com.lulan.shincolle.utility.LogHelper;
-
 /**
  * Fleet team data.
- *
+ * <p>
  * A team = a fleet with one leader (player).
  * Team ally = friendly team; not ally = neutral (not hostile unless banned).
  * Team banned = always hostile team; you can't ally with a banned team.
- *
+ * <p>
  * Team ID = player UID (one player = one team).
  */
 public class TeamData {
@@ -44,12 +44,26 @@ public class TeamData {
         return this.teamID;
     }
 
+    public void setTeamID(int id) {
+        this.teamID = id;
+    }
+
     public String getTeamName() {
         return this.teamName;
     }
 
+    public void setTeamName(String name) {
+        this.teamName = name;
+    }
+
     public String getTeamLeaderName() {
         return this.leaderName;
+    }
+
+    // ========== Setters ==========
+
+    public void setTeamLeaderName(String name) {
+        this.leaderName = name;
     }
 
     public List<Integer> getTeamBannedList() {
@@ -59,29 +73,15 @@ public class TeamData {
         return this.teamBanID;
     }
 
+    public void setTeamBannedList(List<Integer> list) {
+        this.teamBanID = list;
+    }
+
     public List<Integer> getTeamAllyList() {
         if (this.teamAllyID == null) {
             this.teamAllyID = new ArrayList<>();
         }
         return this.teamAllyID;
-    }
-
-    // ========== Setters ==========
-
-    public void setTeamID(int id) {
-        this.teamID = id;
-    }
-
-    public void setTeamName(String name) {
-        this.teamName = name;
-    }
-
-    public void setTeamLeaderName(String name) {
-        this.leaderName = name;
-    }
-
-    public void setTeamBannedList(List<Integer> list) {
-        this.teamBanID = list;
     }
 
     public void setTeamAllyList(List<Integer> list) {
@@ -90,7 +90,9 @@ public class TeamData {
 
     // ========== Ally management ==========
 
-    /** Add ally — only if not already allied and not banned */
+    /**
+     * Add ally — only if not already allied and not banned
+     */
     public void addTeamAlly(int id) {
         if (id > 0 && this.teamAllyID != null) {
             if (!this.teamAllyID.contains(id) && !this.teamBanID.contains(id)) {
@@ -100,7 +102,9 @@ public class TeamData {
         }
     }
 
-    /** Remove ally */
+    /**
+     * Remove ally
+     */
     public void removeTeamAlly(int id) {
         if (id > 0 && this.teamAllyID != null) {
             if (this.teamAllyID.contains(id)) {
@@ -112,7 +116,9 @@ public class TeamData {
 
     // ========== Ban management ==========
 
-    /** Add banned (hostile) team — only if not already banned and not allied */
+    /**
+     * Add banned (hostile) team — only if not already banned and not allied
+     */
     public void addTeamBanned(int id) {
         if (id > 0 && this.teamBanID != null) {
             if (!this.teamBanID.contains(id) && !this.teamAllyID.contains(id)) {
@@ -122,7 +128,9 @@ public class TeamData {
         }
     }
 
-    /** Remove banned (hostile) team */
+    /**
+     * Remove banned (hostile) team
+     */
     public void removeTeamBanned(int id) {
         if (id > 0 && this.teamBanID != null) {
             if (this.teamBanID.contains(id)) {
@@ -134,7 +142,9 @@ public class TeamData {
 
     // ========== Checks ==========
 
-    /** Check if team is in ally list. ID 0 = always friendly. */
+    /**
+     * Check if team is in ally list. ID 0 = always friendly.
+     */
     public boolean isTeamAlly(int id) {
         if (id == 0)
             return true;
@@ -144,7 +154,9 @@ public class TeamData {
         return false;
     }
 
-    /** Check if team is in ban list. ID 0 = always friendly (never banned). */
+    /**
+     * Check if team is in ban list. ID 0 = always friendly (never banned).
+     */
     public boolean isTeamBanned(int id) {
         if (id == 0)
             return false;

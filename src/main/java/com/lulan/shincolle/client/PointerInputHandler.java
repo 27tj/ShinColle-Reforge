@@ -17,7 +17,7 @@ import net.minecraftforge.fml.common.Mod;
 
 /**
  * Client-only pointer input bridge.
- *
+ * <p>
  * Restores legacy key behavior:
  * - Sprint + hotbar 1-9: switch selected team (without changing selected hotbar slot)
  * - Player list key (TAB by default) on main-hand pointer: toggle caress mode (0-2 <-> 3-5)
@@ -25,79 +25,79 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber(modid = Reference.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class PointerInputHandler {
 
-	private PointerInputHandler() {
-	}
+    private PointerInputHandler() {
+    }
 
-	@SubscribeEvent
-	public static void onClientTick(TickEvent.ClientTickEvent event) {
-		if (event.phase != TickEvent.Phase.END) {
-			return;
-		}
+    @SubscribeEvent
+    public static void onClientTick(TickEvent.ClientTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) {
+            return;
+        }
 
-		Minecraft mc = Minecraft.getInstance();
-		LocalPlayer player = mc.player;
-		if (player == null || mc.level == null || mc.screen != null) {
-			return;
-		}
+        Minecraft mc = Minecraft.getInstance();
+        LocalPlayer player = mc.player;
+        if (player == null || mc.level == null || mc.screen != null) {
+            return;
+        }
 
-		ItemStack pointerInUse = getPointerInUse(player);
-		if (pointerInUse.isEmpty()) {
-			return;
-		}
+        ItemStack pointerInUse = getPointerInUse(player);
+        if (pointerInUse.isEmpty()) {
+            return;
+        }
 
-		boolean sprintDown = mc.options.keySprint.isDown();
+        boolean sprintDown = mc.options.keySprint.isDown();
 
-		if (sprintDown) {
-			handleSprintTeamSwitch(player, mc);
-			return;
-		}
+        if (sprintDown) {
+            handleSprintTeamSwitch(player, mc);
+            return;
+        }
 
-		ItemStack mainHand = player.getMainHandItem();
-		if (!mainHand.isEmpty() && mainHand.getItem() == ModItems.POINTER.get()) {
-			while (mc.options.keyPlayerList.consumeClick()) {
-				int mode = PointerItem.toggleCaressMode(PointerItem.getMode(mainHand));
-				PointerItem.setMode(mainHand, mode);
+        ItemStack mainHand = player.getMainHandItem();
+        if (!mainHand.isEmpty() && mainHand.getItem() == ModItems.POINTER.get()) {
+            while (mc.options.keyPlayerList.consumeClick()) {
+                int mode = PointerItem.toggleCaressMode(PointerItem.getMode(mainHand));
+                PointerItem.setMode(mainHand, mode);
 
-				ModNetworking.sendToServer(new C2SGUIInputPacket(
-						C2SGUIInputPacket.SyncPlayerItem,
-						new int[] { player.getId(), 0, mode }));
-			}
-		}
-	}
+                ModNetworking.sendToServer(new C2SGUIInputPacket(
+                        C2SGUIInputPacket.SyncPlayerItem,
+                        new int[]{player.getId(), 0, mode}));
+            }
+        }
+    }
 
-	private static void handleSprintTeamSwitch(LocalPlayer player, Minecraft mc) {
-		int originalSlot = player.getInventory().selected;
-		boolean consumed = false;
+    private static void handleSprintTeamSwitch(LocalPlayer player, Minecraft mc) {
+        int originalSlot = player.getInventory().selected;
+        boolean consumed = false;
 
-		for (int i = 0; i < mc.options.keyHotbarSlots.length; i++) {
-			while (mc.options.keyHotbarSlots[i].consumeClick()) {
-				consumed = true;
-				if (i < CapaTeitoku.TEAM_NUM) {
-					ModNetworking.sendToServer(new C2SGUIInputPacket(
-							C2SGUIInputPacket.SetSelect,
-							new int[] { player.getId(), 0, i }));
-				}
-			}
-		}
+        for (int i = 0; i < mc.options.keyHotbarSlots.length; i++) {
+            while (mc.options.keyHotbarSlots[i].consumeClick()) {
+                consumed = true;
+                if (i < CapaTeitoku.TEAM_NUM) {
+                    ModNetworking.sendToServer(new C2SGUIInputPacket(
+                            C2SGUIInputPacket.SetSelect,
+                            new int[]{player.getId(), 0, i}));
+                }
+            }
+        }
 
-		if (consumed) {
-			// [PORT] 1.10.2 -> 1.20.1: keep pointer in hand while using sprint+hotbar team
-			// shortcuts.
-			player.getInventory().selected = originalSlot;
-		}
-	}
+        if (consumed) {
+            // [PORT] 1.10.2 -> 1.20.1: keep pointer in hand while using sprint+hotbar team
+            // shortcuts.
+            player.getInventory().selected = originalSlot;
+        }
+    }
 
-	private static ItemStack getPointerInUse(LocalPlayer player) {
-		ItemStack main = player.getMainHandItem();
-		if (!main.isEmpty() && main.getItem() == ModItems.POINTER.get()) {
-			return main;
-		}
+    private static ItemStack getPointerInUse(LocalPlayer player) {
+        ItemStack main = player.getMainHandItem();
+        if (!main.isEmpty() && main.getItem() == ModItems.POINTER.get()) {
+            return main;
+        }
 
-		ItemStack off = player.getOffhandItem();
-		if (!off.isEmpty() && off.getItem() == ModItems.POINTER.get()) {
-			return off;
-		}
+        ItemStack off = player.getOffhandItem();
+        if (!off.isEmpty() && off.getItem() == ModItems.POINTER.get()) {
+            return off;
+        }
 
-		return ItemStack.EMPTY;
-	}
+        return ItemStack.EMPTY;
+    }
 }

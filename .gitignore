@@ -50,3 +50,4 @@ run
 /world/
 /logs/
 /server.properties
+/src/generated/resources/.cache/

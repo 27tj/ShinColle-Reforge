@@ -17,11 +17,6 @@ public class SlotVolCore extends SlotItemHandler {
         super(itemHandler, index, x, y);
     }
 
-    @Override
-    public boolean mayPlace(ItemStack stack) {
-        return isValidFuel(stack);
-    }
-
     /**
      * Check if the item is a valid fuel for the Volcano Core.
      * Accepted fuels: Grudge, Grudge Block, Grudge Heavy, Coal, Charcoal, Lava
@@ -45,5 +40,10 @@ public class SlotVolCore extends SlotItemHandler {
         if (stack.is(Items.CHARCOAL))
             return true;
         return stack.is(Items.LAVA_BUCKET);
+    }
+
+    @Override
+    public boolean mayPlace(ItemStack stack) {
+        return isValidFuel(stack);
     }
 }

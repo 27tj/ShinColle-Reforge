@@ -20,26 +20,26 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 /**
  * CUSTOM TEXT PARTICLE
  * Displays arbitrary text above a target position or entity.
- *
+ * <p>
  * Type 0: draw string at fixed position with specified #lines and width
  * Type 1: draw string following an entity with offset
- *
+ * <p>
  * Ported from 1.10.2 to 1.20.1.
  */
 @OnlyIn(Dist.CLIENT)
 public class ParticleTextsCustom extends Particle {
 
     private final int particleType;
+    private final Font font;
+    private final Entity host;
+    private final float pScale;
     private int textWidth;
     private int textHeight;
     private double[] parms;
-    private final Font font;
     private String text;
-    private final Entity host;
-    private final float pScale;
 
     public ParticleTextsCustom(Entity host, ClientLevel level, double posX, double posY, double posZ,
-            float scale, int type, String text, int... parms) {
+                               float scale, int type, String text, int... parms) {
         super(level, 0D, 0D, 0D);
         this.xd = 0D;
         this.yd = 0D;
@@ -64,7 +64,7 @@ public class ParticleTextsCustom extends Particle {
                 this.textHeight = parms[0] - 1;
                 this.textWidth = parms[1] / 2;
                 this.text = text;
-                this.parms = new double[] { posX, posY, posZ };
+                this.parms = new double[]{posX, posY, posZ};
                 this.setPos(this.host.getX() + this.parms[0],
                         this.host.getY() + this.parms[1],
                         this.host.getZ() + this.parms[2]);

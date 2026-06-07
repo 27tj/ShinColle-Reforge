@@ -15,11 +15,11 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 /**
  * Particle spawning utility class for ShinColle.
  * Provides helper methods for spawning attack, emotion, and effect particles.
- *
+ * <p>
  * The original mod (1.10.2) used numeric particle type IDs:
  * Types 1-49: Position-based particles (explosions, flames, etc.)
  * Types 50+: Entity-attached particles (emotions, status effects, etc.)
- *
+ * <p>
  * Sprite-based particles (Spray, Smoke) are spawned via level.addParticle()
  * through the registered provider system.
  * Custom-rendered particles (Laser, Lightning, etc.) are spawned directly via
@@ -46,7 +46,7 @@ public class ParticleHelper {
      * @param type  particle type ID from the original mod's system
      */
     public static void spawnAttackParticleAt(Level level, double x, double y, double z,
-            double lookX, double lookY, double lookZ, int type) {
+                                             double lookX, double lookY, double lookZ, int type) {
         if (level.isClientSide()) {
             switch (type) {
                 // Basic attack/effect particles (types 1-9)
@@ -56,10 +56,10 @@ public class ParticleHelper {
                 case 4 -> level.addParticle(ParticleTypes.SMOKE, x, y, z, 0, 0, 0);
                 case 5 -> level.addParticle(ParticleTypes.FLAME, x, y, z, 0, 0, 0);
                 case 6 -> level.addParticle(ParticleTypes.CRIT, x, y, z, lookX, lookY, lookZ);
-                  case 25 -> {
-                      int teamId = (int) lookY;
-                      spawnTeamCircleAtClient((net.minecraft.client.multiplayer.ClientLevel) level, x, y, z, teamId);
-                  }
+                case 25 -> {
+                    int teamId = (int) lookY;
+                    spawnTeamCircleAtClient((net.minecraft.client.multiplayer.ClientLevel) level, x, y, z, teamId);
+                }
                 case 7 -> level.addParticle(ParticleTypes.ENCHANTED_HIT, x, y, z, lookX, lookY, lookZ);
                 case 8 -> level.addParticle(ParticleTypes.LARGE_SMOKE, x, y, z, 0, 0, 0);
                 case 9 -> level.addParticle(ParticleTypes.BUBBLE, x, y, z, 0, 0.1, 0);
@@ -120,7 +120,8 @@ public class ParticleHelper {
                 }
 
                 default -> {
-                    /* Unhandled particle type */ }
+                    /* Unhandled particle type */
+                }
             }
         }
     }
@@ -212,8 +213,8 @@ public class ParticleHelper {
             byte[] payload = new byte[48];
             buf.getBytes(0, payload);
             com.lulan.shincolle.network.ModNetworking.sendToPlayer(
-                new com.lulan.shincolle.network.S2CSpawnParticlePacket((byte) 25, -1, payload),
-                player
+                    new com.lulan.shincolle.network.S2CSpawnParticlePacket((byte) 25, -1, payload),
+                    player
             );
         } finally {
             buf.release();
@@ -236,7 +237,7 @@ public class ParticleHelper {
      * @param type  beam visual type
      */
     public static void spawnLaserParticle(Level level, double x, double y, double z,
-            double tarX, double tarY, double tarZ, float scale, int type) {
+                                          double tarX, double tarY, double tarZ, float scale, int type) {
         if (level.isClientSide()) {
             spawnLaserParticleClient((ClientLevel) level, x, y, z, tarX, tarY, tarZ, scale, type);
         }
@@ -369,7 +370,7 @@ public class ParticleHelper {
      * @param type      visual type
      */
     public static void spawnCraningParticle(Level level, double x, double y, double z,
-            double lengthMax, double par1, double scale, int type) {
+                                            double lengthMax, double par1, double scale, int type) {
         if (level.isClientSide()) {
             spawnCraningParticleClient((ClientLevel) level, x, y, z, lengthMax, par1, scale, type);
         }
@@ -381,7 +382,7 @@ public class ParticleHelper {
 
     @OnlyIn(Dist.CLIENT)
     private static void spawnTextParticleClient(ClientLevel level, double x, double y, double z,
-            float scale, int type) {
+                                                float scale, int type) {
         Minecraft.getInstance().particleEngine.add(
                 new ParticleTexts(level, x, y, z, scale, type));
     }
@@ -409,7 +410,7 @@ public class ParticleHelper {
 
     @OnlyIn(Dist.CLIENT)
     private static void spawnSprayParticleVariantClient(ClientLevel level, double x, double y, double z,
-            double motionX, double motionY, double motionZ, int sprayType) {
+                                                        double motionX, double motionY, double motionZ, int sprayType) {
         Minecraft.getInstance().particleEngine.add(
                 new ParticleSpray(level, x, y, z, motionX, motionY, motionZ, sprayType));
     }
@@ -429,7 +430,7 @@ public class ParticleHelper {
 
     @OnlyIn(Dist.CLIENT)
     private static void spawnLaserParticleClient(ClientLevel level, double x, double y, double z,
-            double tarX, double tarY, double tarZ, float scale, int type) {
+                                                 double tarX, double tarY, double tarZ, float scale, int type) {
         Minecraft.getInstance().particleEngine.add(
                 new ParticleLaser(level, x, y, z, tarX, tarY, tarZ, scale, type));
     }
@@ -502,7 +503,7 @@ public class ParticleHelper {
 
     @OnlyIn(Dist.CLIENT)
     private static void spawnCraningParticleClient(ClientLevel level, double x, double y, double z,
-            double lengthMax, double par1, double scale, int type) {
+                                                   double lengthMax, double par1, double scale, int type) {
         Minecraft.getInstance().particleEngine.add(
                 new ParticleCraning(level, x, y, z, lengthMax, par1, scale, type));
     }

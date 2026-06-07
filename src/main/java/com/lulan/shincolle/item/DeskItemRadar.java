@@ -20,31 +20,31 @@ import net.minecraftforge.network.NetworkHooks;
  */
 public class DeskItemRadar extends BasicItem {
 
-	public DeskItemRadar() {
-		super(new Properties().stacksTo(1));
-	}
+    public DeskItemRadar() {
+        super(new Properties().stacksTo(1));
+    }
 
-	@Override
-	public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
-		ItemStack stack = player.getItemInHand(hand);
+    @Override
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        ItemStack stack = player.getItemInHand(hand);
 
-		if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
-			NetworkHooks.openScreen(serverPlayer, new MenuProvider() {
-				@Override
-				public Component getDisplayName() {
-					return Component.translatable("container.shincolle.desk");
-				}
+        if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
+            NetworkHooks.openScreen(serverPlayer, new MenuProvider() {
+                @Override
+                public Component getDisplayName() {
+                    return Component.translatable("container.shincolle.desk");
+                }
 
-				@Override
-				public AbstractContainerMenu createMenu(int containerId, Inventory playerInv, Player p) {
-					return new ContainerDesk(containerId, playerInv, 1, null);
-				}
-			}, buf -> {
-				buf.writeInt(1); // guiType 1 = radar item
-				buf.writeBlockPos(BlockPos.ZERO); // no tile entity
-			});
-		}
+                @Override
+                public AbstractContainerMenu createMenu(int containerId, Inventory playerInv, Player p) {
+                    return new ContainerDesk(containerId, playerInv, 1, null);
+                }
+            }, buf -> {
+                buf.writeInt(1); // guiType 1 = radar item
+                buf.writeBlockPos(BlockPos.ZERO); // no tile entity
+            });
+        }
 
-		return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
-	}
+        return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
+    }
 }

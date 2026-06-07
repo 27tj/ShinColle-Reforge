@@ -12,12 +12,12 @@ import net.minecraft.world.level.Level;
  */
 public class EntityRensouhouS extends EntityRensouhou {
 
-	public EntityRensouhouS(EntityType<? extends EntityRensouhouS> type, Level level) {
-		super(type, level);
-	}
+    public EntityRensouhouS(EntityType<? extends EntityRensouhouS> type, Level level) {
+        super(type, level);
+    }
 
-	@Override
-	public EntityDimensions getDimensions(Pose pose) {
-		return EntityDimensions.fixed(0.5F, 1.4F);
-	}
+    @Override
+    public EntityDimensions getDimensions(Pose pose) {
+        return EntityDimensions.fixed(0.5F, 1.4F);
+    }
 }

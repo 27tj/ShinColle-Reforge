@@ -1,7 +1,5 @@
 package com.lulan.shincolle.client.gui;
 
-import org.lwjgl.glfw.GLFW;
-
 import com.lulan.shincolle.capability.CapaTeitoku;
 import com.lulan.shincolle.capability.CapaTeitokuProvider;
 import com.lulan.shincolle.client.gui.inventory.ContainerFormation;
@@ -9,7 +7,6 @@ import com.lulan.shincolle.entity.BasicEntityShip;
 import com.lulan.shincolle.network.C2SGUIInputPacket;
 import com.lulan.shincolle.network.ModNetworking;
 import com.lulan.shincolle.utility.FormationHelper;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
@@ -19,6 +16,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import org.lwjgl.glfw.GLFW;
 
 /**
  * GUI screen for the fleet formation interface.
@@ -29,28 +27,46 @@ public class GuiFormation extends AbstractContainerScreen<ContainerFormation> {
 
     private static final ResourceLocation TEXTURE = new ResourceLocation("shincolle", "textures/gui/guiformation.png");
 
-    /** Formation type names */
+    /**
+     * Formation type names
+     */
     private static final String[] FORMATION_NAMES = {
             "None", "Line Ahead", "Double Line", "Diamond", "Echelon", "Line Abreast"
     };
 
-    /** Attribute labels for formation buff display */
-    private static final String[] ATTR_LABELS = { "ATK(L)", "ATK(H)", "DEF", "SPD", "CRI", "DODGE" };
-    private static final int[] ATTR_COLORS = { 0xFFFF4444, 0xFF44FF44, 0xFFFFFFFF, 0xFFFFFFFF, 0xFF44FFFF, 0xFFFFCC00 };
-    /** Indices into FormationHelper result array for the 6 displayed attributes */
-    private static final int[] ATTR_INDICES = { 0, 1, 2, 3, 8, 9 };
+    /**
+     * Attribute labels for formation buff display
+     */
+    private static final String[] ATTR_LABELS = {"ATK(L)", "ATK(H)", "DEF", "SPD", "CRI", "DODGE"};
+    private static final int[] ATTR_COLORS = {0xFFFF4444, 0xFF44FF44, 0xFFFFFFFF, 0xFFFFFFFF, 0xFF44FFFF, 0xFFFFCC00};
+    /**
+     * Indices into FormationHelper result array for the 6 displayed attributes
+     */
+    private static final int[] ATTR_INDICES = {0, 1, 2, 3, 8, 9};
 
-    /** Currently selected team (0-8) */
+    /**
+     * Currently selected team (0-8)
+     */
     private int teamClicked = 0;
-    /** Currently selected ship slot (0-5) */
+    /**
+     * Currently selected ship slot (0-5)
+     */
     private int listClicked = 0;
-    /** Last clicked ship slot index for double-click detection */
+    /**
+     * Last clicked ship slot index for double-click detection
+     */
     private int lastSlotClicked = -1;
-    /** Last click timestamp (ms) for ship-slot double-click detection */
+    /**
+     * Last click timestamp (ms) for ship-slot double-click detection
+     */
     private long lastSlotClickTime = 0L;
-    /** Team name rename input field (legacy formation GUI behavior) */
+    /**
+     * Team name rename input field (legacy formation GUI behavior)
+     */
     private EditBox unitNameField;
-    /** True while editing team name */
+    /**
+     * True while editing team name
+     */
     private boolean renamingTeamName = false;
 
     public GuiFormation(ContainerFormation menu, Inventory playerInv, Component title) {
@@ -296,7 +312,7 @@ public class GuiFormation extends AbstractContainerScreen<ContainerFormation> {
                     // selection.
                     ModNetworking.sendToServer(new C2SGUIInputPacket(
                             C2SGUIInputPacket.SetSelect,
-                            new int[] { player.getId(), 0, i }));
+                            new int[]{player.getId(), 0, i}));
                 }
                 // Update local capability
                 CapaTeitoku capa = getCapaTeitoku();
@@ -336,7 +352,7 @@ public class GuiFormation extends AbstractContainerScreen<ContainerFormation> {
                 Player player = Minecraft.getInstance().player;
                 ModNetworking.sendToServer(new C2SGUIInputPacket(
                         C2SGUIInputPacket.SetFormation,
-                        new int[] { player != null ? player.getId() : 0, teamClicked, i }));
+                        new int[]{player != null ? player.getId() : 0, teamClicked, i}));
                 // Update local capability
                 CapaTeitoku capa = getCapaTeitoku();
                 if (capa != null) {
@@ -408,7 +424,7 @@ public class GuiFormation extends AbstractContainerScreen<ContainerFormation> {
 
         ModNetworking.sendToServer(new C2SGUIInputPacket(
                 C2SGUIInputPacket.OpenShipGUI,
-                new int[] { player.getId(), 0, sid }));
+                new int[]{player.getId(), 0, sid}));
     }
 
     private void swapSelectedShip(boolean moveUp) {
@@ -423,7 +439,7 @@ public class GuiFormation extends AbstractContainerScreen<ContainerFormation> {
 
         ModNetworking.sendToServer(new C2SGUIInputPacket(
                 C2SGUIInputPacket.SwapShip,
-                new int[] { player.getId(), 0, current, target }));
+                new int[]{player.getId(), 0, current, target}));
 
         // Client-side optimistic swap so UI responds immediately before server sync
         // packet arrives.
@@ -463,7 +479,7 @@ public class GuiFormation extends AbstractContainerScreen<ContainerFormation> {
         if (!newName.isEmpty()) {
             ModNetworking.sendToServer(new C2SGUIInputPacket(
                     C2SGUIInputPacket.SetUnitName,
-                    new int[] { player.getId(), 0, this.teamClicked },
+                    new int[]{player.getId(), 0, this.teamClicked},
                     newName));
             capa.setUnitName(this.teamClicked, newName);
         }

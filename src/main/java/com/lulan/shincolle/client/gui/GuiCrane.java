@@ -1,15 +1,11 @@
 package com.lulan.shincolle.client.gui;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.lulan.shincolle.client.gui.inventory.ContainerCrane;
 import com.lulan.shincolle.network.C2SGUIInputPacket;
 import com.lulan.shincolle.network.ModNetworking;
 import com.lulan.shincolle.reference.ID;
 import com.lulan.shincolle.tileentity.TileEntityCrane;
 import com.lulan.shincolle.utility.GuiHelper;
-
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.resources.language.I18n;
@@ -17,6 +13,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * GUI screen for the crane block.
@@ -32,6 +31,11 @@ public class GuiCrane extends AbstractContainerScreen<ContainerCrane> {
         super(menu, playerInv, title);
         this.imageWidth = 176;
         this.imageHeight = 204;
+    }
+
+    private static String tr(String key, String fallback) {
+        String localized = I18n.get(key);
+        return localized.equals(key) ? fallback : localized;
     }
 
     @Override
@@ -211,7 +215,7 @@ public class GuiCrane extends AbstractContainerScreen<ContainerCrane> {
     private void sendTileBtn(BlockPos pos, int buttonId, int value) {
         ModNetworking.sendToServer(new C2SGUIInputPacket(
                 C2SGUIInputPacket.TileBtn,
-                new int[] { 0, pos.getX(), pos.getY(), pos.getZ(), buttonId, value }));
+                new int[]{0, pos.getX(), pos.getY(), pos.getZ(), buttonId, value}));
     }
 
     private void renderHoveringText(GuiGraphics graphics, int mouseX, int mouseY) {
@@ -285,11 +289,6 @@ public class GuiCrane extends AbstractContainerScreen<ContainerCrane> {
         if (!lines.isEmpty()) {
             graphics.renderComponentTooltip(this.font, lines, mouseX, mouseY);
         }
-    }
-
-    private static String tr(String key, String fallback) {
-        String localized = I18n.get(key);
-        return localized.equals(key) ? fallback : localized;
     }
 
     @Override

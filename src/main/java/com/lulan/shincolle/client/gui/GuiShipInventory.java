@@ -27,7 +27,7 @@ import java.util.Objects;
 
 /**
  * GUI screen for the ship entity inventory.
- *
+ * <p>
  * Features:
  * - Entity preview rendering in the top-right area
  * - Info page tabs (3 pages): kills/exp, ATK/DEF stats, marriage/formation
@@ -47,36 +47,16 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
             "textures/gui/guinameicon2.png");
 
     // ========== State ==========
-
-    /** Current info page: 0=Kills/EXP, 1=ATK/DEF/SPD, 2=Marriage/Formation */
-    private int infoPage = 0;
-
-    /** Attribute display on info page: false=surface attack, true=air attack. */
-    private boolean showAirAttack = false;
-
-    /** Current AI settings page: 1-12 (pages 9-12 are empty) */
-    private int showPageAI = 1;
-
     /**
-     * Which slider is being dragged: -1=none, 0=followMin, 1=followMax, 2=fleeHP,
-     * 3=wpStay, 4=autoCR
+     * Page 1: Attack type toggles
      */
-    private int mousePressBar = -1;
-
-    /** Current slider drag position (0-42) */
-    private int barPos = 0;
-
-    // ========== AI Page Toggle Definitions ==========
-    // Each entry: {flagId, buttonId, conditionFlagId (-1 = always visible)}
-
-    /** Page 1: Attack type toggles */
     private static final int[][] PAGE1_TOGGLES = {
-            { ID.F.UseMelee, ID.B.ShipInv_Melee, -1 },
-            { ID.F.UseAmmoLight, ID.B.ShipInv_AmmoLight, ID.F.AtkType_Light },
-            { ID.F.UseAmmoHeavy, ID.B.ShipInv_AmmoHeavy, ID.F.AtkType_Heavy },
-            { ID.F.UseAirLight, ID.B.ShipInv_AirLight, ID.F.AtkType_AirLight },
-            { ID.F.UseAirHeavy, ID.B.ShipInv_AirHeavy, ID.F.AtkType_AirHeavy },
-            { ID.F.UseRingEffect, ID.B.ShipInv_AuraEffect, ID.F.HaveRingEffect },
+            {ID.F.UseMelee, ID.B.ShipInv_Melee, -1},
+            {ID.F.UseAmmoLight, ID.B.ShipInv_AmmoLight, ID.F.AtkType_Light},
+            {ID.F.UseAmmoHeavy, ID.B.ShipInv_AmmoHeavy, ID.F.AtkType_Heavy},
+            {ID.F.UseAirLight, ID.B.ShipInv_AirLight, ID.F.AtkType_AirLight},
+            {ID.F.UseAirHeavy, ID.B.ShipInv_AirHeavy, ID.F.AtkType_AirHeavy},
+            {ID.F.UseRingEffect, ID.B.ShipInv_AuraEffect, ID.F.HaveRingEffect},
     };
     private static final String[] PAGE1_LABELS = {
             "Melee", "Atk Light", "Atk Heavy", "Air Light", "Air Heavy", "Aura"
@@ -85,28 +65,33 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
             "gui.shincolle.canmelee", "gui.shincolle.canlightattack", "gui.shincolle.canheavyattack",
             "gui.shincolle.canairlightattack", "gui.shincolle.canairheavyattack", "gui.shincolle.auraeffect"
     };
-
-    /** Page 3: Targeting AI toggles */
+    /**
+     * Page 3: Targeting AI toggles
+     */
     private static final int[][] PAGE3_TOGGLES = {
-            { ID.F.PassiveAI, ID.B.ShipInv_TarAI, -1 },
-            { ID.F.OnSightChase, ID.B.ShipInv_OnSightAI, -1 },
-            { ID.F.PVPFirst, ID.B.ShipInv_PVPAI, -1 },
-            { ID.F.AntiAir, ID.B.ShipInv_AAAI, -1 },
-            { ID.F.AntiSS, ID.B.ShipInv_ASMAI, -1 },
-            { ID.F.TimeKeeper, ID.B.ShipInv_TIMEKEEPAI, -1 },
+            {ID.F.PassiveAI, ID.B.ShipInv_TarAI, -1},
+            {ID.F.OnSightChase, ID.B.ShipInv_OnSightAI, -1},
+            {ID.F.PVPFirst, ID.B.ShipInv_PVPAI, -1},
+            {ID.F.AntiAir, ID.B.ShipInv_AAAI, -1},
+            {ID.F.AntiSS, ID.B.ShipInv_ASMAI, -1},
+            {ID.F.TimeKeeper, ID.B.ShipInv_TIMEKEEPAI, -1},
     };
     private static final String[] PAGE3_LABELS = {
             "Passive AI", "On Sight", "PVP First", "Anti-Air", "Anti-Sub", "Timekeeper"
     };
+
+    // ========== AI Page Toggle Definitions ==========
+    // Each entry: {flagId, buttonId, conditionFlagId (-1 = always visible)}
     private static final String[] PAGE3_LABEL_KEYS = {
             "gui.shincolle.targetAI", "gui.shincolle.onsightAI", "gui.shincolle.ai.pvp",
             "gui.shincolle.ai.aa", "gui.shincolle.ai.asm", "gui.shincolle.ai.timekeeper"
     };
-
-    /** Page 4: Item/Pump toggles */
+    /**
+     * Page 4: Item/Pump toggles
+     */
     private static final int[][] PAGE4_TOGGLES = {
-            { ID.F.PickItem, ID.B.ShipInv_PickitemAI, ID.F.CanPickItem },
-            { ID.F.AutoPump, ID.B.ShipInv_AutoPump, -1 },
+            {ID.F.PickItem, ID.B.ShipInv_PickitemAI, ID.F.CanPickItem},
+            {ID.F.AutoPump, ID.B.ShipInv_AutoPump, -1},
     };
     private static final String[] PAGE4_LABELS = {
             "Pick Item", "Auto Pump"
@@ -114,17 +99,38 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
     private static final String[] PAGE4_LABEL_KEYS = {
             "gui.shincolle.ai.pickitem", "gui.shincolle.autopump"
     };
-
-    // ========== Slider Bar Constants ==========
-
     private static final int SLIDER_TRACK_X = 191; // track left X (relative)
     private static final int SLIDER_TRACK_W = 43; // track width
     private static final int SLIDER_MAX_POS = 42; // max drag position
     private static final int SLIDER_HANDLE_W = 5; // handle width
     private static final int SLIDER_HANDLE_H = 9; // handle height
 
-    /** Slider Y positions for each bar row (track center Y, relative to GUI) */
-    private static final int[] SLIDER_TRACK_Y = { 148, 172, 196 };
+    // ========== Slider Bar Constants ==========
+    /**
+     * Slider Y positions for each bar row (track center Y, relative to GUI)
+     */
+    private static final int[] SLIDER_TRACK_Y = {148, 172, 196};
+    /**
+     * Current info page: 0=Kills/EXP, 1=ATK/DEF/SPD, 2=Marriage/Formation
+     */
+    private int infoPage = 0;
+    /**
+     * Attribute display on info page: false=surface attack, true=air attack.
+     */
+    private boolean showAirAttack = false;
+    /**
+     * Current AI settings page: 1-12 (pages 9-12 are empty)
+     */
+    private int showPageAI = 1;
+    /**
+     * Which slider is being dragged: -1=none, 0=followMin, 1=followMax, 2=fleeHP,
+     * 3=wpStay, 4=autoCR
+     */
+    private int mousePressBar = -1;
+    /**
+     * Current slider drag position (0-42)
+     */
+    private int barPos = 0;
 
     // ========== Constructor ==========
 
@@ -135,6 +141,90 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
     }
 
     // ========== Background Rendering ==========
+
+    private static String getMoraleDisplayName(int morale) {
+        if (morale > ID.Morale.L_Excited) {
+            return tr("gui.shincolle.morale0", "Excited");
+        }
+        if (morale > ID.Morale.L_Happy) {
+            return tr("gui.shincolle.morale1", "Happy");
+        }
+        if (morale > ID.Morale.L_Normal) {
+            return tr("gui.shincolle.morale2", "Normal");
+        }
+        if (morale > ID.Morale.L_Tired) {
+            return tr("gui.shincolle.morale3", "Tired");
+        }
+        return tr("gui.shincolle.morale4", "Exhausted");
+    }
+
+    private static int getMoraleDisplayColor(int morale) {
+        if (morale > ID.Morale.L_Excited) {
+            return 0xFF5500;
+        }
+        if (morale > ID.Morale.L_Happy) {
+            return 0xFFFF00;
+        }
+        if (morale > ID.Morale.L_Normal) {
+            return 0x00FF00;
+        }
+        if (morale > ID.Morale.L_Tired) {
+            return 0xAAAAAA;
+        }
+        return 0xFF0000;
+    }
+
+    /**
+     * Get display name for a formation type ID
+     */
+    private static String getFormationName(int formatType) {
+        return switch (formatType) {
+            case 1 -> tr("gui.shincolle.formation.format1", "Line Ahead");
+            case 2 -> tr("gui.shincolle.formation.format2", "Double Line");
+            case 3 -> tr("gui.shincolle.formation.format3", "Diamond");
+            case 4 -> tr("gui.shincolle.formation.format4", "Echelon");
+            case 5 -> tr("gui.shincolle.formation.format5", "Line Abreast");
+            default -> tr("gui.shincolle.formation.format0", "None");
+        };
+    }
+
+    /**
+     * Get short display name for a ship type ID
+     */
+    private static String getShipTypeName(int shipType) {
+        return switch (shipType) {
+            case ID.ShipType.DESTROYER -> "DD";
+            case ID.ShipType.LIGHT_CRUISER -> "CL";
+            case ID.ShipType.HEAVY_CRUISER -> "CA";
+            case ID.ShipType.TORPEDO_CRUISER -> "CLT";
+            case ID.ShipType.LIGHT_CARRIER -> "CVL";
+            case ID.ShipType.STANDARD_CARRIER -> "CV";
+            case ID.ShipType.BATTLESHIP -> "BB";
+            case ID.ShipType.TRANSPORT -> "AP";
+            case ID.ShipType.SUBMARINE -> "SS";
+            case ID.ShipType.DEMON -> "Demon";
+            case ID.ShipType.HIME -> "Hime";
+            default -> "??";
+        };
+    }
+
+    /**
+     * Get morale level display name from auto-CR value
+     */
+    private static String getMoraleLevelName(int level) {
+        return switch (level) {
+            case 1 -> tr("gui.shincolle.morale4", "Exhausted");
+            case 2 -> tr("gui.shincolle.morale3", "Tired");
+            case 3 -> tr("gui.shincolle.morale2", "Normal");
+            case 4 -> tr("gui.shincolle.morale1", "Happy");
+            default -> tr("gui.shincolle.general.off", "Off");
+        };
+    }
+
+    private static String tr(String key, String fallback) {
+        String localized = I18n.get(key);
+        return localized.equals(key) ? fallback : localized;
+    }
 
     @Override
     protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
@@ -153,6 +243,8 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
         }
     }
 
+    // ========== AI Page Tab Rendering ==========
+
     /**
      * Render inventory page lock overlays and current page indicator (left tabs).
      */
@@ -170,6 +262,8 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
         int tabY = this.topPos + 18 + Mth.clamp(invPage, 0, 2) * 36;
         graphics.blit(TEXTURE, this.leftPos + 62, tabY, 74, 214, 6, 34);
     }
+
+    // ========== AI Page Content Background Rendering ==========
 
     /**
      * Render legacy task icon/slot overlay in the inventory panel (page 0 only).
@@ -201,13 +295,17 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
         }
     }
 
-    /** Render the selected info page tab indicator */
+    /**
+     * Render the selected info page tab indicator
+     */
     private void renderInfoPageTabIndicator(GuiGraphics graphics) {
         int tabY = this.topPos + 18 + infoPage * 36;
         graphics.blit(TEXTURE, this.leftPos + 135, tabY, 74, 214, 6, 34);
     }
 
-    /** Render entity preview in the top-right area */
+    /**
+     * Render entity preview in the top-right area
+     */
     private void renderEntityPreview(GuiGraphics graphics, int mouseX, int mouseY, BasicEntityShip ship) {
         // [PORT] 1.10.2 -> 1.20.1: keep legacy modelPos offsets so model anchor remains
         // consistent.
@@ -231,7 +329,9 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
                 ship);
     }
 
-    /** Render morale icon (11x11 sprite) */
+    /**
+     * Render morale icon (11x11 sprite)
+     */
     private void renderMoraleIcon(GuiGraphics graphics, BasicEntityShip ship) {
         int morale = ship.getMorale();
         int moraleIdx = BuffHelper.getMoraleLevel(morale);
@@ -239,7 +339,9 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
                 moraleIdx * 11, 240, 11, 11);
     }
 
-    /** Render legacy ship type/name icons in model panel area. */
+    /**
+     * Render legacy ship type/name icons in model panel area.
+     */
     private void renderShipIdentityIcons(GuiGraphics graphics, BasicEntityShip ship) {
         int[] typeIcon = Values.ShipTypeIconMap.get(ship.getShipType());
         if (typeIcon != null && typeIcon.length >= 2) {
@@ -269,9 +371,9 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
         graphics.blit(nameTexture, this.leftPos + 176, this.topPos + 63 + offY, nameIcon[1], nameIcon[2], 11, 59);
     }
 
-    // ========== AI Page Tab Rendering ==========
-
-    /** Render AI page tab indicators (two columns of 6 tabs) */
+    /**
+     * Render AI page tab indicators (two columns of 6 tabs)
+     */
     private void renderAIPageTabs(GuiGraphics graphics) {
         // [PORT] 1.10.2 -> 1.20.1: use legacy single tab-indicator sprite for AI pages.
         int indicatorX = showPageAI <= 6 ? 239 : 246;
@@ -286,16 +388,16 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
         graphics.blit(TEXTURE, this.leftPos + indicatorX, this.topPos + indicatorY, 74, 214, 6, 11);
     }
 
-    // ========== AI Page Content Background Rendering ==========
-
-    /** Dispatch AI page background rendering based on current page */
+    /**
+     * Dispatch AI page background rendering based on current page
+     */
     private void renderAIPageContentBg(GuiGraphics graphics, BasicEntityShip ship) {
         switch (showPageAI) {
             case 1:
                 renderToggleButtonBg(graphics, ship, PAGE1_TOGGLES);
                 break;
             case 2:
-                renderSliderBarsBg(graphics, ship, new int[] { 0, 1, 2 });
+                renderSliderBarsBg(graphics, ship, new int[]{0, 1, 2});
                 break;
             case 3:
                 renderToggleButtonBg(graphics, ship, PAGE3_TOGGLES);
@@ -304,7 +406,7 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
                 renderToggleButtonBg(graphics, ship, PAGE4_TOGGLES);
                 break;
             case 5:
-                renderSliderBarsBg(graphics, ship, new int[] { 3, 4 });
+                renderSliderBarsBg(graphics, ship, new int[]{3, 4});
                 break;
             case 6:
                 renderPage6Bg(graphics, ship);
@@ -318,7 +420,11 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
         }
     }
 
-    /** Render toggle button backgrounds for a toggle page */
+    // ========== Label/Text Rendering ==========
+
+    /**
+     * Render toggle button backgrounds for a toggle page
+     */
     private void renderToggleButtonBg(GuiGraphics graphics, BasicEntityShip ship, int[][] toggles) {
         for (int i = 0; i < toggles.length; i++) {
             int flagId = toggles[i][0];
@@ -334,7 +440,9 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
         }
     }
 
-    /** Render slider bar backgrounds (track + handle) */
+    /**
+     * Render slider bar backgrounds (track + handle)
+     */
     private void renderSliderBarsBg(GuiGraphics graphics, BasicEntityShip ship, int[] barIndices) {
         for (int idx = 0; idx < barIndices.length; idx++) {
             int barIndex = barIndices[idx];
@@ -357,7 +465,11 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
         }
     }
 
-    /** Render page 6 background: Show Held toggle + Model State grid */
+    // ========== Info Page Text Rendering ==========
+
+    /**
+     * Render page 6 background: Show Held toggle + Model State grid
+     */
     private void renderPage6Bg(GuiGraphics graphics, BasicEntityShip ship) {
         // Show Held Item toggle
         int bx = this.leftPos + 174;
@@ -382,7 +494,9 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
         }
     }
 
-    /** Render page 7 background: Task selection */
+    /**
+     * Render page 7 background: Task selection
+     */
     private void renderPage7Bg(GuiGraphics graphics, BasicEntityShip ship) {
         int currentTask = ship.getStateMinor(ID.M.Task);
         // Task icon row and overlay labels.
@@ -414,7 +528,9 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
                 11, 11);
     }
 
-    /** Render page 8 background: Task side I/O/Fuel direction buttons */
+    /**
+     * Render page 8 background: Task side I/O/Fuel direction buttons
+     */
     private void renderPage8Bg(GuiGraphics graphics, BasicEntityShip ship) {
         int taskSide = ship.getStateMinor(ID.M.TaskSide);
 
@@ -431,12 +547,12 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
         }
     }
 
-    /** Helper: draw a single 11x11 toggle button */
+    /**
+     * Helper: draw a single 11x11 toggle button
+     */
     private void drawToggleButton(GuiGraphics graphics, int x, int y, boolean isOn) {
         graphics.blit(TEXTURE, x, y, isOn ? 0 : 11, 214, 11, 11);
     }
-
-    // ========== Label/Text Rendering ==========
 
     @Override
     protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
@@ -481,7 +597,9 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
         graphics.drawString(this.font, this.playerInventoryTitle, this.inventoryLabelX, 121, 0x404040, false);
     }
 
-    /** Render HP text label and value */
+    /**
+     * Render HP text label and value
+     */
     private void renderHPText(GuiGraphics graphics, BasicEntityShip ship) {
         int hpCurrent = Mth.ceil(ship.getHealth());
         int hpMax = Mth.ceil(ship.getMaxHealth());
@@ -501,9 +619,11 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
         graphics.drawString(this.font, hpStr, 118, 5, hpTextColor, true);
     }
 
-    // ========== Info Page Text Rendering ==========
+    // ========== AI Page Label Rendering ==========
 
-    /** Page 0: Kills, EXP, Ammo, Grudge, Morale */
+    /**
+     * Page 0: Kills, EXP, Ammo, Grudge, Morale
+     */
     private void renderInfoPage0(GuiGraphics graphics, BasicEntityShip ship) {
         int textX = 75;
         int textY = 20;
@@ -526,7 +646,9 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
                 String.valueOf(ship.getStateMinor(ID.M.NumGrudge)), lc, vc);
     }
 
-    /** Page 1: ATK, DEF, SPD, MOV, HIT */
+    /**
+     * Page 1: ATK, DEF, SPD, MOV, HIT
+     */
     private void renderInfoPage1(GuiGraphics graphics, BasicEntityShip ship) {
         Attrs attrs = ship.getAttrs();
         if (attrs == null)
@@ -562,7 +684,9 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
                 GuiHelper.getBonusPointColor(attrs.getAttrsBonus(ID.AttrsBase.HIT)));
     }
 
-    /** Page 2: Marriage, Ring, Formation, Ship type, UID */
+    /**
+     * Page 2: Marriage, Ring, Formation, Ship type, UID
+     */
     private void renderInfoPage2(GuiGraphics graphics, BasicEntityShip ship) {
         int textX = 75;
         int textY = 20;
@@ -587,48 +711,18 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
         }
     }
 
-    private static String getMoraleDisplayName(int morale) {
-        if (morale > ID.Morale.L_Excited) {
-            return tr("gui.shincolle.morale0", "Excited");
-        }
-        if (morale > ID.Morale.L_Happy) {
-            return tr("gui.shincolle.morale1", "Happy");
-        }
-        if (morale > ID.Morale.L_Normal) {
-            return tr("gui.shincolle.morale2", "Normal");
-        }
-        if (morale > ID.Morale.L_Tired) {
-            return tr("gui.shincolle.morale3", "Tired");
-        }
-        return tr("gui.shincolle.morale4", "Exhausted");
-    }
-
-    private static int getMoraleDisplayColor(int morale) {
-        if (morale > ID.Morale.L_Excited) {
-            return 0xFF5500;
-        }
-        if (morale > ID.Morale.L_Happy) {
-            return 0xFFFF00;
-        }
-        if (morale > ID.Morale.L_Normal) {
-            return 0x00FF00;
-        }
-        if (morale > ID.Morale.L_Tired) {
-            return 0xAAAAAA;
-        }
-        return 0xFF0000;
-    }
-
-    /** Draw label at textX, value right-aligned at x=133 */
+    /**
+     * Draw label at textX, value right-aligned at x=133
+     */
     private void drawStatLine(GuiGraphics graphics, int textX, int textY,
-            String label, String value, int labelColor, int valueColor) {
+                              String label, String value, int labelColor, int valueColor) {
         graphics.drawString(this.font, label, textX, textY, labelColor, false);
         graphics.drawString(this.font, value, 133 - this.font.width(value), textY, valueColor, true);
     }
 
-    // ========== AI Page Label Rendering ==========
-
-    /** Dispatch AI page label rendering */
+    /**
+     * Dispatch AI page label rendering
+     */
     private void renderAIPageLabels(GuiGraphics graphics, BasicEntityShip ship) {
         switch (showPageAI) {
             case 1:
@@ -658,9 +752,11 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
         }
     }
 
-    /** Render labels for toggle pages */
+    /**
+     * Render labels for toggle pages
+     */
     private void renderToggleLabels(GuiGraphics graphics, BasicEntityShip ship,
-            int[][] toggles, String[] labels, String[] labelKeys) {
+                                    int[][] toggles, String[] labels, String[] labelKeys) {
         for (int i = 0; i < toggles.length; i++) {
             int conditionFlag = toggles[i][2];
             if (conditionFlag >= 0 && !ship.getStateFlag(conditionFlag))
@@ -670,7 +766,9 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
         }
     }
 
-    /** Render slider labels for page 2: Follow Min, Follow Max, Flee HP */
+    /**
+     * Render slider labels for page 2: Follow Min, Follow Max, Flee HP
+     */
     private void renderSliderLabelsPage2(GuiGraphics graphics, BasicEntityShip ship) {
         int lc = 0x000000;
 
@@ -690,7 +788,9 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
         graphics.drawString(this.font, String.valueOf(flee), 174, 193, fleeColor, true);
     }
 
-    /** Render slider labels for page 5: Waypoint Stay, Auto Combat Ration */
+    /**
+     * Render slider labels for page 5: Waypoint Stay, Auto Combat Ration
+     */
     private void renderSliderLabelsPage5(GuiGraphics graphics, BasicEntityShip ship) {
         int lc = 0x000000;
 
@@ -707,7 +807,11 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
         graphics.drawString(this.font, crText, 174, 169, crColor, true);
     }
 
-    /** Render page 6 labels: Show Held + Model State grid */
+    // ========== Input Handling ==========
+
+    /**
+     * Render page 6 labels: Show Held + Model State grid
+     */
     private void renderPage6Labels(GuiGraphics graphics, BasicEntityShip ship) {
         boolean showHeld = ship.getStateFlag(ID.F.ShowHeldItem);
         graphics.drawString(this.font, tr("gui.shincolle.showhelditem", "Show Held Item"), 187, 133,
@@ -715,7 +819,9 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
         graphics.drawString(this.font, tr("gui.shincolle.appearance", "Appearance"), 177, 146, 0x000000, false);
     }
 
-    /** Render page 7 labels: Task selection */
+    /**
+     * Render page 7 labels: Task selection
+     */
     private void renderPage7Labels(GuiGraphics graphics, BasicEntityShip ship) {
         graphics.drawString(this.font, " " + tr("gui.shincolle.crane.usemeta", "Metadata"), 187, 159, 0x000000, false);
         graphics.drawString(this.font, " " + tr("gui.shincolle.crane.useoredict", "Ore Dict"), 187, 172, 0x000000,
@@ -723,20 +829,24 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
         graphics.drawString(this.font, " " + tr("gui.shincolle.crane.usenbt", "NBT Tag"), 187, 185, 0x000000, false);
     }
 
-    /** Render page 8 labels: Task side directions */
+    /**
+     * Render page 8 labels: Task side directions
+     */
     private void renderPage8Labels(GuiGraphics graphics) {
         String[] rowLabels = {
                 tr("gui.shincolle.ai.inputside", "Input"),
                 tr("gui.shincolle.ai.outputside", "Output"),
                 tr("gui.shincolle.ai.fuelside", "Fuel")
         };
-        int[] rowLabelY = { 133, 159, 185 };
+        int[] rowLabelY = {133, 159, 185};
         for (int i = 0; i < 3; i++) {
             graphics.drawString(this.font, rowLabels[i], 177, rowLabelY[i], 0x000000, false);
         }
     }
 
-    /** Render small page numbers on each AI tab */
+    /**
+     * Render small page numbers on each AI tab
+     */
     private void renderAIPageTabNumbers(GuiGraphics graphics) {
         for (int i = 0; i < 6; i++) {
             int tabY = 132 + i * 13;
@@ -753,8 +863,6 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
             graphics.drawString(this.font, num, 247, tabY, color, false);
         }
     }
-
-    // ========== Input Handling ==========
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
@@ -805,7 +913,9 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
         return super.mouseClicked(mouseX, mouseY, button);
     }
 
-    /** Handle clicks inside info-page controls. */
+    /**
+     * Handle clicks inside info-page controls.
+     */
     private boolean handleInfoPageClick(int relX, int relY) {
         // [PORT] 1.10.2 -> 1.20.1: keep the attack/air view toggle on attribute page.
         if (infoPage == 1 && relX >= 73 && relX <= 132 && relY >= 18 && relY <= 40) {
@@ -815,7 +925,9 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
         return false;
     }
 
-    /** Handle inventory page tab clicks (left column) and sync to server. */
+    /**
+     * Handle inventory page tab clicks (left column) and sync to server.
+     */
     private boolean handleInventoryPageClick(BasicEntityShip ship, int relX, int relY) {
         if (relX < 61 || relX > 70) {
             return false;
@@ -845,7 +957,9 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
         return true;
     }
 
-    /** Handle click within the AI page content area. Returns true if handled. */
+    /**
+     * Handle click within the AI page content area. Returns true if handled.
+     */
     private boolean handleAIPageClick(BasicEntityShip ship, int relX, int relY) {
         return switch (showPageAI) {
             case 1 -> handleToggleClick(ship, relX, relY, PAGE1_TOGGLES);
@@ -887,7 +1001,11 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
         return false;
     }
 
-    /** Handle click on slider bar pages. Start drag if clicked on a slider area. */
+    // ========== Slider Drag Handling ==========
+
+    /**
+     * Handle click on slider bar pages. Start drag if clicked on a slider area.
+     */
     private boolean handleSliderClick(int relX, int relY, int[] barIndices) {
         if (relX < 187 || relX > 238)
             return false;
@@ -905,7 +1023,9 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
         return false;
     }
 
-    /** Handle click on page 6 (Show Held toggle + model states) */
+    /**
+     * Handle click on page 6 (Show Held toggle + model states)
+     */
     private boolean handlePage6Click(BasicEntityShip ship, int relX, int relY) {
         // Show Held Item toggle at (174, 131)
         if (relX >= 174 && relX <= 184 && relY >= 131 && relY <= 142) {
@@ -935,7 +1055,11 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
         return false;
     }
 
-    /** Handle click on page 7 (Task selection + task settings) */
+    // ========== Main Render ==========
+
+    /**
+     * Handle click on page 7 (Task selection + task settings)
+     */
     private boolean handlePage7Click(BasicEntityShip ship, int relX, int relY) {
         // Task buttons (x=174-237, y=136-149)
         if (relX >= 174 && relX <= 237 && relY >= 136 && relY <= 149) {
@@ -963,12 +1087,14 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
         return false;
     }
 
-    /** Handle click on page 8 (Task side direction buttons) */
+    /**
+     * Handle click on page 8 (Task side direction buttons)
+     */
     private boolean handlePage8Click(BasicEntityShip ship, int relX, int relY) {
         if (relX < 173 || relX > 238)
             return false;
 
-        int[] rowYs = { 144, 170, 196 };
+        int[] rowYs = {144, 170, 196};
         for (int row = 0; row < 3; row++) {
             if (relY >= rowYs[row] && relY <= rowYs[row] + 11) {
                 int col = (relX - 173) / 11;
@@ -982,8 +1108,6 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
         }
         return false;
     }
-
-    // ========== Slider Drag Handling ==========
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
@@ -1011,7 +1135,7 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
         return super.mouseReleased(mouseX, mouseY, button);
     }
 
-    // ========== Main Render ==========
+    // ========== Slider Conversion Methods ==========
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
@@ -1028,7 +1152,9 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
         }
     }
 
-    /** Render small hover tooltips for AI page task controls (legacy parity). */
+    /**
+     * Render small hover tooltips for AI page task controls (legacy parity).
+     */
     private void renderAIPageTooltip(GuiGraphics graphics, int mouseX, int mouseY) {
         if (showPageAI != 7) {
             return;
@@ -1064,7 +1190,9 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
         }
     }
 
-    /** Morale icon hover region near the top-right model panel. */
+    /**
+     * Morale icon hover region near the top-right model panel.
+     */
     private boolean isHoveringMoraleIcon(int mouseX, int mouseY) {
         int x0 = this.leftPos + 238;
         int y0 = this.topPos + 17;
@@ -1127,9 +1255,9 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
         graphics.renderComponentTooltip(this.font, lines, mouseX, mouseY);
     }
 
-    // ========== Slider Conversion Methods ==========
-
-    /** Convert entity state value to slider bar position (0-42) */
+    /**
+     * Convert entity state value to slider bar position (0-42)
+     */
     private int stateToBarPos(int barIndex, int stateValue) {
         return switch (barIndex) {
             case 0 -> (int) ((stateValue - 1) / 30.0 * SLIDER_MAX_POS); // FollowMin: 1-31
@@ -1141,7 +1269,11 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
         };
     }
 
-    /** Convert slider bar position (0-42) to entity state value */
+    // ========== Packet Sending ==========
+
+    /**
+     * Convert slider bar position (0-42) to entity state value
+     */
     private int barPosToState(int barIndex, int pos) {
         pos = Mth.clamp(pos, 0, SLIDER_MAX_POS);
         return switch (barIndex) {
@@ -1154,7 +1286,11 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
         };
     }
 
-    /** Get the ID.M state index for a slider bar */
+    // ========== Utility Methods ==========
+
+    /**
+     * Get the ID.M state index for a slider bar
+     */
     private int getSliderState(BasicEntityShip ship, int barIndex) {
         return switch (barIndex) {
             case 0 -> ship.getStateMinor(ID.M.FollowMin);
@@ -1166,7 +1302,9 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
         };
     }
 
-    /** Set the entity state for a slider bar (client-side preview) */
+    /**
+     * Set the entity state for a slider bar (client-side preview)
+     */
     private void setSliderState(BasicEntityShip ship, int barIndex, int value) {
         switch (barIndex) {
             case 0:
@@ -1187,7 +1325,9 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
         }
     }
 
-    /** Get the button ID for a slider bar */
+    /**
+     * Get the button ID for a slider bar
+     */
     private int getSliderButtonId(int barIndex) {
         return switch (barIndex) {
             case 0 -> ID.B.ShipInv_FollowMin;
@@ -1199,8 +1339,6 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
         };
     }
 
-    // ========== Packet Sending ==========
-
     /**
      * Send a ship GUI button packet to the server.
      * Format: type=ShipBtn, values={entityId, 0, buttonId, value}
@@ -1208,54 +1346,6 @@ public class GuiShipInventory extends AbstractContainerScreen<ContainerShipInven
     private void sendShipButton(BasicEntityShip ship, int buttonId, int value) {
         ModNetworking.sendToServer(new C2SGUIInputPacket(
                 C2SGUIInputPacket.ShipBtn,
-                new int[] { ship.getId(), 0, buttonId, value }));
-    }
-
-    // ========== Utility Methods ==========
-
-    /** Get display name for a formation type ID */
-    private static String getFormationName(int formatType) {
-        return switch (formatType) {
-            case 1 -> tr("gui.shincolle.formation.format1", "Line Ahead");
-            case 2 -> tr("gui.shincolle.formation.format2", "Double Line");
-            case 3 -> tr("gui.shincolle.formation.format3", "Diamond");
-            case 4 -> tr("gui.shincolle.formation.format4", "Echelon");
-            case 5 -> tr("gui.shincolle.formation.format5", "Line Abreast");
-            default -> tr("gui.shincolle.formation.format0", "None");
-        };
-    }
-
-    /** Get short display name for a ship type ID */
-    private static String getShipTypeName(int shipType) {
-        return switch (shipType) {
-            case ID.ShipType.DESTROYER -> "DD";
-            case ID.ShipType.LIGHT_CRUISER -> "CL";
-            case ID.ShipType.HEAVY_CRUISER -> "CA";
-            case ID.ShipType.TORPEDO_CRUISER -> "CLT";
-            case ID.ShipType.LIGHT_CARRIER -> "CVL";
-            case ID.ShipType.STANDARD_CARRIER -> "CV";
-            case ID.ShipType.BATTLESHIP -> "BB";
-            case ID.ShipType.TRANSPORT -> "AP";
-            case ID.ShipType.SUBMARINE -> "SS";
-            case ID.ShipType.DEMON -> "Demon";
-            case ID.ShipType.HIME -> "Hime";
-            default -> "??";
-        };
-    }
-
-    /** Get morale level display name from auto-CR value */
-    private static String getMoraleLevelName(int level) {
-        return switch (level) {
-            case 1 -> tr("gui.shincolle.morale4", "Exhausted");
-            case 2 -> tr("gui.shincolle.morale3", "Tired");
-            case 3 -> tr("gui.shincolle.morale2", "Normal");
-            case 4 -> tr("gui.shincolle.morale1", "Happy");
-            default -> tr("gui.shincolle.general.off", "Off");
-        };
-    }
-
-    private static String tr(String key, String fallback) {
-        String localized = I18n.get(key);
-        return localized.equals(key) ? fallback : localized;
+                new int[]{ship.getId(), 0, buttonId, value}));
     }
 }

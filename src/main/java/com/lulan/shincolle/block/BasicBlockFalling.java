@@ -8,11 +8,11 @@ import net.minecraft.world.level.block.FallingBlock;
  */
 public abstract class BasicBlockFalling extends FallingBlock {
 
-	public BasicBlockFalling() {
-		this(Properties.of().strength(0.5F));
-	}
+    public BasicBlockFalling() {
+        this(Properties.of().strength(0.5F));
+    }
 
-	public BasicBlockFalling(Properties properties) {
-		super(properties);
-	}
+    public BasicBlockFalling(Properties properties) {
+        super(properties);
+    }
 }

@@ -13,7 +13,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
  * HUD overlay rendering utility for ShinColle.
  * Handles drawing skill icons, cooldown indicators, and other HUD elements
  * when the player is riding a ship entity (mount mode).
- *
+ * <p>
  * In 1.20.1 Forge, HUD overlays are registered via RenderGuiOverlayEvent.
  * The actual event registration will be handled in ClientSetup or a dedicated
  * event handler class.
@@ -57,7 +57,7 @@ public class RenderHelper {
      * @param maxFuel  maximum fuel value
      */
     public static void drawShipStatusBar(GuiGraphics graphics, int x, int y,
-            float hp, float maxHp, float fuel, float maxFuel) {
+                                         float hp, float maxHp, float fuel, float maxFuel) {
 
         // HP bar background
         graphics.fill(x, y, x + BAR_WIDTH, y + BAR_HEIGHT, COLOR_BAR_BG);

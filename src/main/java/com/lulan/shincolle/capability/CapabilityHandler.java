@@ -13,11 +13,11 @@ import net.minecraftforge.fml.common.Mod;
 
 /**
  * Handles Forge Capability lifecycle events for ShinColle.
- *
+ * <p>
  * Registered on MinecraftForge.EVENT_BUS:
  * - AttachCapabilitiesEvent: attaches CapaTeitoku to players
  * - PlayerEvent.Clone: copies capability data on respawn / dimension change
- *
+ * <p>
  * Registered on MOD event bus (via ShinColle.java addListener):
  * - RegisterCapabilitiesEvent: registers CapaTeitoku capability
  */

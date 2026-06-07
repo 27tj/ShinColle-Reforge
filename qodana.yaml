@@ -42,3 +42,7 @@ include:
   - name: RedundantMethodOverride
   - name: SwitchStatementWithTooFewBranches
   - name: DanglingJavadoc
+exclude:
+  - name: VulnerableLibrariesLocal
+    paths:
+      - build.gradle

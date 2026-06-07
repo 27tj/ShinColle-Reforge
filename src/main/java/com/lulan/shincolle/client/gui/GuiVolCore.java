@@ -122,7 +122,7 @@ public class GuiVolCore extends AbstractContainerScreen<ContainerVolCore> {
                 if (btn == ID.B.VolCore_Power) {
                     ModNetworking.sendToServer(new C2SGUIInputPacket(
                             C2SGUIInputPacket.TileBtn,
-                            new int[] { 0, pos.getX(), pos.getY(), pos.getZ(), ID.B.VolCore_Power, 0 }));
+                            new int[]{0, pos.getX(), pos.getY(), pos.getZ(), ID.B.VolCore_Power, 0}));
                 }
             }
             return true;

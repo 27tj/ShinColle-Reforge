@@ -2,16 +2,11 @@ package com.lulan.shincolle.client.gui.inventory;
 
 import com.lulan.shincolle.init.ModMenuTypes;
 import com.lulan.shincolle.tileentity.TileEntityCrane;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ClickType;
-import net.minecraft.world.inventory.ContainerData;
-import net.minecraft.world.inventory.SimpleContainerData;
-import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.items.IItemHandler;
@@ -23,7 +18,7 @@ import net.minecraftforge.items.ItemStackHandler;
  * inventory.
  * Ghost slots use custom click handling: clicking with an item sets the filter,
  * clicking with empty hand clears it.
- *
+ * <p>
  * ContainerData layout:
  * 0: craneMode (0-24)
  * 1: isActive (0/1)
@@ -61,12 +56,16 @@ public class ContainerCrane extends AbstractContainerMenu {
     private final TileEntityCrane tile;
     private final ContainerData data;
 
-    /** Client-side constructor */
+    /**
+     * Client-side constructor
+     */
     public ContainerCrane(int containerId, Inventory playerInv, FriendlyByteBuf buf) {
         this(containerId, playerInv, getTileFromBuf(playerInv.player, buf), new SimpleContainerData(DATA_COUNT));
     }
 
-    /** Server-side constructor */
+    /**
+     * Server-side constructor
+     */
     public ContainerCrane(int containerId, Inventory playerInv, TileEntityCrane tile) {
         this(containerId, playerInv, tile, createTileData(tile));
     }

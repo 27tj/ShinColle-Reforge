@@ -17,7 +17,7 @@ public class ParticleSmoke extends TextureSheetParticle {
     private final SpriteSet sprites;
 
     public ParticleSmoke(ClientLevel level, double x, double y, double z,
-            double xSpeed, double ySpeed, double zSpeed, float scale, SpriteSet sprites) {
+                         double xSpeed, double ySpeed, double zSpeed, float scale, SpriteSet sprites) {
         super(level, x, y, z, xSpeed, ySpeed, zSpeed);
         this.sprites = sprites;
         this.quadSize *= scale * 0.5F;

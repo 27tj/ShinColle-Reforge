@@ -1,10 +1,7 @@
 package com.lulan.shincolle.command;
 
-import java.util.List;
-
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
-
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
@@ -13,9 +10,11 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.List;
+
 /**
  * Command: /shipcleardrop [range]
- *
+ * <p>
  * Clears dropped items (ItemEntity) within the specified range.
  * Requires OP level 2.
  */

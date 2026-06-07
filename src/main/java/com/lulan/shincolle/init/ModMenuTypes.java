@@ -1,13 +1,6 @@
 package com.lulan.shincolle.init;
 
-import com.lulan.shincolle.client.gui.inventory.ContainerCrane;
-import com.lulan.shincolle.client.gui.inventory.ContainerDesk;
-import com.lulan.shincolle.client.gui.inventory.ContainerFormation;
-import com.lulan.shincolle.client.gui.inventory.ContainerLargeShipyard;
-import com.lulan.shincolle.client.gui.inventory.ContainerRecipePaper;
-import com.lulan.shincolle.client.gui.inventory.ContainerShipInventory;
-import com.lulan.shincolle.client.gui.inventory.ContainerSmallShipyard;
-import com.lulan.shincolle.client.gui.inventory.ContainerVolCore;
+import com.lulan.shincolle.client.gui.inventory.*;
 import com.lulan.shincolle.reference.Reference;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraftforge.common.extensions.IForgeMenuType;

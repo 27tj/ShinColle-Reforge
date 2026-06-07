@@ -27,7 +27,7 @@ public class EntityCarrierWD extends BasicEntityShipCV implements IShipRiderType
         this.setStateMinor(ID.M.NumState, 2);
         this.setGrudgeConsumption(1);
         this.setAmmoConsumption(1);
-        this.ModelPos = new float[] { 0F, 25F, 0F, 45F };
+        this.ModelPos = new float[]{0F, 25F, 0F, 45F};
 
         // aircraft only: disable cannon attacks
         this.StateFlag[ID.F.AtkType_Light] = false;

@@ -17,7 +17,7 @@ import net.minecraft.world.phys.Vec3;
 
 /**
  * Command: /shipinfo
- *
+ * <p>
  * Displays detailed information about the ship entity the player is looking at
  * (mouse-over).
  * Available to all players (permission level 0).
@@ -81,18 +81,18 @@ public class ShipCmdShipInfo {
                 "  HP: " + String.format("%.1f", hp) + " / " + String.format("%.1f", maxHp)), false);
         source.sendSuccess(() -> Component.literal(
                 "  ATK: " + String.format("%.1f", atkL)
-                + " | DEF: " + String.format("%.2f", def)
-                + " | SPD: " + String.format("%.2f", spd)), false);
+                        + " | DEF: " + String.format("%.2f", def)
+                        + " | SPD: " + String.format("%.2f", spd)), false);
         source.sendSuccess(() -> Component.literal(
                 "  MOV: " + String.format("%.3f", mov)
-                + " | HIT: " + String.format("%.1f", hit)), false);
+                        + " | HIT: " + String.format("%.1f", hit)), false);
         source.sendSuccess(() -> Component.literal(
                 "  Owner: " + ownerName + " | Ship UID: " + shipUID), false);
         source.sendSuccess(() -> Component.literal(
                 "  Morale: " + morale
-                + " | Ammo(L): " + ammoLight
-                + " | Ammo(H): " + ammoHeavy
-                + " | Grudge: " + grudge), false);
+                        + " | Ammo(L): " + ammoLight
+                        + " | Ammo(H): " + ammoHeavy
+                        + " | Grudge: " + grudge), false);
 
         return 1;
     }

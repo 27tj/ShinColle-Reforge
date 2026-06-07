@@ -1,13 +1,11 @@
 package com.lulan.shincolle.client.model;
 
-import net.minecraft.world.entity.Entity;
 import com.lulan.shincolle.entity.IShipEmotion;
 import com.lulan.shincolle.reference.ID;
 import com.lulan.shincolle.reference.Reference;
 import com.lulan.shincolle.utility.EmotionHelper;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -16,6 +14,7 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
 
 public class ModelBlockDesk extends ShipModelBaseAdv<Entity> {
 
@@ -72,7 +71,7 @@ public class ModelBlockDesk extends ShipModelBaseAdv<Entity> {
 
     @Override
     public void setupAnim(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks,
-            float netHeadYaw, float headPitch) {
+                          float netHeadYaw, float headPitch) {
         IShipEmotion ent = (IShipEmotion) entity;
         this.showEquip(ent);
         this.setFlush(ent.getStateMinor(ID.M.Morale) > ID.Morale.L_Happy);
@@ -87,7 +86,7 @@ public class ModelBlockDesk extends ShipModelBaseAdv<Entity> {
 
     @Override
     public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay,
-            float red, float green, float blue, float alpha) {
+                               float red, float green, float blue, float alpha) {
         this.shape3.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
         this.shape6.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
         this.shape1.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);

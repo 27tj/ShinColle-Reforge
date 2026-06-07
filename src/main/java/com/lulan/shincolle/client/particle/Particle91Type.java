@@ -16,14 +16,14 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 /**
  * 91TYPE PARTICLE
  * Attack text effect with 6 characters that fade in/out individually.
- *
+ * <p>
  * Animation phases per character:
  * age 0~15: color fade in (scale shrinks from 3x to 1x, alpha rises 0 to 1)
  * age 16~75: stable (scale 1x, alpha 1)
  * age 76~91: alpha fade out (scale grows from 1x to 3x, alpha drops 1 to 0)
- *
+ * <p>
  * Each character is offset by 8 ticks from the previous.
- *
+ * <p>
  * Ported from 1.10.2 to 1.20.1.
  */
 @OnlyIn(Dist.CLIENT)
@@ -31,13 +31,13 @@ public class Particle91Type extends Particle {
 
     private static final ResourceLocation TEXTURE = new ResourceLocation("shincolle",
             "textures/particles/particle91type.png");
-    private int partAge;
     private final int fadeTime = 16;
     private final int middTime = 60;
     private final int totalTime = 2 * fadeTime + middTime;
-    private float minu, maxu, cx, cy, cz, charScale, charAlpha;
     private final float fadeCoef = 1F / fadeTime;
     private final float pScale;
+    private int partAge;
+    private float minu, maxu, cx, cy, cz, charScale, charAlpha;
 
     public Particle91Type(ClientLevel level, double posX, double posY, double posZ, float scale) {
         super(level, 0D, 0D, 0D);
@@ -121,8 +121,8 @@ public class Particle91Type extends Particle {
      * Add a quad with the given size and UV coordinates.
      */
     private void addQuad(BufferBuilder builder, float scale, float x, float y, float z,
-            float offx, float offy, float offz,
-            float minu, float maxu, float minv, float maxv) {
+                         float offx, float offy, float offz,
+                         float minu, float maxu, float minv, float maxv) {
         float offsetX = offx * scale;
         float offsetY = offy * scale;
         float offsetZ = offz * scale;

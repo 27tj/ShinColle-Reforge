@@ -28,7 +28,7 @@ public class EntityMidwayHime extends BasicEntityShipCV implements IShipRiderTyp
         this.setStateMinor(ID.M.NumState, 2);
         this.setGrudgeConsumption(1);
         this.setAmmoConsumption(1);
-        this.ModelPos = new float[] { 0F, 25F, 0F, 45F };
+        this.ModelPos = new float[]{0F, 25F, 0F, 45F};
 
         // hybrid attacker: cannon + aircraft
         this.StateFlag[ID.F.AtkType_Light] = true;

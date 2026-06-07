@@ -28,12 +28,16 @@ public class ContainerRecipePaper extends AbstractContainerMenu {
     private final SimpleContainer recipeInv;
     private final int heldSlot;
 
-    /** Client-side constructor (from network) */
+    /**
+     * Client-side constructor (from network)
+     */
     public ContainerRecipePaper(int containerId, Inventory playerInv, FriendlyByteBuf buf) {
         this(containerId, playerInv, buf.readInt());
     }
 
-    /** Server-side constructor */
+    /**
+     * Server-side constructor
+     */
     public ContainerRecipePaper(int containerId, Inventory playerInv, int heldSlot) {
         super(ModMenuTypes.RECIPE_PAPER.get(), containerId);
         this.heldSlot = heldSlot;

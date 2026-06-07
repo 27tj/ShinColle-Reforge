@@ -1,9 +1,6 @@
 package com.lulan.shincolle.network;
 
-import java.util.function.Supplier;
-
 import com.lulan.shincolle.utility.ParticleHelper;
-
 import io.netty.buffer.Unpooled;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
@@ -11,13 +8,15 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.network.NetworkEvent;
 
+import java.util.function.Supplier;
+
 /**
  * Server-to-Client particle spawn packet.
- *
+ * <p>
  * Triggers client-side particle effects for ShinColle entities.
  * Different type values correspond to different particle effects
  * (attacks, skill effects, emotional indicators, etc.).
- *
+ * <p>
  * Particle types (from 1.10.2):
  * 0: Attack hit effect
  * 1: Cannon fire effect

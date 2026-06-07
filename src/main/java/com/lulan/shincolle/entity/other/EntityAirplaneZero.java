@@ -10,7 +10,7 @@ import net.minecraft.world.level.Level;
  */
 public class EntityAirplaneZero extends EntityAirplane {
 
-	public EntityAirplaneZero(EntityType<? extends EntityAirplaneZero> type, Level level) {
-		super(type, level);
-	}
+    public EntityAirplaneZero(EntityType<? extends EntityAirplaneZero> type, Level level) {
+        super(type, level);
+    }
 }

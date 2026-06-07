@@ -19,7 +19,7 @@ import net.minecraftforge.items.ItemStackHandler;
 /**
  * Container/Menu for the Volcano Core block.
  * 9 fuel input slots (3x3 grid) + player inventory.
- *
+ * <p>
  * ContainerData layout:
  * 0: fuelPercent (0-1000)
  * 1: btnActive (0/1)
@@ -37,12 +37,16 @@ public class ContainerVolCore extends AbstractContainerMenu {
     private final TileEntityVolCore tile;
     private final ContainerData data;
 
-    /** Client-side constructor */
+    /**
+     * Client-side constructor
+     */
     public ContainerVolCore(int containerId, Inventory playerInv, FriendlyByteBuf buf) {
         this(containerId, playerInv, getTileFromBuf(playerInv.player, buf), new SimpleContainerData(DATA_COUNT));
     }
 
-    /** Server-side constructor */
+    /**
+     * Server-side constructor
+     */
     public ContainerVolCore(int containerId, Inventory playerInv, TileEntityVolCore tile) {
         this(containerId, playerInv, tile, createTileData(tile));
     }

@@ -20,7 +20,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 /**
  * Render layer that displays held items in ship entity hands.
  * Ported from 1.10.2 LayerShipHeldItem to 1.20.1 RenderLayer system.
- *
+ * <p>
  * Uses ShipModelBaseAdv arm chain transforms (getArmForSide) to position
  * the held item correctly relative to the model's arm parts.
  */
@@ -33,8 +33,8 @@ public class LayerShipHeldItem<T extends BasicEntityShip> extends RenderLayer<T,
 
     @Override
     public void render(PoseStack poseStack, MultiBufferSource buffer, int packedLight,
-            T entity, float limbSwing, float limbSwingAmount, float partialTick,
-            float ageInTicks, float netHeadYaw, float headPitch) {
+                       T entity, float limbSwing, float limbSwingAmount, float partialTick,
+                       float ageInTicks, float netHeadYaw, float headPitch) {
         // Check AI option
         if (!entity.canShowHeldItem())
             return;
@@ -54,8 +54,8 @@ public class LayerShipHeldItem<T extends BasicEntityShip> extends RenderLayer<T,
     }
 
     private void renderHeldItem(PoseStack poseStack, MultiBufferSource buffer, int packedLight,
-            T entity, ItemStack stack, ItemDisplayContext displayContext,
-            HumanoidArm arm) {
+                                T entity, ItemStack stack, ItemDisplayContext displayContext,
+                                HumanoidArm arm) {
         poseStack.pushPose();
 
         if (entity.isCrouching()) {

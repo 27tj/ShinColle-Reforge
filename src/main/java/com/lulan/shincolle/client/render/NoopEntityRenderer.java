@@ -11,15 +11,15 @@ import net.minecraft.world.entity.Entity;
  */
 public class NoopEntityRenderer<T extends Entity> extends EntityRenderer<T> {
 
-	private static final ResourceLocation TEXTURE =
-			new ResourceLocation("shincolle", "textures/entity/placeholder.png");
+    private static final ResourceLocation TEXTURE =
+            new ResourceLocation("shincolle", "textures/entity/placeholder.png");
 
-	public NoopEntityRenderer(EntityRendererProvider.Context context) {
-		super(context);
-	}
+    public NoopEntityRenderer(EntityRendererProvider.Context context) {
+        super(context);
+    }
 
-	@Override
-	public ResourceLocation getTextureLocation(T entity) {
-		return TEXTURE;
-	}
+    @Override
+    public ResourceLocation getTextureLocation(T entity) {
+        return TEXTURE;
+    }
 }

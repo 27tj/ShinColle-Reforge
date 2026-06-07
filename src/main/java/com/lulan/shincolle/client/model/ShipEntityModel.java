@@ -16,15 +16,15 @@ import net.minecraft.resources.ResourceLocation;
  */
 public class ShipEntityModel<T extends BasicEntityShip> extends HumanoidModel<T> {
 
-	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-			new ResourceLocation("shincolle", "ship_entity"), "main");
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
+            new ResourceLocation("shincolle", "ship_entity"), "main");
 
-	public ShipEntityModel(ModelPart root) {
-		super(root);
-	}
+    public ShipEntityModel(ModelPart root) {
+        super(root);
+    }
 
-	public static LayerDefinition createBodyLayer() {
-		MeshDefinition mesh = HumanoidModel.createMesh(CubeDeformation.NONE, 0.0F);
-		return LayerDefinition.create(mesh, 64, 64);
-	}
+    public static LayerDefinition createBodyLayer() {
+        MeshDefinition mesh = HumanoidModel.createMesh(CubeDeformation.NONE, 0.0F);
+        return LayerDefinition.create(mesh, 64, 64);
+    }
 }

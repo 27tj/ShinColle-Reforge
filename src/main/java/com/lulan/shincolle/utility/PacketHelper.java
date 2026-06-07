@@ -1,11 +1,11 @@
 package com.lulan.shincolle.utility;
 
+import net.minecraft.network.FriendlyByteBuf;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import net.minecraft.network.FriendlyByteBuf;
 
 /**
  * Serialization utility class with static helpers for FriendlyByteBuf.

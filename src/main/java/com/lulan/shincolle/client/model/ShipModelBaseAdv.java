@@ -1,10 +1,7 @@
 package com.lulan.shincolle.client.model;
 
-import java.util.NoSuchElementException;
-
 import com.lulan.shincolle.entity.IShipEmotion;
 import com.lulan.shincolle.reference.ID;
-
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -13,9 +10,11 @@ import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.HumanoidArm;
 
+import java.util.NoSuchElementException;
+
 /**
  * Base model class for ShinColle ship entities (1.20.1 port).
- *
+ * <p>
  * Replaces the old ShipModelBaseAdv which extended ModelBase.
  * All ship models extend this class and implement their own
  * createBodyLayer() static method for part definitions.
@@ -26,19 +25,13 @@ public abstract class ShipModelBaseAdv<T extends Entity> extends EntityModel<T> 
     protected float offsetX = 0F;
     protected float offsetY = 0F;
     protected float offsetZ = 0F;
-    private boolean offsetBaseInitialized = false;
-    private float baseOffsetX = 0F;
-    private float baseOffsetY = 0F;
-    private float baseOffsetZ = 0F;
-
     // Held item support fields
     protected ModelPart[] armMain;
     protected ModelPart[] armOff;
-    protected float[] offsetItem = new float[] { 0F, 0F, 0F };
-    protected float[] rotateItem = new float[] { 0F, 0F, 0F };
-    protected float[] offsetBlock = new float[] { 0F, 0F, 0F };
-    protected float[] rotateBlock = new float[] { 0F, 0F, 0F };
-
+    protected float[] offsetItem = new float[]{0F, 0F, 0F};
+    protected float[] rotateItem = new float[]{0F, 0F, 0F};
+    protected float[] offsetBlock = new float[]{0F, 0F, 0F};
+    protected float[] rotateBlock = new float[]{0F, 0F, 0F};
     // Face parts (for emotion system)
     protected ModelPart Face0;
     protected ModelPart Face1;
@@ -50,6 +43,10 @@ public abstract class ShipModelBaseAdv<T extends Entity> extends EntityModel<T> 
     protected ModelPart Mouth2;
     protected ModelPart Flush0;
     protected ModelPart Flush1;
+    private boolean offsetBaseInitialized = false;
+    private float baseOffsetX = 0F;
+    private float baseOffsetY = 0F;
+    private float baseOffsetZ = 0F;
 
     public ShipModelBaseAdv() {
         super();
@@ -102,6 +99,14 @@ public abstract class ShipModelBaseAdv<T extends Entity> extends EntityModel<T> 
                 PartPose.offset(6F, -3.0F, -6.9F));
     }
 
+    private static ModelPart getOptionalChild(ModelPart parent, String childName) {
+        try {
+            return parent.getChild(childName);
+        } catch (NoSuchElementException ignored) {
+            return null;
+        }
+    }
+
     /**
      * Helper: load face parts from a ModelPart (the glow head).
      * Call from constructor after getting the glow head part.
@@ -119,14 +124,6 @@ public abstract class ShipModelBaseAdv<T extends Entity> extends EntityModel<T> 
         this.Mouth2 = getOptionalChild(glowHead, "Mouth2");
         this.Flush0 = getOptionalChild(glowHead, "Flush0");
         this.Flush1 = getOptionalChild(glowHead, "Flush1");
-    }
-
-    private static ModelPart getOptionalChild(ModelPart parent, String childName) {
-        try {
-            return parent.getChild(childName);
-        } catch (NoSuchElementException ignored) {
-            return null;
-        }
     }
 
     public float getScale() {

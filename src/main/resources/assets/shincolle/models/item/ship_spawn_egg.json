@@ -6,6 +6,12 @@
   "overrides": [
     {
       "predicate": {
+        "shincolle:egg_icon": 0
+      },
+      "model": "shincolle:item/ship_spawn_egg_s"
+    },
+    {
+      "predicate": {
         "shincolle:egg_icon": 1
       },
       "model": "shincolle:item/ship_spawn_egg_l"

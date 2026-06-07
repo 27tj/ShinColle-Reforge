@@ -5,5 +5,5 @@ package com.lulan.shincolle.item;
  * Returns int[4] = {grudge, abyssium, ammo, polymetal}
  */
 public interface IShipResourceItem {
-	int[] getResourceValue(int meta);
+    int[] getResourceValue(int meta);
 }

@@ -1,12 +1,9 @@
 package com.lulan.shincolle.block;
 
-import javax.annotation.Nullable;
-
 import com.lulan.shincolle.entity.other.BasicEntityItem;
 import com.lulan.shincolle.init.ModBlockEntities;
 import com.lulan.shincolle.init.ModEntities;
 import com.lulan.shincolle.tileentity.TileMultiGrudgeHeavy;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.Containers;
@@ -20,6 +17,8 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraftforge.items.ItemStackHandler;
+
+import javax.annotation.Nullable;
 
 public class BlockGrudgeHeavy extends BasicBlockMulti {
 
@@ -43,7 +42,7 @@ public class BlockGrudgeHeavy extends BasicBlockMulti {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state,
-            BlockEntityType<T> type) {
+                                                                  BlockEntityType<T> type) {
         return level.isClientSide ? null
                 : createTickerHelper(type, ModBlockEntities.GRUDGE_HEAVY_MULTI.get(), TileMultiGrudgeHeavy::serverTick);
     }

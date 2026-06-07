@@ -24,472 +24,495 @@ import net.minecraftforge.common.ForgeHooks;
 /**
  * Block entity for Grudge Heavy multiblock structure (Large Shipyard).
  * Handles large ship/equipment building with 4 material types stored as counts.
- *
+ * <p>
  * Slot layout (10 slots):
  * 0: Output
  * 1: Fuel
  * 2-9: Material input
- *
+ * <p>
  * Material storage: Tracks 4 material stock counts internally (grudge,
  * abyssium, ammo, polymetal)
  */
 public class TileMultiGrudgeHeavy extends BasicTileInventory implements MenuProvider, ITileFurnace {
 
-	public static final int SLOTS_NUM = 10;
-	public static final int SLOT_OUTPUT = 0;
-	public static final int SLOT_FUEL = 1;
+    public static final int SLOTS_NUM = 10;
+    public static final int SLOT_OUTPUT = 0;
+    public static final int SLOT_FUEL = 1;
+    private static final int POWER_INSTANT = 57600;
+    // Config values
+    private static int POWER_MAX;
+    private static int BUILD_SPEED;
+    private static float FUEL_MAGN;
 
-	/** Build type: 0=none, 1=ship, 2=equip, 3=ship_loop, 4=equip_loop */
-	private int buildType = 0;
-	/** Inventory mode: 0=recycle/add materials, 1=release/extract materials */
-	private int invMode = 0;
-	/** Material selection for output (0-3) */
-	private int selectMat = 0;
+    static {
+        reloadConfig();
+    }
 
-	/** Core block position for multiblock structure */
-	private BlockPos corePos = BlockPos.ZERO;
-	/** Whether this tile has a valid core position */
-	private boolean hasCorePos = false;
-	/** Power consumed in current build cycle */
-	private int powerConsumed = 0;
-	/** Remaining fuel power in storage */
-	private int powerRemained = 0;
-	/** Power goal for current build */
-	private int powerGoal = 0;
-	/** Whether currently active */
-	private boolean isActive = false;
-	/** Sync timer */
-	private int syncTime = 0;
+    /**
+     * Build type: 0=none, 1=ship, 2=equip, 3=ship_loop, 4=equip_loop
+     */
+    private int buildType = 0;
+    /**
+     * Inventory mode: 0=recycle/add materials, 1=release/extract materials
+     */
+    private int invMode = 0;
+    /**
+     * Material selection for output (0-3)
+     */
+    private int selectMat = 0;
+    /**
+     * Core block position for multiblock structure
+     */
+    private BlockPos corePos = BlockPos.ZERO;
+    /**
+     * Whether this tile has a valid core position
+     */
+    private boolean hasCorePos = false;
+    /**
+     * Power consumed in current build cycle
+     */
+    private int powerConsumed = 0;
+    /**
+     * Remaining fuel power in storage
+     */
+    private int powerRemained = 0;
+    /**
+     * Power goal for current build
+     */
+    private int powerGoal = 0;
+    /**
+     * Whether currently active
+     */
+    private boolean isActive = false;
+    /**
+     * Sync timer
+     */
+    private int syncTime = 0;
+    /**
+     * Material stock counts: [grudge, abyssium, ammo, polymetal]
+     */
+    private int[] matsStock = new int[4];
+    /**
+     * Material build requirements: [grudge, abyssium, ammo, polymetal]
+     */
+    private int[] matsBuild = new int[4];
 
-	/** Material stock counts: [grudge, abyssium, ammo, polymetal] */
-	private int[] matsStock = new int[4];
-	/** Material build requirements: [grudge, abyssium, ammo, polymetal] */
-	private int[] matsBuild = new int[4];
+    public TileMultiGrudgeHeavy(BlockPos pos, BlockState state) {
+        this(ModBlockEntities.GRUDGE_HEAVY_MULTI.get(), pos, state);
+    }
 
-	// Config values
-	private static int POWER_MAX;
-	private static int BUILD_SPEED;
-	private static float FUEL_MAGN;
-	private static final int POWER_INSTANT = 57600;
+    public TileMultiGrudgeHeavy(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+        super(type, pos, state, SLOTS_NUM);
+    }
 
-	static {
-		reloadConfig();
-	}
+    public static void reloadConfig() {
+        double[] cfg = ConfigHandler.tileShipyardLarge;
+        POWER_MAX = (int) cfg[0];
+        BUILD_SPEED = (int) cfg[1];
+        FUEL_MAGN = (float) cfg[2];
+    }
 
-	public static void reloadConfig() {
-		double[] cfg = ConfigHandler.tileShipyardLarge;
-		POWER_MAX = (int) cfg[0];
-		BUILD_SPEED = (int) cfg[1];
-		FUEL_MAGN = (float) cfg[2];
-	}
+    public static void serverTick(Level level, BlockPos pos, BlockState state, TileMultiGrudgeHeavy tile) {
+        tile.tickServer();
+    }
 
-	public TileMultiGrudgeHeavy(BlockPos pos, BlockState state) {
-		this(ModBlockEntities.GRUDGE_HEAVY_MULTI.get(), pos, state);
-	}
+    @Override
+    public Component getDisplayName() {
+        return Component.translatable("container.shincolle.large_shipyard");
+    }
 
-	public TileMultiGrudgeHeavy(BlockEntityType<?> type, BlockPos pos, BlockState state) {
-		super(type, pos, state, SLOTS_NUM);
-	}
+    // ==================== ITileFurnace ====================
 
-	@Override
-	public Component getDisplayName() {
-		return Component.translatable("container.shincolle.large_shipyard");
-	}
+    @Override
+    public AbstractContainerMenu createMenu(int containerId, Inventory playerInv, Player player) {
+        return new ContainerLargeShipyard(containerId, playerInv, this);
+    }
 
-	@Override
-	public AbstractContainerMenu createMenu(int containerId, Inventory playerInv, Player player) {
-		return new ContainerLargeShipyard(containerId, playerInv, this);
-	}
+    @Override
+    public int getPowerConsumed() {
+        return powerConsumed;
+    }
 
-	// ==================== ITileFurnace ====================
+    @Override
+    public void setPowerConsumed(int v) {
+        this.powerConsumed = v;
+    }
 
-	@Override
-	public int getPowerConsumed() {
-		return powerConsumed;
-	}
+    @Override
+    public int getPowerGoal() {
+        return powerGoal;
+    }
 
-	@Override
-	public void setPowerConsumed(int v) {
-		this.powerConsumed = v;
-	}
+    @Override
+    public void setPowerGoal(int v) {
+        this.powerGoal = v;
+    }
 
-	@Override
-	public int getPowerGoal() {
-		return powerGoal;
-	}
+    @Override
+    public int getPowerRemained() {
+        return powerRemained;
+    }
 
-	@Override
-	public void setPowerGoal(int v) {
-		this.powerGoal = v;
-	}
+    @Override
+    public void setPowerRemained(int v) {
+        this.powerRemained = v;
+    }
 
-	@Override
-	public int getPowerRemained() {
-		return powerRemained;
-	}
+    @Override
+    public int getPowerMax() {
+        return POWER_MAX;
+    }
 
-	@Override
-	public void setPowerRemained(int v) {
-		this.powerRemained = v;
-	}
+    @Override
+    public void setPowerMax(int v) {
+    }
 
-	@Override
-	public int getPowerMax() {
-		return POWER_MAX;
-	}
+    // ==================== Material Management ====================
 
-	@Override
-	public void setPowerMax(int v) {
-	}
+    @Override
+    public float getFuelMagni() {
+        return FUEL_MAGN;
+    }
 
-	@Override
-	public float getFuelMagni() {
-		return FUEL_MAGN;
-	}
+    public int getBuildType() {
+        return buildType;
+    }
 
-	// ==================== Material Management ====================
+    public void setBuildType(int type) {
+        this.buildType = type;
+        setChanged();
+    }
 
-	public int getBuildType() {
-		return buildType;
-	}
+    public int getInvMode() {
+        return invMode;
+    }
 
-	public void setBuildType(int type) {
-		this.buildType = type;
-		setChanged();
-	}
+    public void setInvMode(int mode) {
+        this.invMode = mode;
+        setChanged();
+    }
 
-	public int getInvMode() {
-		return invMode;
-	}
+    public int getSelectMat() {
+        return selectMat;
+    }
 
-	public void setInvMode(int mode) {
-		this.invMode = mode;
-		setChanged();
-	}
+    public void setSelectMat(int mat) {
+        this.selectMat = mat;
+        setChanged();
+    }
 
-	public int getSelectMat() {
-		return selectMat;
-	}
+    public int getMatStock(int index) {
+        return index >= 0 && index < 4 ? matsStock[index] : 0;
+    }
 
-	public void setSelectMat(int mat) {
-		this.selectMat = mat;
-		setChanged();
-	}
+    public void setMatStock(int index, int value) {
+        if (index >= 0 && index < 4) {
+            matsStock[index] = value;
+            setChanged();
+        }
+    }
 
-	public int getMatStock(int index) {
-		return index >= 0 && index < 4 ? matsStock[index] : 0;
-	}
+    public int getMatBuild(int index) {
+        return index >= 0 && index < 4 ? matsBuild[index] : 0;
+    }
 
-	public void setMatStock(int index, int value) {
-		if (index >= 0 && index < 4) {
-			matsStock[index] = value;
-			setChanged();
-		}
-	}
+    // ==================== Multiblock ====================
 
-	public int getMatBuild(int index) {
-		return index >= 0 && index < 4 ? matsBuild[index] : 0;
-	}
+    public void setMatBuild(int index, int value) {
+        if (index >= 0 && index < 4) {
+            matsBuild[index] = value;
+        }
+    }
 
-	public void setMatBuild(int index, int value) {
-		if (index >= 0 && index < 4) {
-			matsBuild[index] = value;
-		}
-	}
+    public BlockPos getCorePos() {
+        return corePos;
+    }
 
-	// ==================== Multiblock ====================
+    public void setCorePos(BlockPos pos) {
+        this.corePos = pos;
+        this.hasCorePos = true;
+        setChanged();
+    }
 
-	public BlockPos getCorePos() {
-		return corePos;
-	}
+    public boolean hasCorePos() {
+        return hasCorePos;
+    }
 
-	public void setCorePos(BlockPos pos) {
-		this.corePos = pos;
-		this.hasCorePos = true;
-		setChanged();
-	}
+    public void resetCorePos() {
+        this.corePos = BlockPos.ZERO;
+        this.hasCorePos = false;
+        setChanged();
+    }
 
-	public boolean hasCorePos() {
-		return hasCorePos;
-	}
+    // ==================== Build Logic ====================
 
-	public void resetCorePos() {
-		this.corePos = BlockPos.ZERO;
-		this.hasCorePos = false;
-		setChanged();
-	}
+    @Override
+    public AABB getRenderBoundingBox() {
+        // [PORT] 1.10.2 -> 1.20.1: keep large-shipyard model visible when the core
+        // block is just outside frustum by expanding BE render bounds to structure
+        // size.
+        BlockPos pos = this.getBlockPos();
+        return new AABB(pos.offset(-2, -3, -2), pos.offset(3, 3, 3));
+    }
 
-	@Override
-	public AABB getRenderBoundingBox() {
-		// [PORT] 1.10.2 -> 1.20.1: keep large-shipyard model visible when the core
-		// block is just outside frustum by expanding BE render bounds to structure
-		// size.
-		BlockPos pos = this.getBlockPos();
-		return new AABB(pos.offset(-2, -3, -2), pos.offset(3, 3, 3));
-	}
+    public boolean isBuilding() {
+        return hasRemainedPower() && canBuild();
+    }
 
-	// ==================== Build Logic ====================
+    public boolean hasRemainedPower() {
+        return powerRemained >= BUILD_SPEED;
+    }
 
-	public boolean isBuilding() {
-		return hasRemainedPower() && canBuild();
-	}
+    public boolean canBuild() {
+        if (buildType == 0)
+            return false;
+        ItemStack output = inventory.getStackInSlot(SLOT_OUTPUT);
+        if (!output.isEmpty() || powerGoal <= 0)
+            return false;
 
-	public boolean hasRemainedPower() {
-		return powerRemained >= BUILD_SPEED;
-	}
+        // Verify stock is sufficient for build requirements
+        for (int i = 0; i < 4; i++) {
+            if (matsStock[i] < matsBuild[i])
+                return false;
+        }
+        return true;
+    }
 
-	public boolean canBuild() {
-		if (buildType == 0)
-			return false;
-		ItemStack output = inventory.getStackInSlot(SLOT_OUTPUT);
-		if (!output.isEmpty() || powerGoal <= 0)
-			return false;
+    public int getPowerRemainingScaled(int pixels) {
+        if (POWER_MAX <= 0)
+            return 0;
+        return powerRemained * pixels / POWER_MAX;
+    }
 
-		// Verify stock is sufficient for build requirements
-		for (int i = 0; i < 4; i++) {
-			if (matsStock[i] < matsBuild[i])
-				return false;
-		}
-		return true;
-	}
+    public int getBuildProgressScaled(int pixels) {
+        if (powerGoal <= 0)
+            return 0;
+        return powerConsumed * pixels / powerGoal;
+    }
 
-	public int getPowerRemainingScaled(int pixels) {
-		if (POWER_MAX <= 0)
-			return 0;
-		return powerRemained * pixels / POWER_MAX;
-	}
+    public String getBuildTimeString() {
+        if (powerGoal <= 0 || BUILD_SPEED <= 0)
+            return "0:00";
+        int remainTicks = (powerGoal - powerConsumed) / BUILD_SPEED;
+        int seconds = remainTicks / 20;
+        return String.format("%d:%02d", seconds / 60, seconds % 60);
+    }
 
-	public int getBuildProgressScaled(int pixels) {
-		if (powerGoal <= 0)
-			return 0;
-		return powerConsumed * pixels / powerGoal;
-	}
+    /**
+     * Consume solid fuel from fuel slot, converting to power.
+     * Accepts Grudge items (with fixed 2400 base burn value) and any vanilla
+     * furnace fuel (coal, logs, lava buckets, blaze rods, etc.) via ForgeHooks.
+     */
+    private void decrItemFuel() {
+        if (powerRemained >= POWER_MAX)
+            return;
 
-	public String getBuildTimeString() {
-		if (powerGoal <= 0 || BUILD_SPEED <= 0)
-			return "0:00";
-		int remainTicks = (powerGoal - powerConsumed) / BUILD_SPEED;
-		int seconds = remainTicks / 20;
-		return String.format("%d:%02d", seconds / 60, seconds % 60);
-	}
+        ItemStack fuelStack = inventory.getStackInSlot(SLOT_FUEL);
+        if (fuelStack.isEmpty())
+            return;
 
-	/**
-	 * Consume solid fuel from fuel slot, converting to power.
-	 * Accepts Grudge items (with fixed 2400 base burn value) and any vanilla
-	 * furnace fuel (coal, logs, lava buckets, blaze rods, etc.) via ForgeHooks.
-	 */
-	private void decrItemFuel() {
-		if (powerRemained >= POWER_MAX)
-			return;
+        int fuelValue = 0;
 
-		ItemStack fuelStack = inventory.getStackInSlot(SLOT_FUEL);
-		if (fuelStack.isEmpty())
-			return;
+        // Priority 1: Grudge items use a fixed base burn value
+        if (fuelStack.is(ModItems.GRUDGE.get())) {
+            fuelValue = (int) (2400 * FUEL_MAGN);
+        } else {
+            // Priority 2: Any vanilla/modded furnace fuel
+            int burnTime = ForgeHooks.getBurnTime(fuelStack, null);
+            if (burnTime > 0) {
+                fuelValue = (int) (burnTime * FUEL_MAGN);
+            }
+        }
 
-		int fuelValue = 0;
+        if (fuelValue > 0 && powerRemained + fuelValue <= POWER_MAX) {
+            // Handle container items (e.g., lava bucket -> empty bucket)
+            ItemStack containerStack = fuelStack.getCraftingRemainingItem();
+            if (!containerStack.isEmpty() && fuelStack.getCount() > 1) {
+                // Cannot consume stacked items that leave a container
+                return;
+            }
 
-		// Priority 1: Grudge items use a fixed base burn value
-		if (fuelStack.is(ModItems.GRUDGE.get())) {
-			fuelValue = (int) (2400 * FUEL_MAGN);
-		} else {
-			// Priority 2: Any vanilla/modded furnace fuel
-			int burnTime = ForgeHooks.getBurnTime(fuelStack, null);
-			if (burnTime > 0) {
-				fuelValue = (int) (burnTime * FUEL_MAGN);
-			}
-		}
+            fuelStack.shrink(1);
+            powerRemained += fuelValue;
 
-		if (fuelValue > 0 && powerRemained + fuelValue <= POWER_MAX) {
-			// Handle container items (e.g., lava bucket -> empty bucket)
-			ItemStack containerStack = fuelStack.getCraftingRemainingItem();
-			if (!containerStack.isEmpty() && fuelStack.getCount() > 1) {
-				// Cannot consume stacked items that leave a container
-				return;
-			}
+            if (fuelStack.isEmpty()) {
+                // Replace with container item if applicable (e.g., empty bucket)
+                inventory.setStackInSlot(SLOT_FUEL, containerStack.isEmpty() ? ItemStack.EMPTY : containerStack.copy());
+            }
+            setChanged();
+        }
+    }
 
-			fuelStack.shrink(1);
-			powerRemained += fuelValue;
+    /**
+     * Recycle input items into material stock
+     */
+    private void recycleInputSlots() {
+        for (int i = 2; i < SLOTS_NUM; i++) {
+            ItemStack stack = inventory.getStackInSlot(i);
+            if (stack.isEmpty())
+                continue;
 
-			if (fuelStack.isEmpty()) {
-				// Replace with container item if applicable (e.g., empty bucket)
-				inventory.setStackInSlot(SLOT_FUEL, containerStack.isEmpty() ? ItemStack.EMPTY : containerStack.copy());
-			}
-			setChanged();
-		}
-	}
+            int matIndex = -1;
+            if (stack.is(ModItems.GRUDGE.get()))
+                matIndex = 0;
+            else if (stack.is(ModItems.ABYSS_METAL.get()))
+                matIndex = 1;
+            else if (stack.is(ModItems.AMMO.get()))
+                matIndex = 2;
+            else if (stack.is(ModItems.POLYMETAL_NODULE.get()))
+                matIndex = 3;
+            if (matIndex < 0)
+                continue;
 
-	/** Recycle input items into material stock */
-	private void recycleInputSlots() {
-		for (int i = 2; i < SLOTS_NUM; i++) {
-			ItemStack stack = inventory.getStackInSlot(i);
-			if (stack.isEmpty())
-				continue;
+            matsStock[matIndex] += stack.getCount();
+            inventory.setStackInSlot(i, ItemStack.EMPTY);
+            setChanged();
+        }
+    }
 
-			int matIndex = -1;
-			if (stack.is(ModItems.GRUDGE.get()))
-				matIndex = 0;
-			else if (stack.is(ModItems.ABYSS_METAL.get()))
-				matIndex = 1;
-			else if (stack.is(ModItems.AMMO.get()))
-				matIndex = 2;
-			else if (stack.is(ModItems.POLYMETAL_NODULE.get()))
-				matIndex = 3;
-			if (matIndex < 0)
-				continue;
+    // ==================== Tick Logic ====================
 
-			matsStock[matIndex] += stack.getCount();
-			inventory.setStackInSlot(i, ItemStack.EMPTY);
-			setChanged();
-		}
-	}
-
-	private void buildComplete() {
-		boolean buildShip = (buildType == 1 || buildType == 3);
+    private void buildComplete() {
+        boolean buildShip = (buildType == 1 || buildType == 3);
         assert level != null;
         ItemStack result = LargeRecipes.calculateResult(
-				matsBuild[0], matsBuild[1], matsBuild[2], matsBuild[3],
-				buildShip, level.random);
+                matsBuild[0], matsBuild[1], matsBuild[2], matsBuild[3],
+                buildShip, level.random);
 
-		if (!result.isEmpty()) {
-			inventory.setStackInSlot(SLOT_OUTPUT, result);
-			LogHelper.debug("LARGE SHIPYARD: build complete, result=" + result);
-		}
+        if (!result.isEmpty()) {
+            inventory.setStackInSlot(SLOT_OUTPUT, result);
+            LogHelper.debug("LARGE SHIPYARD: build complete, result=" + result);
+        }
 
-		// Deduct consumed materials from stock
-		for (int i = 0; i < 4; i++) {
-			matsStock[i] -= matsBuild[i];
-			if (matsStock[i] < 0)
-				matsStock[i] = 0;
-		}
+        // Deduct consumed materials from stock
+        for (int i = 0; i < 4; i++) {
+            matsStock[i] -= matsBuild[i];
+            if (matsStock[i] < 0)
+                matsStock[i] = 0;
+        }
 
-		powerConsumed = 0;
-		powerGoal = 0;
+        powerConsumed = 0;
+        powerGoal = 0;
 
-		if (buildType == 1 || buildType == 2) {
-			// Single build: reset build type and requirements
-			buildType = 0;
-			matsBuild = new int[4];
-		} else if (buildType == 3 || buildType == 4) {
-			// Loop build: check if stock is sufficient for another cycle
-			boolean canLoop = true;
-			for (int i = 0; i < 4; i++) {
-				if (matsStock[i] < matsBuild[i]) {
-					canLoop = false;
-					break;
-				}
-			}
-			if (!canLoop) {
-				// Insufficient materials for next loop cycle, stop building
-				buildType = 0;
-				matsBuild = new int[4];
-			}
-		}
+        if (buildType == 1 || buildType == 2) {
+            // Single build: reset build type and requirements
+            buildType = 0;
+            matsBuild = new int[4];
+        } else if (buildType == 3 || buildType == 4) {
+            // Loop build: check if stock is sufficient for another cycle
+            boolean canLoop = true;
+            for (int i = 0; i < 4; i++) {
+                if (matsStock[i] < matsBuild[i]) {
+                    canLoop = false;
+                    break;
+                }
+            }
+            if (!canLoop) {
+                // Insufficient materials for next loop cycle, stop building
+                buildType = 0;
+                matsBuild = new int[4];
+            }
+        }
 
-		setChanged();
-	}
+        setChanged();
+    }
 
-	// ==================== Tick Logic ====================
+    private void tickServer() {
+        boolean sendUpdate = false;
+        syncTime++;
 
-	public static void serverTick(Level level, BlockPos pos, BlockState state, TileMultiGrudgeHeavy tile) {
-		tile.tickServer();
-	}
+        if (buildType != 0 && LargeRecipes.isValidInput(matsBuild[0], matsBuild[1], matsBuild[2], matsBuild[3])) {
+            int totalMats = matsBuild[0] + matsBuild[1] + matsBuild[2] + matsBuild[3];
+            powerGoal = LargeRecipes.calculateFuelCost(totalMats);
+        } else if (buildType == 0) {
+            powerGoal = 0;
+        }
 
-	private void tickServer() {
-		boolean sendUpdate = false;
-		syncTime++;
+        decrItemFuel();
 
-		if (buildType != 0 && LargeRecipes.isValidInput(matsBuild[0], matsBuild[1], matsBuild[2], matsBuild[3])) {
-			int totalMats = matsBuild[0] + matsBuild[1] + matsBuild[2] + matsBuild[3];
-			powerGoal = LargeRecipes.calculateFuelCost(totalMats);
-		} else if (buildType == 0) {
-			powerGoal = 0;
-		}
+        if (invMode == 0) {
+            recycleInputSlots();
+        }
 
-		decrItemFuel();
+        if (isBuilding()) {
+            ItemStack fuelStack = inventory.getStackInSlot(SLOT_FUEL);
+            if (!fuelStack.isEmpty() && fuelStack.is(ModItems.INSTANT_CON_MAT.get())) {
+                fuelStack.shrink(1);
+                if (fuelStack.isEmpty()) {
+                    inventory.setStackInSlot(SLOT_FUEL, ItemStack.EMPTY);
+                }
+                powerConsumed += POWER_INSTANT;
+            }
 
-		if (invMode == 0) {
-			recycleInputSlots();
-		}
+            if (powerRemained >= BUILD_SPEED) {
+                powerRemained -= BUILD_SPEED;
+                powerConsumed += BUILD_SPEED;
+            }
 
-		if (isBuilding()) {
-			ItemStack fuelStack = inventory.getStackInSlot(SLOT_FUEL);
-			if (!fuelStack.isEmpty() && fuelStack.is(ModItems.INSTANT_CON_MAT.get())) {
-				fuelStack.shrink(1);
-				if (fuelStack.isEmpty()) {
-					inventory.setStackInSlot(SLOT_FUEL, ItemStack.EMPTY);
-				}
-				powerConsumed += POWER_INSTANT;
-			}
+            if (powerGoal > 0 && powerConsumed >= powerGoal) {
+                buildComplete();
+                sendUpdate = true;
+            }
+        } else if (!canBuild()) {
+            powerConsumed = 0;
+        }
 
-			if (powerRemained >= BUILD_SPEED) {
-				powerRemained -= BUILD_SPEED;
-				powerConsumed += BUILD_SPEED;
-			}
+        boolean nowActive = isBuilding();
+        if (isActive != nowActive) {
+            isActive = nowActive;
+            sendUpdate = true;
+        }
 
-			if (powerGoal > 0 && powerConsumed >= powerGoal) {
-				buildComplete();
-				sendUpdate = true;
-			}
-		} else if (!canBuild()) {
-			powerConsumed = 0;
-		}
+        if (sendUpdate || syncTime > 12000) {
+            syncTime = 0;
+            setChanged();
+        }
+    }
 
-		boolean nowActive = isBuilding();
-		if (isActive != nowActive) {
-			isActive = nowActive;
-			sendUpdate = true;
-		}
+    // ==================== NBT ====================
 
-		if (sendUpdate || syncTime > 12000) {
-			syncTime = 0;
-			setChanged();
-		}
-	}
+    @Override
+    protected void saveAdditional(CompoundTag tag) {
+        super.saveAdditional(tag);
+        tag.putInt("BuildType", buildType);
+        tag.putInt("InvMode", invMode);
+        tag.putInt("SelectMat", selectMat);
+        tag.putInt("PowerConsumed", powerConsumed);
+        tag.putInt("PowerRemained", powerRemained);
+        tag.putInt("PowerGoal", powerGoal);
+        tag.putBoolean("Active", isActive);
+        tag.putIntArray("MatsStock", matsStock);
+        tag.putIntArray("MatsBuild", matsBuild);
+        if (hasCorePos) {
+            tag.putInt("CoreX", corePos.getX());
+            tag.putInt("CoreY", corePos.getY());
+            tag.putInt("CoreZ", corePos.getZ());
+        }
+    }
 
-	// ==================== NBT ====================
-
-	@Override
-	protected void saveAdditional(CompoundTag tag) {
-		super.saveAdditional(tag);
-		tag.putInt("BuildType", buildType);
-		tag.putInt("InvMode", invMode);
-		tag.putInt("SelectMat", selectMat);
-		tag.putInt("PowerConsumed", powerConsumed);
-		tag.putInt("PowerRemained", powerRemained);
-		tag.putInt("PowerGoal", powerGoal);
-		tag.putBoolean("Active", isActive);
-		tag.putIntArray("MatsStock", matsStock);
-		tag.putIntArray("MatsBuild", matsBuild);
-		if (hasCorePos) {
-			tag.putInt("CoreX", corePos.getX());
-			tag.putInt("CoreY", corePos.getY());
-			tag.putInt("CoreZ", corePos.getZ());
-		}
-	}
-
-	@Override
-	public void load(CompoundTag tag) {
-		super.load(tag);
-		buildType = tag.getInt("BuildType");
-		invMode = tag.getInt("InvMode");
-		selectMat = tag.getInt("SelectMat");
-		powerConsumed = tag.getInt("PowerConsumed");
-		powerRemained = tag.getInt("PowerRemained");
-		powerGoal = tag.getInt("PowerGoal");
-		isActive = tag.getBoolean("Active");
-		if (tag.contains("MatsStock")) {
-			int[] arr = tag.getIntArray("MatsStock");
-			if (arr.length == 4)
-				matsStock = arr;
-		}
-		if (tag.contains("MatsBuild")) {
-			int[] arr = tag.getIntArray("MatsBuild");
-			if (arr.length == 4)
-				matsBuild = arr;
-		}
-		if (tag.contains("CoreX")) {
-			corePos = new BlockPos(tag.getInt("CoreX"), tag.getInt("CoreY"), tag.getInt("CoreZ"));
-			hasCorePos = true;
-		}
-	}
+    @Override
+    public void load(CompoundTag tag) {
+        super.load(tag);
+        buildType = tag.getInt("BuildType");
+        invMode = tag.getInt("InvMode");
+        selectMat = tag.getInt("SelectMat");
+        powerConsumed = tag.getInt("PowerConsumed");
+        powerRemained = tag.getInt("PowerRemained");
+        powerGoal = tag.getInt("PowerGoal");
+        isActive = tag.getBoolean("Active");
+        if (tag.contains("MatsStock")) {
+            int[] arr = tag.getIntArray("MatsStock");
+            if (arr.length == 4)
+                matsStock = arr;
+        }
+        if (tag.contains("MatsBuild")) {
+            int[] arr = tag.getIntArray("MatsBuild");
+            if (arr.length == 4)
+                matsBuild = arr;
+        }
+        if (tag.contains("CoreX")) {
+            corePos = new BlockPos(tag.getInt("CoreX"), tag.getInt("CoreY"), tag.getInt("CoreZ"));
+            hasCorePos = true;
+        }
+    }
 }

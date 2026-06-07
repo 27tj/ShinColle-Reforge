@@ -22,256 +22,268 @@ import net.minecraft.world.level.Level;
  */
 public abstract class BasicEntitySummon extends Mob implements IShipOwner {
 
-	protected IShipAttackBase host;
-	protected Entity atkTarget;
-	protected Attrs shipAttrs;
-	protected ShipPathNavigate shipNavigator;
-	protected ShipMoveHelper shipMoveHelper;
-	protected int numAmmoLight;
-	protected int numAmmoHeavy;
-	protected int scaleLevel;
-	protected boolean initScale;
+    protected IShipAttackBase host;
+    protected Entity atkTarget;
+    protected Attrs shipAttrs;
+    protected ShipPathNavigate shipNavigator;
+    protected ShipMoveHelper shipMoveHelper;
+    protected int numAmmoLight;
+    protected int numAmmoHeavy;
+    protected int scaleLevel;
+    protected boolean initScale;
 
-	protected BasicEntitySummon(EntityType<? extends BasicEntitySummon> type, Level level) {
-		super(type, level);
-		this.invulnerableTime = 2;
-		this.numAmmoLight = 6;
-		this.numAmmoHeavy = 0;
-		this.scaleLevel = 0;
-		this.initScale = false;
-		this.shipAttrs = new Attrs();
-		this.setMaxUpStep(7.0F);
-	}
+    protected BasicEntitySummon(EntityType<? extends BasicEntitySummon> type, Level level) {
+        super(type, level);
+        this.invulnerableTime = 2;
+        this.numAmmoLight = 6;
+        this.numAmmoHeavy = 0;
+        this.scaleLevel = 0;
+        this.initScale = false;
+        this.shipAttrs = new Attrs();
+        this.setMaxUpStep(7.0F);
+    }
 
-	/** Called at end of subclass constructor */
-	protected void postInit() {
-		this.shipNavigator = new ShipPathNavigate(this);
-		// [PORT] 1.10.2 -> 1.20.1: restore legacy summon turn-rate cap for ship-type
-		// summons.
-		this.shipMoveHelper = new ShipMoveHelper(this, 60F);
-	}
+    public static AttributeSupplier.Builder createSummonAttributes() {
+        return Mob.createMobAttributes()
+                .add(Attributes.MAX_HEALTH, 40.0D)
+                .add(Attributes.MOVEMENT_SPEED, 0.4D)
+                .add(Attributes.FOLLOW_RANGE, 48.0D)
+                .add(Attributes.ATTACK_DAMAGE, 1.0D);
+    }
 
-	// ========== Static Attributes ==========
+    // ========== Static Attributes ==========
 
-	public static AttributeSupplier.Builder createSummonAttributes() {
-		return Mob.createMobAttributes()
-				.add(Attributes.MAX_HEALTH, 40.0D)
-				.add(Attributes.MOVEMENT_SPEED, 0.4D)
-				.add(Attributes.FOLLOW_RANGE, 48.0D)
-				.add(Attributes.ATTACK_DAMAGE, 1.0D);
-	}
+    /**
+     * Called at end of subclass constructor
+     */
+    protected void postInit() {
+        this.shipNavigator = new ShipPathNavigate(this);
+        // [PORT] 1.10.2 -> 1.20.1: restore legacy summon turn-rate cap for ship-type
+        // summons.
+        this.shipMoveHelper = new ShipMoveHelper(this, 60F);
+    }
 
-	// ========== Abstract Methods ==========
+    // ========== Abstract Methods ==========
 
-	/** Set AI goals - override in subclass */
-	protected abstract void setAIList();
+    /**
+     * Set AI goals - override in subclass
+     */
+    protected abstract void setAIList();
 
-	/** Return ammo/resources to host when despawning */
-	protected abstract void returnSummonResource();
+    /**
+     * Return ammo/resources to host when despawning
+     */
+    protected abstract void returnSummonResource();
 
-	/** Initialize attributes from host ship. Called after spawn. */
-	public abstract void initAttrs(IShipAttackBase host, Entity target, int scaleLevel, float... par2);
+    /**
+     * Initialize attributes from host ship. Called after spawn.
+     */
+    public abstract void initAttrs(IShipAttackBase host, Entity target, int scaleLevel, float... par2);
 
-	/** Get max lifetime in ticks */
-	public int getLifeLength() {
-		return 1800; // 90 seconds default
-	}
+    /**
+     * Get max lifetime in ticks
+     */
+    public int getLifeLength() {
+        return 1800; // 90 seconds default
+    }
 
-	/** Whether this entity can still find/acquire targets */
-	public boolean canFindTarget() {
-		return this.numAmmoLight > 0 || this.numAmmoHeavy > 0;
-	}
+    /**
+     * Whether this entity can still find/acquire targets
+     */
+    public boolean canFindTarget() {
+        return this.numAmmoLight > 0 || this.numAmmoHeavy > 0;
+    }
 
-	// ========== Fire Immunity ==========
+    // ========== Fire Immunity ==========
 
-	@Override
-	public boolean fireImmune() {
-		return true;
-	}
+    @Override
+    public boolean fireImmune() {
+        return true;
+    }
 
-	// ========== Despawn Control ==========
+    // ========== Despawn Control ==========
 
-	@Override
-	public boolean removeWhenFarAway(double distanceSq) {
-		return false;
-	}
+    @Override
+    public boolean removeWhenFarAway(double distanceSq) {
+        return false;
+    }
 
-	// ========== Tick / Update ==========
+    // ========== Tick / Update ==========
 
-	@Override
-	public void tick() {
-		super.tick();
+    @Override
+    public void tick() {
+        super.tick();
 
-		// server side only
-		if (!this.level().isClientSide()) {
-			if (this.tickCount == 1) {
-				sendSyncPacket(0);
-			}
+        // server side only
+        if (!this.level().isClientSide()) {
+            if (this.tickCount == 1) {
+                sendSyncPacket(0);
+            }
 
-			boolean shouldDie = false;
+            boolean shouldDie = false;
 
-			// host validity check
-			if (this.host == null) {
-				shouldDie = true;
-			} else {
-				Entity hostEnt = this.host.getHostEntity();
-				if (hostEnt == null || (hostEnt instanceof LivingEntity le && !le.isAlive())) {
-					shouldDie = true;
-				}
-			}
+            // host validity check
+            if (this.host == null) {
+                shouldDie = true;
+            } else {
+                Entity hostEnt = this.host.getHostEntity();
+                if (hostEnt == null || (hostEnt instanceof LivingEntity le && !le.isAlive())) {
+                    shouldDie = true;
+                }
+            }
 
-			// lifetime check
-			if (!shouldDie && this.tickCount > this.getLifeLength()) {
-				shouldDie = true;
-			}
+            // lifetime check
+            if (!shouldDie && this.tickCount > this.getLifeLength()) {
+                shouldDie = true;
+            }
 
-			// target validity check - if can't find more targets, die
-			if (!shouldDie && !canFindTarget()
-					&& (this.atkTarget == null || !this.atkTarget.isAlive())) {
-				// try host's target
-				if (this.host != null && this.host.getEntityTarget() != null
-						&& this.host.getEntityTarget().isAlive()) {
-					this.atkTarget = this.host.getEntityTarget();
-				} else {
-					shouldDie = true;
-				}
-			}
+            // target validity check - if can't find more targets, die
+            if (!shouldDie && !canFindTarget()
+                    && (this.atkTarget == null || !this.atkTarget.isAlive())) {
+                // try host's target
+                if (this.host != null && this.host.getEntityTarget() != null
+                        && this.host.getEntityTarget().isAlive()) {
+                    this.atkTarget = this.host.getEntityTarget();
+                } else {
+                    shouldDie = true;
+                }
+            }
 
-			if (shouldDie) {
-				if (this.host != null) {
-					this.returnSummonResource();
-				}
-				this.discard();
-				return;
-			}
-		}
+            if (shouldDie) {
+                if (this.host != null) {
+                    this.returnSummonResource();
+                }
+                this.discard();
+                return;
+            }
+        }
 
-		// both sides: prevent drowning
-		if ((this.tickCount & 127) == 0) {
-			this.setAirSupply(300);
-		}
-	}
+        // both sides: prevent drowning
+        if ((this.tickCount & 127) == 0) {
+            this.setAirSupply(300);
+        }
+    }
 
-	@Override
-	public void aiStep() {
-		if (!level().isClientSide()) {
-			EntityHelper.updateShipNavigator(this);
-			super.aiStep();
-		} else {
-			super.aiStep();
-		}
-	}
+    @Override
+    public void aiStep() {
+        if (!level().isClientSide()) {
+            EntityHelper.updateShipNavigator(this);
+            super.aiStep();
+        } else {
+            super.aiStep();
+        }
+    }
 
-	// ========== IShipOwner ==========
+    // ========== IShipOwner ==========
 
-	@Override
-	public int getPlayerUID() {
-		if (this.host != null)
-			return this.host.getPlayerUID();
-		return 0;
-	}
+    @Override
+    public int getPlayerUID() {
+        if (this.host != null)
+            return this.host.getPlayerUID();
+        return 0;
+    }
 
-	@Override
-	public void setPlayerUID(int uid) {
-	}
+    @Override
+    public void setPlayerUID(int uid) {
+    }
 
-	@Override
-	public Entity getHostEntity() {
-		if (this.host != null)
-			return this.host.getHostEntity();
-		return null;
-	}
+    @Override
+    public Entity getHostEntity() {
+        if (this.host != null)
+            return this.host.getHostEntity();
+        return null;
+    }
 
-	// ========== Host and Target ==========
+    // ========== Host and Target ==========
 
-	public IShipAttackBase getHost() {
-		return this.host;
-	}
+    public IShipAttackBase getHost() {
+        return this.host;
+    }
 
-	public void setHost(IShipAttackBase host) {
-		this.host = host;
-	}
+    public void setHost(IShipAttackBase host) {
+        this.host = host;
+    }
 
-	public Entity getEntityTarget() {
-		return this.atkTarget;
-	}
+    public Entity getEntityTarget() {
+        return this.atkTarget;
+    }
 
-	public void setEntityTarget(Entity target) {
-		this.atkTarget = target;
-	}
+    public void setEntityTarget(Entity target) {
+        this.atkTarget = target;
+    }
 
-	public Attrs getAttrs() {
-		return this.shipAttrs;
-	}
+    public Attrs getAttrs() {
+        return this.shipAttrs;
+    }
 
-	public ShipPathNavigate getShipNavigate() {
-		return this.shipNavigator;
-	}
+    public ShipPathNavigate getShipNavigate() {
+        return this.shipNavigator;
+    }
 
-	public ShipMoveHelper getShipMoveHelper() {
-		return this.shipMoveHelper;
-	}
+    public ShipMoveHelper getShipMoveHelper() {
+        return this.shipMoveHelper;
+    }
 
-	public int getScaleLevel() {
-		return this.scaleLevel;
-	}
+    public int getScaleLevel() {
+        return this.scaleLevel;
+    }
 
-	public void setScaleLevel(int level) {
-		this.scaleLevel = level;
-	}
+    public void setScaleLevel(int level) {
+        this.scaleLevel = level;
+    }
 
-	// ========== Ammo ==========
+    // ========== Ammo ==========
 
-	public int getNumAmmoLight() {
-		return this.numAmmoLight;
-	}
+    public int getNumAmmoLight() {
+        return this.numAmmoLight;
+    }
 
-	public void setNumAmmoLight(int num) {
-		this.numAmmoLight = num;
-	}
+    public void setNumAmmoLight(int num) {
+        this.numAmmoLight = num;
+    }
 
-	public int getNumAmmoHeavy() {
-		return this.numAmmoHeavy;
-	}
+    public int getNumAmmoHeavy() {
+        return this.numAmmoHeavy;
+    }
 
-	public void setNumAmmoHeavy(int num) {
-		this.numAmmoHeavy = num;
-	}
+    public void setNumAmmoHeavy(int num) {
+        this.numAmmoHeavy = num;
+    }
 
-	// ========== Network Sync ==========
+    // ========== Network Sync ==========
 
-	/**
-	 * Send sync packet to tracking clients.
-	 * type: 0=emotion, 1=motion, 2=rotation
-	 */
-	public void sendSyncPacket(int type) {
-		if (!this.level().isClientSide()) {
-			switch (type) {
-				case 0:
-					ModNetworking.sendToAllTracking(
-							S2CEntitySyncPacket.syncEmotion(this), this);
-					break;
-				case 1:
-					ModNetworking.sendToAllTracking(
-							S2CEntitySyncPacket.syncMotion(this), this);
-					break;
-				case 2:
-					ModNetworking.sendToAllTracking(
-							S2CEntitySyncPacket.syncRotation(this), this);
-					break;
-			}
-		}
-	}
+    /**
+     * Send sync packet to tracking clients.
+     * type: 0=emotion, 1=motion, 2=rotation
+     */
+    public void sendSyncPacket(int type) {
+        if (!this.level().isClientSide()) {
+            switch (type) {
+                case 0:
+                    ModNetworking.sendToAllTracking(
+                            S2CEntitySyncPacket.syncEmotion(this), this);
+                    break;
+                case 1:
+                    ModNetworking.sendToAllTracking(
+                            S2CEntitySyncPacket.syncMotion(this), this);
+                    break;
+                case 2:
+                    ModNetworking.sendToAllTracking(
+                            S2CEntitySyncPacket.syncRotation(this), this);
+                    break;
+            }
+        }
+    }
 
-	// ========== AI Task Management ==========
+    // ========== AI Task Management ==========
 
-	protected void clearAITasks() {
-		this.goalSelector.removeAllGoals(goal -> true);
-	}
+    protected void clearAITasks() {
+        this.goalSelector.removeAllGoals(goal -> true);
+    }
 
-	protected void clearAITargetTasks() {
-		this.setTarget(null);
-		this.atkTarget = null;
-		this.targetSelector.removeAllGoals(goal -> true);
-	}
+    protected void clearAITargetTasks() {
+        this.setTarget(null);
+        this.atkTarget = null;
+        this.targetSelector.removeAllGoals(goal -> true);
+    }
 }

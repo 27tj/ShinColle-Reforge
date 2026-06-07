@@ -13,8 +13,8 @@ public class EntityMountAfH extends BasicEntityMountLarge {
 
     public EntityMountAfH(EntityType<? extends EntityMountAfH> type, Level level) {
         super(type, level);
-        this.seatPos = new float[] { 0.59F, -0.25F, 0F };
-        this.seatPos2 = new float[] { -0.85F, 1F, -1.12F };
+        this.seatPos = new float[]{0.59F, -0.25F, 0F};
+        this.seatPos2 = new float[]{-0.85F, 1F, -1.12F};
     }
 
     @Override

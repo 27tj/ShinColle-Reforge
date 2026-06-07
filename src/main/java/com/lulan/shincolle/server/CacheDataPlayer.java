@@ -6,7 +6,7 @@ import net.minecraft.world.level.Level;
 
 /**
  * Cache data for player UID → entity mapping.
- *
+ * <p>
  * This is a runtime cache ONLY — NOT saved to disk.
  * Used for owner checking and radar display.
  */
@@ -21,7 +21,7 @@ public class CacheDataPlayer {
     public CompoundTag capaNBT;
 
     public CacheDataPlayer(int eid, ResourceKey<Level> dimension, boolean hasTeam,
-            double posX, double posY, double posZ, CompoundTag nbt) {
+                           double posX, double posY, double posZ, CompoundTag nbt) {
         this.entityID = eid;
         this.dimension = dimension;
         this.hasTeam = hasTeam;

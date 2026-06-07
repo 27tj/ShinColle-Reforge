@@ -10,7 +10,7 @@ import java.util.List;
 
 /**
  * Player capability for ShinColle ("Admiral" / "Teitoku" data).
- *
+ * <p>
  * Stores per-player persistent data:
  * - hasRing / isRingActive / isRingFlying (marriage ring state)
  * - marriageNum (total married ships)
@@ -27,27 +27,32 @@ public class CapaTeitoku implements INBTSerializable<CompoundTag> {
 
     public static final int TEAM_NUM = 9;
     public static final int SLOT_NUM = 6;
-
+    /**
+     * teamList[team][slot] = ship entity ID (-1 = empty)
+     */
+    private final int[][] teamList;
+    /**
+     * sidList[team][slot] = ship UID (-1 = empty)
+     */
+    private final int[][] sidList;
+    /**
+     * formatID[team] = formation type
+     */
+    private final int[] formatID;
+    /**
+     * unitNames[team] = team name
+     */
+    private final String[] unitNames;
     // ========== Ring state ==========
     private boolean hasRing;
     private boolean isRingActive;
+
+    // ========== Team data ==========
     private boolean isRingFlying;
     private int marriageNum;
-
     // ========== Cooldowns ==========
     private int bossCooldown;
     private int teamCooldown;
-
-    // ========== Team data ==========
-    /** teamList[team][slot] = ship entity ID (-1 = empty) */
-    private final int[][] teamList;
-    /** sidList[team][slot] = ship UID (-1 = empty) */
-    private final int[][] sidList;
-    /** formatID[team] = formation type */
-    private final int[] formatID;
-    /** unitNames[team] = team name */
-    private final String[] unitNames;
-
     // ========== Player identification ==========
     private int playerUID;
     private int selectTeam;
@@ -476,7 +481,9 @@ public class CapaTeitoku implements INBTSerializable<CompoundTag> {
         }
     }
 
-    /** Clear all entity IDs in team slots (e.g. on dimension change) */
+    /**
+     * Clear all entity IDs in team slots (e.g. on dimension change)
+     */
     public void clearTeamEntityIDs() {
         for (int i = 0; i < TEAM_NUM; i++) {
             for (int j = 0; j < SLOT_NUM; j++) {
@@ -485,13 +492,17 @@ public class CapaTeitoku implements INBTSerializable<CompoundTag> {
         }
     }
 
-    /** Check if this player has a team (has team data in ServerDataManager) */
+    /**
+     * Check if this player has a team (has team data in ServerDataManager)
+     */
     public boolean hasTeam() {
         return this.playerUID > 0
                 && com.lulan.shincolle.server.ServerDataManager.getTeamData(this.playerUID) != null;
     }
 
-    /** Copy all persistent data from another CapaTeitoku (for player respawn) */
+    /**
+     * Copy all persistent data from another CapaTeitoku (for player respawn)
+     */
     public void copyFrom(CapaTeitoku other) {
         this.hasRing = other.hasRing;
         this.isRingActive = other.isRingActive;

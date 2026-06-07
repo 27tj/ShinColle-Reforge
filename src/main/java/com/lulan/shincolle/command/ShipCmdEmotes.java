@@ -1,15 +1,11 @@
 package com.lulan.shincolle.command;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.lulan.shincolle.entity.BasicEntityShip;
 import com.lulan.shincolle.entity.BasicEntityShipHostile;
 import com.lulan.shincolle.reference.ID;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
@@ -20,16 +16,21 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Command: /shipemotes [emote]
  * Aliases: /em, /emo, /emote, /emotes
- *
+ * <p>
  * Plays an emote on the ship entity the player is looking at.
  * Available to all players (permission level 0).
  */
 public class ShipCmdEmotes {
 
-    /** Emote name to emote ID mapping (35 emotes, IDs 0-34) */
+    /**
+     * Emote name to emote ID mapping (35 emotes, IDs 0-34)
+     */
     private static final Map<String, Integer> EMOTE_MAP = new HashMap<>();
 
     static {
@@ -145,7 +146,7 @@ public class ShipCmdEmotes {
                         .executes(ctx -> executeEmote(ctx.getSource(), StringArgumentType.getString(ctx, "emote")))));
 
         // Aliases
-        for (String alias : new String[] { "em", "emo", "emote", "emotes" }) {
+        for (String alias : new String[]{"em", "emo", "emote", "emotes"}) {
             dispatcher.register(Commands.literal(alias)
                     .executes(ctx -> executeList(ctx.getSource()))
                     .then(Commands.argument("emote", StringArgumentType.string())

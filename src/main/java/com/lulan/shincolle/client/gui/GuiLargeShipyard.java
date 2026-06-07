@@ -18,7 +18,7 @@ import net.minecraft.world.entity.player.Inventory;
 /**
  * GUI screen for the large shipyard block (Grudge Heavy multiblock).
  * Based on original GuiLargeShipyard.java.
- *
+ * <p>
  * SLOT POSITION:
  * output(168,51) fuel bar(9,83 height=63) fuel color bar(208,64)
  * ship button(157,24) equip button(177,24) inv(25,116)
@@ -95,7 +95,7 @@ public class GuiLargeShipyard extends AbstractContainerScreen<ContainerLargeShip
     @Override
     protected void renderLabels(GuiGraphics g, int mouseX, int mouseY) {
         // Material build amounts (left column, centered at x=73)
-        int[] rowY = { 20, 39, 58, 77 };
+        int[] rowY = {20, 39, 58, 77};
         for (int i = 0; i < 4; i++) {
             int buildVal = this.menu.getMatBuild(i);
             String buildStr = String.valueOf(buildVal);
@@ -240,7 +240,7 @@ public class GuiLargeShipyard extends AbstractContainerScreen<ContainerLargeShip
 
     private void handleMaterialPageButton(int btn, BlockPos pos, int selectMat) {
         // btn 0-7: +1000, +100, +10, +1, -1000, -100, -10, -1
-        int[] deltas = { 1000, 100, 10, 1, -1000, -100, -10, -1 };
+        int[] deltas = {1000, 100, 10, 1, -1000, -100, -10, -1};
         if (btn >= 0 && btn < deltas.length) {
             sendTileBtn(pos, ID.B.Shipyard_INCDEC, deltas[btn]);
         }
@@ -249,7 +249,7 @@ public class GuiLargeShipyard extends AbstractContainerScreen<ContainerLargeShip
     private void sendTileBtn(BlockPos pos, int buttonId, int value) {
         ModNetworking.sendToServer(new C2SGUIInputPacket(
                 C2SGUIInputPacket.TileBtn,
-                new int[] { 0, pos.getX(), pos.getY(), pos.getZ(), buttonId, value }));
+                new int[]{0, pos.getX(), pos.getY(), pos.getZ(), buttonId, value}));
     }
 
     @Override
