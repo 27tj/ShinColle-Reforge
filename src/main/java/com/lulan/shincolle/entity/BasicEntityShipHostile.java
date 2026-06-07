@@ -23,16 +23,12 @@ import com.lulan.shincolle.reference.ID;
 import com.lulan.shincolle.reference.unitclass.Attrs;
 import com.lulan.shincolle.reference.unitclass.AttrsAdv;
 import com.lulan.shincolle.reference.unitclass.MissileData;
-import com.lulan.shincolle.utility.BlockHelper;
-import com.lulan.shincolle.utility.BuffHelper;
-import com.lulan.shincolle.utility.CombatHelper;
-import com.lulan.shincolle.utility.DebugProfiler;
-import com.lulan.shincolle.utility.EntityHelper;
-import com.lulan.shincolle.utility.TargetHelper;
+import com.lulan.shincolle.utility.*;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.server.LoggedPrintStream;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -171,11 +167,6 @@ public abstract class BasicEntityShipHostile extends Mob
 		this.shipMoveHelper = new ShipMoveHelper(this, 60F);
 		this.shipAttrs = new AttrsAdv(this.getShipClass());
 
-		// init boss bar if scale level >= 2
-		if (this.scaleLevel >= 2 && !this.level().isClientSide()) {
-			this.bossEvent = new ServerBossEvent(
-					this.getDisplayName(), bossBarColor, BossEvent.BossBarOverlay.PROGRESS);
-		}
 	}
 
 	// ========== Static Attribute Builder ==========
@@ -226,6 +217,7 @@ public abstract class BasicEntityShipHostile extends Mob
 		if (!this.level().isClientSide()) {
 			calcShipAttributes(31, false);
 		}
+		creatBossEvent();
 	}
 
 	/** Set size based on scale level */
@@ -386,6 +378,12 @@ public abstract class BasicEntityShipHostile extends Mob
 		ModNetworking.sendToPlayer(S2CEntitySyncPacket.syncScale(this, this.getScaleLevel()), player);
 		if (this.bossEvent != null) {
 			this.bossEvent.addPlayer(player);
+		}
+	}
+	public void creatBossEvent() {
+		if (this.scaleLevel >= 2 && !this.level().isClientSide()) {
+			this.bossEvent = new ServerBossEvent(
+					this.getDisplayName(), bossBarColor, BossEvent.BossBarOverlay.PROGRESS);
 		}
 	}
 
