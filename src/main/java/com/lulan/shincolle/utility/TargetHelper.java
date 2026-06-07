@@ -130,11 +130,7 @@ public class TargetHelper {
             return true;
         }
 
-        if (target instanceof Projectile
-                || target instanceof FireworkRocketEntity
-                || target instanceof FishingHook
-                || target instanceof HangingEntity
-                || target instanceof AreaEffectCloud) {
+        if (target instanceof Projectile || target instanceof FishingHook || target instanceof AreaEffectCloud) {
             return true;
         }
 
@@ -272,9 +268,6 @@ public class TargetHelper {
     private static int getOwnerUID(Entity entity) {
         if (entity instanceof IShipOwner owner) {
             return owner.getPlayerUID();
-        }
-        if (entity instanceof IShipAttackBase attackBase) {
-            return attackBase.getPlayerUID();
         }
         // players don't have a UID in this system — return -1
         return -1;

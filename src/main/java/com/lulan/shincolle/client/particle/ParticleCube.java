@@ -57,17 +57,14 @@ public class ParticleCube extends Particle {
         // yamato cannon charging
         if (type == 1) { // yamato beam head
             this.lifetime = 30;
-            this.rCol = 1F;
-            this.gCol = 0.8F;
-            this.bCol = 0.9F;
         } else {
             this.particleScale = (float) par1; // par1 as new scale
             this.lifetime = 40;
-            this.rCol = 1F;
-            this.gCol = 0.8F;
-            this.bCol = 0.9F;
         }
-	}
+        this.rCol = 1F;
+        this.gCol = 0.8F;
+        this.bCol = 0.9F;
+    }
 
     @Override
     public void render(VertexConsumer buffer, Camera camera, float partialTick) {
@@ -290,8 +287,6 @@ public class ParticleCube extends Particle {
                 }
 
                 // random scale effect
-                this.scaleOut += this.random.nextFloat() * 0.04F - 0.01F;
-                this.scaleIn += this.random.nextFloat() * 0.04F - 0.005F;
             } else {// particle position
                 posOffset = CalcHelper.rotateXZByAxis(host.getBbWidth() * 2F, 0F,
                         (host.yBodyRot % 360) * Values.N.DIV_PI_180, 1F);
@@ -315,9 +310,9 @@ public class ParticleCube extends Particle {
                 this.scaleIn = this.scaleOut * 0.75F;
 
                 // random scale effect
-                this.scaleOut += this.random.nextFloat() * 0.04F - 0.01F;
-                this.scaleIn += this.random.nextFloat() * 0.04F - 0.005F;
             }// end switch
+            this.scaleOut += this.random.nextFloat() * 0.04F - 0.01F;
+            this.scaleIn += this.random.nextFloat() * 0.04F - 0.005F;
         }
 
         if (this.age++ > this.lifetime) {

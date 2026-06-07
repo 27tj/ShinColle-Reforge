@@ -46,13 +46,6 @@ public class ParticleSweep extends Particle {
         this.particleType = type;
         this.hasPhysics = false;
 
-        /**
-         * type 0: sword sweep right to left
-         * parms: 0:scale1, 1:scale2, 2:scale3, 3:fade, 4:maxAge, 5:R, 6:G, 7:B, 8:A
-         * scale1: height
-         * scale2: forward/backward width
-         * scale3: left/right width, makes effect tilt from vertical
-         */
         if (type == 0) {
             this.swpScale1 = parms[0];
             this.swpScale2 = parms[1];
@@ -94,7 +87,7 @@ public class ParticleSweep extends Particle {
         float minV = (float) (i / 4) * 0.5F;
         float maxV = minV + 0.4995F;
         // Use camera entity's width for offset calculation
-        float entityWidth = 0.6F; // default player-like width
+        float entityWidth; // default player-like width
 
         entityWidth = camera.getEntity().getBbWidth();
 
