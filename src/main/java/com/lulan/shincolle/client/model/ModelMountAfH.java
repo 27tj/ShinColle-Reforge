@@ -291,8 +291,6 @@ public class ModelMountAfH extends ShipModelBaseAdv<Entity> {
 
         if (netHeadYaw <= -180F) {
 
-        } else if (netHeadYaw >= 180F) {
-
         }
 
         float angleX = Mth.cos(ageInTicks * 0.08F);

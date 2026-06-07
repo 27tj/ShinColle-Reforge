@@ -41,10 +41,6 @@ public class ParticleLine extends Particle {
         this.particleType = type;
         this.hasPhysics = false;
 
-        /**
-         * parms: height, width forward, width backward, R, G, B, A, px, py, pz, mx, my,
-         * mz
-         */
         if (type == 0) { // high speed blur
             this.lifetime = 50;
             this.rCol = parms[3];
