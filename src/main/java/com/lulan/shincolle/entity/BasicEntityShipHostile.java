@@ -218,6 +218,7 @@ public abstract class BasicEntityShipHostile extends Mob
 			calcShipAttributes(31, false);
 		}
 		creatBossEvent();
+		setHealth(this.getMaxHealth());
 	}
 
 	/** Set size based on scale level */
