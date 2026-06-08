@@ -130,7 +130,7 @@ public class TargetHelper {
             return true;
         }
 
-        if (target instanceof Projectile || target instanceof FishingHook || target instanceof AreaEffectCloud) {
+        if (target instanceof Projectile || target instanceof AreaEffectCloud) {
             return true;
         }
 

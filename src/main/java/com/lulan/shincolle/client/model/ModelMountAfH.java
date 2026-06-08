@@ -289,10 +289,6 @@ public class ModelMountAfH extends ShipModelBaseAdv<Entity> {
                           float netHeadYaw, float headPitch) {
         IShipEmotion ent = (IShipEmotion) entity;
 
-        if (netHeadYaw <= -180F) {
-
-        }
-
         float angleX = Mth.cos(ageInTicks * 0.08F);
 
         this.offsetY = 0F;
