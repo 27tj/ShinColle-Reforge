@@ -26,9 +26,6 @@ public class ShipFleeGoal extends Goal {
 
     @Override
     public boolean canUse() {
-        if (this.ship.getStateFlag(ID.F.NoFuel))
-            return false;
-
         LivingEntity owner = resolveOwner();
         if (owner == null || !owner.isAlive())
             return false;

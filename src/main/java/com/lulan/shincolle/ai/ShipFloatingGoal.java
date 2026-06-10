@@ -143,10 +143,8 @@ public class ShipFloatingGoal extends Goal {
             return false;
         }
 
-        // block floating when: no fuel, riding, sitting, crane, navigating, or in guard
-        // position
-        return !(ship.getStateFlag(ID.F.NoFuel)
-                || ship.isPassenger()
+        // block floating when: riding, sitting, crane, navigating, or in guard position
+        return !(ship.isPassenger()
                 || ship.isOrderedToSit()
                 || ship.getStateMinor(ID.M.CraneState) > 0
                 || !ship.getShipNavigate().noPath()
