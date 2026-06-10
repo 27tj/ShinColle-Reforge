@@ -618,11 +618,15 @@ public abstract class BasicEntityShip extends TamableAnimal
                 // reset AI and sync once
                 if (!this.initAI && tickCount > 10) {
                     setStateFlag(ID.F.CanDrop, true);
+                    // check fuel state first (sets NoFuel flag but won't clear
+                    // goals since none are registered yet)
+                    decrGrudgeNum(0);
+                    // then register goals — they stay registered because
+                    // updateFuelStateByAITaskPresence already ran with empty selectors
                     clearAITasks();
                     clearAITargetTasks();
                     setAIList();
                     setAITargetList();
-                    decrGrudgeNum(0);
                     updateChunkLoader();
                     this.initAI = true;
                 }
@@ -1460,13 +1464,14 @@ public abstract class BasicEntityShip extends TamableAnimal
         int targetTaskCount = this.targetSelector.getAvailableGoals().size();
 
         if (noFuel) {
+            // Only clear combat targeting when fuel runs out.
+            // Keep movement/floating/idle goals so the ship can still
+            // wander, float, and play idle animations without fuel.
             if (targetTaskCount > 0) {
                 this.setMorale(0);
-                clearAITasks();
                 clearAITargetTasks();
-                if (this.getVehicle() instanceof BasicEntityMount mount) {
-                    mount.clearAITasks();
-                }
+                this.setTarget(null);
+                this.setEntityTarget(null);
                 sendSyncPacketEmotion();
             }
         } else {
