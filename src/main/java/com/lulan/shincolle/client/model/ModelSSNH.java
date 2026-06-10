@@ -597,11 +597,8 @@ public class ModelSSNH extends ShipModelBaseAdv<Entity> {
     @Override
     public void applyDeadPose(float f, float f1, float f2, float f3, float f4, IShipEmotion ent) {
 
-        // [PORT] Restored from 1.10.2 GlStateManager.translate
         this.offsetY += 0.27F;
         this.setFaceHungry(ent);
-        // [PORT] 1.10.2 -> 1.20.1: GlStateManager.translate(0, 0.27, 0)
-        this.offsetY += 0.27F;
 
         // 頭部
         this.Head.xRot = -0.15F;

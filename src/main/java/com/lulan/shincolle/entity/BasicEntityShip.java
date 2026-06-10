@@ -1464,14 +1464,18 @@ public abstract class BasicEntityShip extends TamableAnimal
         int targetTaskCount = this.targetSelector.getAvailableGoals().size();
 
         if (noFuel) {
-            // Only clear combat targeting when fuel runs out.
-            // Keep movement/floating/idle goals so the ship can still
-            // wander, float, and play idle animations without fuel.
+            // Clear all AI when fuel runs out — ship becomes inert.
+            // Water buoyancy is handled by travel()/moveEntityInFluid()
+            // independently of AI goals, so the ship won't sink.
             if (targetTaskCount > 0) {
                 this.setMorale(0);
+                clearAITasks();
                 clearAITargetTasks();
                 this.setTarget(null);
                 this.setEntityTarget(null);
+                if (this.getVehicle() instanceof BasicEntityMount mount) {
+                    mount.clearAITasks();
+                }
                 sendSyncPacketEmotion();
             }
         } else {

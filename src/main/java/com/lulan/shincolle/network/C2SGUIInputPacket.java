@@ -535,23 +535,53 @@ public class C2SGUIInputPacket {
     }
 
     /**
-     * Set ship sitting state.
-     * values: 0:player eid, 1:(unused dim), 2:meta, 3:entity id
+     * Set ship sitting state (team-aware).
+     * values: 0:player eid, 1:(unused dim), 2:mode, 3:entity id
+     *
+     * In single mode: toggles sit for the clicked ship only.
+     * In group/formation mode: toggles sit for all ships in the current team.
+     * If the clicked ship is not in any team, toggles sit for that ship only.
      */
     private void handleSetSitting(ServerPlayer player) {
         if (values.length < 4)
             return;
 
         ServerLevel level = player.serverLevel();
+        int mode = values[2];
         Entity entity = level.getEntity(values[3]);
 
-        if (entity instanceof BasicEntityShip ship) {
-            // [PORT] 1.10.2 -> 1.20.1: fallback to UUID owner check to avoid
-            // sit-toggle packet rejection when UID capability is not ready.
-            if (TeamHelper.checkSameOwner(player, ship) || ship.isOwnedBy(player)) {
-                boolean newSit = !ship.isOrderedToSit();
-                ship.setEntitySit(newSit);
-                ship.setRiderAndMountSit();
+        if (!(entity instanceof BasicEntityShip clickedShip))
+            return;
+        if (!TeamHelper.checkSameOwner(player, clickedShip) && !clickedShip.isOwnedBy(player))
+            return;
+
+        CapaTeitoku capa = player.getCapability(CapaTeitokuProvider.CAPABILITY).orElse(null);
+        if (capa == null) {
+            boolean newSit = !clickedShip.isOrderedToSit();
+            clickedShip.setEntitySit(newSit);
+            clickedShip.setRiderAndMountSit();
+            return;
+        }
+
+        int teamId = capa.getSelectTeam();
+        int clickedUid = clickedShip.getStateMinor(ID.M.ShipUID);
+        boolean inTeam = findTeamSlotByUID(capa, teamId, clickedUid) >= 0;
+
+        if (!inTeam || mode == 0) {
+            // Not in team or single mode: toggle only the clicked ship
+            boolean newSit = !clickedShip.isOrderedToSit();
+            clickedShip.setEntitySit(newSit);
+            clickedShip.setRiderAndMountSit();
+        } else {
+            // Group/formation mode: toggle all ships in the team
+            // Use the first team ship's state to decide toggle direction
+            boolean newSit = !clickedShip.isOrderedToSit();
+            for (int i = 0; i < CapaTeitoku.SLOT_NUM; i++) {
+                BasicEntityShip ship = resolveTeamShip(level, capa, teamId, i);
+                if (ship != null) {
+                    ship.setEntitySit(newSit);
+                    ship.setRiderAndMountSit();
+                }
             }
         }
     }

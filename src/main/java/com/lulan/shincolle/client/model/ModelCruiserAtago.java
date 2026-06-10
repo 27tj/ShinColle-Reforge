@@ -972,13 +972,9 @@ public class ModelCruiserAtago extends ShipModelBaseAdv<Entity> {
         // [PORT] 1.10.2 -> 1.20.1: preserve legacy dead-pose grounding offset.
         this.offsetY += 0.58F + 0.26F * ent.getScaleLevel();
 
-        // [PORT] Restored from 1.10.2 GlStateManager.translate
-        this.offsetY += 0.58F + 0.26F * ent.getScaleLevel();
         this.setFaceHungry(ent);
 
         // body
-        // [PORT] Restored from 1.10.2 GlStateManager.translate
-        this.offsetY += 0.58F;
         this.Head.xRot = 0.55F;
         this.Head.yRot = -0.2F;
         this.BodyMain.xRot = -0.7F;
