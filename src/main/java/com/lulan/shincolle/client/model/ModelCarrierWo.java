@@ -581,10 +581,6 @@ public class ModelCarrierWo extends ShipModelBaseAdv<Entity> {
         // 手臂晃動
         this.ArmRight02.yRot = 0F;
         // 身體角度
-        // this.Butt.offsetY = 0F;
-        // 身體角度
-        // [PORT] Restored from 1.10.2 GlStateManager.translate
-        this.offsetY += 0.41F;
         this.BodyMain.xRot = 0.2094F;
         this.BodyMain.yRot = 0F;
         this.BodyMain.zRot = 0F;

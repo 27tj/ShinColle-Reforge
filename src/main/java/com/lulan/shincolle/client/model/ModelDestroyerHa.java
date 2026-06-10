@@ -320,8 +320,6 @@ public class ModelDestroyerHa extends ShipModelBaseAdv<Entity> {
         // [PORT] 1.10.2 -> 1.20.1: legacy dead pose uses face index 2.
         this.setFace(2);
 
-        // [PORT] Restored from 1.10.2 GlStateManager.translate
-        this.offsetY += 0.5F;
         this.Back.xRot = 0F;
         this.Back.zRot = -1.66F;
         this.NeckBack.xRot = 0.1745F;

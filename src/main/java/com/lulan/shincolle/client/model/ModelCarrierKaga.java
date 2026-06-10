@@ -709,8 +709,6 @@ public class ModelCarrierKaga extends ShipModelBaseAdv<Entity> {
         // [PORT] 1.10.2 -> 1.20.1: preserve legacy dead-pose grounding offset.
         this.offsetY += 0.48F + 0.2F * ent.getScaleLevel();
 
-        // [PORT] Restored from 1.10.2 GlStateManager.translate
-        this.offsetY += 0.48F + 0.2F * ent.getScaleLevel();
         this.setFaceHungry(ent);
 
         if (((IShipFloating) ent).getShipDepth() > 0) {

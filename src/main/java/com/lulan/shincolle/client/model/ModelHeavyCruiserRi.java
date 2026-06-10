@@ -457,8 +457,6 @@ public class ModelHeavyCruiserRi extends ShipModelBaseAdv<Entity> {
         this.HeadTail0.xRot = -0.05F;
         this.HeadTail1.xRot = -0.05F;
         // arm
-        // [PORT] Restored from 1.10.2 GlStateManager.translate
-        this.offsetY += 0.45F;
         this.ArmLeft.xRot = -0.6F;
         this.ArmRight.xRot = -0.6F;
         this.ArmLeft.zRot = 0.5F;

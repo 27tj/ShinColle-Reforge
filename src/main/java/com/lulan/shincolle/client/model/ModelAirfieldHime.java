@@ -487,8 +487,6 @@ public class ModelAirfieldHime extends ShipModelBaseAdv<Entity> {
             this.EquipRdR01.visible = false;
 
         // Body
-        // [PORT] Restored from 1.10.2 GlStateManager.translate
-        this.offsetY += 0.27F;
         this.Head.xRot += 0.14F;
         this.BodyMain.xRot = 0.4F;
         this.Butt.xRot = -0.4F;

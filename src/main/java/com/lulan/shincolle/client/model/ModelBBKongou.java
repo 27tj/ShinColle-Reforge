@@ -1389,8 +1389,6 @@ public class ModelBBKongou extends ShipModelBaseAdv<Entity> {
                 break;
         }
 
-        // [PORT] Restored from 1.10.2 GlStateManager.translate
-        this.offsetY += 1.05F;
         this.setFaceHungry(ent);
 
         // body

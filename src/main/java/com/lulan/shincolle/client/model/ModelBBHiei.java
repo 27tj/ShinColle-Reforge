@@ -1131,8 +1131,6 @@ public class ModelBBHiei extends ShipModelBaseAdv<Entity> {
                 break;
         }
 
-        // [PORT] Restored from 1.10.2 GlStateManager.translate
-        this.offsetY += 0.89F;
         this.setFaceHungry(ent);
 
         // hair

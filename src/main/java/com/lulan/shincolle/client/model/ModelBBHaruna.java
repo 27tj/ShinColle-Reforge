@@ -1169,8 +1169,6 @@ public class ModelBBHaruna extends ShipModelBaseAdv<Entity> {
                 break;
         }
 
-        // [PORT] Restored from 1.10.2 GlStateManager.translate
-        this.offsetY += 1.09F;
         this.setFaceHungry(ent);
 
         // head
