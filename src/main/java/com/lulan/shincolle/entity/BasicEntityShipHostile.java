@@ -300,7 +300,7 @@ public abstract class BasicEntityShipHostile extends Mob
 		this.goalSelector.addGoal(0, new ShipFloatingGoal(this));
 		// [PORT] 1.10.2 -> 1.20.1: restore legacy hostile mobility goals
 		this.goalSelector.addGoal(21, new ShipOpenDoorGoal(this, true));
-		this.goalSelector.addGoal(23, new ShipHostileWanderGoal(this, 12, 1, 0.8D));
+		this.goalSelector.addGoal(23, new ShipHostileWanderGoal(this, 12, 1, 1.0D));
 		// ranged cannon attack
 		this.goalSelector.addGoal(11, new ShipRangeAttackGoal(this));
 		// melee attack on collide
