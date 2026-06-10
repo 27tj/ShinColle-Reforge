@@ -127,8 +127,8 @@ public class GuiDesk extends AbstractContainerScreen<ContainerDesk> {
 
     public GuiDesk(ContainerDesk menu, Inventory playerInv, Component title) {
         super(menu, playerInv, title);
-        this.imageWidth = (int) (256 * GUI_SCALE);
-        this.imageHeight = (int) (192 * GUI_SCALE);
+        this.imageWidth = 256;
+        this.imageHeight = 192;
         this.type = menu.getGuiType();
         this.tile = menu.getTile();
         this.player = playerInv.player;
@@ -356,8 +356,8 @@ public class GuiDesk extends AbstractContainerScreen<ContainerDesk> {
 
         // Book-specific tooltips
         if (this.guiFunc == 2) {
-            int localX = mouseX - this.leftPos;
-            int localY = mouseY - this.topPos;
+            int localX = (int) (mouseX * GUI_SCALE_INV) - this.leftPos;
+            int localY = (int) (mouseY * GUI_SCALE_INV) - this.topPos;
 
             // Item icon tooltip
             ItemStack hovered = GuiBook.getHoveredItem(bookChapNum, bookPageNum, localX, localY);
